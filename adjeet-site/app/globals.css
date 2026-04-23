@@ -1,1 +1,32 @@
 @import "tailwindcss";
+@import "../design/tokens.css";
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  background-color: var(--paper);
+  color: var(--ink);
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: var(--font-inter), system-ui, sans-serif;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Body copy line length */
+p, li {
+  max-width: 65ch;
+}
+
+/* Visible focus rings */
+:focus-visible {
+  outline: 2px solid var(--adjeet-blue);
+  outline-offset: 3px;
+  border-radius: 2px;
+}
