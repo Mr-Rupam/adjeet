@@ -7,7 +7,7 @@
   --ink-subtle:      #8A857C;
   --rule:            #E4DDD0;
   --adjeet-blue:     #1E7FB8;
-  --adjeet-blue-deep:#134C70;
+  --adjeet-blue-deep: #134C70;
   --ochre:           #C9962E;
   --clay:            #A6503A;
   --sage:            #6B7C5A;
@@ -53,4 +53,27 @@
   --ink-muted:      #BAB3A2;
   --rule:           #2B2823;
   --adjeet-blue:    #4FA8E0;
+}
+
+/* ─── Tailwind v4 theme registration ─────────────────────────────────── */
+@theme {
+  /* Colours */
+  --color-paper:          var(--paper);
+  --color-paper-elevated: var(--paper-elevated);
+  --color-ink:            var(--ink);
+  --color-ink-muted:      var(--ink-muted);
+  --color-ink-subtle:     var(--ink-subtle);
+  --color-rule:           var(--rule);
+  --color-blue:           var(--adjeet-blue);
+  --color-blue-deep:      var(--adjeet-blue-deep);
+  --color-ochre:          var(--ochre);
+  --color-clay:           var(--clay);
+  --color-sage:           var(--sage);
+  --color-slate:          var(--slate);
+  --color-success:        var(--success);
+  --color-warning:        var(--warning);
+  --color-error:          var(--error);
+
+  /* Max width */
+  --width-content: var(--content-max);
 }

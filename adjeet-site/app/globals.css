@@ -10,7 +10,12 @@
 html {
   background-color: var(--paper);
   color: var(--ink);
-  scroll-behavior: smooth;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  html {
+    scroll-behavior: smooth;
+  }
 }
 
 body {
