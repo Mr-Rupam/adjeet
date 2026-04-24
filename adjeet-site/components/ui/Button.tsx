@@ -16,17 +16,18 @@ const SIZE_CLASSES: Record<Size, string> = {
   lg: 'px-7 py-3.5 text-base font-medium',
 }
 
-const BASE = 'inline-flex items-center justify-center rounded transition-all duration-150 active:scale-[0.98] focus-visible:outline-2 focus-visible:outline-offset-2 disabled:opacity-50 disabled:pointer-events-none'
+const BASE = 'inline-flex items-center justify-center rounded transition-all duration-150 active:scale-[0.98] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue disabled:opacity-50 disabled:pointer-events-none'
 
 interface ButtonBaseProps {
   variant?: Variant
   size?: Size
   className?: string
+  children: React.ReactNode
 }
 
 type ButtonProps =
   | (ButtonBaseProps & ComponentPropsWithoutRef<'button'> & { href?: undefined })
-  | (ButtonBaseProps & { href: string; target?: string; rel?: string; children: React.ReactNode; className?: string })
+  | (ButtonBaseProps & { href: string; target?: string; rel?: string; children: React.ReactNode })
 
 export function Button({ variant = 'primary', size = 'md', className = '', ...props }: ButtonProps) {
   const classes = `${BASE} ${VARIANT_CLASSES[variant]} ${SIZE_CLASSES[size]} ${className}`

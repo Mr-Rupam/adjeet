@@ -7,8 +7,10 @@ const BADGE_CLASSES: Record<BadgeVariant, string> = {
   success: 'bg-success text-white',
 }
 
+import type { ReactNode } from 'react'
+
 interface BadgeProps {
-  children: React.ReactNode
+  children: ReactNode
   variant?: BadgeVariant
   className?: string
 }
