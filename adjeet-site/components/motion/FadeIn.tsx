@@ -9,6 +9,7 @@ interface FadeInProps {
   className?: string
 }
 
+// Note: does not propagate Framer Motion variants — use staggerItem from StaggerChildren instead when composing with StaggerChildren
 export function FadeIn({ children, delay = 0, className }: FadeInProps) {
   const reduced = useReducedMotion()
 

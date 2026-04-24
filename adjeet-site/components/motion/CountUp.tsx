@@ -37,7 +37,7 @@ export function CountUp({ to, from = 0, duration = 1.2, suffix = '', className }
   }
 
   return (
-    <span ref={ref} role="status" className={className}>
+    <span ref={ref} role="status" aria-label={`${to}${suffix}`} className={className}>
       {display}{suffix}
     </span>
   )
