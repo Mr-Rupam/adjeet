@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState, useCallback } from 'react'
+import { useEffect, useState, useCallback, useRef, useId } from 'react'
 import Image from 'next/image'
 
 export interface LightboxPhoto {
@@ -15,17 +15,55 @@ interface LightboxProps {
 }
 
 export function Lightbox({ photos, initialIndex, onClose }: LightboxProps) {
-  const [idx, setIdx] = useState(initialIndex)
+  const [idx, setIdx] = useState(() =>
+    Math.max(0, Math.min(initialIndex, photos.length - 1))
+  )
   const total = photos.length
+  const closeRef = useRef<HTMLButtonElement>(null)
+  const captionId = useId()
 
   const prev = useCallback(() => setIdx(i => (i - 1 + total) % total), [total])
   const next = useCallback(() => setIdx(i => (i + 1) % total), [total])
 
+  // Focus close button on open
+  useEffect(() => {
+    closeRef.current?.focus()
+  }, [])
+
+  // Scroll lock
+  useEffect(() => {
+    document.body.style.overflow = 'hidden'
+    return () => { document.body.style.overflow = '' }
+  }, [])
+
+  // Keyboard navigation + focus trap
   useEffect(() => {
     function onKey(e: KeyboardEvent) {
-      if (e.key === 'Escape') onClose()
-      if (e.key === 'ArrowRight') next()
-      if (e.key === 'ArrowLeft') prev()
+      if (e.key === 'Escape') { onClose(); return }
+      if (e.key === 'ArrowRight') { next(); return }
+      if (e.key === 'ArrowLeft') { prev(); return }
+
+      if (e.key === 'Tab') {
+        const dialog = document.querySelector('[role="dialog"]')
+        if (!dialog) return
+        const focusable = Array.from(
+          dialog.querySelectorAll<HTMLElement>('button:not([disabled])')
+        )
+        if (focusable.length === 0) return
+        const first = focusable[0]
+        const last = focusable[focusable.length - 1]
+        if (e.shiftKey) {
+          if (document.activeElement === first) {
+            e.preventDefault()
+            last.focus()
+          }
+        } else {
+          if (document.activeElement === last) {
+            e.preventDefault()
+            first.focus()
+          }
+        }
+      }
     }
     document.addEventListener('keydown', onKey)
     return () => document.removeEventListener('keydown', onKey)
@@ -38,10 +76,12 @@ export function Lightbox({ photos, initialIndex, onClose }: LightboxProps) {
       role="dialog"
       aria-modal="true"
       aria-label="Photo viewer"
+      aria-describedby={captionId}
       className="fixed inset-0 z-50 flex items-center justify-center bg-ink/90"
     >
       {/* Close */}
       <button
+        ref={closeRef}
         onClick={onClose}
         aria-label="Close photo viewer"
         className="absolute top-4 right-4 p-2 text-white hover:text-ink-muted"
@@ -54,7 +94,7 @@ export function Lightbox({ photos, initialIndex, onClose }: LightboxProps) {
         <button
           onClick={prev}
           aria-label="Previous photo"
-          className="absolute left-4 p-3 text-white hover:text-ink-muted text-2xl"
+          className="absolute left-4 top-1/2 -translate-y-1/2 p-3 text-white hover:text-ink-muted text-2xl"
         >
           ←
         </button>
@@ -70,7 +110,7 @@ export function Lightbox({ photos, initialIndex, onClose }: LightboxProps) {
           className="object-contain max-h-[80vh] w-full"
           priority
         />
-        <p className="mt-2 text-center text-sm text-ink-muted">{photo.alt}</p>
+        <p id={captionId} className="mt-2 text-center text-sm text-ink-muted">{photo.alt}</p>
       </div>
 
       {/* Next */}
@@ -78,7 +118,7 @@ export function Lightbox({ photos, initialIndex, onClose }: LightboxProps) {
         <button
           onClick={next}
           aria-label="Next photo"
-          className="absolute right-4 p-3 text-white hover:text-ink-muted text-2xl"
+          className="absolute right-4 top-1/2 -translate-y-1/2 p-3 text-white hover:text-ink-muted text-2xl"
         >
           →
         </button>

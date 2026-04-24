@@ -58,4 +58,23 @@ describe('Lightbox', () => {
     render(<Lightbox photos={photos} initialIndex={0} onClose={vi.fn()} />)
     expect(screen.getByRole('dialog')).toBeTruthy()
   })
+
+  it('focuses the close button on open', () => {
+    render(<Lightbox photos={photos} initialIndex={0} onClose={vi.fn()} />)
+    const closeBtn = screen.getByRole('button', { name: /close/i })
+    expect(document.activeElement).toBe(closeBtn)
+  })
+
+  it('locks body scroll on open and restores on unmount', () => {
+    const { unmount } = render(<Lightbox photos={photos} initialIndex={0} onClose={vi.fn()} />)
+    expect(document.body.style.overflow).toBe('hidden')
+    unmount()
+    expect(document.body.style.overflow).toBe('')
+  })
+
+  it('wraps from first to last on ArrowLeft', () => {
+    render(<Lightbox photos={photos} initialIndex={0} onClose={vi.fn()} />)
+    fireEvent.keyDown(document, { key: 'ArrowLeft' })
+    expect(screen.getByAltText('Photo C')).toBeTruthy()
+  })
 })
