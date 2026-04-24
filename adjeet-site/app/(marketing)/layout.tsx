@@ -1,3 +1,4 @@
+import type React from 'react'
 import { buildLocalBusinessJsonLd } from '@/lib/seo'
 
 export default function MarketingLayout({ children }: { children: React.ReactNode }) {

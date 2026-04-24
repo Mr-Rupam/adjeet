@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { buildFaqJsonLd, buildBreadcrumbJsonLd, buildServiceJsonLd, siteConfig } from '@/lib/seo'
+import { buildFaqJsonLd, buildBreadcrumbJsonLd, buildServiceJsonLd, buildLocalBusinessJsonLd, siteConfig } from '@/lib/seo'
 import { services } from '@/content/services'
 
 describe('buildFaqJsonLd', () => {
@@ -54,5 +54,39 @@ describe('buildServiceJsonLd', () => {
     expect(result.name).toBe(service.name)
     expect(Array.isArray(result.areaServed)).toBe(true)
     expect(result.areaServed).toContain('Siliguri')
+  })
+})
+
+describe('buildLocalBusinessJsonLd', () => {
+  it('returns LocalBusiness schema with correct type and name', () => {
+    const result = buildLocalBusinessJsonLd()
+    expect(result['@type']).toBe('LocalBusiness')
+    expect(result.name).toBe('AD-JEET')
+  })
+
+  it('has a telephone field', () => {
+    const result = buildLocalBusinessJsonLd()
+    expect(result.telephone).toBeTruthy()
+  })
+
+  it('has address with PostalAddress type', () => {
+    const result = buildLocalBusinessJsonLd()
+    expect(result.address['@type']).toBe('PostalAddress')
+  })
+
+  it('has geo coordinates', () => {
+    const result = buildLocalBusinessJsonLd()
+    expect(result.geo['@type']).toBe('GeoCoordinates')
+    expect(typeof result.geo.latitude).toBe('number')
+    expect(typeof result.geo.longitude).toBe('number')
+  })
+
+  it('areaServed contains all 5 districts', () => {
+    const result = buildLocalBusinessJsonLd()
+    expect(result.areaServed).toContain('Siliguri')
+    expect(result.areaServed).toContain('Jalpaiguri')
+    expect(result.areaServed).toContain('Cooch Behar')
+    expect(result.areaServed).toContain('Darjeeling')
+    expect(result.areaServed).toContain('Malda')
   })
 })
