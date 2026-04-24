@@ -1,4 +1,4 @@
-const ADJEET_WHATSAPP = '+919832012345'
+const ADJEET_WHATSAPP = '+919832011524'
 
 export function buildWhatsAppUrl(phone: string, message: string): string {
   const number = phone.replace(/^\+/, '')
