@@ -1,11 +1,12 @@
 import { ServiceSlug } from '@/content/services'
+import { CitySlug } from '@/content/cities'
 
 export interface GalleryPhoto {
   id: string
   src: string
   alt: string
   service: ServiceSlug
-  city: string
+  city: CitySlug
   year: number
   featured: boolean
 }
@@ -129,6 +130,6 @@ export function getPhotosByService(service: ServiceSlug): GalleryPhoto[] {
   return photos.filter(p => p.service === service)
 }
 
-export function getPhotosByCity(city: string): GalleryPhoto[] {
+export function getPhotosByCity(city: CitySlug): GalleryPhoto[] {
   return photos.filter(p => p.city === city)
 }

@@ -1,23 +1,25 @@
+import { CitySlug } from '@/content/cities'
+
+export type ProgrammaticCity = CitySlug
+
+const PROG_SERVICES = ['glow-sign-boards', 'acp-led-signage', 'flex-printing', 'vehicle-branding', 'f-pole-installation'] as const
+
+export type ProgrammaticService = (typeof PROG_SERVICES)[number]
+
 export interface ProgrammaticPage {
-  service: string
-  city: string
+  service: ProgrammaticService
+  city: CitySlug
   slug: string
   headline: string
   body: string
   stats: { label: string; value: string }[]
-  relatedCities: string[]
+  relatedCities: CitySlug[]
 }
-
-const CITIES = ['siliguri', 'jalpaiguri', 'cooch-behar', 'darjeeling', 'malda'] as const
-const PROG_SERVICES = ['glow-sign-board', 'acp-led-signage', 'flex-printing', 'vehicle-branding', 'f-pole-installation'] as const
-
-export type ProgrammaticCity = (typeof CITIES)[number]
-export type ProgrammaticService = (typeof PROG_SERVICES)[number]
 
 export const programmaticPages: ProgrammaticPage[] = [
   // ── Glow Sign Board ──────────────────────────────────────────────────
   {
-    service: 'glow-sign-board',
+    service: 'glow-sign-boards',
     city: 'siliguri',
     slug: 'glow-sign-board-in-siliguri',
     headline: 'Glow Sign Boards in Siliguri — Illuminate Your Business on Hill Cart Road',
@@ -38,7 +40,7 @@ If you are a new business setting up in Siliguri or an established brand refresh
     relatedCities: ['jalpaiguri', 'cooch-behar', 'darjeeling'],
   },
   {
-    service: 'glow-sign-board',
+    service: 'glow-sign-boards',
     city: 'jalpaiguri',
     slug: 'glow-sign-board-in-jalpaiguri',
     headline: 'Glow Sign Boards in Jalpaiguri — Expert Signage for the Tea Garden Gateway',
@@ -59,7 +61,7 @@ Contact AD-JEET on WhatsApp to arrange a free site measurement and quote for you
     relatedCities: ['siliguri', 'cooch-behar', 'darjeeling'],
   },
   {
-    service: 'glow-sign-board',
+    service: 'glow-sign-boards',
     city: 'cooch-behar',
     slug: 'glow-sign-board-in-cooch-behar',
     headline: 'Glow Sign Boards in Cooch Behar — Bright Signage for a Royal Town',
@@ -78,7 +80,7 @@ Turnaround for Cooch Behar projects is typically 10–12 working days to account
     relatedCities: ['siliguri', 'jalpaiguri', 'malda'],
   },
   {
-    service: 'glow-sign-board',
+    service: 'glow-sign-boards',
     city: 'darjeeling',
     slug: 'glow-sign-board-in-darjeeling',
     headline: 'Glow Sign Boards in Darjeeling — High-Altitude Signage Built to Last',
@@ -97,7 +99,7 @@ Transport and installation in Darjeeling is scheduled on our hill-route trip cal
     relatedCities: ['siliguri', 'jalpaiguri', 'malda'],
   },
   {
-    service: 'glow-sign-board',
+    service: 'glow-sign-boards',
     city: 'malda',
     slug: 'glow-sign-board-in-malda',
     headline: 'Glow Sign Boards in Malda — Signage for the Mango Capital of Bengal',
