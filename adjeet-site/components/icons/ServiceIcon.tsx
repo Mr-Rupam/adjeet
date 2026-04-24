@@ -6,7 +6,7 @@ interface ServiceIconProps {
   className?: string
 }
 
-const ICONS: Record<string, React.ReactElement> = {
+const ICONS: Record<string, React.ReactElement<React.SVGProps<SVGSVGElement>>> = {
   lightbulb: (
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5} strokeLinecap="round" strokeLinejoin="round">
       <path d="M9 21h6M12 3a6 6 0 0 1 6 6c0 2.5-1.5 4.5-3 6H9c-1.5-1.5-3-3.5-3-6a6 6 0 0 1 6-6z" />
