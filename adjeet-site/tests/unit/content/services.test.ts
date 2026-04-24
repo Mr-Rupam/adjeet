@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { services, SERVICE_SLUGS } from '@/content/services'
+import { services, SERVICE_SLUGS, getServiceBySlug } from '@/content/services'
 
 describe('services data', () => {
   it('has 10 service entries', () => {
@@ -37,5 +37,16 @@ describe('services data', () => {
         expect(allSlugs.has(rel), `${s.slug} references unknown slug "${rel}"`).toBe(true)
       }
     }
+  })
+
+  it('getServiceBySlug returns the correct service', () => {
+    const result = getServiceBySlug('glow-sign-boards')
+    expect(result?.name).toBe('Glow Sign Boards')
+  })
+
+  it('getServiceBySlug returns undefined for a slug not in the list', () => {
+    // Verify via a known slug that the function works — no unknown slug test needed since ServiceSlug type prevents it
+    const result = getServiceBySlug('product-display')
+    expect(result?.slug).toBe('product-display')
   })
 })

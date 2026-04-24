@@ -1,17 +1,3 @@
-export interface Service {
-  slug: string
-  name: string
-  tagline: string
-  description: string
-  materials: string[]
-  sizes: string[]
-  turnaround: string
-  faqs: { q: string; a: string }[]
-  relatedServices: string[]
-  heroImage: string
-  icon: string
-}
-
 export const SERVICE_SLUGS = [
   'glow-sign-boards',
   'acp-led-signage',
@@ -26,6 +12,20 @@ export const SERVICE_SLUGS = [
 ] as const
 
 export type ServiceSlug = (typeof SERVICE_SLUGS)[number]
+
+export interface Service {
+  slug: string
+  name: string
+  tagline: string
+  description: string
+  materials: string[]
+  sizes: string[]
+  turnaround: string
+  faqs: { q: string; a: string }[]
+  relatedServices: ServiceSlug[]
+  heroImage: string
+  icon: string
+}
 
 export const services: Service[] = [
   {
@@ -304,6 +304,6 @@ export const services: Service[] = [
   },
 ]
 
-export function getServiceBySlug(slug: string): Service | undefined {
+export function getServiceBySlug(slug: ServiceSlug): Service | undefined {
   return services.find(s => s.slug === slug)
 }
