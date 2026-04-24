@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useId } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
 
 interface AccordionItem {
@@ -15,6 +15,7 @@ interface AccordionProps {
 
 export function Accordion({ items, className = '' }: AccordionProps) {
   const [open, setOpen] = useState<number | null>(null)
+  const uid = useId()
 
   function toggle(idx: number) {
     setOpen(prev => (prev === idx ? null : idx))
@@ -23,7 +24,7 @@ export function Accordion({ items, className = '' }: AccordionProps) {
   return (
     <dl className={`divide-y divide-rule ${className}`}>
       {items.map((item, idx) => {
-        const panelId = `accordion-panel-${idx}`
+        const panelId = `${uid}-panel-${idx}`
         const isOpen = open === idx
         return (
           <div key={item.q}>

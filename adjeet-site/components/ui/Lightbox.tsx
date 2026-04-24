@@ -20,6 +20,7 @@ export function Lightbox({ photos, initialIndex, onClose }: LightboxProps) {
   )
   const total = photos.length
   const closeRef = useRef<HTMLButtonElement>(null)
+  const dialogRef = useRef<HTMLDivElement>(null)
   const captionId = useId()
 
   const prev = useCallback(() => setIdx(i => (i - 1 + total) % total), [total])
@@ -44,10 +45,8 @@ export function Lightbox({ photos, initialIndex, onClose }: LightboxProps) {
       if (e.key === 'ArrowLeft') { prev(); return }
 
       if (e.key === 'Tab') {
-        const dialog = document.querySelector('[role="dialog"]')
-        if (!dialog) return
         const focusable = Array.from(
-          dialog.querySelectorAll<HTMLElement>('button:not([disabled])')
+          dialogRef.current?.querySelectorAll<HTMLElement>('button:not([disabled])') ?? []
         )
         if (focusable.length === 0) return
         const first = focusable[0]
@@ -73,6 +72,7 @@ export function Lightbox({ photos, initialIndex, onClose }: LightboxProps) {
 
   return (
     <div
+      ref={dialogRef}
       role="dialog"
       aria-modal="true"
       aria-label="Photo viewer"
