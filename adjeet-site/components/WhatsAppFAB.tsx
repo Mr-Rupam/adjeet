@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { defaultWhatsAppUrl } from '@/lib/whatsapp'
+import { trackWhatsAppClick } from '@/lib/analytics'
 
 export function WhatsAppFAB() {
   const [visible, setVisible] = useState(false)
@@ -30,6 +31,7 @@ export function WhatsAppFAB() {
           target="_blank"
           rel="noopener noreferrer"
           aria-label="Chat with us on WhatsApp"
+          onClick={() => trackWhatsAppClick({ source_page: 'fab' })}
           initial={{ y: 80, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
           exit={{ y: 80, opacity: 0 }}

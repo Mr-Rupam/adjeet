@@ -6,6 +6,8 @@ import { Nav } from '@/components/Nav'
 import { Footer } from '@/components/Footer'
 import { WhatsAppFAB } from '@/components/WhatsAppFAB'
 import { ConsentBanner } from '@/components/ui/ConsentBanner'
+import { Analytics } from '@/components/Analytics'
+import { ReducedMotionWrapper } from '@/components/motion/ReducedMotionWrapper'
 import './globals.css'
 
 export const metadata: Metadata = {
@@ -27,14 +29,17 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <ThemeScript />
       </head>
       <body className="min-h-screen flex flex-col bg-paper text-ink">
-        <SkipLink />
-        <Nav />
-        <main id="main-content" className="flex-1 pt-16">
-          {children}
-        </main>
-        <Footer />
-        <WhatsAppFAB />
-        <ConsentBanner />
+        <ReducedMotionWrapper>
+          <SkipLink />
+          <Nav />
+          <main id="main-content" className="flex-1 pt-16">
+            {children}
+          </main>
+          <Footer />
+          <WhatsAppFAB />
+          <ConsentBanner />
+          <Analytics />
+        </ReducedMotionWrapper>
       </body>
     </html>
   )

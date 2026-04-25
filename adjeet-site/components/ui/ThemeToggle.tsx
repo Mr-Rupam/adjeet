@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import { STORAGE_KEY, ThemePreference } from '@/lib/theme'
+import { trackThemeToggle } from '@/lib/analytics'
 
 const CYCLE: ThemePreference[] = ['light', 'dark', 'system']
 
@@ -34,6 +35,7 @@ export function ThemeToggle() {
     const next = CYCLE[(CYCLE.indexOf(pref) + 1) % CYCLE.length]
     setPref(next)
     applyTheme(next)
+    trackThemeToggle(next)
   }
 
   return (
