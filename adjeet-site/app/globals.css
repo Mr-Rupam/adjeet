@@ -35,3 +35,10 @@ p, li {
   outline-offset: 3px;
   border-radius: 2px;
 }
+
+/* bg-ink is used as a "permanent dark section" background throughout the site.
+   In dark mode --ink flips to cream, so we pin these sections to --paper
+   (which is #13120F in dark mode — still very dark). */
+[data-theme="dark"] .bg-ink {
+  background-color: var(--paper);
+}
