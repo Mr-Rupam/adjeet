@@ -7,6 +7,7 @@ import { getPhotosByService } from '@/content/gallery'
 import { defaultWhatsAppUrl } from '@/lib/whatsapp'
 import { buildBreadcrumbJsonLd, buildServiceJsonLd, buildFaqJsonLd, siteConfig } from '@/lib/seo'
 import { GalleryStrip } from '@/components/sections/GalleryStrip'
+import { ProgrammaticPageTracker } from '@/components/PageViewTracker'
 
 const CITY_LABELS: Record<string, string> = {
   siliguri: 'Siliguri',
@@ -58,6 +59,7 @@ export default async function ProgrammaticPage({ params }: { params: Promise<Par
 
   return (
     <>
+      <ProgrammaticPageTracker service={page.service} city={page.city} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(serviceSchema) }} />
       {faqSchema && <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }} />}
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumb) }} />

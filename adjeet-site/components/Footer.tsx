@@ -2,8 +2,8 @@ import Link from 'next/link'
 
 const OFFICE_ADDRESS = 'Platinum Square, Siliguri, West Bengal 734001'
 const WORKSHOP_ADDRESS = 'Patiram Jote, Siliguri, West Bengal'
-const WHATSAPP_DISPLAY = '+91 98320 12345'
-const WHATSAPP_HREF = 'https://wa.me/919832012345'
+const WHATSAPP_DISPLAY = '+91 98320 11524'
+const WHATSAPP_HREF = 'https://wa.me/919832011524'
 
 export function Footer() {
   return (

@@ -13,6 +13,8 @@ import { defaultWhatsAppUrl } from '@/lib/whatsapp'
 import { Accordion } from '@/components/ui/Accordion'
 import { ServiceTile } from '@/components/sections/ServicesGrid'
 import { GalleryStrip } from '@/components/sections/GalleryStrip'
+import { LeadForm } from '@/components/sections/LeadForm'
+import { ServicePageTracker } from '@/components/PageViewTracker'
 
 type Params = { slug: string }
 
@@ -57,6 +59,7 @@ export default async function ServiceDetailPage({
 
   return (
     <>
+      <ServicePageTracker service={service.slug} />
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(serviceSchema) }}
@@ -145,6 +148,27 @@ export default async function ServiceDetailPage({
             </h2>
             <Accordion items={service.faqs} />
           </div>
+        </div>
+      </section>
+
+      {/* Lead form */}
+      <section className="py-[var(--section-py)] border-t border-rule">
+        <div className="mx-auto max-w-content px-6 grid md:grid-cols-2 gap-12 items-start">
+          <div>
+            <h2 className="text-2xl font-bold font-[var(--font-fraunces)] text-ink mb-3">
+              Get a Callback
+            </h2>
+            <p className="text-ink-muted text-sm mb-2">
+              Leave your details and we&apos;ll call you back within 2 business hours with a quote for {service.name}.
+            </p>
+            <p className="text-xs text-ink-subtle">
+              Prefer WhatsApp?{' '}
+              <a href={waUrl} target="_blank" rel="noopener noreferrer" className="text-blue hover:underline">
+                Message us directly →
+              </a>
+            </p>
+          </div>
+          <LeadForm />
         </div>
       </section>
 

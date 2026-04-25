@@ -47,7 +47,7 @@ export function GalleryTeaser() {
         </div>
 
         <div className="text-center mt-8">
-          <Link href="/gallery" className="text-sm text-blue hover:underline">
+          <Link href="/portfolio" className="text-sm text-blue hover:underline">
             View all work →
           </Link>
         </div>

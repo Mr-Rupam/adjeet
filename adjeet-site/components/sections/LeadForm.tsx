@@ -16,6 +16,7 @@ export function LeadForm() {
     formState: { errors, isSubmitting },
   } = useForm<LeadInput>({
     resolver: zodResolver(leadSchema),
+    mode: 'onBlur',
     defaultValues: { serviceInterest: [], timeline: 'immediate' },
   })
 

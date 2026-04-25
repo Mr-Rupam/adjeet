@@ -8,6 +8,7 @@ import { services, type ServiceSlug } from '@/content/services'
 import { CITY_SLUGS, type CitySlug } from '@/content/cities'
 import { Lightbox, type LightboxPhoto } from '@/components/ui/Lightbox'
 import { FadeIn } from '@/components/motion/FadeIn'
+import { trackPortfolioFilter } from '@/lib/analytics'
 
 const CITY_LABELS: Record<CitySlug, string> = {
   siliguri: 'Siliguri',
@@ -41,6 +42,7 @@ export default function PortfolioPage() {
     if (value === 'all') params.delete(key)
     else params.set(key, value)
     router.push(`/portfolio?${params.toString()}`, { scroll: false })
+    if (value !== 'all') trackPortfolioFilter({ filter_type: key, filter_value: value })
   }
 
   function openAt(idx: number) {
