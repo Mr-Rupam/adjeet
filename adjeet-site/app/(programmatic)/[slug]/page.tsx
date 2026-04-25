@@ -65,7 +65,7 @@ export default async function ProgrammaticPage({ params }: { params: Promise<Par
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumb) }} />
 
       {/* Hero */}
-      <section className="flex items-end min-h-[40vh] bg-ink py-16">
+      <section className="flex items-end min-h-[40vh] bg-surface-inverse py-16">
         <div className="mx-auto max-w-content px-6">
           <nav aria-label="Breadcrumb" className="mb-6">
             <ol className="flex gap-2 text-xs text-white/50 list-none p-0 m-0">

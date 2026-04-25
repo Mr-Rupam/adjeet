@@ -15,7 +15,7 @@ export default function ServicesPage() {
   return (
     <>
       {/* Compact hero */}
-      <section className="flex items-end min-h-[40vh] bg-ink py-16">
+      <section className="flex items-end min-h-[40vh] bg-surface-inverse py-16">
         <div className="mx-auto max-w-content px-6">
           <h1 className="text-[var(--text-display-2)] font-[var(--font-fraunces)] font-bold text-white mb-4">
             Our Services
