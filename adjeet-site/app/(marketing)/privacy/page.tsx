@@ -21,6 +21,11 @@ export default function PrivacyPage() {
             service interest. We use this information solely to respond to your enquiry. We do not sell or
             share your personal data with third parties for marketing purposes.
           </p>
+          <p className="mt-2">
+            Form submissions are securely stored in our database (MongoDB Atlas) and may be synced to an
+            internal spreadsheet (Google Sheets) for our team&apos;s operational use. This data is also
+            transmitted to our email provider (Resend) to notify our team of new enquiries.
+          </p>
         </section>
 
         <section>
@@ -44,8 +49,9 @@ export default function PrivacyPage() {
         <section>
           <h2 className="text-lg font-semibold text-ink mb-3">4. Data Retention</h2>
           <p>
-            Contact form submissions are sent to our team email and retained for up to 12 months for business
-            correspondence. You may request deletion by contacting us via WhatsApp or email.
+            Contact form submissions are stored in our secure database and retained for up to 12 months
+            for business correspondence. Copies may exist in our email inbox and internal spreadsheet.
+            You may request deletion of all your data by contacting us via WhatsApp or email.
           </p>
         </section>
 
@@ -53,7 +59,8 @@ export default function PrivacyPage() {
           <h2 className="text-lg font-semibold text-ink mb-3">5. Security</h2>
           <p>
             We take reasonable measures to protect your data in transit and at rest. Our website uses HTTPS.
-            Contact form data is transmitted securely to our email provider (Resend).
+            Contact form data is encrypted in transit and stored in a password-protected, access-controlled
+            database (MongoDB Atlas). Email notifications are sent via Resend over encrypted connections.
           </p>
         </section>
 

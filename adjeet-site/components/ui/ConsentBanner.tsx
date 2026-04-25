@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
+import Link from 'next/link'
 
 const CONSENT_KEY = 'adjeet-consent'
 
@@ -31,7 +32,7 @@ export function ConsentBanner() {
       <p className="text-sm text-ink-muted mb-4 md:mb-0 max-w-prose">
         We use analytics cookies (Google Analytics 4) to understand how visitors use our site.
         No personal data is shared with third parties.{' '}
-        <a href="/privacy" className="underline hover:text-ink">Privacy Policy</a>
+        <Link href="/privacy" className="underline hover:text-ink">Privacy Policy</Link>
       </p>
       <div className="flex gap-3 shrink-0">
         <button

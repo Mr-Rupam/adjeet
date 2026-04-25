@@ -5,7 +5,7 @@ import { STORAGE_KEY } from '@/lib/theme'
 export function ThemeScript() {
   const script = `
 (function(){
-  var pref = localStorage.getItem('${STORAGE_KEY}') || 'system';
+  var pref = localStorage.getItem(${JSON.stringify(STORAGE_KEY)}) || 'system';
   var sys = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
   var resolved = pref === 'system' ? sys : pref;
   document.documentElement.setAttribute('data-theme', resolved);

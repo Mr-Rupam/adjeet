@@ -19,6 +19,16 @@ export function MobileNav({ links }: { links: NavLink[] }) {
     if (open) closeRef.current?.focus()
   }, [open])
 
+  // Lock body scroll when drawer is open
+  useEffect(() => {
+    if (open) {
+      document.body.style.overflow = 'hidden'
+    } else {
+      document.body.style.overflow = ''
+    }
+    return () => { document.body.style.overflow = '' }
+  }, [open])
+
   return (
     <>
       <button
@@ -32,35 +42,46 @@ export function MobileNav({ links }: { links: NavLink[] }) {
       </button>
 
       {open && (
-        <div
-          id="mobile-nav-drawer"
-          role="dialog"
-          aria-modal="true"
-          aria-label="Navigation menu"
-          className="fixed inset-0 z-50 bg-paper flex flex-col"
-        >
-          <div className="flex justify-end p-6">
-            <button
-              ref={closeRef}
-              onClick={() => setOpen(false)}
-              aria-label="Close navigation menu"
-              className="p-2 text-ink-muted hover:text-ink"
-            >
-              ✕
-            </button>
-          </div>
-          <nav className="flex flex-col gap-6 px-8 pt-8">
-            {links.map(({ href, label }) => (
-              <Link
-                key={href}
-                href={href}
-                className="text-3xl font-bold text-ink hover:text-blue transition-colors"
+        <>
+          {/* Backdrop */}
+          <div
+            className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm"
+            onClick={() => setOpen(false)}
+            aria-hidden="true"
+          />
+
+          {/* Drawer */}
+          <div
+            id="mobile-nav-drawer"
+            role="dialog"
+            aria-modal="true"
+            aria-label="Navigation menu"
+            className="fixed inset-0 z-[60] flex flex-col"
+            style={{ background: 'var(--paper)' }}
+          >
+            <div className="flex justify-end p-6">
+              <button
+                ref={closeRef}
+                onClick={() => setOpen(false)}
+                aria-label="Close navigation menu"
+                className="p-2 text-ink-muted hover:text-ink text-xl"
               >
-                {label}
-              </Link>
-            ))}
-          </nav>
-        </div>
+                ✕
+              </button>
+            </div>
+            <nav className="flex flex-col gap-8 px-10 pt-8">
+              {links.map(({ href, label }) => (
+                <Link
+                  key={href}
+                  href={href}
+                  className="text-4xl font-[var(--font-fraunces)] font-bold text-ink hover:text-blue transition-colors"
+                >
+                  {label}
+                </Link>
+              ))}
+            </nav>
+          </div>
+        </>
       )}
     </>
   )
