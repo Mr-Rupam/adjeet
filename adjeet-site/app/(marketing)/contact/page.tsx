@@ -48,7 +48,7 @@ export default function ContactPage() {
             Get in Touch
           </h1>
           <p className="text-white/70 max-w-xl">
-            Tell us about your project and we&apos;ll get back to you with a quote within 2 business hours.
+            Tell us about your project and our team will get back to you with a quote as soon as possible.
           </p>
         </div>
       </section>

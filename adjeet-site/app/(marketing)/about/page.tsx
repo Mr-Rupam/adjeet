@@ -125,7 +125,7 @@ export default function AboutPage() {
       <section className="py-16 bg-blue">
         <div className="mx-auto max-w-content px-6 text-center">
           <h2 className="text-white text-2xl font-bold mb-3">Have a project in mind?</h2>
-          <p className="text-white/80 mb-8">Reach us on WhatsApp — we respond within 2 hours on business days.</p>
+          <p className="text-white/80 mb-8">Reach us on WhatsApp and our team will get back to you soon.</p>
           <a
             href={waUrl}
             target="_blank"

@@ -116,7 +116,7 @@ export default async function ProgrammaticPage({ params }: { params: Promise<Par
           <h2 className="text-white text-2xl font-bold mb-3">
             Get a quote for {service.name} in {cityLabel}
           </h2>
-          <p className="text-white/80 mb-8">WhatsApp us — we respond within 2 hours on business days.</p>
+          <p className="text-white/80 mb-8">WhatsApp us and our team will get back to you as soon as possible.</p>
           <a
             href={waUrl}
             target="_blank"

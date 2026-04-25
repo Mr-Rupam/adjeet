@@ -50,7 +50,7 @@ export function LeadForm() {
       <div className="rounded-lg border border-rule bg-paper-elevated p-8 text-center">
         <p className="text-2xl mb-2">✓</p>
         <h3 className="font-bold text-ink mb-2">Message received!</h3>
-        <p className="text-sm text-ink-muted">We&apos;ll call you back within 2 business hours.</p>
+        <p className="text-sm text-ink-muted">Our team will be in touch with you shortly.</p>
       </div>
     )
   }

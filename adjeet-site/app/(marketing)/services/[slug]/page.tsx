@@ -159,7 +159,7 @@ export default async function ServiceDetailPage({
               Get a Callback
             </h2>
             <p className="text-ink-muted text-sm mb-2">
-              Leave your details and we&apos;ll call you back within 2 business hours with a quote for {service.name}.
+              Leave your details and our team will reach out with a quote for {service.name}.
             </p>
             <p className="text-xs text-ink-subtle">
               Prefer WhatsApp?{' '}
