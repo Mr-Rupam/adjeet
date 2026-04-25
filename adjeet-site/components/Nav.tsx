@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import Image from 'next/image'
 import { ThemeToggle } from '@/components/ui/ThemeToggle'
 import { MobileNav } from '@/components/MobileNav'
 
@@ -16,8 +17,15 @@ export function Nav() {
         className="mx-auto flex max-w-content items-center justify-between px-6 h-16"
         aria-label="Main navigation"
       >
-        <Link href="/" className="font-bold text-ink text-lg tracking-tight">
-          AD-JEET
+        <Link href="/" className="flex items-center">
+          <Image
+            src="/logo.png"
+            alt="AD-JEET — North Bengal Signage"
+            height={36}
+            width={148}
+            className="object-contain"
+            priority
+          />
         </Link>
 
         {/* Desktop links */}

@@ -4,7 +4,7 @@ import type { Service } from '@/content/services'
 export const siteConfig = {
   name: 'AD-JEET',
   url: 'https://adjeet.in',
-  ogImage: '/images/og-default.jpg',
+  ogImage: '/og-image.jpg',
   description: "North Bengal's most trusted signage and outdoor advertising partner since 1990.",
 }
 
