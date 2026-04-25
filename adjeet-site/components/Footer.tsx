@@ -7,7 +7,7 @@ const WHATSAPP_HREF = 'https://wa.me/919832011524'
 
 export function Footer() {
   return (
-    <footer className="bg-surface-inverse text-ink-subtle mt-auto">
+    <footer className="section-inverse text-ink-subtle mt-auto">
       <div className="mx-auto max-w-content px-6 py-16 grid md:grid-cols-3 gap-12">
         {/* Brand */}
         <div>

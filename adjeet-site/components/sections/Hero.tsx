@@ -33,7 +33,7 @@ export function Hero() {
   }, [])
 
   return (
-    <section className="relative flex items-center min-h-svh bg-surface-inverse overflow-hidden">
+    <section className="relative flex items-center min-h-svh section-inverse overflow-hidden">
       {/* Placeholder background — swap for next/image when /images/hero/bg.jpg is ready */}
       <div className="absolute inset-0 bg-slate opacity-60" />
       {/* Gradient overlay */}

@@ -11,7 +11,7 @@ export default function PortfolioPage() {
   return (
     <>
       {/* Hero */}
-      <section className="flex items-end min-h-[40vh] bg-surface-inverse py-16">
+      <section className="flex items-end min-h-[40vh] section-inverse py-16">
         <div className="mx-auto max-w-content px-6">
           <p className="text-xs font-semibold uppercase tracking-widest text-white/50 mb-4">
             Our Work

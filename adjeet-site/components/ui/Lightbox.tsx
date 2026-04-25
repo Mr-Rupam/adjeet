@@ -77,7 +77,7 @@ export function Lightbox({ photos, initialIndex, onClose }: LightboxProps) {
       aria-modal="true"
       aria-label="Photo viewer"
       aria-describedby={captionId}
-      className="fixed inset-0 z-50 flex items-center justify-center bg-surface-inverse/90"
+      className="fixed inset-0 z-50 flex items-center justify-center section-inverse/90"
     >
       {/* Close */}
       <button

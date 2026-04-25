@@ -36,3 +36,9 @@ p, li {
   border-radius: 2px;
 }
 
+/* Always-dark surface for hero banners, footer, lightbox.
+   Bypasses @theme so the CSS variable is resolved at runtime, not build time. */
+.section-inverse {
+  background-color: var(--surface-inverse);
+}
+
