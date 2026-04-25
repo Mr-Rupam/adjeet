@@ -61,3 +61,292 @@ p, li {
   overflow: hidden;
 }
 
+/* ─── The Neon Sandbox Hero ───────────────────────────────────────────── */
+
+.sandbox-hero {
+  min-height: 100svh;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  background-color: #0a0a0c;
+  padding: 80px 20px 40px;
+  
+  /* Theme variables - default pink */
+  --neon-base: #fff;
+  --neon-glow-1: #ff2a85;
+  --neon-glow-2: #e6005c;
+  --neon-dim: rgba(255, 42, 133, 0.2);
+}
+
+.sandbox-hero.theme-blue {
+  --neon-glow-1: #00d2ff;
+  --neon-glow-2: #0088cc;
+  --neon-dim: rgba(0, 210, 255, 0.2);
+}
+
+.sandbox-hero.theme-gold {
+  --neon-base: #fff9e6;
+  --neon-glow-1: #ffb800;
+  --neon-glow-2: #cc8800;
+  --neon-dim: rgba(255, 184, 0, 0.2);
+}
+
+/* ── Background & Grid ── */
+.sandbox-bg {
+  position: absolute;
+  inset: 0;
+  background-image: 
+    linear-gradient(rgba(10, 10, 12, 0.85), rgba(10, 10, 12, 0.95)),
+    url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M54.627 0l.83.83v58.34h-58.34l-.83-.83v-58.34h58.34zm-5.827 5h-43.68v43.68h43.68v-43.68z' fill='%231f1f24' fill-opacity='0.4' fill-rule='evenodd'/%3E%3C/svg%3E");
+  z-index: 0;
+}
+
+.sandbox-grid {
+  position: absolute;
+  inset: 0;
+  background: 
+    linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px) 0 0 / 100px 100px,
+    linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px) 0 0 / 100px 100px;
+  z-index: 1;
+  pointer-events: none;
+}
+
+.sandbox-content {
+  position: relative;
+  z-index: 10;
+  width: 100%;
+  max-width: 1200px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 60px;
+}
+
+/* ── The Neon Sign Area ── */
+.neon-container {
+  position: relative;
+  width: 100%;
+  min-height: 200px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  cursor: text;
+  padding: 40px 20px;
+}
+
+/* Mounting rails behind the text */
+.mounting-rail {
+  position: absolute;
+  left: 10%;
+  right: 10%;
+  height: 4px;
+  background: linear-gradient(90deg, #111, #333, #111);
+  border-top: 1px solid #444;
+  border-bottom: 1px solid #000;
+  z-index: -1;
+  border-radius: 2px;
+  opacity: 0.6;
+}
+.rail-top { top: 35%; }
+.rail-bottom { bottom: 35%; }
+
+/* Hidden input overlay */
+.hidden-input {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  z-index: 5;
+  width: 100%;
+  height: 100%;
+  cursor: text;
+  font-size: 16px; /* Prevent iOS zoom */
+}
+
+/* The visible text */
+.neon-text {
+  font-family: 'Inter', system-ui, sans-serif;
+  font-weight: 200; /* Thin font for glass tube look */
+  font-size: clamp(3rem, 10vw, 8rem);
+  text-transform: uppercase;
+  margin: 0;
+  letter-spacing: 0.05em;
+  text-align: center;
+  color: var(--neon-base);
+  white-space: nowrap;
+  
+  /* The Glow Magic */
+  text-shadow:
+    0 0 5px #fff,
+    0 0 10px #fff,
+    0 0 20px var(--neon-glow-1),
+    0 0 40px var(--neon-glow-1),
+    0 0 80px var(--neon-glow-2),
+    0 0 120px var(--neon-glow-2),
+    0 0 150px var(--neon-glow-2);
+    
+  transition: text-shadow 0.3s ease, color 0.3s ease;
+  position: relative;
+  z-index: 2;
+}
+
+.neon-char {
+  display: inline-block;
+  /* Add subtle inner shadow for tube realism */
+  position: relative;
+}
+
+.neon-placeholder {
+  color: #333;
+  text-shadow: none;
+  font-weight: 400;
+  opacity: 0.5;
+}
+
+/* Blinking cursor */
+.neon-cursor {
+  display: inline-block;
+  width: 4px;
+  height: 0.8em;
+  background-color: var(--neon-base);
+  box-shadow: 0 0 10px var(--neon-glow-1), 0 0 20px var(--neon-glow-1);
+  margin-left: 8px;
+  vertical-align: text-bottom;
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+.neon-cursor.active {
+  animation: blink 1s step-end infinite;
+}
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
+
+/* Edit hint below sign */
+.edit-hint {
+  position: absolute;
+  bottom: -30px;
+  font-family: var(--font-jetbrains-mono), monospace;
+  font-size: 10px;
+  color: rgba(255,255,255,0.4);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  pointer-events: none;
+}
+.pulse-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--neon-glow-1);
+  box-shadow: 0 0 8px var(--neon-glow-1);
+  animation: pulseDot 2s infinite alternate;
+}
+@keyframes pulseDot {
+  from { opacity: 0.4; }
+  to { opacity: 1; }
+}
+
+/* ── Controls & CTAs ── */
+.sandbox-controls {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 32px;
+  text-align: center;
+  max-width: 600px;
+  z-index: 10;
+}
+
+.color-picker {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 12px 24px;
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 40px;
+  backdrop-filter: blur(10px);
+}
+.picker-label {
+  font-family: var(--font-jetbrains-mono), monospace;
+  font-size: 10px;
+  color: rgba(255,255,255,0.5);
+  letter-spacing: 0.1em;
+}
+.color-btn {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  border: 2px solid transparent;
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+.color-btn:hover {
+  transform: scale(1.1);
+}
+.color-btn.active {
+  border-color: #fff;
+}
+.btn-pink { background: #ff2a85; box-shadow: 0 0 10px rgba(255,42,133,0.5); }
+.btn-blue { background: #00d2ff; box-shadow: 0 0 10px rgba(0,210,255,0.5); }
+.btn-gold { background: #ffb800; box-shadow: 0 0 10px rgba(255,184,0,0.5); }
+
+.sandbox-pitch {
+  font-size: clamp(1rem, 2vw, 1.125rem);
+  color: rgba(255,255,255,0.7);
+  line-height: 1.6;
+  margin: 0;
+}
+
+.sandbox-ctas {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.btn-primary-neon {
+  padding: 16px 32px;
+  background: var(--neon-glow-2);
+  color: #fff;
+  font-weight: 600;
+  text-decoration: none;
+  border-radius: 4px;
+  transition: background 0.2s, box-shadow 0.2s, transform 0.2s;
+  box-shadow: 0 4px 20px var(--neon-dim);
+}
+.btn-primary-neon:hover {
+  background: var(--neon-glow-1);
+  box-shadow: 0 6px 30px var(--neon-dim);
+  transform: translateY(-2px);
+}
+
+.btn-secondary-outline {
+  padding: 16px 32px;
+  background: transparent;
+  color: rgba(255,255,255,0.8);
+  font-weight: 500;
+  text-decoration: none;
+  border: 1px solid rgba(255,255,255,0.2);
+  border-radius: 4px;
+  transition: background 0.2s, color 0.2s;
+}
+.btn-secondary-outline:hover {
+  background: rgba(255,255,255,0.05);
+  color: #fff;
+}
+
+/* Touch device adjustments */
+@media (hover: none) {
+  .hidden-input {
+    /* Make input slightly visible to ensure touch targets on some bad mobile browsers, but keep opacity 0 normally works */
+  }
+}
+
+
