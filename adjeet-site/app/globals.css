@@ -36,6 +36,118 @@ p, li {
   border-radius: 2px;
 }
 
+/* ── Hero sign glow pulse ─────────────────────────────────────────────── */
+.hero-sign {
+  animation: sign-breathe 5s ease-in-out infinite;
+}
+@keyframes sign-breathe {
+  0%, 100% {
+    text-shadow:
+      0 0 18px rgba(255,255,255,0.25),
+      0 0 40px rgba(79,168,224,0.55),
+      0 0 80px rgba(30,127,184,0.38),
+      0 0 130px rgba(30,127,184,0.18);
+  }
+  50% {
+    text-shadow:
+      0 0 25px rgba(255,255,255,0.35),
+      0 0 55px rgba(79,168,224,0.70),
+      0 0 100px rgba(30,127,184,0.50),
+      0 0 160px rgba(30,127,184,0.25);
+  }
+}
+
+/* ── Ticker ───────────────────────────────────────────────────────────── */
+@keyframes ticker-scroll {
+  0%   { transform: translateX(0); }
+  100% { transform: translateX(-33.333%); }
+}
+
+/* ── Hero CTA buttons ─────────────────────────────────────────────────── */
+.hero-cta-primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 14px 32px;
+  background: #1E7FB8;
+  color: #fff;
+  font-family: var(--font-inter);
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  border-radius: 2px;
+  transition: background 0.2s, box-shadow 0.2s, transform 0.1s;
+  box-shadow: 0 0 24px rgba(30,127,184,0.45), 0 0 48px rgba(30,127,184,0.15);
+}
+.hero-cta-primary:hover {
+  background: #2990CC;
+  box-shadow: 0 0 32px rgba(30,127,184,0.65), 0 0 64px rgba(30,127,184,0.22);
+}
+.hero-cta-primary:active { transform: scale(0.98); }
+
+.hero-cta-ghost {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 13px 32px;
+  border: 1px solid rgba(255,255,255,0.18);
+  color: rgba(255,255,255,0.6);
+  font-family: var(--font-inter);
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  border-radius: 2px;
+  transition: border-color 0.2s, color 0.2s, transform 0.1s;
+}
+.hero-cta-ghost:hover {
+  border-color: rgba(79,168,224,0.5);
+  color: rgba(255,255,255,0.9);
+}
+.hero-cta-ghost:active { transform: scale(0.98); }
+
+.hero-cta-wa {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 13px 24px;
+  border: 1px solid rgba(37,211,102,0.3);
+  color: rgba(37,211,102,0.75);
+  font-family: var(--font-inter);
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  border-radius: 2px;
+  transition: border-color 0.2s, color 0.2s, background 0.2s, transform 0.1s;
+}
+.hero-cta-wa:hover {
+  border-color: rgba(37,211,102,0.6);
+  color: #25D366;
+  background: rgba(37,211,102,0.05);
+}
+.hero-cta-wa:active { transform: scale(0.98); }
+
+/* ── Scroll line ──────────────────────────────────────────────────────── */
+.scroll-line {
+  width: 1px;
+  height: 56px;
+  background: linear-gradient(to bottom, rgba(79,168,224,0.5), transparent);
+  animation: scroll-pulse 2s ease-in-out infinite;
+}
+@keyframes scroll-pulse {
+  0%, 100% { opacity: 0.4; transform: scaleY(1); }
+  50% { opacity: 0.9; transform: scaleY(1.1); }
+}
+
+/* Reduced motion overrides */
+@media (prefers-reduced-motion: reduce) {
+  .hero-sign { animation: none; }
+  @keyframes ticker-scroll { 0%, 100% { transform: none; } }
+  .scroll-line { animation: none; }
+}
+
 /* Always-dark surface for hero banners, footer, lightbox.
    Bypasses @theme so the CSS variable is resolved at runtime, not build time. */
 .section-inverse {
