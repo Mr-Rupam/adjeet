@@ -61,99 +61,175 @@ p, li {
   overflow: hidden;
 }
 
-/* ─── The Neon Sandbox Hero ───────────────────────────────────────────── */
+/* ─── The Signage Sandbox Hero ───────────────────────────────────────────── */
 
 .sandbox-hero {
   min-height: 100svh;
   position: relative;
-  display: flex;
-  align-items: center;
-  justify-content: center;
   overflow: hidden;
-  background-color: #0a0a0c;
-  padding: 80px 20px 40px;
-  
-  /* Theme variables - default pink */
-  --neon-base: #fff;
-  --neon-glow-1: #ff2a85;
-  --neon-glow-2: #e6005c;
-  --neon-dim: rgba(255, 42, 133, 0.2);
+  background-color: #07070a;
+  padding: 24px 24px 48px;
+  perspective: 1400px;
 }
 
-.sandbox-hero.theme-blue {
-  --neon-glow-1: #00d2ff;
-  --neon-glow-2: #0088cc;
-  --neon-dim: rgba(0, 210, 255, 0.2);
-}
-
-.sandbox-hero.theme-gold {
-  --neon-base: #fff9e6;
-  --neon-glow-1: #ffb800;
-  --neon-glow-2: #cc8800;
-  --neon-dim: rgba(255, 184, 0, 0.2);
-}
-
-/* ── Background & Grid ── */
+/* ── Background: Dark showroom with subtle grid + spotlight ── */
 .sandbox-bg {
   position: absolute;
   inset: 0;
-  background-image: 
-    linear-gradient(rgba(10, 10, 12, 0.85), rgba(10, 10, 12, 0.95)),
-    url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M54.627 0l.83.83v58.34h-58.34l-.83-.83v-58.34h58.34zm-5.827 5h-43.68v43.68h43.68v-43.68z' fill='%231f1f24' fill-opacity='0.4' fill-rule='evenodd'/%3E%3C/svg%3E");
+  background-image:
+    radial-gradient(ellipse 60% 50% at 50% 35%, rgba(40, 40, 55, 0.55), rgba(5, 5, 8, 0.95) 70%),
+    linear-gradient(180deg, #0a0a0d 0%, #050507 100%);
   z-index: 0;
 }
-
-.sandbox-grid {
+.sandbox-bg::after {
+  content: '';
   position: absolute;
   inset: 0;
-  background: 
-    linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px) 0 0 / 100px 100px,
-    linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px) 0 0 / 100px 100px;
-  z-index: 1;
-  pointer-events: none;
+  background-image:
+    linear-gradient(rgba(255,255,255,0.025) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.025) 1px, transparent 1px);
+  background-size: 60px 60px;
+  mask-image: radial-gradient(ellipse 70% 60% at 50% 50%, #000 30%, transparent 75%);
+  -webkit-mask-image: radial-gradient(ellipse 70% 60% at 50% 50%, #000 30%, transparent 75%);
+  opacity: 0.6;
 }
 
 .sandbox-content {
   position: relative;
   z-index: 10;
   width: 100%;
-  max-width: 1200px;
+  max-width: 1240px;
+  margin: 0 auto;
   display: flex;
   flex-direction: column;
-  align-items: center;
-  gap: 60px;
+  gap: 36px;
 }
 
-/* ── The Neon Sign Area ── */
-.neon-container {
-  position: relative;
-  width: 100%;
-  min-height: 200px;
+/* ── Top bar (editorial section label) ── */
+.sandbox-topbar {
   display: flex;
-  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+  padding-bottom: 16px;
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+  font-family: var(--font-jetbrains-mono), monospace;
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  color: rgba(255,255,255,0.4);
+  text-transform: uppercase;
+}
+.sandbox-topbar__hint {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+.pulse-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--ochre, #c8a35b);
+  animation: pulseDot 1.6s infinite alternate;
+}
+@keyframes pulseDot {
+  from { opacity: 0.3; transform: scale(0.85); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+/* ── Manifesto headline ── */
+.sandbox-manifesto {
+  font-family: var(--font-fraunces), serif;
+  font-size: clamp(1.875rem, 5vw, 3.75rem);
+  font-weight: 700;
+  line-height: 1.06;
+  letter-spacing: -0.02em;
+  color: #f5f3ec;
+  margin: 0;
+  max-width: 22ch;
+}
+.sandbox-manifesto__ital {
+  font-style: italic;
+  font-weight: 400;
+  color: rgba(245,243,236,0.65);
+}
+.sandbox-manifesto__hl {
+  position: relative;
+  color: var(--ochre, #d6a85b);
+  font-style: italic;
+  font-weight: 600;
+}
+
+/* ── Stage: sign + spec card ── */
+.sandbox-stage {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 320px;
+  gap: 24px;
+  align-items: stretch;
+}
+@media (max-width: 900px) {
+  .sandbox-stage {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ── Sign sample area ── */
+.signage-container {
+  position: relative;
+  min-height: 320px;
+  display: flex;
   align-items: center;
   justify-content: center;
   cursor: text;
-  padding: 40px 20px;
+  padding: 30px 0 60px;
 }
 
-/* Mounting rails behind the text */
-.mounting-rail {
+.mounting-surface {
+  position: relative;
+  padding: 56px 72px;
+  text-align: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  max-width: 720px;
+  min-height: 200px;
+  z-index: 2;
+}
+
+/* Floor reflection / shadow plane */
+.signage-floor {
   position: absolute;
-  left: 10%;
-  right: 10%;
-  height: 4px;
-  background: linear-gradient(90deg, #111, #333, #111);
-  border-top: 1px solid #444;
-  border-bottom: 1px solid #000;
-  z-index: -1;
-  border-radius: 2px;
-  opacity: 0.6;
+  bottom: 18px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 75%;
+  height: 16px;
+  background: radial-gradient(ellipse, rgba(0,0,0,0.55), transparent 70%);
+  filter: blur(8px);
+  z-index: 1;
+  pointer-events: none;
+  transition: background 0.5s ease;
 }
-.rail-top { top: 35%; }
-.rail-bottom { bottom: 35%; }
 
-/* Hidden input overlay */
+/* Rivets */
+.rivet {
+  position: absolute;
+  width: 7px;
+  height: 7px;
+  background: radial-gradient(circle at 35% 30%, #4a4d50, #1a1c1e);
+  border-radius: 50%;
+  box-shadow:
+    inset 0 -1px 1px rgba(0,0,0,0.7),
+    0 1px 1px rgba(0,0,0,0.6),
+    0 0 0 1px rgba(255,255,255,0.04);
+  opacity: 0;
+  transition: opacity 0.4s;
+}
+.rivet-tl { top: 14px; left: 14px; }
+.rivet-tr { top: 14px; right: 14px; }
+.rivet-bl { bottom: 14px; left: 14px; }
+.rivet-br { bottom: 14px; right: 14px; }
+
+/* Hidden input */
 .hidden-input {
   position: absolute;
   inset: 0;
@@ -162,191 +238,412 @@ p, li {
   width: 100%;
   height: 100%;
   cursor: text;
-  font-size: 16px; /* Prevent iOS zoom */
+  font-size: 16px;
 }
 
-/* The visible text */
-.neon-text {
-  font-family: 'Inter', system-ui, sans-serif;
-  font-weight: 200; /* Thin font for glass tube look */
-  font-size: clamp(3rem, 10vw, 8rem);
+/* Sign text — base */
+.signage-text {
+  font-size: clamp(2.75rem, 8vw, 6rem);
   text-transform: uppercase;
   margin: 0;
-  letter-spacing: 0.05em;
   text-align: center;
-  color: var(--neon-base);
   white-space: nowrap;
-  
-  /* The Glow Magic */
-  text-shadow:
-    0 0 5px #fff,
-    0 0 10px #fff,
-    0 0 20px var(--neon-glow-1),
-    0 0 40px var(--neon-glow-1),
-    0 0 80px var(--neon-glow-2),
-    0 0 120px var(--neon-glow-2),
-    0 0 150px var(--neon-glow-2);
-    
-  transition: text-shadow 0.3s ease, color 0.3s ease;
   position: relative;
   z-index: 2;
+  line-height: 1;
 }
-
-.neon-char {
+.signage-char {
   display: inline-block;
-  /* Add subtle inner shadow for tube realism */
   position: relative;
 }
-
-.neon-placeholder {
-  color: #333;
-  text-shadow: none;
-  font-weight: 400;
-  opacity: 0.5;
+.signage-placeholder {
+  opacity: 0.4;
 }
-
-/* Blinking cursor */
-.neon-cursor {
+.signage-cursor {
   display: inline-block;
-  width: 4px;
-  height: 0.8em;
-  background-color: var(--neon-base);
-  box-shadow: 0 0 10px var(--neon-glow-1), 0 0 20px var(--neon-glow-1);
-  margin-left: 8px;
+  width: 5px;
+  height: 0.75em;
+  margin-left: 6px;
   vertical-align: text-bottom;
   opacity: 0;
-  transition: opacity 0.2s;
+  background: currentColor;
 }
-.neon-cursor.active {
+.signage-cursor.active {
   animation: blink 1s step-end infinite;
 }
 @keyframes blink {
-  0%, 100% { opacity: 1; }
+  0%, 100% { opacity: 0.7; }
   50% { opacity: 0; }
 }
 
-/* Edit hint below sign */
-.edit-hint {
+/* ═══════════════════════════════════════════════════════════════════════
+   MATERIAL: GLOW SIGN — White acrylic + aluminium cabinet + halo
+   ═══════════════════════════════════════════════════════════════════════ */
+
+.theme-glowsign .mounting-surface {
+  background:
+    radial-gradient(ellipse at 50% 35%, #ffffff 0%, #f6f5ef 70%, #e9e7df 100%);
+  border: 5px solid #b8b8b8;
+  border-top-color: #d0d0d0;
+  border-bottom-color: #888;
+  border-radius: 8px;
+  box-shadow:
+    /* Cabinet depth (ridge underneath) */
+    0 4px 0 -1px #6a6a6a,
+    0 7px 0 -1px #4a4a4a,
+    0 9px 14px rgba(0,0,0,0.55),
+    /* Halo glow */
+    0 0 60px rgba(255, 240, 200, 0.42),
+    0 0 130px rgba(255, 195, 110, 0.22),
+    /* Bottom-light spill onto wall */
+    0 70px 90px -30px rgba(255, 170, 90, 0.42),
+    /* Inner brightness */
+    inset 0 0 30px rgba(255, 250, 220, 0.55);
+}
+.theme-glowsign .signage-text {
+  font-family: 'Inter', system-ui, sans-serif;
+  font-weight: 900;
+  letter-spacing: -0.025em;
+  color: #c5141d;
+  text-shadow:
+    0 0 1px #c5141d,
+    0 1px 0 rgba(0,0,0,0.12),
+    0 2px 6px rgba(180,30,40,0.3);
+}
+.theme-glowsign .signage-cursor { background: #c5141d; }
+.theme-glowsign .signage-placeholder {
+  color: #c5141d;
+  opacity: 0.25;
+}
+.theme-glowsign .signage-floor {
+  background: radial-gradient(ellipse, rgba(255,180,90,0.4), transparent 70%);
+  filter: blur(14px);
+  height: 28px;
+  width: 85%;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════
+   MATERIAL: ACP / LED — Brushed dark metal + panel seams + face-lit
+   ═══════════════════════════════════════════════════════════════════════ */
+
+.theme-acpled .mounting-surface {
+  background:
+    /* Soft vertical highlight */
+    linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.05) 50%, transparent 100%),
+    /* Brushed grain (horizontal lines) */
+    repeating-linear-gradient(0deg,
+      rgba(255,255,255,0.03) 0px,
+      transparent 1px,
+      rgba(0,0,0,0.07) 2px,
+      transparent 3px),
+    linear-gradient(180deg, #2a2d30 0%, #1a1c1e 50%, #131517 100%);
+  border: 1px solid #0a0b0c;
+  border-top-color: #3a3d40;
+  border-radius: 3px;
+  box-shadow:
+    /* Mounting depth */
+    0 4px 0 -1px #0a0b0c,
+    0 8px 18px rgba(0,0,0,0.6),
+    /* Cool LED ambient */
+    0 0 50px rgba(120,180,255,0.12),
+    0 30px 60px -20px rgba(120,180,255,0.18),
+    /* Top edge highlight */
+    inset 0 1px 0 rgba(255,255,255,0.08);
+}
+.theme-acpled .mounting-surface::before {
+  /* Horizontal panel seam */
+  content: '';
   position: absolute;
-  bottom: -30px;
-  font-family: var(--font-jetbrains-mono), monospace;
-  font-size: 10px;
-  color: rgba(255,255,255,0.4);
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  display: flex;
-  align-items: center;
-  gap: 8px;
+  left: 0;
+  right: 0;
+  top: 50%;
+  height: 1px;
+  background: linear-gradient(90deg,
+    transparent,
+    rgba(0,0,0,0.55) 25%,
+    rgba(0,0,0,0.55) 75%,
+    transparent);
+  z-index: 1;
+}
+.theme-acpled .rivet { opacity: 1; }
+.theme-acpled .signage-text {
+  font-family: 'Inter', system-ui, sans-serif;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  color: #fafcff;
+}
+.theme-acpled .signage-char {
+  text-shadow:
+    /* Inner LED (per-character face-lit) */
+    0 0 2px rgba(255,255,255,0.95),
+    0 0 8px rgba(190,220,255,0.85),
+    0 0 18px rgba(120,170,250,0.7),
+    0 0 32px rgba(70,130,220,0.45),
+    /* Ambient cabinet halo */
+    0 0 55px rgba(60,110,200,0.22);
+}
+.theme-acpled .signage-cursor { background: #cfe4ff; box-shadow: 0 0 8px rgba(120,170,250,0.8); }
+.theme-acpled .signage-placeholder {
+  color: rgba(220,235,255,0.4);
+}
+.theme-acpled .signage-floor {
+  background: radial-gradient(ellipse, rgba(80,140,220,0.28), transparent 70%);
+  filter: blur(12px);
+  height: 22px;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════
+   MATERIAL: WALL PAINT — Weathered concrete + terracotta serif + warm spot
+   ═══════════════════════════════════════════════════════════════════════ */
+
+.theme-wallpaint .mounting-surface {
+  background:
+    /* Warm spotlight from above */
+    radial-gradient(ellipse 80% 60% at 50% 0%, rgba(255,235,180,0.35), transparent 65%),
+    /* Grain noise */
+    url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='240' height='240'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0.4 0 0 0 0 0.32 0 0 0 0 0.22 0 0 0 0.55 0'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>"),
+    /* Weathered concrete base */
+    linear-gradient(165deg, #d6b58a 0%, #c39c66 45%, #a87d4d 100%);
+  background-size: cover, 240px 240px, cover;
+  background-blend-mode: normal, multiply, normal;
+  border: none;
+  border-radius: 0;
+  box-shadow:
+    /* Subtle wall edge shadow */
+    0 30px 60px -20px rgba(0,0,0,0.55),
+    /* Bottom plinth shadow on wall */
+    inset 0 -40px 50px -20px rgba(60,35,15,0.32),
+    inset 0 30px 50px -20px rgba(255,235,180,0.18);
+}
+.theme-wallpaint .mounting-surface::after {
+  /* Faint rough edge / chalk-line border */
+  content: '';
+  position: absolute;
+  inset: 14px;
+  border: 1px dashed rgba(80,40,20,0.18);
   pointer-events: none;
 }
-.pulse-dot {
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  background: var(--neon-glow-1);
-  box-shadow: 0 0 8px var(--neon-glow-1);
-  animation: pulseDot 2s infinite alternate;
+.theme-wallpaint .signage-text {
+  font-family: var(--font-fraunces), serif;
+  font-style: italic;
+  font-weight: 600;
+  letter-spacing: -0.005em;
+  color: #6e2916;
+  text-shadow:
+    1px 1px 0 rgba(40,15,5,0.18),
+    2px 2px 4px rgba(20,10,5,0.12);
 }
-@keyframes pulseDot {
-  from { opacity: 0.4; }
-  to { opacity: 1; }
+.theme-wallpaint .signage-char:nth-child(odd) {
+  transform: translateY(-1px) rotate(-0.6deg);
+}
+.theme-wallpaint .signage-char:nth-child(even) {
+  transform: translateY(1px) rotate(0.5deg);
+}
+.theme-wallpaint .signage-char:nth-child(3n) {
+  transform: translateY(0) rotate(-0.3deg);
+}
+.theme-wallpaint .signage-cursor { background: #6e2916; height: 0.65em; }
+.theme-wallpaint .signage-placeholder {
+  color: #6e2916;
+  opacity: 0.4;
+}
+.theme-wallpaint .signage-floor {
+  background: radial-gradient(ellipse, rgba(60,35,15,0.45), transparent 70%);
+  filter: blur(10px);
+  height: 18px;
+  width: 80%;
 }
 
-/* ── Controls & CTAs ── */
-.sandbox-controls {
+/* ═══════════════════════════════════════════════════════════════════════
+   SPEC CARD
+   ═══════════════════════════════════════════════════════════════════════ */
+
+.spec-card {
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 4px;
+  padding: 22px 22px 18px;
   display: flex;
   flex-direction: column;
-  align-items: center;
-  gap: 32px;
-  text-align: center;
-  max-width: 600px;
-  z-index: 10;
+  font-family: var(--font-jetbrains-mono), monospace;
+  color: rgba(255,255,255,0.85);
+  backdrop-filter: blur(8px);
+}
+.spec-card__head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  padding-bottom: 14px;
+  margin-bottom: 14px;
+  border-bottom: 1px solid rgba(255,255,255,0.12);
+}
+.spec-card__serial {
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ochre, #d6a85b);
+}
+.spec-card__label {
+  font-family: var(--font-fraunces), serif;
+  font-size: 14px;
+  font-weight: 600;
+  font-style: italic;
+  color: #fff;
+  text-align: right;
+  letter-spacing: 0;
+  text-transform: none;
+}
+.spec-card__rows {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  flex: 1;
+}
+.spec-card__row {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 12px;
+  padding-bottom: 10px;
+  border-bottom: 1px dashed rgba(255,255,255,0.08);
+}
+.spec-card__row:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+.spec-k {
+  font-size: 9.5px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.4);
+  flex-shrink: 0;
+}
+.spec-v {
+  font-size: 11px;
+  color: rgba(255,255,255,0.85);
+  text-align: right;
+  letter-spacing: 0.02em;
+}
+.spec-card__foot {
+  margin-top: 16px;
+  padding-top: 12px;
+  border-top: 1px solid rgba(255,255,255,0.08);
+  display: flex;
+  justify-content: space-between;
+  font-size: 9.5px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.35);
 }
 
-.color-picker {
+/* ═══════════════════════════════════════════════════════════════════════
+   MATERIAL PICKER (refined editorial)
+   ═══════════════════════════════════════════════════════════════════════ */
+
+.material-picker {
   display: flex;
-  align-items: center;
-  gap: 16px;
-  padding: 12px 24px;
-  background: rgba(255,255,255,0.03);
-  border: 1px solid rgba(255,255,255,0.08);
-  border-radius: 40px;
-  backdrop-filter: blur(10px);
+  align-items: stretch;
+  gap: 0;
+  border: 1px solid rgba(255,255,255,0.12);
+  border-radius: 4px;
+  overflow: hidden;
+  align-self: flex-start;
+  flex-wrap: wrap;
 }
 .picker-label {
   font-family: var(--font-jetbrains-mono), monospace;
   font-size: 10px;
-  color: rgba(255,255,255,0.5);
-  letter-spacing: 0.1em;
+  letter-spacing: 0.14em;
+  color: rgba(255,255,255,0.4);
+  padding: 14px 18px;
+  border-right: 1px solid rgba(255,255,255,0.08);
+  display: flex;
+  align-items: center;
+  text-transform: uppercase;
 }
-.color-btn {
-  width: 24px;
-  height: 24px;
-  border-radius: 50%;
-  border: 2px solid transparent;
+.material-btn {
+  padding: 12px 22px;
+  background: transparent;
+  border: none;
+  border-right: 1px solid rgba(255,255,255,0.08);
+  color: rgba(255,255,255,0.55);
   cursor: pointer;
-  transition: transform 0.2s, box-shadow 0.2s;
+  transition: all 0.2s;
+  text-align: left;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
 }
-.color-btn:hover {
-  transform: scale(1.1);
+.material-btn:last-child { border-right: none; }
+.material-btn__label {
+  font-family: var(--font-fraunces), serif;
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  line-height: 1.1;
 }
-.color-btn.active {
-  border-color: #fff;
+.material-btn__sub {
+  font-family: var(--font-jetbrains-mono), monospace;
+  font-size: 9.5px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.35);
 }
-.btn-pink { background: #ff2a85; box-shadow: 0 0 10px rgba(255,42,133,0.5); }
-.btn-blue { background: #00d2ff; box-shadow: 0 0 10px rgba(0,210,255,0.5); }
-.btn-gold { background: #ffb800; box-shadow: 0 0 10px rgba(255,184,0,0.5); }
+.material-btn:hover {
+  background: rgba(255,255,255,0.04);
+  color: rgba(255,255,255,0.9);
+}
+.material-btn.active {
+  background: rgba(255,255,255,0.08);
+  color: #fff;
+}
+.material-btn.active .material-btn__sub {
+  color: var(--ochre, #d6a85b);
+}
 
-.sandbox-pitch {
-  font-size: clamp(1rem, 2vw, 1.125rem);
-  color: rgba(255,255,255,0.7);
-  line-height: 1.6;
-  margin: 0;
-}
-
+/* ── CTAs ── */
 .sandbox-ctas {
   display: flex;
-  gap: 16px;
+  gap: 14px;
   flex-wrap: wrap;
-  justify-content: center;
 }
-
-.btn-primary-neon {
-  padding: 16px 32px;
-  background: var(--neon-glow-2);
-  color: #fff;
+.btn-primary-signage {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 28px;
+  background: #ffffff;
+  color: #0a0a0c;
+  font-family: var(--font-fraunces), serif;
   font-weight: 600;
+  font-size: 15px;
+  letter-spacing: -0.01em;
   text-decoration: none;
-  border-radius: 4px;
-  transition: background 0.2s, box-shadow 0.2s, transform 0.2s;
-  box-shadow: 0 4px 20px var(--neon-dim);
+  border-radius: 3px;
+  transition: transform 0.2s, opacity 0.2s;
 }
-.btn-primary-neon:hover {
-  background: var(--neon-glow-1);
-  box-shadow: 0 6px 30px var(--neon-dim);
-  transform: translateY(-2px);
+.btn-primary-signage:hover {
+  transform: translateY(-1px);
+  opacity: 0.92;
 }
-
 .btn-secondary-outline {
-  padding: 16px 32px;
+  display: inline-flex;
+  align-items: center;
+  padding: 14px 26px;
   background: transparent;
-  color: rgba(255,255,255,0.8);
+  color: rgba(255,255,255,0.7);
+  font-size: 14px;
   font-weight: 500;
   text-decoration: none;
-  border: 1px solid rgba(255,255,255,0.2);
-  border-radius: 4px;
-  transition: background 0.2s, color 0.2s;
+  border: 1px solid rgba(255,255,255,0.18);
+  border-radius: 3px;
+  transition: all 0.2s;
 }
 .btn-secondary-outline:hover {
   background: rgba(255,255,255,0.05);
   color: #fff;
-}
-
-/* Touch device adjustments */
-@media (hover: none) {
-  .hidden-input {
-    /* Make input slightly visible to ensure touch targets on some bad mobile browsers, but keep opacity 0 normally works */
-  }
+  border-color: rgba(255,255,255,0.3);
 }
 
 

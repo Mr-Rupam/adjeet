@@ -44,10 +44,10 @@ interface ServicesGridProps {
 
 export function ServicesGrid({ expanded = false, className = '' }: ServicesGridProps) {
   return (
-    <section className={`py-[var(--section-py)] ${className}`}>
+    <section className={`py-16 md:py-32 ${className}`}>
       <div className="mx-auto max-w-content px-6">
         <FadeIn>
-          <h2 className="text-center font-bold text-[var(--text-display-2)] font-[var(--font-fraunces)] text-ink mb-12">
+          <h2 className="text-center font-bold text-4xl md:text-5xl font-[var(--font-fraunces)] text-ink mb-12">
             {expanded ? 'Our Services' : 'What We Do'}
           </h2>
         </FadeIn>

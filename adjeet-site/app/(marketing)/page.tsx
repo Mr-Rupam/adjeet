@@ -1,10 +1,12 @@
 import type { Metadata } from 'next'
 import { Hero } from '@/components/sections/Hero'
 import { ClientShowcase } from '@/components/sections/ClientShowcase'
-import { ServicesGrid } from '@/components/sections/ServicesGrid'
-import { ProofBlock } from '@/components/sections/ProofBlock'
-import { GalleryTeaser } from '@/components/sections/GalleryTeaser'
-import { TrustBand } from '@/components/sections/TrustBand'
+import { ServicesIndex } from '@/components/sections/ServicesIndex'
+import { TheStandard } from '@/components/sections/TheStandard'
+import { SelectedWork } from '@/components/sections/SelectedWork'
+import { ByTheNumbers } from '@/components/sections/ByTheNumbers'
+import { WhereWeWork } from '@/components/sections/WhereWeWork'
+import { CommissionSign } from '@/components/sections/CommissionSign'
 
 export const metadata: Metadata = {
   title: 'AD-JEET — North Bengal Signage & Outdoor Advertising',
@@ -18,11 +20,12 @@ export default function HomePage() {
     <>
       <Hero />
       <ClientShowcase />
-      <ServicesGrid />
-      <ProofBlock />
-      <GalleryTeaser />
-      <TrustBand />
+      <ServicesIndex />
+      <TheStandard />
+      <SelectedWork />
+      <ByTheNumbers />
+      <WhereWeWork />
+      <CommissionSign />
     </>
   )
 }
-

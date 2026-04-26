@@ -76,7 +76,7 @@ export default async function ProgrammaticPage({ params }: { params: Promise<Par
               <li className="text-white/80">{cityLabel}</li>
             </ol>
           </nav>
-          <h1 className="text-[var(--text-display-2)] font-[var(--font-fraunces)] font-bold text-white mb-4 leading-tight">
+          <h1 className="text-4xl md:text-5xl font-[var(--font-fraunces)] font-bold text-white mb-4 leading-tight">
             {page.headline}
           </h1>
         </div>
@@ -97,7 +97,7 @@ export default async function ProgrammaticPage({ params }: { params: Promise<Par
       </section>
 
       {/* Body */}
-      <section className="py-[var(--section-py)] border-b border-rule">
+      <section className="py-16 md:py-32 border-b border-rule">
         <div className="mx-auto max-w-content px-6">
           <div className="max-w-2xl space-y-5">
             {paragraphs.map((p, i) => (

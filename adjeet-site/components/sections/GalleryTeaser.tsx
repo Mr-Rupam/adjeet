@@ -19,10 +19,10 @@ export function GalleryTeaser() {
   }
 
   return (
-    <section className="py-[var(--section-py)]">
+    <section className="py-16 md:py-32">
       <div className="mx-auto max-w-content px-6">
         <FadeIn>
-          <h2 className="text-center font-bold text-[var(--text-display-2)] font-[var(--font-fraunces)] text-ink mb-12">
+          <h2 className="text-center font-bold text-4xl md:text-5xl font-[var(--font-fraunces)] text-ink mb-12">
             Our Work
           </h2>
         </FadeIn>

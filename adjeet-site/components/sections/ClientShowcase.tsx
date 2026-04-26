@@ -67,7 +67,7 @@ export function ClientShowcase() {
         <span className="inline-block px-4 py-1.5 mb-5 text-xs font-semibold uppercase tracking-widest rounded-full border border-rule bg-paper-elevated text-ink-muted">
           ★ Trusted by 200+ brands
         </span>
-        <h2 className="text-[var(--text-display-2)] font-[var(--font-fraunces)] font-bold text-ink leading-tight">
+        <h2 className="text-4xl md:text-5xl font-[var(--font-fraunces)] font-bold text-ink leading-tight">
           Signage partner for
           <br className="hidden sm:block" />
           India&apos;s biggest brands

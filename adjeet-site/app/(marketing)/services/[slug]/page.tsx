@@ -85,7 +85,7 @@ export default async function ServiceDetailPage({
               <li className="text-white/80">{service.name}</li>
             </ol>
           </nav>
-          <h1 className="text-[var(--text-display-2)] font-[var(--font-fraunces)] font-bold text-white mb-4 leading-tight">
+          <h1 className="text-4xl md:text-5xl font-[var(--font-fraunces)] font-bold text-white mb-4 leading-tight">
             {service.name}
           </h1>
           <p className="text-white/75 text-lg max-w-xl">{service.tagline}</p>
@@ -140,7 +140,7 @@ export default async function ServiceDetailPage({
       </section>
 
       {/* FAQs */}
-      <section className="py-[var(--section-py)]">
+      <section className="py-16 md:py-32">
         <div className="mx-auto max-w-content px-6">
           <div className="max-w-2xl">
             <h2 className="text-2xl font-bold font-[var(--font-fraunces)] text-ink mb-8">
@@ -152,7 +152,7 @@ export default async function ServiceDetailPage({
       </section>
 
       {/* Lead form */}
-      <section className="py-[var(--section-py)] border-t border-rule">
+      <section className="py-16 md:py-32 border-t border-rule">
         <div className="mx-auto max-w-content px-6 grid md:grid-cols-2 gap-12 items-start">
           <div>
             <h2 className="text-2xl font-bold font-[var(--font-fraunces)] text-ink mb-3">
