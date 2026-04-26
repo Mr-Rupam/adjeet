@@ -12,7 +12,7 @@ export function Footer() {
         {/* Brand */}
         <div>
           <p className="text-ink font-bold text-lg mb-2">AD-JEET</p>
-          <p className="text-sm">North Bengal's signage authority since 1990.</p>
+          <p className="text-sm">North Bengal&apos;s signage authority since 1990.</p>
         </div>
 
         {/* Addresses */}

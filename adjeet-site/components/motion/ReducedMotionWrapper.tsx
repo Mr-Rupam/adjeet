@@ -15,6 +15,7 @@ export function useReducedMotion() {
     // Only run standalone subscription when not inside a ReducedMotionWrapper
     if (ctx !== null) return
     const mq = window.matchMedia('(prefers-reduced-motion: reduce)')
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setReduced(mq.matches)
     const handler = (e: MediaQueryListEvent) => setReduced(e.matches)
     mq.addEventListener('change', handler)
@@ -30,6 +31,7 @@ export function ReducedMotionWrapper({ children }: { children: React.ReactNode }
 
   useEffect(() => {
     const mq = window.matchMedia('(prefers-reduced-motion: reduce)')
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setReduced(mq.matches)
     const handler = (e: MediaQueryListEvent) => setReduced(e.matches)
     mq.addEventListener('change', handler)

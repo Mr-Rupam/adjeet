@@ -101,7 +101,7 @@ export function MaterialsLibrary() {
       {/* Materials grid */}
       <div className="mx-auto max-w-content px-6 pb-20 md:pb-28">
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-x-10">
-          {CATEGORIES.map((cat, i) => (
+          {CATEGORIES.map((cat) => (
             <div
               key={cat.n}
               className="py-8"

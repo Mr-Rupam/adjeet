@@ -1,8 +1,7 @@
 import type { Metadata } from 'next'
-import Link from 'next/link'
 import { LeadForm } from '@/components/sections/LeadForm'
 import { defaultWhatsAppUrl } from '@/lib/whatsapp'
-import { buildBreadcrumbJsonLd, siteConfig } from '@/lib/seo'
+import { buildBreadcrumbJsonLd } from '@/lib/seo'
 
 export const metadata: Metadata = {
   title: 'Contact AD-JEET — Get a Signage Quote',
@@ -95,7 +94,7 @@ export default function ContactPage() {
         {/* Huge ghost text */}
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 select-none pointer-events-none whitespace-nowrap">
           <span
-            className="block font-[var(--font-fraunces)] font-black text-transparent leading-none"
+            className="block font-serif font-black text-transparent leading-none"
             style={{
               fontSize: 'clamp(10rem, 25vw, 30rem)',
               WebkitTextStroke: '1px rgba(30,127,184,0.05)',
@@ -107,21 +106,21 @@ export default function ContactPage() {
 
         <div className="relative z-10 mx-auto w-full max-w-content px-6 pb-20 pt-32">
           <div className="flex items-center gap-4 mb-8">
-            <div className="w-16 h-[1px] bg-[var(--adjeet-blue)]" />
-            <span className="text-[10px] font-[var(--font-mono)] uppercase tracking-[0.3em] text-white/40">
+            <div className="w-16 h-[1px] bg-blue" />
+            <span className="text-[10px] font-mono uppercase tracking-[0.3em] text-white/40">
               Contact
             </span>
           </div>
 
           <h1 className="mb-6">
             <span
-              className="block font-[var(--font-fraunces)] font-black text-white leading-[0.85] tracking-tight"
+              className="block font-serif font-black text-white leading-[0.85] tracking-tight"
               style={{ fontSize: 'clamp(3rem, 9vw, 8rem)' }}
             >
               Let&apos;s
             </span>
             <span
-              className="block font-[var(--font-fraunces)] font-black leading-[0.85] tracking-tight"
+              className="block font-serif font-black leading-[0.85] tracking-tight"
               style={{
                 fontSize: 'clamp(3rem, 9vw, 8rem)',
                 background: 'linear-gradient(135deg, var(--adjeet-blue), #7EC8E3)',
@@ -168,7 +167,7 @@ export default function ContactPage() {
                 )}
 
                 <span className="text-2xl mb-4 block">{method.icon}</span>
-                <p className="text-[10px] font-[var(--font-mono)] uppercase tracking-[0.2em] text-ink-subtle mb-2">
+                <p className="text-[10px] font-mono uppercase tracking-[0.2em] text-ink-subtle mb-2">
                   {method.label}
                 </p>
                 <p className="font-bold text-ink text-lg mb-1 group-hover:text-blue transition-colors">
@@ -191,8 +190,8 @@ export default function ContactPage() {
         <div className="mx-auto max-w-content px-6">
           {/* Section header */}
           <div className="flex items-center gap-4 mb-12">
-            <div className="w-12 h-[1px] bg-[var(--adjeet-blue)]" />
-            <span className="text-[10px] font-[var(--font-mono)] uppercase tracking-[0.3em] text-ink-subtle">
+            <div className="w-12 h-[1px] bg-blue" />
+            <span className="text-[10px] font-mono uppercase tracking-[0.3em] text-ink-subtle">
               Send us a message
             </span>
           </div>
@@ -202,7 +201,7 @@ export default function ContactPage() {
             <div className="lg:col-span-3">
               <div className="rounded-2xl border border-rule bg-paper-elevated p-8 sm:p-10 shadow-sm">
                 <h2
-                  className="font-[var(--font-fraunces)] font-bold text-ink mb-2"
+                  className="font-serif font-bold text-ink mb-2"
                   style={{ fontSize: 'clamp(1.5rem, 3vw, 2rem)' }}
                 >
                   Get a quote
@@ -226,7 +225,7 @@ export default function ContactPage() {
                   <div className="absolute top-0 right-0 w-20 h-20 bg-gradient-to-bl from-blue/5 to-transparent rounded-bl-full" />
 
                   <div className="relative">
-                    <span className="inline-block px-2 py-0.5 rounded bg-blue/10 text-[10px] font-[var(--font-mono)] uppercase tracking-[0.2em] text-blue mb-3">
+                    <span className="inline-block px-2 py-0.5 rounded bg-blue/10 text-[10px] font-mono uppercase tracking-[0.2em] text-blue mb-3">
                       {loc.type}
                     </span>
                     <h3 className="font-bold text-ink mb-2">{loc.name}</h3>
@@ -255,7 +254,7 @@ export default function ContactPage() {
                 />
                 {/* Map overlay label */}
                 <div className="absolute bottom-3 left-3 px-3 py-1.5 rounded-lg bg-paper/90 backdrop-blur-sm border border-rule shadow-sm">
-                  <p className="text-[10px] font-[var(--font-mono)] uppercase tracking-wider text-ink-subtle">
+                  <p className="text-[10px] font-mono uppercase tracking-wider text-ink-subtle">
                     📍 Platinum Square, Siliguri
                   </p>
                 </div>
@@ -273,7 +272,7 @@ export default function ContactPage() {
                   ].map(item => (
                     <div key={item.label} className="flex justify-between items-center text-sm">
                       <span className="text-ink-muted">{item.label}</span>
-                      <span className="font-[var(--font-mono)] text-xs text-ink font-medium">
+                      <span className="font-mono text-xs text-ink font-medium">
                         {item.value}
                       </span>
                     </div>
@@ -300,11 +299,11 @@ export default function ContactPage() {
 
         <div className="relative max-w-content mx-auto px-6">
           <div className="text-center mb-16">
-            <span className="inline-block text-[10px] font-[var(--font-mono)] uppercase tracking-[0.3em] text-white/40 mb-4">
+            <span className="inline-block text-[10px] font-mono uppercase tracking-[0.3em] text-white/40 mb-4">
               Service Area
             </span>
             <h2
-              className="font-[var(--font-fraunces)] font-black text-white leading-[0.9]"
+              className="font-serif font-black text-white leading-[0.9]"
               style={{ fontSize: 'clamp(2rem, 5vw, 3.5rem)' }}
             >
               We cover all of<br />North Bengal.
@@ -335,7 +334,7 @@ export default function ContactPage() {
               >
                 <p className="text-sm font-medium text-white">{d.name}</p>
                 {d.tag && (
-                  <span className="text-[9px] font-[var(--font-mono)] uppercase tracking-wider text-blue">
+                  <span className="text-[9px] font-mono uppercase tracking-wider text-blue">
                     {d.tag}
                   </span>
                 )}
@@ -351,7 +350,7 @@ export default function ContactPage() {
               href={waUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center justify-center rounded bg-white text-[var(--adjeet-blue-deep)] font-bold px-8 py-4 text-sm hover:bg-white/90 transition-colors active:scale-[0.98]"
+              className="inline-flex items-center justify-center rounded bg-white text-blue-deep font-bold px-8 py-4 text-sm hover:bg-white/90 transition-colors active:scale-[0.98]"
             >
               Ask about your area →
             </a>

@@ -40,19 +40,24 @@ export function ServiceTile({ slug, name, tagline, icon, expanded }: ServiceTile
 interface ServicesGridProps {
   expanded?: boolean
   className?: string
+  excludeSlug?: string
+  limit?: number
 }
 
-export function ServicesGrid({ expanded = false, className = '' }: ServicesGridProps) {
+export function ServicesGrid({ expanded = false, className = '', excludeSlug, limit = 5 }: ServicesGridProps) {
+  const displayedServices = services
+    .filter(s => s.slug !== excludeSlug)
+    .slice(0, limit)
   return (
     <section className={`py-16 md:py-32 ${className}`}>
       <div className="mx-auto max-w-content px-6">
         <FadeIn>
-          <h2 className="text-center font-bold text-4xl md:text-5xl font-[var(--font-fraunces)] text-ink mb-12">
+          <h2 className="text-center font-bold text-4xl md:text-5xl font-serif text-ink mb-12">
             {expanded ? 'Our Services' : 'What We Do'}
           </h2>
         </FadeIn>
         <StaggerChildren className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4">
-          {services.map(service => (
+          {displayedServices.map(service => (
             <ServiceTile
               key={service.slug}
               slug={service.slug}

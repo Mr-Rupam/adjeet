@@ -34,8 +34,9 @@ export function LeadForm() {
         return
       }
       setSubmitted(true)
-      if (typeof window !== 'undefined' && (window as Window & { gtag?: Function }).gtag) {
-        (window as Window & { gtag?: Function }).gtag!('event', 'lead_submit', {
+      type GtagFn = (command: string, ...args: unknown[]) => void
+      if (typeof window !== 'undefined' && (window as Window & { gtag?: GtagFn }).gtag) {
+        (window as Window & { gtag?: GtagFn }).gtag!('event', 'lead_submit', {
           city: data.city,
           timeline: data.timeline,
         })
@@ -51,7 +52,7 @@ export function LeadForm() {
         <div className="inline-flex items-center justify-center w-14 h-14 rounded-full bg-blue/10 mb-4">
           <span className="text-2xl">✓</span>
         </div>
-        <h3 className="font-[var(--font-fraunces)] font-bold text-ink text-xl mb-2">
+        <h3 className="font-serif font-bold text-ink text-xl mb-2">
           Message received!
         </h3>
         <p className="text-sm text-ink-muted max-w-sm mx-auto">
@@ -64,9 +65,9 @@ export function LeadForm() {
   const fieldBase =
     'block w-full rounded-xl border bg-paper px-4 py-3 text-sm text-ink placeholder:text-ink-subtle/60 focus:outline-none transition-all duration-200'
   const fieldNormal = `${fieldBase} border-rule focus:border-blue focus:ring-2 focus:ring-blue/10`
-  const fieldError = `${fieldBase} border-[var(--error)] focus:border-[var(--error)] focus:ring-2 focus:ring-[var(--error)]/10`
+  const fieldError = `${fieldBase} border-error focus:border-error focus:ring-2 focus:ring-error/10`
   const label = 'block text-xs font-semibold text-ink-muted mb-2'
-  const errMsg = 'mt-1.5 text-xs text-[var(--error)] flex items-center gap-1'
+  const errMsg = 'mt-1.5 text-xs text-error flex items-center gap-1'
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} noValidate className="space-y-5">
@@ -144,7 +145,7 @@ export function LeadForm() {
                 <input
                   type="checkbox"
                   value={s.slug}
-                  className="rounded border-rule text-blue focus:ring-blue accent-[var(--adjeet-blue)]"
+                  className="rounded border-rule text-blue focus:ring-blue accent-blue"
                   {...register('serviceInterest')}
                 />
                 <span className="text-xs">{s.name}</span>
@@ -187,7 +188,7 @@ export function LeadForm() {
 
       {/* Server error */}
       {serverError && (
-        <div className="flex items-start gap-2 text-sm text-[var(--error)] bg-[var(--error)]/5 border border-[var(--error)]/20 rounded-xl px-4 py-3">
+        <div className="flex items-start gap-2 text-sm text-error bg-error/5 border border-error/20 rounded-xl px-4 py-3">
           <span className="mt-0.5">⚠</span>
           <p>{serverError}</p>
         </div>
@@ -214,7 +215,7 @@ export function LeadForm() {
       </button>
 
       {/* Trust line */}
-      <p className="text-center text-[10px] text-ink-subtle font-[var(--font-mono)] tracking-wide">
+      <p className="text-center text-[10px] text-ink-subtle font-mono tracking-wide">
         🔒 Your data is stored securely. We never share it with third parties.
       </p>
     </form>

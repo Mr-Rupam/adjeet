@@ -80,4 +80,9 @@
 
   /* Max width */
   --width-content: var(--content-max);
+
+  /* Fonts */
+  --font-sans: var(--font-inter), system-ui, sans-serif;
+  --font-serif: var(--font-fraunces), serif;
+  --font-mono: var(--font-mono), monospace;
 }

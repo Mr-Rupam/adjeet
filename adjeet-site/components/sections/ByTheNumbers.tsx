@@ -97,7 +97,7 @@ export function ByTheNumbers() {
                 fontWeight: 700,
               }}
             >
-              "
+              &ldquo;
             </div>
             <p
               className="text-ink"

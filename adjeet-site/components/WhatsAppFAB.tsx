@@ -11,6 +11,7 @@ export function WhatsAppFAB() {
   useEffect(() => {
     const hero = document.getElementById('hero-section')
     if (!hero) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setVisible(true)
       return
     }

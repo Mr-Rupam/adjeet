@@ -11,7 +11,8 @@ export function MobileNav({ links }: { links: NavLink[] }) {
   const pathname = usePathname()
   const closeRef = useRef<HTMLButtonElement>(null)
 
-  // Close on route change
+  // Close on route change — intentional direct setState to sync with external router state
+  // eslint-disable-next-line react-hooks/set-state-in-effect
   useEffect(() => { setOpen(false) }, [pathname])
 
   // Focus the close button when drawer opens
@@ -74,7 +75,7 @@ export function MobileNav({ links }: { links: NavLink[] }) {
                 <Link
                   key={href}
                   href={href}
-                  className="text-4xl font-[var(--font-fraunces)] font-bold text-ink hover:text-blue transition-colors"
+                  className="text-4xl font-serif font-bold text-ink hover:text-blue transition-colors"
                 >
                   {label}
                 </Link>

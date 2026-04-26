@@ -4,7 +4,7 @@ import { ServicesManifesto } from '@/components/sections/ServicesManifesto'
 import { ServicesCatalogue } from '@/components/sections/ServicesCatalogue'
 import { OurProcess } from '@/components/sections/OurProcess'
 import { MaterialsLibrary } from '@/components/sections/MaterialsLibrary'
-import { CommissionSign } from '@/components/sections/CommissionSign'
+
 
 export const metadata: Metadata = {
   title: 'Signage & Outdoor Advertising Services',
@@ -21,7 +21,6 @@ export default function ServicesPage() {
       <ServicesCatalogue />
       <OurProcess />
       <MaterialsLibrary />
-      <CommissionSign />
     </>
   )
 }

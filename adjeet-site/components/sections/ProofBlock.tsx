@@ -21,7 +21,7 @@ export function ProofBlock() {
           {STATS.map(stat => (
             <div key={stat.label}>
               <dt className="order-2 mt-2 text-sm text-ink-muted">{stat.label}</dt>
-              <dd className="order-1 text-4xl font-bold font-[var(--font-fraunces)] text-ink">
+              <dd className="order-1 text-4xl font-bold font-serif text-ink">
                 <CountUp to={stat.to} suffix={stat.suffix} />
               </dd>
             </div>

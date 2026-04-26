@@ -36,7 +36,7 @@ export function ServicesIndex() {
 
       {/* Index rows */}
       <div className="mx-auto max-w-content">
-        {services.map((service, i) => (
+        {services.slice(0, 5).map((service, i) => (
           <Link
             key={service.slug}
             href={`/services/${service.slug}`}

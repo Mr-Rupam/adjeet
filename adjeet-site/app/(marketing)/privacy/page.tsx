@@ -10,7 +10,7 @@ export const metadata: Metadata = {
 export default function PrivacyPage() {
   return (
     <main className="mx-auto max-w-content px-6 py-20">
-      <h1 className="text-3xl font-bold font-[var(--font-fraunces)] text-ink mb-2">Privacy Policy</h1>
+      <h1 className="text-3xl font-bold font-serif text-ink mb-2">Privacy Policy</h1>
       <p className="text-xs text-ink-subtle mb-12">Last updated: April 2026</p>
 
       <div className="prose prose-sm max-w-2xl text-ink-muted space-y-8">
@@ -41,7 +41,7 @@ export default function PrivacyPage() {
           <h2 className="text-lg font-semibold text-ink mb-3">3. WhatsApp</h2>
           <p>
             Clicking a WhatsApp button opens WhatsApp (web or app) with a pre-filled message. Any subsequent
-            conversation is governed by WhatsApp's own privacy policy. We do not receive any data from WhatsApp
+            conversation is governed by WhatsApp&apos;s own privacy policy. We do not receive any data from WhatsApp
             other than what you choose to send us in the chat.
           </p>
         </section>
@@ -75,7 +75,7 @@ export default function PrivacyPage() {
         <section>
           <h2 className="text-lg font-semibold text-ink mb-3">7. Changes</h2>
           <p>
-            We may update this policy from time to time. The "Last updated" date above reflects the most recent
+            We may update this policy from time to time. The &quot;Last updated&quot; date above reflects the most recent
             revision. Continued use of the site after changes constitutes acceptance of the updated policy.
           </p>
         </section>

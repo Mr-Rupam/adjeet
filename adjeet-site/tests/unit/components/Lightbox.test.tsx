@@ -10,7 +10,8 @@ const photos = [
 
 // Mock next/image to a plain img
 vi.mock('next/image', () => ({
-  default: ({ src, alt, ...rest }: { src: string; alt: string; [key: string]: unknown }) => (
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  default: ({ src, alt, ..._rest }: { src: string; alt: string; [key: string]: unknown }) => (
     // eslint-disable-next-line @next/next/no-img-element
     <img src={src} alt={alt} />
   ),

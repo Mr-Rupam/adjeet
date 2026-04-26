@@ -9,6 +9,7 @@ export function ConsentBanner() {
   const [visible, setVisible] = useState(false)
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     if (!localStorage.getItem(CONSENT_KEY)) setVisible(true)
   }, [])
 

@@ -44,7 +44,7 @@ export function CommissionSign() {
             <br />
             <span style={{ color: 'var(--ochre)' }}>in mind?</span>
             <br />
-            Let's build it.
+            Let&apos;s build it.
           </h2>
 
           <p

@@ -4,7 +4,7 @@ import { useState, useMemo, useCallback } from 'react'
 import Image from 'next/image'
 import { useSearchParams, useRouter } from 'next/navigation'
 import { motion, AnimatePresence } from 'framer-motion'
-import { photos, type GalleryPhoto } from '@/content/gallery'
+import { photos } from '@/content/gallery'
 import { services, type ServiceSlug } from '@/content/services'
 import { CITY_SLUGS, type CitySlug } from '@/content/cities'
 import { Lightbox, type LightboxPhoto } from '@/components/ui/Lightbox'
@@ -129,7 +129,7 @@ export function PortfolioContent() {
             </div>
 
             <div className="flex items-center gap-3">
-              <span className="font-[var(--font-mono)] text-xs text-ink-subtle">
+              <span className="font-mono text-xs text-ink-subtle">
                 {filtered.length} project{filtered.length !== 1 ? 's' : ''}
               </span>
               {(serviceFilter !== 'all' || cityFilter !== 'all') && (
@@ -137,7 +137,7 @@ export function PortfolioContent() {
                   onClick={() => {
                     router.push('/portfolio', { scroll: false })
                   }}
-                  className="text-[10px] font-[var(--font-mono)] uppercase tracking-wider text-blue hover:text-blue-deep transition-colors"
+                  className="text-[10px] font-mono uppercase tracking-wider text-blue hover:text-blue-deep transition-colors"
                 >
                   Clear filters ×
                 </button>
@@ -207,7 +207,7 @@ export function PortfolioContent() {
           {filtered.length === 0 ? (
             <div className="py-32 text-center">
               <span className="block text-6xl mb-4 opacity-30">∅</span>
-              <p className="text-ink-muted text-sm font-[var(--font-mono)]">
+              <p className="text-ink-muted text-sm font-mono">
                 No projects match the current filters.
               </p>
               <button
@@ -250,14 +250,14 @@ export function PortfolioContent() {
 
                     {/* Top-left: project number */}
                     <div className="absolute top-3 left-3 opacity-0 group-hover:opacity-100 transition-all duration-300 translate-y-2 group-hover:translate-y-0">
-                      <span className="font-[var(--font-mono)] text-[10px] text-white/50 tracking-wider">
+                      <span className="font-mono text-[10px] text-white/50 tracking-wider">
                         {String(idx + 1).padStart(2, '0')}
                       </span>
                     </div>
 
                     {/* Top-right: service tag */}
                     <div className="absolute top-3 right-3 opacity-0 group-hover:opacity-100 transition-all duration-300 translate-y-2 group-hover:translate-y-0">
-                      <span className="px-2 py-0.5 rounded bg-white/10 backdrop-blur-sm text-[10px] font-[var(--font-mono)] text-white/70 uppercase tracking-wider">
+                      <span className="px-2 py-0.5 rounded bg-white/10 backdrop-blur-sm text-[10px] font-mono text-white/70 uppercase tracking-wider">
                         {SERVICE_SHORT[photo.service] ?? photo.service}
                       </span>
                     </div>
@@ -268,11 +268,11 @@ export function PortfolioContent() {
                         {photo.alt}
                       </p>
                       <div className="flex items-center gap-2">
-                        <span className="text-white/40 text-[10px] font-[var(--font-mono)] uppercase tracking-wider">
+                        <span className="text-white/40 text-[10px] font-mono uppercase tracking-wider">
                           {CITY_LABELS[photo.city]}
                         </span>
                         <span className="text-white/20">·</span>
-                        <span className="text-white/40 text-[10px] font-[var(--font-mono)]">
+                        <span className="text-white/40 text-[10px] font-mono">
                           {photo.year}
                         </span>
                       </div>
@@ -281,7 +281,7 @@ export function PortfolioContent() {
                     {/* Featured indicator */}
                     {photo.featured && (
                       <div className="absolute top-3 left-3 group-hover:opacity-0 transition-opacity">
-                        <div className="w-2 h-2 rounded-full bg-[var(--adjeet-blue)] shadow-[0_0_8px_rgba(30,127,184,0.6)]" />
+                        <div className="w-2 h-2 rounded-full bg-blue shadow-[0_0_8px_rgba(30,127,184,0.6)]" />
                       </div>
                     )}
                   </motion.button>

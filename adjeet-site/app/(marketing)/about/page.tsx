@@ -95,7 +95,7 @@ export default function AboutPage() {
         {/* Giant ghost year */}
         <div className="absolute top-1/2 right-0 -translate-y-1/2 translate-x-[5%] select-none pointer-events-none">
           <span
-            className="block font-[var(--font-fraunces)] font-black text-transparent leading-none"
+            className="block font-serif font-black text-transparent leading-none"
             style={{
               fontSize: 'clamp(12rem, 30vw, 35rem)',
               WebkitTextStroke: '1px rgba(201,150,46,0.06)',
@@ -109,7 +109,7 @@ export default function AboutPage() {
           {/* Eyebrow */}
           <div className="flex items-center gap-4 mb-10">
             <div className="w-20 h-[1px] bg-ochre/60" />
-            <span className="text-[10px] font-[var(--font-mono)] uppercase tracking-[0.3em] text-ochre/60">
+            <span className="text-[10px] font-mono uppercase tracking-[0.3em] text-ochre/60">
               Est. 1990 · Siliguri, West Bengal
             </span>
           </div>
@@ -117,19 +117,19 @@ export default function AboutPage() {
           {/* Headline — stacked, oversized */}
           <h1 className="mb-8">
             <span
-              className="block font-[var(--font-fraunces)] font-black text-white leading-[0.82] tracking-tight"
+              className="block font-serif font-black text-white leading-[0.82] tracking-tight"
               style={{ fontSize: 'clamp(3rem, 8vw, 7rem)' }}
             >
               We don&apos;t just
             </span>
             <span
-              className="block font-[var(--font-fraunces)] font-black text-white leading-[0.82] tracking-tight"
+              className="block font-serif font-black text-white leading-[0.82] tracking-tight"
               style={{ fontSize: 'clamp(3rem, 8vw, 7rem)' }}
             >
               make signs.
             </span>
             <span
-              className="block font-[var(--font-fraunces)] font-black leading-[0.82] tracking-tight mt-2"
+              className="block font-serif font-black leading-[0.82] tracking-tight mt-2"
               style={{
                 fontSize: 'clamp(3rem, 8vw, 7rem)',
                 background: 'linear-gradient(135deg, var(--ochre), #E8C06A)',
@@ -154,10 +154,10 @@ export default function AboutPage() {
               { val: '12', label: 'Districts' },
             ].map(s => (
               <div key={s.label}>
-                <span className="block font-[var(--font-fraunces)] text-3xl font-black text-white leading-none">
+                <span className="block font-serif text-3xl font-black text-white leading-none">
                   {s.val}
                 </span>
-                <span className="block text-[10px] font-[var(--font-mono)] uppercase tracking-[0.2em] text-white/25 mt-1">
+                <span className="block text-[10px] font-mono uppercase tracking-[0.2em] text-white/25 mt-1">
                   {s.label}
                 </span>
               </div>
@@ -168,7 +168,7 @@ export default function AboutPage() {
         {/* Scroll indicator */}
         <div className="absolute bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2">
           <div className="w-[1px] h-10 bg-gradient-to-b from-transparent to-white/20" />
-          <span className="text-[9px] font-[var(--font-mono)] uppercase tracking-[0.3em] text-white/20">
+          <span className="text-[9px] font-mono uppercase tracking-[0.3em] text-white/20">
             Scroll
           </span>
         </div>
@@ -188,13 +188,13 @@ export default function AboutPage() {
             {/* Left — sticky label */}
             <div className="lg:col-span-2 lg:sticky lg:top-24">
               <div className="flex items-center gap-4 mb-6">
-                <div className="w-12 h-[1px] bg-[var(--adjeet-blue)]" />
-                <span className="text-[10px] font-[var(--font-mono)] uppercase tracking-[0.3em] text-ink-subtle">
+                <div className="w-12 h-[1px] bg-blue" />
+                <span className="text-[10px] font-mono uppercase tracking-[0.3em] text-ink-subtle">
                   Our Story
                 </span>
               </div>
               <h2
-                className="font-[var(--font-fraunces)] font-black text-ink leading-[0.9] mb-6"
+                className="font-serif font-black text-ink leading-[0.9] mb-6"
                 style={{ fontSize: 'clamp(2rem, 4vw, 3.5rem)' }}
               >
                 Built by hand.<br />
@@ -233,7 +233,7 @@ export default function AboutPage() {
                 <div key={i} className="relative">
                   {block.highlight && (
                     <div className="mb-4 flex items-end gap-3">
-                      <span className="font-[var(--font-fraunces)] text-4xl font-black text-blue leading-none">
+                      <span className="font-serif text-4xl font-black text-blue leading-none">
                         {block.highlight}
                       </span>
                       <span className="text-xs text-ink-subtle pb-1">{block.highlightLabel}</span>
@@ -266,12 +266,12 @@ export default function AboutPage() {
         <div className="relative max-w-content mx-auto px-6 mb-16">
           <div className="flex items-center gap-4 mb-6">
             <div className="w-12 h-[1px] bg-ochre/60" />
-            <span className="text-[10px] font-[var(--font-mono)] uppercase tracking-[0.3em] text-white/40">
+            <span className="text-[10px] font-mono uppercase tracking-[0.3em] text-white/40">
               Milestones
             </span>
           </div>
           <h2
-            className="font-[var(--font-fraunces)] font-black text-white leading-[0.9]"
+            className="font-serif font-black text-white leading-[0.9]"
             style={{ fontSize: 'clamp(2rem, 5vw, 4rem)' }}
           >
             35 years of<br />milestones.
@@ -292,7 +292,7 @@ export default function AboutPage() {
                 >
                   {/* Year — massive */}
                   <span
-                    className="block font-[var(--font-fraunces)] font-black leading-none mb-4"
+                    className="block font-serif font-black leading-none mb-4"
                     style={{
                       fontSize: '3.5rem',
                       background: `linear-gradient(135deg, ${i % 2 === 0 ? 'var(--adjeet-blue)' : 'var(--ochre)'}, rgba(255,255,255,0.2))`,
@@ -318,13 +318,13 @@ export default function AboutPage() {
       <section className="py-24">
         <div className="mx-auto max-w-content px-6">
           <div className="flex items-center gap-4 mb-6">
-            <div className="w-12 h-[1px] bg-[var(--adjeet-blue)]" />
-            <span className="text-[10px] font-[var(--font-mono)] uppercase tracking-[0.3em] text-ink-subtle">
+            <div className="w-12 h-[1px] bg-blue" />
+            <span className="text-[10px] font-mono uppercase tracking-[0.3em] text-ink-subtle">
               Why AD-JEET
             </span>
           </div>
           <h2
-            className="font-[var(--font-fraunces)] font-black text-ink leading-[0.9] mb-16"
+            className="font-serif font-black text-ink leading-[0.9] mb-16"
             style={{ fontSize: 'clamp(2rem, 5vw, 4rem)' }}
           >
             What sets us<br />apart.
@@ -338,7 +338,7 @@ export default function AboutPage() {
               >
                 {/* Background number */}
                 <span
-                  className="absolute -top-4 -right-2 font-[var(--font-fraunces)] font-black text-transparent leading-none select-none pointer-events-none"
+                  className="absolute -top-4 -right-2 font-serif font-black text-transparent leading-none select-none pointer-events-none"
                   style={{
                     fontSize: '8rem',
                     WebkitTextStroke: '1px rgba(30,127,184,0.06)',
@@ -349,7 +349,7 @@ export default function AboutPage() {
 
                 <div className="relative">
                   <span className="text-3xl mb-4 block">{v.icon}</span>
-                  <span className="text-[10px] font-[var(--font-mono)] uppercase tracking-[0.2em] text-blue mb-3 block">
+                  <span className="text-[10px] font-mono uppercase tracking-[0.2em] text-blue mb-3 block">
                     {v.number}
                   </span>
                   <h3 className="text-xl font-bold text-ink mb-3">{v.title}</h3>
@@ -370,10 +370,10 @@ export default function AboutPage() {
           <div className="grid grid-cols-3 lg:grid-cols-6 gap-6 sm:gap-8 text-center">
             {STATS.map(s => (
               <div key={s.label}>
-                <span className="block font-[var(--font-fraunces)] text-3xl sm:text-4xl font-black text-ink leading-none mb-1">
+                <span className="block font-serif text-3xl sm:text-4xl font-black text-ink leading-none mb-1">
                   {s.value}
                 </span>
-                <span className="block text-[10px] font-[var(--font-mono)] uppercase tracking-[0.15em] text-ink-subtle">
+                <span className="block text-[10px] font-mono uppercase tracking-[0.15em] text-ink-subtle">
                   {s.label}
                 </span>
               </div>
@@ -390,12 +390,12 @@ export default function AboutPage() {
             <div>
               <div className="flex items-center gap-4 mb-6">
                 <div className="w-12 h-[1px] bg-ochre/60" />
-                <span className="text-[10px] font-[var(--font-mono)] uppercase tracking-[0.3em] text-ink-subtle">
+                <span className="text-[10px] font-mono uppercase tracking-[0.3em] text-ink-subtle">
                   The Workshop
                 </span>
               </div>
               <h2
-                className="font-[var(--font-fraunces)] font-black text-ink leading-[0.9] mb-6"
+                className="font-serif font-black text-ink leading-[0.9] mb-6"
                 style={{ fontSize: 'clamp(2rem, 4vw, 3rem)' }}
               >
                 Where signs<br />come to life.
@@ -422,12 +422,12 @@ export default function AboutPage() {
                 ].map(spec => (
                   <div key={spec.label} className="rounded-xl border border-rule p-4">
                     <div className="flex items-baseline gap-1 mb-0.5">
-                      <span className="font-[var(--font-fraunces)] text-2xl font-black text-ink leading-none">
+                      <span className="font-serif text-2xl font-black text-ink leading-none">
                         {spec.val}
                       </span>
                       <span className="text-xs text-ink-subtle">{spec.unit}</span>
                     </div>
-                    <span className="text-[10px] font-[var(--font-mono)] uppercase tracking-wider text-ink-subtle">
+                    <span className="text-[10px] font-mono uppercase tracking-wider text-ink-subtle">
                       {spec.label}
                     </span>
                   </div>
@@ -440,25 +440,25 @@ export default function AboutPage() {
               <div className="grid grid-cols-2 gap-3">
                 <div className="rounded-2xl bg-gradient-to-br from-slate to-slate/60 aspect-[3/4] flex items-end p-6">
                   <div>
-                    <span className="text-[10px] font-[var(--font-mono)] uppercase tracking-wider text-white/40 block mb-1">Metal</span>
+                    <span className="text-[10px] font-mono uppercase tracking-wider text-white/40 block mb-1">Metal</span>
                     <span className="text-white font-bold text-sm">Cutting & Welding</span>
                   </div>
                 </div>
                 <div className="rounded-2xl bg-gradient-to-br from-blue to-blue-deep aspect-square flex items-end p-6 mt-8">
                   <div>
-                    <span className="text-[10px] font-[var(--font-mono)] uppercase tracking-wider text-white/40 block mb-1">LED</span>
+                    <span className="text-[10px] font-mono uppercase tracking-wider text-white/40 block mb-1">LED</span>
                     <span className="text-white font-bold text-sm">Wiring & Testing</span>
                   </div>
                 </div>
                 <div className="rounded-2xl bg-gradient-to-br from-ochre to-ochre/60 aspect-square flex items-end p-6 -mt-4">
                   <div>
-                    <span className="text-[10px] font-[var(--font-mono)] uppercase tracking-wider text-white/40 block mb-1">Acrylic</span>
+                    <span className="text-[10px] font-mono uppercase tracking-wider text-white/40 block mb-1">Acrylic</span>
                     <span className="text-white font-bold text-sm">Routing & Bending</span>
                   </div>
                 </div>
                 <div className="rounded-2xl bg-gradient-to-br from-sage to-sage/60 aspect-[3/4] flex items-end p-6 mt-4">
                   <div>
-                    <span className="text-[10px] font-[var(--font-mono)] uppercase tracking-wider text-white/40 block mb-1">Paint</span>
+                    <span className="text-[10px] font-mono uppercase tracking-wider text-white/40 block mb-1">Paint</span>
                     <span className="text-white font-bold text-sm">Finish & QC</span>
                   </div>
                 </div>
@@ -474,7 +474,7 @@ export default function AboutPage() {
 
       {/* ═══════════════════ CTA — Close the loop ═══════════════════ */}
       <section className="py-24 relative overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-br from-[var(--adjeet-blue)] via-[var(--adjeet-blue-deep)] to-[#08192a]" />
+        <div className="absolute inset-0 bg-gradient-to-br from-blue via-blue-deep to-[#08192a]" />
         <div
           className="absolute inset-0 opacity-10"
           style={{
@@ -485,11 +485,11 @@ export default function AboutPage() {
 
         <div className="relative max-w-content mx-auto px-6">
           <div className="max-w-2xl mx-auto text-center">
-            <span className="inline-block text-[10px] font-[var(--font-mono)] uppercase tracking-[0.3em] text-white/40 mb-6">
+            <span className="inline-block text-[10px] font-mono uppercase tracking-[0.3em] text-white/40 mb-6">
               Ready to start?
             </span>
             <h2
-              className="font-[var(--font-fraunces)] font-black text-white leading-[0.9] mb-6"
+              className="font-serif font-black text-white leading-[0.9] mb-6"
               style={{ fontSize: 'clamp(2.5rem, 6vw, 5rem)' }}
             >
               Your sign is<br />one call away.
@@ -502,7 +502,7 @@ export default function AboutPage() {
                 href={waUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center justify-center rounded-xl bg-white text-[var(--adjeet-blue-deep)] font-bold px-8 py-4 text-sm hover:bg-white/90 transition-colors active:scale-[0.98]"
+                className="inline-flex items-center justify-center rounded-xl bg-white text-blue-deep font-bold px-8 py-4 text-sm hover:bg-white/90 transition-colors active:scale-[0.98]"
               >
                 Chat on WhatsApp
               </a>
@@ -513,7 +513,7 @@ export default function AboutPage() {
                 Send a message →
               </Link>
             </div>
-            <p className="mt-8 text-white/30 text-xs font-[var(--font-mono)]">
+            <p className="mt-8 text-white/30 text-xs font-mono">
               Same-day site visits in Siliguri · One-year LED warranty · Free quotes
             </p>
           </div>

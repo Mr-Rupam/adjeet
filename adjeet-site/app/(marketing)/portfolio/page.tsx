@@ -2,7 +2,6 @@ import { Suspense } from 'react'
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import { PortfolioContent } from './PortfolioContent'
-import { photos } from '@/content/gallery'
 import { services } from '@/content/services'
 import { defaultWhatsAppUrl } from '@/lib/whatsapp'
 import { buildBreadcrumbJsonLd, siteConfig } from '@/lib/seo'
@@ -28,8 +27,6 @@ const STATS = [
 
 export default function PortfolioPage() {
   const waUrl = defaultWhatsAppUrl()
-  const featuredCount = photos.filter(p => p.featured).length
-  const totalCount = photos.length
 
   return (
     <>
@@ -58,13 +55,13 @@ export default function PortfolioPage() {
           {/* Radial spotlight */}
           <div className="absolute inset-0 bg-[radial-gradient(ellipse_80%_50%_at_20%_80%,rgba(30,127,184,0.15),transparent)]" />
           {/* Diagonal accent line */}
-          <div className="absolute top-0 right-0 w-[1px] h-full bg-gradient-to-b from-transparent via-[var(--adjeet-blue)] to-transparent opacity-20 translate-x-[-120px]" />
+          <div className="absolute top-0 right-0 w-[1px] h-full bg-gradient-to-b from-transparent via-blue to-transparent opacity-20 translate-x-[-120px]" />
         </div>
 
         {/* Oversized background number */}
         <div className="absolute top-1/2 right-0 -translate-y-1/2 translate-x-[10%] select-none pointer-events-none">
           <span
-            className="block font-[var(--font-fraunces)] font-black text-transparent leading-none"
+            className="block font-serif font-black text-transparent leading-none"
             style={{
               fontSize: 'clamp(15rem, 35vw, 40rem)',
               WebkitTextStroke: '1px rgba(30,127,184,0.08)',
@@ -78,8 +75,8 @@ export default function PortfolioPage() {
         <div className="relative z-10 mx-auto w-full max-w-content px-6 pb-16 pt-32">
           {/* Eyebrow with animated line */}
           <div className="flex items-center gap-4 mb-8">
-            <div className="w-16 h-[1px] bg-[var(--adjeet-blue)]" />
-            <span className="text-[10px] font-[var(--font-mono)] uppercase tracking-[0.3em] text-white/40">
+            <div className="w-16 h-[1px] bg-blue" />
+            <span className="text-[10px] font-mono uppercase tracking-[0.3em] text-white/40">
               Portfolio / {new Date().getFullYear()}
             </span>
           </div>
@@ -87,13 +84,13 @@ export default function PortfolioPage() {
           {/* Main headline — massive, editorial */}
           <h1 className="mb-6">
             <span
-              className="block font-[var(--font-fraunces)] font-black text-white leading-[0.85] tracking-tight"
+              className="block font-serif font-black text-white leading-[0.85] tracking-tight"
               style={{ fontSize: 'clamp(3.5rem, 10vw, 9rem)' }}
             >
               Our
             </span>
             <span
-              className="block font-[var(--font-fraunces)] font-black leading-[0.85] tracking-tight"
+              className="block font-serif font-black leading-[0.85] tracking-tight"
               style={{
                 fontSize: 'clamp(3.5rem, 10vw, 9rem)',
                 background: 'linear-gradient(135deg, var(--adjeet-blue), #7EC8E3)',
@@ -114,10 +111,10 @@ export default function PortfolioPage() {
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-6 sm:gap-10 mb-12">
             {STATS.map((stat, i) => (
               <div key={i} className="group">
-                <span className="block font-[var(--font-fraunces)] text-4xl sm:text-5xl font-black text-white leading-none mb-1">
+                <span className="block font-serif text-4xl sm:text-5xl font-black text-white leading-none mb-1">
                   {stat.number}
                 </span>
-                <span className="block text-[10px] font-[var(--font-mono)] uppercase tracking-[0.2em] text-white/30">
+                <span className="block text-[10px] font-mono uppercase tracking-[0.2em] text-white/30">
                   {stat.label}
                 </span>
                 <span className="block text-[10px] text-white/20 mt-0.5">{stat.suffix}</span>
@@ -128,7 +125,7 @@ export default function PortfolioPage() {
           {/* Scroll cue */}
           <div className="flex items-center gap-3 text-white/20">
             <div className="w-[1px] h-8 bg-white/20 animate-pulse" />
-            <span className="text-[10px] font-[var(--font-mono)] uppercase tracking-[0.3em]">
+            <span className="text-[10px] font-mono uppercase tracking-[0.3em]">
               Scroll to explore
             </span>
           </div>
@@ -146,7 +143,7 @@ export default function PortfolioPage() {
       <section className="py-8 border-b border-rule bg-paper relative z-10">
         <div className="mx-auto max-w-content px-6">
           <div className="flex items-center gap-6 overflow-x-auto no-scrollbar pb-2">
-            <span className="flex-shrink-0 text-[10px] font-[var(--font-mono)] uppercase tracking-[0.2em] text-ink-subtle">
+            <span className="flex-shrink-0 text-[10px] font-mono uppercase tracking-[0.2em] text-ink-subtle">
               Jump to:
             </span>
             {services.slice(0, 6).map((s, i) => (
@@ -155,7 +152,7 @@ export default function PortfolioPage() {
                 href={`/portfolio?service=${s.slug}`}
                 className="flex-shrink-0 group flex items-center gap-2 text-sm text-ink-muted hover:text-blue transition-colors"
               >
-                <span className="font-[var(--font-mono)] text-[10px] text-ink-subtle/50 group-hover:text-blue/50">
+                <span className="font-mono text-[10px] text-ink-subtle/50 group-hover:text-blue/50">
                   {String(i + 1).padStart(2, '0')}
                 </span>
                 <span className="font-medium">{s.name}</span>
@@ -170,7 +167,7 @@ export default function PortfolioPage() {
         fallback={
           <div className="py-32 text-center">
             <div className="inline-block w-8 h-8 border-2 border-blue/30 border-t-blue rounded-full animate-spin" />
-            <p className="mt-4 text-ink-muted text-sm font-[var(--font-mono)]">Loading gallery…</p>
+            <p className="mt-4 text-ink-muted text-sm font-mono">Loading gallery…</p>
           </div>
         }
       >
@@ -193,14 +190,14 @@ export default function PortfolioPage() {
 
         <div className="relative max-w-content mx-auto px-6">
           <div className="flex items-center gap-4 mb-12">
-            <div className="w-12 h-[1px] bg-[var(--adjeet-blue)]" />
-            <span className="text-[10px] font-[var(--font-mono)] uppercase tracking-[0.3em] text-white/40">
+            <div className="w-12 h-[1px] bg-blue" />
+            <span className="text-[10px] font-mono uppercase tracking-[0.3em] text-white/40">
               Our Process
             </span>
           </div>
 
           <h2
-            className="font-[var(--font-fraunces)] font-black text-white leading-[0.9] mb-16"
+            className="font-serif font-black text-white leading-[0.9] mb-16"
             style={{ fontSize: 'clamp(2rem, 5vw, 4rem)' }}
           >
             From sketch<br />to street.
@@ -215,7 +212,7 @@ export default function PortfolioPage() {
             ].map(item => (
               <div key={item.step} className="group relative">
                 <span
-                  className="block font-[var(--font-fraunces)] font-black text-transparent leading-none mb-4"
+                  className="block font-serif font-black text-transparent leading-none mb-4"
                   style={{
                     fontSize: '5rem',
                     WebkitTextStroke: '1px rgba(30,127,184,0.15)',
@@ -225,7 +222,7 @@ export default function PortfolioPage() {
                 </span>
                 <h3 className="text-white font-bold text-lg mb-2 -mt-4">{item.title}</h3>
                 <p className="text-white/40 text-sm leading-relaxed">{item.desc}</p>
-                <div className="absolute top-0 left-0 w-[1px] h-full bg-gradient-to-b from-[var(--adjeet-blue)]/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+                <div className="absolute top-0 left-0 w-[1px] h-full bg-gradient-to-b from-blue/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
               </div>
             ))}
           </div>
@@ -234,7 +231,7 @@ export default function PortfolioPage() {
 
       {/* ═══════════════════ CTA — Bold close ═══════════════════ */}
       <section className="py-24 relative overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-br from-[var(--adjeet-blue)] via-[var(--adjeet-blue-deep)] to-[#0a2a40]" />
+        <div className="absolute inset-0 bg-gradient-to-br from-blue via-blue-deep to-[#0a2a40]" />
         {/* Grid texture */}
         <div
           className="absolute inset-0 opacity-10"
@@ -245,11 +242,11 @@ export default function PortfolioPage() {
         />
 
         <div className="relative max-w-content mx-auto px-6 text-center">
-          <span className="inline-block text-[10px] font-[var(--font-mono)] uppercase tracking-[0.3em] text-white/50 mb-6">
+          <span className="inline-block text-[10px] font-mono uppercase tracking-[0.3em] text-white/50 mb-6">
             Ready to start?
           </span>
           <h2
-            className="font-[var(--font-fraunces)] font-black text-white leading-[0.9] mb-6"
+            className="font-serif font-black text-white leading-[0.9] mb-6"
             style={{ fontSize: 'clamp(2rem, 6vw, 5rem)' }}
           >
             Let&apos;s build<br />your sign.
@@ -262,7 +259,7 @@ export default function PortfolioPage() {
               href={waUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center justify-center rounded bg-white text-[var(--adjeet-blue-deep)] font-bold px-8 py-4 text-sm hover:bg-white/90 transition-colors active:scale-[0.98]"
+              className="inline-flex items-center justify-center rounded bg-white text-blue-deep font-bold px-8 py-4 text-sm hover:bg-white/90 transition-colors active:scale-[0.98]"
             >
               Chat on WhatsApp
             </a>

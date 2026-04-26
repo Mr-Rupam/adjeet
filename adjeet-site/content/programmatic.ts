@@ -2,7 +2,7 @@ import { CitySlug } from '@/content/cities'
 
 export type ProgrammaticCity = CitySlug
 
-const PROG_SERVICES = ['glow-sign-boards', 'acp-led-signage', 'flex-printing', 'vehicle-branding', 'f-pole-installation'] as const
+export const PROG_SERVICES = ['glow-sign-boards', 'acp-led-signage', 'flex-printing', 'vehicle-branding', 'f-pole-installation'] as const
 
 export type ProgrammaticService = (typeof PROG_SERVICES)[number]
 

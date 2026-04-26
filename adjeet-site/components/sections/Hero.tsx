@@ -91,7 +91,7 @@ export function Hero() {
         {/* Manifesto headline */}
         <h1 className="sandbox-manifesto">
           Type your brand.<br />
-          <span className="sandbox-manifesto__ital">We'll show you</span> how it looks
+          <span className="sandbox-manifesto__ital">We&apos;ll show you</span> how it looks
           <br />
           <span className="sandbox-manifesto__hl">lit</span>,{' '}
           <span className="sandbox-manifesto__hl">painted</span>, or{' '}

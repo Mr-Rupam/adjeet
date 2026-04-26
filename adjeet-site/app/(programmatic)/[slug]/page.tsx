@@ -76,7 +76,7 @@ export default async function ProgrammaticPage({ params }: { params: Promise<Par
               <li className="text-white/80">{cityLabel}</li>
             </ol>
           </nav>
-          <h1 className="text-4xl md:text-5xl font-[var(--font-fraunces)] font-bold text-white mb-4 leading-tight">
+          <h1 className="text-4xl md:text-5xl font-serif font-bold text-white mb-4 leading-tight">
             {page.headline}
           </h1>
         </div>
@@ -88,7 +88,7 @@ export default async function ProgrammaticPage({ params }: { params: Promise<Par
           <dl className="flex flex-wrap gap-12">
             {page.stats.map(s => (
               <div key={s.label}>
-                <dd className="text-3xl font-bold font-[var(--font-fraunces)] text-ink">{s.value}</dd>
+                <dd className="text-3xl font-bold font-serif text-ink">{s.value}</dd>
                 <dt className="text-xs text-ink-subtle mt-1">{s.label}</dt>
               </div>
             ))}
