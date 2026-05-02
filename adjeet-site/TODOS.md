@@ -17,7 +17,7 @@ Tracked from /plan-design-review session (2026-05-01). See DESIGN.md for the des
 **Done 2026-05-02.** DESIGN.md created at adjeet-site/DESIGN.md with font pairing, CSS approach matrix, token colors, corner radius, animation, accessibility, Hero CTA hierarchy, SectionLabel spec, and section transition rules.
 
 ### [x] Redesign ClientShowcase to match editorial system
-**Done 2026-05-02.** Rounded-full pills removed, star emoji badge removed, heading updated to "Airtel. Jio. Havells. They chose AD-JEET for North Bengal.", layout left-aligned, keyframe animations moved to ClientShowcase.module.css with prefers-reduced-motion + pause-on-hover.
+**Done 2026-05-02 (v2).** Sharp rectangular plates (no rounded corners), amber 3px left-border for national brands (Airtel, Jio, Havells, Vivo, OYO, Emami, Adani), rule-color left-border for regional brands. Fraunces for brand name, JetBrains Mono for sector tag. Ink-fill primary button replacing blue rounded button. Sector-color mapping removed.
 
 ### [ ] Integrate HeroSandbox into page.tsx as second section
 **Deferred 2026-05-02** (removed from homepage per /plan-eng-review). HeroSandbox kept in repo as untracked files. B2B signage buyers convert via WhatsApp, not interactive demos. The three "Before shipping HeroSandbox" issues must be resolved before it can ship anywhere.
@@ -26,8 +26,8 @@ Tracked from /plan-design-review session (2026-05-01). See DESIGN.md for the des
 
 ## From 2026-05-02 plan-design-review
 
-### [x] Fix Hero CTA visual hierarchy
-**Done 2026-05-02.** Swapped CSS treatments in Hero.module.css: `.whatsappAction` now has `background: var(--hero-paper); color: var(--hero-ink)` (visually dominant paper fill). `.primaryAction` ("Our Services") now has dark semi-transparent treatment.
+### [x] Redesign Hero (clean slate)
+**Done 2026-05-02.** Full rewrite of Hero.tsx + Hero.module.css. Single decorative element: 4px amber left bar (::before). Photo as texture at brightness(0.18). Large Khand heading "North / Bengal's / sign maker." Districts paragraph. Amber-fill WhatsApp primary CTA, outlined secondary, text tertiary. metaBar / copyStack / processBar three-row grid. No blueprint grid, signal field, specimen box, or competing effects.
 
 ### [x] SelectedWork: empty state (0 photos)
 **Done 2026-05-02.** Added `if (featured.length === 0)` early return with warm copy "Photographing recent projects — see our work in person." and a WhatsApp link.
