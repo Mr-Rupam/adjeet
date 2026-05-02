@@ -20,20 +20,8 @@ const heroBody = Anek_Latin({
   preload: true,
 })
 
-const SERVICES = [
-  'Glow Sign Boards',
-  'ACP/LED Signage',
-  'Flex Printing',
-  'Vehicle Branding',
-  'F-Pole Installation',
-  'Wall Painting',
-]
-
-const CITIES = ['Siliguri', 'Jalpaiguri', 'Cooch Behar', 'Darjeeling', 'Malda']
-
 export function Hero() {
   const waUrl = defaultWhatsAppUrl()
-  const marqueeItems = [...SERVICES, ...CITIES]
 
   return (
     <section
@@ -43,7 +31,8 @@ export function Hero() {
     >
       <Image
         src="/og-image.jpg"
-        alt="AD-JEET fabrication workshop entrance in Siliguri"
+        alt=""
+        aria-hidden="true"
         fill
         priority
         sizes="100vw"
@@ -51,40 +40,35 @@ export function Hero() {
         blurDataURL="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAIAAACQd1PeAAAADElEQVR4nGOQklEDAACwAF31pX+jAAAAAElFTkSuQmCC"
         className={styles.photo}
       />
-      <div className={styles.inkWash} aria-hidden="true" />
-      <div className={styles.blueprint} aria-hidden="true" />
-      <div className={styles.edgeGlow} aria-hidden="true" />
-      <div className={styles.signalField} aria-hidden="true">
-        <span className={styles.signalWord}>VISIBLE</span>
-        <span className={styles.measureLine} />
-        <span className={styles.measurePin}>26.7271 N</span>
-        <span className={styles.measurePin}>88.3953 E</span>
-      </div>
 
       <div className={styles.shell}>
-        <div className={styles.metaBar} aria-label="AD-JEET company facts">
-          <span>AD-JEET Branding Solution</span>
-          <span>Siliguri workshop</span>
-          <span>Since 1990</span>
+        {/* Top bar: brand + year */}
+        <div className={styles.metaBar} aria-label="Company info">
+          <span className={styles.metaBrand}>AD-JEET Branding Solution</span>
+          <span className={styles.metaYear}>Since 1990</span>
         </div>
 
+        {/* Main copy block */}
         <div className={styles.copyStack}>
-          <p className={styles.eyebrow}>Signage fabrication and outdoor advertising</p>
+          <p className={styles.eyebrow}>Signage fabrication &middot; outdoor advertising</p>
+
           <h1 id="home-hero-heading" className={styles.heading}>
-            North Bengal signage that gets seen, built in Siliguri since 1990
+            North<br />
+            Bengal&rsquo;s<br />
+            sign maker.
           </h1>
-          <p className={styles.lede}>
-            AD-JEET designs, fabricates, prints, and installs glow sign boards,
-            ACP/LED signage, flex printing, vehicle branding, wall painting, and
-            F-pole structures across Siliguri, Jalpaiguri, Cooch Behar,
-            Darjeeling, and Malda.
+
+          <p className={styles.districts} aria-label="Coverage districts">
+            Siliguri &middot; Jalpaiguri &middot; Cooch Behar &middot; Darjeeling &middot; Malda
           </p>
 
-          <div className={styles.actionRow} aria-label="Hero calls to action">
-            <Link href="/services" className={styles.primaryAction}>
-              Our Services
-              <span aria-hidden="true">&rarr;</span>
-            </Link>
+          <p className={styles.lede}>
+            Glow sign boards, ACP&thinsp;/&thinsp;LED signage, flex printing, vehicle
+            branding, F-pole structures, wall murals. Designed, fabricated, and
+            installed by our own team at our Siliguri workshop.
+          </p>
+
+          <div className={styles.actionRow} aria-label="Calls to action">
             <a
               href={waUrl}
               target="_blank"
@@ -93,32 +77,24 @@ export function Hero() {
             >
               Get Quote on WhatsApp
             </a>
+            <Link href="/services" className={styles.servicesAction}>
+              Our Services <span aria-hidden="true">&rarr;</span>
+            </Link>
             <Link href="/portfolio" className={styles.textAction}>
               View Portfolio
             </Link>
           </div>
-
-          <div className={styles.processRail} aria-label="AD-JEET process">
-            <span>Survey</span>
-            <span>Fabricate</span>
-            <span>Install</span>
-            <span>Maintain</span>
-          </div>
         </div>
 
-        <div className={styles.lowerDeck}>
-          <div className={styles.specimen} aria-hidden="true">
-            <span className={styles.specimenLabel}>Lit face sample</span>
-            <span className={styles.specimenWord}>AD-JEET</span>
-          </div>
-        </div>
-      </div>
-
-      <div className={styles.ticker} aria-label="Services and coverage areas">
-        <div className={styles.tickerTrack}>
-          {[...marqueeItems, ...marqueeItems].map((item, index) => (
-            <span key={`${item}-${index}`}>{item}</span>
-          ))}
+        {/* Process steps at bottom */}
+        <div className={styles.processBar} aria-label="Our process">
+          <span>Survey</span>
+          <span className={styles.dot} aria-hidden="true" />
+          <span>Fabricate</span>
+          <span className={styles.dot} aria-hidden="true" />
+          <span>Install</span>
+          <span className={styles.dot} aria-hidden="true" />
+          <span>Maintain</span>
         </div>
       </div>
     </section>

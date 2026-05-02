@@ -27,7 +27,7 @@ Both hero fonts are loaded with `variable` CSS custom properties (`--font-hero-d
 **Known examples:**
 - `Hero.module.css` — dark editorial, OKLCH
 - `Hero.sandbox.module.css` — dark editorial, OKLCH, three material themes
-- `ClientShowcase.module.css` — **exception**: Tailwind layout + a module file for global keyframe animations only (keyframes cannot live in Tailwind)
+- `ClientShowcase.module.css` — light section, but uses CSS Module for button styles + client plate styles + carousel keyframes (complex enough to warrant a module)
 
 ---
 
@@ -59,9 +59,12 @@ Dark mode equivalents are defined in `design/tokens.css` under `[data-theme="dar
 
 ## Corner Radius Policy
 
-**No `rounded-full`** anywhere in this codebase. The design language is industrial / editorial — sharp or minimally-rounded corners only.
+**No rounded corners on UI elements.** The design language is industrial / editorial — sharp edges only on buttons, plates, and cards.
 
-Allowed: `rounded` (4px), `rounded-sm` (2px), or no rounding. Never `rounded-full` (pill shape).
+- **Buttons:** `border-radius: 0` — never use `rounded`, `rounded-sm`, or `rounded-full`
+- **Client plates:** sharp (`border-radius: 0`)
+- **Image containers only:** `border-radius: 2px` is acceptable for photo crops (SelectedWork grid)
+- **Never:** `rounded-full` (pill shapes), `rounded-lg`, `rounded-md`
 
 ---
 
@@ -88,11 +91,11 @@ This is a documented design decision (2026-05-02). The contrast IS the rhythm.
 ## Hero CTA Hierarchy
 
 The Hero has three CTAs in `.actionRow`:
-1. **Primary: "Get Quote on WhatsApp"** — filled button, adjeet-blue or paper fill, highest visual weight. B2B signage buyers convert via WhatsApp call first.
-2. **Secondary: "Our Services →"** — outlined/ghost button, border-rule, ink text.
-3. **Tertiary: "View Portfolio"** — text-only link, inline.
+1. **Primary: "Get Quote on WhatsApp"** — amber fill (`var(--hero-amber)`), dark ink text. Highest visual weight. B2B signage buyers convert via WhatsApp first.
+2. **Secondary: "Our Services →"** — outlined/ghost, `border: 1px solid var(--hero-rule)`, paper text.
+3. **Tertiary: "View Portfolio"** — text only, muted color, no border.
 
-**Current state (as of 2026-05-02):** The CSS class names are semantically correct (`primaryAction`, `whatsappAction`, `textAction`) but the visual treatment is reversed — `primaryAction` ("Our Services") has the filled paper treatment and `whatsappAction` has the dark semi-transparent treatment. **This needs to be fixed: swap the visual treatments so WhatsApp is the visually dominant CTA.**
+**Fixed 2026-05-02.** `.whatsappAction` now carries the amber fill. `.servicesAction` is the outlined secondary.
 
 ---
 
@@ -132,3 +135,43 @@ Hidden interactive elements (e.g. a text input that is visually replaced by a st
 
 ### Auto-scrolling content
 Auto-scrolling carousels must pause on hover and on keyboard focus (`focus-within`). Use `animation-play-state: paused` triggered by CSS `:hover` and `:focus-within` on the carousel wrapper. See `ClientShowcase.module.css` for the pattern.
+
+---
+
+## Accent Color Policy (2026-05-02 redesign)
+
+**Amber/ochre (`oklch(0.72 0.13 74)` / `#C9962E`) is the sole accent.** It replaces blue as the primary action indicator in the hero zone and as the left-border accent on national brand plates.
+
+Amber appears as:
+1. **Hero `::before`** — 4px left bar, full height
+2. **Hero primary CTA** — amber fill (`var(--hero-amber)`)
+3. **ClientShowcase national brand plates** — 3px left border (`border-left-color: oklch(0.72 0.13 74)`)
+
+Blue (`--blue`) remains in the token system for links and focus rings (accessibility) but is no longer used for filled action buttons or section accents.
+
+---
+
+## ClientShowcase — Plate Design (2026-05-02)
+
+Client plates are sharp rectangular containers. No color-per-sector.
+
+- **All plates:** `background: var(--paper-elevated)`, `border: 1px solid var(--rule)`, `border-left-width: 3px`
+- **National brands** (Airtel, Jio, Havells, Vivo, OYO, Emami, Adani Cement): amber left border
+- **Regional brands:** `var(--rule)` left border (same as other three sides — visually plain)
+- **Brand name:** Fraunces, 0.88rem, 700 weight, `var(--ink)`
+- **Sector tag:** JetBrains Mono, 9px, 600 weight, `letter-spacing: 0.14em`, uppercase, `var(--ink-subtle)`
+
+No `rounded`, no color-coded backgrounds, no sector-based color mapping.
+
+---
+
+## What We Don't Do
+
+- No emoji in production UI
+- No gradient backgrounds on content sections (fade edges on carousel are acceptable)
+- No drop shadows on text
+- No per-sector color coding in client plates
+- No `rounded-full` pill shapes
+- No blue/green/clay/sage UI accents (reserved for future data viz only)
+- No competing decorative effects in the same section
+- No inline `style={{}}` objects for visual design (dynamic values only)
