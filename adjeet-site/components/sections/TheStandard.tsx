@@ -1,3 +1,5 @@
+import { SectionLabel } from '@/components/ui/SectionLabel'
+
 const STANDARDS = [
   {
     n: '01',
@@ -24,23 +26,7 @@ const STANDARDS = [
 export function TheStandard() {
   return (
     <section style={{ borderBottom: '1px solid var(--rule)' }}>
-      {/* Section label bar */}
-      <div
-        className="mx-auto max-w-content px-6 py-4"
-        style={{ borderBottom: '1px solid var(--rule)' }}
-      >
-        <span
-          style={{
-            fontFamily: 'var(--font-mono)',
-            fontSize: '11px',
-            letterSpacing: '0.14em',
-            color: 'var(--ink-subtle)',
-            textTransform: 'uppercase',
-          }}
-        >
-          № 02 — Our Standard
-        </span>
-      </div>
+      <SectionLabel number="02" label="Our Standard" />
 
       {/* Principles grid */}
       <div className="mx-auto max-w-content px-6 py-12 md:py-16">

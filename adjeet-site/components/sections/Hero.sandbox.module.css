@@ -620,6 +620,11 @@
     flex-shrink: 0;
   }
 
+  .specCard {
+    max-height: 280px;
+    overflow-y: auto;
+  }
+
   .sandboxCtas {
     flex-direction: column;
     align-items: stretch;

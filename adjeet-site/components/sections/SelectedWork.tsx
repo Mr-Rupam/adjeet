@@ -1,9 +1,10 @@
 'use client'
 
 import { useState } from 'react'
-import Link from 'next/link'
 import { getFeaturedPhotos } from '@/content/gallery'
 import { Lightbox, type LightboxPhoto } from '@/components/ui/Lightbox'
+import { SectionLabel } from '@/components/ui/SectionLabel'
+import { defaultWhatsAppUrl } from '@/lib/whatsapp'
 
 export function SelectedWork() {
   const featured = getFeaturedPhotos().slice(0, 4)
@@ -18,37 +19,43 @@ export function SelectedWork() {
     setIsOpen(true)
   }
 
+  if (featured.length === 0) {
+    return (
+      <section style={{ borderBottom: '1px solid var(--rule)' }}>
+        <SectionLabel number="03" label="Selected Work" href="/portfolio" linkText="Full portfolio →" />
+        <div className="mx-auto max-w-content px-6 py-16 flex flex-col gap-4">
+          <p
+            style={{
+              fontFamily: 'var(--font-fraunces)',
+              fontSize: 'clamp(1.125rem, 2vw, 1.375rem)',
+              fontWeight: 600,
+              color: 'var(--ink-muted)',
+            }}
+          >
+            Photographing recent projects — see our work in person.
+          </p>
+          <a
+            href={defaultWhatsAppUrl()}
+            target="_blank"
+            rel="noopener noreferrer"
+            style={{
+              fontFamily: 'var(--font-mono)',
+              fontSize: '11px',
+              letterSpacing: '0.1em',
+              color: 'var(--ink-subtle)',
+              textTransform: 'uppercase',
+            }}
+          >
+            Get in touch via WhatsApp →
+          </a>
+        </div>
+      </section>
+    )
+  }
+
   return (
     <section style={{ borderBottom: '1px solid var(--rule)' }}>
-      {/* Section label bar */}
-      <div
-        className="mx-auto max-w-content px-6 py-4 flex items-center justify-between"
-        style={{ borderBottom: '1px solid var(--rule)' }}
-      >
-        <span
-          style={{
-            fontFamily: 'var(--font-mono)',
-            fontSize: '11px',
-            letterSpacing: '0.14em',
-            color: 'var(--ink-subtle)',
-            textTransform: 'uppercase',
-          }}
-        >
-          № 03 — Selected Work
-        </span>
-        <Link
-          href="/portfolio"
-          className="hover:text-blue transition-colors"
-          style={{
-            fontFamily: 'var(--font-mono)',
-            fontSize: '11px',
-            letterSpacing: '0.08em',
-            color: 'var(--ink-subtle)',
-          }}
-        >
-          Full portfolio →
-        </Link>
-      </div>
+      <SectionLabel number="03" label="Selected Work" href="/portfolio" linkText="Full portfolio →" />
 
       {/* Image grid */}
       <div className="mx-auto max-w-content px-6 py-8 md:py-12">

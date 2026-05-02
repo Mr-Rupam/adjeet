@@ -23,6 +23,30 @@ const heroBody = Anek_Latin({
 
 type Material = 'glowsign' | 'acpled' | 'wallpaint'
 
+type CharEntry = { id: string; char: string }
+
+function getUpdatedChars(prev: CharEntry[], newText: string): CharEntry[] {
+  // Find longest common prefix
+  let prefixLen = 0
+  while (prefixLen < prev.length && prefixLen < newText.length && prev[prefixLen].char === newText[prefixLen]) {
+    prefixLen++
+  }
+  // Find longest common suffix (beyond the differing prefix)
+  let oldEnd = prev.length
+  let newEnd = newText.length
+  while (oldEnd > prefixLen && newEnd > prefixLen && prev[oldEnd - 1].char === newText[newEnd - 1]) {
+    oldEnd--
+    newEnd--
+  }
+  const prefix = prev.slice(0, prefixLen)
+  const suffix = prev.slice(oldEnd)
+  const newMiddle = Array.from(newText.slice(prefixLen, newEnd)).map(char => ({
+    id: crypto.randomUUID(),
+    char,
+  }))
+  return [...prefix, ...newMiddle, ...suffix]
+}
+
 const THEME_CLASS: Record<Material, string> = {
   glowsign:  styles.themeGlowsign,
   acpled:    styles.themeAcpled,
@@ -81,7 +105,10 @@ const MATERIALS: { id: Material; label: string; sub: string }[] = [
 const MAX_CHARS = 12
 
 export function HeroSandbox() {
-  const [text, setText] = useState('AD-JEET')
+  const [chars, setChars] = useState<CharEntry[]>(() =>
+    Array.from('AD-JEET').map(char => ({ id: crypto.randomUUID(), char }))
+  )
+  const text = chars.map(c => c.char).join('')
   const [isFocused, setIsFocused] = useState(false)
   const [material, setMaterial] = useState<Material>('glowsign')
   const inputRef = useRef<HTMLInputElement>(null)
@@ -94,7 +121,8 @@ export function HeroSandbox() {
 
   const handleTextChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const val = e.target.value.toUpperCase()
-    if (val.length <= MAX_CHARS) setText(val)
+    if (val.length > MAX_CHARS) return
+    setChars(prev => getUpdatedChars(prev, val))
   }
 
   return (
@@ -168,16 +196,16 @@ export function HeroSandbox() {
                   <span className={styles.signagePlaceholder}>YOUR BRAND</span>
                 ) : (
                   <AnimatePresence mode="popLayout">
-                    {text.split('').map((char, i) => (
+                    {chars.map((entry, i) => (
                       <motion.span
-                        key={`${i}-${char}`}
+                        key={entry.id}
                         initial={{ opacity: 0, y: 6, filter: 'brightness(0.2)' }}
                         animate={{ opacity: 1, y: 0, filter: 'brightness(1)' }}
                         exit={{ opacity: 0, scale: 0.9, filter: 'brightness(0)' }}
                         transition={{ duration: 0.2, delay: i * 0.02 }}
                         className={styles.signageChar}
                       >
-                        {char === ' ' ? ' ' : char}
+                        {entry.char === ' ' ? ' ' : entry.char}
                       </motion.span>
                     ))}
                   </AnimatePresence>

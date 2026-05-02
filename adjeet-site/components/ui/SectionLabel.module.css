@@ -1,0 +1,27 @@
+/* ── SectionLabel.module.css ─────────────────────────────────────── */
+/* Mono section label bar used in ServicesIndex, TheStandard, SelectedWork, ByTheNumbers. */
+
+.container {
+  border-bottom: 1px solid var(--rule);
+}
+
+.label {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  color: var(--ink-subtle);
+  text-transform: uppercase;
+}
+
+.link {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  color: var(--ink-subtle);
+  text-decoration: none;
+  transition: color 150ms;
+}
+
+.link:hover {
+  color: var(--blue);
+}
