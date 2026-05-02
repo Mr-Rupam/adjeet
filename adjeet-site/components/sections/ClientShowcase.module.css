@@ -1,0 +1,41 @@
+/* ClientShowcase.module.css — keyframe animations only */
+/* Layout and color use Tailwind utilities in the component. */
+
+.animateScrollLeft {
+  animation: scrollLeft 35s linear infinite;
+}
+
+.animateScrollRight {
+  animation: scrollRight 35s linear infinite;
+}
+
+@keyframes scrollLeft {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}
+
+@keyframes scrollRight {
+  from { transform: translateX(-50%); }
+  to   { transform: translateX(0); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animateScrollLeft,
+  .animateScrollRight {
+    animation: none;
+  }
+}
+
+@media (max-width: 640px) {
+  .animateScrollLeft,
+  .animateScrollRight {
+    animation: none;
+  }
+}
+
+.carouselWrap:hover .animateScrollLeft,
+.carouselWrap:hover .animateScrollRight,
+.carouselWrap:focus-within .animateScrollLeft,
+.carouselWrap:focus-within .animateScrollRight {
+  animation-play-state: paused;
+}
