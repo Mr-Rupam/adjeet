@@ -65,7 +65,7 @@ export function ClientShowcase() {
       {/* Content */}
       <div className="relative max-w-content mx-auto px-6 text-center">
         <span className="inline-block px-4 py-1.5 mb-5 text-xs font-semibold uppercase tracking-widest rounded-full border border-rule bg-paper-elevated text-ink-muted">
-          ★ Trusted by 200+ brands
+          Trusted by 200+ brands
         </span>
         <h2 className="text-4xl md:text-5xl font-serif font-bold text-ink leading-tight">
           Signage partner for
@@ -81,7 +81,7 @@ export function ClientShowcase() {
         <div className="flex flex-wrap gap-4 justify-center mt-8">
           <Link
             href="/portfolio"
-            className="inline-flex items-center justify-center rounded bg-blue text-white font-medium px-7 py-3.5 text-sm hover:opacity-90 transition-opacity active:scale-[0.98]"
+            className="inline-flex items-center justify-center rounded bg-ochre text-ink font-medium px-7 py-3.5 text-sm hover:opacity-90 transition-opacity active:scale-[0.98]"
           >
             View our work
           </Link>
