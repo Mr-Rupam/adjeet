@@ -7,24 +7,31 @@ const WHATSAPP_HREF = 'https://wa.me/919832011524'
 
 export function Footer() {
   return (
-    <footer className="section-inverse text-ink-subtle mt-auto">
+    <footer
+      className="section-inverse mt-auto text-[rgba(245,240,232,0.45)]"
+    >
       <div className="mx-auto max-w-content px-6 py-16 grid md:grid-cols-3 gap-12">
+
         {/* Brand */}
         <div>
-          <p className="text-ink font-bold text-lg mb-2">AD-JEET</p>
+          <p className="text-[rgba(245,240,232,0.9)] font-bold text-lg mb-2">
+            AD-JEET
+          </p>
           <p className="text-sm">North Bengal&apos;s signage authority since 1990.</p>
         </div>
 
         {/* Addresses */}
         <div>
-          <p className="text-ink text-sm font-semibold mb-3">Our Locations</p>
+          <p className="text-[rgba(245,240,232,0.9)] text-sm font-semibold mb-3">
+            Our Locations
+          </p>
           <address className="not-italic text-sm space-y-3">
             <div>
-              <p className="text-ink-muted font-medium">Office</p>
+              <p className="text-[rgba(245,240,232,0.65)] font-medium mb-0.5">Office</p>
               <p>{OFFICE_ADDRESS}</p>
             </div>
             <div>
-              <p className="text-ink-muted font-medium">Workshop</p>
+              <p className="text-[rgba(245,240,232,0.65)] font-medium mb-0.5">Workshop</p>
               <p>{WORKSHOP_ADDRESS}</p>
             </div>
           </address>
@@ -32,19 +39,33 @@ export function Footer() {
 
         {/* Links */}
         <div>
-          <p className="text-ink text-sm font-semibold mb-3">Contact</p>
+          <p className="text-[rgba(245,240,232,0.9)] text-sm font-semibold mb-3">
+            Contact
+          </p>
           <ul className="text-sm space-y-2 list-none p-0 m-0">
             <li>
-              <a href={WHATSAPP_HREF} className="hover:text-ink transition-colors">
+              <a
+                href={WHATSAPP_HREF}
+                className="transition-colors hover:text-[rgba(245,240,232,0.9)]"
+              >
                 WhatsApp: {WHATSAPP_DISPLAY}
               </a>
             </li>
           </ul>
-          <div className="mt-8 pt-6 border-t border-rule/20 text-xs space-y-1">
-            <Link href="/privacy" className="hover:text-ink transition-colors block">Privacy Policy</Link>
+          <div
+            className="mt-8 pt-6 text-xs space-y-1"
+            style={{ borderTop: '1px solid rgba(255,255,255,0.08)' }}
+          >
+            <Link
+              href="/privacy"
+              className="block transition-colors hover:text-[rgba(245,240,232,0.9)]"
+            >
+              Privacy Policy
+            </Link>
             <p>© {new Date().getFullYear()} AD-JEET. All rights reserved.</p>
           </div>
         </div>
+
       </div>
     </footer>
   )
