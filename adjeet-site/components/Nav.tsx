@@ -34,7 +34,7 @@ export function Nav() {
             <li key={href}>
               <Link
                 href={href}
-                className="text-ink-muted hover:text-ink text-sm font-medium transition-colors"
+                className="inline-flex items-center py-3.5 text-ink-muted hover:text-ink text-sm font-medium transition-colors"
               >
                 {label}
               </Link>
