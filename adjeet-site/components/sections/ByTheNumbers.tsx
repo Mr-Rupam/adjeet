@@ -54,6 +54,7 @@ export function ByTheNumbers() {
                     lineHeight: 1,
                     letterSpacing: '-0.02em',
                     marginBottom: '0.4rem',
+                    fontVariantNumeric: 'tabular-nums',
                   }}
                 >
                   <CountUp to={stat.value} suffix={stat.suffix} />
