@@ -96,9 +96,9 @@ export function ClientShowcase() {
         </div>
 
         {/* Client carousel */}
-        <div className="mt-14 overflow-hidden relative">
+        <div className="carousel-wrap mt-14 overflow-hidden relative">
           {/* Row 1 — scrolls left */}
-          <div className="flex gap-5 whitespace-nowrap animate-[scroll-left_35s_linear_infinite]">
+          <div className="animate-scroll-left flex gap-5 whitespace-nowrap animate-[scroll-left_35s_linear_infinite]">
             {repeat(CLIENTS_ROW1).map((client, i) => {
               const colors = SECTOR_COLORS[client.sector] ?? SECTOR_COLORS.Banking;
               return (
@@ -118,7 +118,7 @@ export function ClientShowcase() {
           </div>
 
           {/* Row 2 — scrolls right */}
-          <div className="flex gap-5 whitespace-nowrap mt-4 animate-[scroll-right_35s_linear_infinite]">
+          <div className="animate-scroll-right flex gap-5 whitespace-nowrap mt-4 animate-[scroll-right_35s_linear_infinite]">
             {repeat(CLIENTS_ROW2).map((client, i) => {
               const colors = SECTOR_COLORS[client.sector] ?? SECTOR_COLORS.Banking;
               return (
@@ -145,20 +145,30 @@ export function ClientShowcase() {
 
       <style jsx>{`
         @keyframes scroll-left {
-          0% {
-            transform: translateX(0);
-          }
-          100% {
-            transform: translateX(-50%);
-          }
+          0% { transform: translateX(0); }
+          100% { transform: translateX(-50%); }
         }
         @keyframes scroll-right {
-          0% {
-            transform: translateX(-50%);
+          0% { transform: translateX(-50%); }
+          100% { transform: translateX(0); }
+        }
+        @media (prefers-reduced-motion: reduce) {
+          .animate-scroll-left,
+          .animate-scroll-right {
+            animation: none !important;
           }
-          100% {
-            transform: translateX(0);
+        }
+        @media (max-width: 480px) {
+          .animate-scroll-left,
+          .animate-scroll-right {
+            animation: none !important;
           }
+        }
+        .carousel-wrap:hover .animate-scroll-left,
+        .carousel-wrap:focus-within .animate-scroll-left,
+        .carousel-wrap:hover .animate-scroll-right,
+        .carousel-wrap:focus-within .animate-scroll-right {
+          animation-play-state: paused;
         }
       `}</style>
     </section>
