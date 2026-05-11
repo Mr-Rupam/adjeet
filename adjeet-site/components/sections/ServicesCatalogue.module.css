@@ -1,0 +1,215 @@
+/* ─── Services Catalogue — Billboard Flip ──────────────────────────────── */
+
+.section {
+  background: var(--paper);
+  border-bottom: 1px solid var(--rule);
+}
+
+/* Header bar */
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  max-width: var(--content-max);
+  margin: 0 auto;
+  padding: 14px 48px;
+  border-bottom: 1px solid var(--rule);
+}
+
+.headerLabel,
+.headerCount {
+  font-family: var(--font-mono), monospace;
+  font-size: 11px;
+  letter-spacing: 0.13em;
+  color: var(--ink-subtle);
+  text-transform: uppercase;
+}
+
+/* ─── Grid — gap-as-border technique ───────────────────────────────────── */
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 1px;
+  background: var(--rule);
+  border-bottom: 1px solid var(--rule);
+  max-width: var(--content-max);
+  margin: 0 auto;
+}
+
+/* ─── Card Outer — staggered entrance ──────────────────────────────────── */
+
+@keyframes cardEntrance {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.cardOuter {
+  background: var(--paper);
+  animation: cardEntrance 0.45s ease-out both;
+}
+
+/* ─── Card Link — perspective container ────────────────────────────────── */
+
+.cardLink {
+  display: block;
+  width: 100%;
+  height: 200px;
+  perspective: 900px;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+/* ─── Card Inner — 3D flipper ──────────────────────────────────────────── */
+
+.cardInner {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  transform-style: preserve-3d;
+  transition: transform 0.55s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.cardLink:hover .cardInner,
+.cardLink:focus-visible .cardInner {
+  transform: rotateY(180deg);
+}
+
+/* ─── Both Faces ────────────────────────────────────────────────────────── */
+
+.cardFront,
+.cardBack {
+  position: absolute;
+  inset: 0;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  display: flex;
+  flex-direction: column;
+  padding: 20px;
+}
+
+/* ─── Front Face ────────────────────────────────────────────────────────── */
+
+.cardFront {
+  background: var(--paper);
+  justify-content: space-between;
+}
+
+.cardNum {
+  font-family: var(--font-mono), monospace;
+  font-size: 10px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--ochre);
+}
+
+.cardName {
+  font-family: var(--font-fraunces), serif;
+  font-size: clamp(0.9375rem, 1.5vw, 1.125rem);
+  font-weight: 700;
+  line-height: 1.25;
+  color: var(--ink);
+  letter-spacing: -0.01em;
+}
+
+.cardArrow {
+  font-size: 0.9375rem;
+  color: var(--ink-subtle);
+  align-self: flex-end;
+}
+
+/* ─── Back Face ─────────────────────────────────────────────────────────── */
+
+.cardBack {
+  background: #0C0B09;
+  transform: rotateY(180deg);
+  justify-content: center;
+  align-items: center;
+  gap: 14px;
+  text-align: center;
+}
+
+.cardIcon {
+  color: var(--ochre);
+  flex-shrink: 0;
+}
+
+.cardTagline {
+  font-family: var(--font-fraunces), serif;
+  font-style: italic;
+  font-size: 0.875rem;
+  line-height: 1.45;
+  color: rgba(245, 240, 232, 0.75);
+  padding: 0 6px;
+}
+
+/* ─── Responsive ────────────────────────────────────────────────────────── */
+
+@media (max-width: 1000px) {
+  .header {
+    padding: 14px 32px;
+  }
+
+  .grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .cardLink {
+    height: 180px;
+  }
+}
+
+@media (max-width: 640px) {
+  .header {
+    padding: 12px 20px;
+  }
+
+  .grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .cardLink {
+    height: 150px;
+  }
+
+  /* Touch devices: disable 3D flip, show front face only */
+  .cardInner {
+    transform-style: flat;
+  }
+
+  .cardLink:hover .cardInner {
+    transform: none;
+  }
+
+  .cardBack {
+    display: none;
+  }
+
+  .cardFront {
+    height: 150px;
+  }
+}
+
+/* ─── Reduced motion ────────────────────────────────────────────────────── */
+
+@media (prefers-reduced-motion: reduce) {
+  .cardOuter {
+    animation: none;
+    opacity: 1;
+  }
+
+  .cardInner {
+    transition: none;
+  }
+
+  .cardLink:hover .cardInner,
+  .cardLink:focus-visible .cardInner {
+    transform: none;
+  }
+}

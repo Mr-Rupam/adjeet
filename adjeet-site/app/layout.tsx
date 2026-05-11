@@ -5,6 +5,7 @@ import { SkipLink } from '@/components/SkipLink'
 import { Nav } from '@/components/Nav'
 import { Footer } from '@/components/Footer'
 import { WhatsAppFAB } from '@/components/WhatsAppFAB'
+import { Chatbot } from '@/components/Chatbot'
 import { ConsentBanner } from '@/components/ui/ConsentBanner'
 import { Analytics } from '@/components/Analytics'
 import { ReducedMotionWrapper } from '@/components/motion/ReducedMotionWrapper'
@@ -56,6 +57,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             {children}
           </main>
           <Footer />
+          <Chatbot />
           <WhatsAppFAB />
           <ConsentBanner />
           <Analytics />

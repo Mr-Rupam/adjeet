@@ -1,21 +1,21 @@
 /* ─── Colours ─────────────────────────────────────────────────────────── */
 :root {
-  --paper:           #F7F3EC;
-  --paper-elevated:  #FBF8F3;
-  --ink:             #1A1916;
-  --ink-muted:       #4A4741;
-  --ink-subtle:      #8A857C;
-  --rule:            #E4DDD0;
-  --adjeet-blue:     #1E7FB8;
-  --adjeet-blue-deep: #134C70;
+  --paper:           #FFFFFF;
+  --paper-elevated:  #F8FAFC;
+  --ink:             #020617;
+  --ink-muted:       #334155;
+  --ink-subtle:      #64748B;
+  --rule:            #E2E8F0;
+  --adjeet-blue:     #0070F3;
+  --adjeet-blue-deep: #0051B3;
   --ochre:           #C9962E;
   --clay:            #A6503A;
   --sage:            #6B7C5A;
   --slate:           #455362;
-  --success:         #3F7A4E;
-  --warning:         #B8862A;
-  --error:           #A63D3D;
-  --surface-inverse: #1A1916;
+  --success:         #16A34A;
+  --warning:         #D97706;
+  --error:           #DC2626;
+  --surface-inverse: #020617;
 
   /* ─── Elevation ──────────────────────────────────────────────────────── */
   --elev-1: 0 1px 2px rgba(26,25,22,0.04), 0 2px 6px rgba(26,25,22,0.03);
@@ -48,14 +48,14 @@
 }
 
 :root[data-theme="dark"] {
-  --paper:           #13120F;
-  --paper-elevated:  #1E1C18;
-  --ink:             #F0EBDE;
-  --ink-muted:       #BAB3A2;
-  --ink-subtle:      #A8A29A;
-  --rule:            #2B2823;
-  --adjeet-blue:     #4FA8E0;
-  --surface-inverse: #0D0C0A;
+  --paper:           #020617;
+  --paper-elevated:  #0F172A;
+  --ink:             #F8FAFC;
+  --ink-muted:       #CBD5E1;
+  --ink-subtle:      #94A3B8;
+  --rule:            #1E293B;
+  --adjeet-blue:     #3291FF;
+  --surface-inverse: #000000;
 }
 
 /* ─── Tailwind v4 theme registration ─────────────────────────────────── */

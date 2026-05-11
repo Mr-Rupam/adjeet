@@ -56,7 +56,7 @@ export const services: Service[] = [
       },
     ],
     relatedServices: ['acp-led-signage', 'f-pole-installation', 'in-shop-branding'],
-    heroImage: '/images/services/glow-sign-boards-hero.jpg',
+    heroImage: '/airtel.png',
     icon: 'lightbulb',
   },
   {
@@ -83,7 +83,7 @@ export const services: Service[] = [
       },
     ],
     relatedServices: ['glow-sign-boards', 'in-shop-branding', 'f-pole-installation'],
-    heroImage: '/images/services/acp-led-signage-hero.jpg',
+    heroImage: '/Ambuja_cement_ACP-LED.png',
     icon: 'panels',
   },
   {
@@ -137,7 +137,7 @@ export const services: Service[] = [
       },
     ],
     relatedServices: ['flex-printing', 'in-shop-branding', 'one-way-vision'],
-    heroImage: '/images/services/vehicle-branding-hero.jpg',
+    heroImage: '/SRMB_vechile.png',
     icon: 'truck',
   },
   {

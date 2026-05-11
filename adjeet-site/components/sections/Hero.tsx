@@ -4,14 +4,11 @@ import { useState, useRef } from 'react'
 import Link from 'next/link'
 import { defaultWhatsAppUrl } from '@/lib/whatsapp'
 import { motion, AnimatePresence } from 'framer-motion'
+import styles from './Hero.module.css'
 
 type Material = 'glowsign' | 'acpled' | 'wallpaint'
 
-const SPECS: Record<Material, {
-  label: string
-  serial: string
-  rows: { k: string; v: string }[]
-}> = {
+const SPECS: Record<Material, { label: string; serial: string; rows: { k: string; v: string }[] }> = {
   glowsign: {
     label: 'Glow Sign Board',
     serial: 'GS-01',
@@ -50,10 +47,10 @@ const SPECS: Record<Material, {
   },
 }
 
-const MATERIALS: { id: Material; label: string; sub: string }[] = [
-  { id: 'glowsign', label: 'Glow Sign', sub: 'lit' },
-  { id: 'acpled', label: 'ACP / LED', sub: 'face-lit' },
-  { id: 'wallpaint', label: 'Wall Paint', sub: 'painted' },
+const MATERIALS: { id: Material; label: string }[] = [
+  { id: 'glowsign', label: 'Glow Sign' },
+  { id: 'acpled', label: 'ACP / LED' },
+  { id: 'wallpaint', label: 'Wall Paint' },
 ]
 
 export function Hero() {
@@ -63,10 +60,7 @@ export function Hero() {
   const inputRef = useRef<HTMLInputElement>(null)
   const waUrl = defaultWhatsAppUrl()
   const spec = SPECS[material]
-
-  const handleContainerClick = () => {
-    inputRef.current?.focus()
-  }
+  const matIndex = MATERIALS.findIndex(m => m.id === material) + 1
 
   const handleTextChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const val = e.target.value.toUpperCase()
@@ -74,38 +68,99 @@ export function Hero() {
   }
 
   return (
-    <section className={`sandbox-hero theme-${material}`}>
-      <div className="sandbox-bg" />
+    <section className={`${styles.section} theme-${material}`}>
+      <div className={styles.bg} />
 
-      <div className="sandbox-content">
+      {/* Meta bar */}
+      <div className={styles.topbar}>
+        <span className={styles.topbarBrand}>AD-JEET</span>
+        <span className={styles.topbarDot} aria-hidden="true" />
+        <span>Signage fabricators · Siliguri, North Bengal</span>
+        <span className={styles.topbarPush}>
+          <span className={styles.liveDot} aria-hidden="true" />
+          Live preview
+        </span>
+      </div>
 
-        {/* Top bar — editorial */}
-        <div className="sandbox-topbar">
-          <span className="sandbox-topbar__id">№ 00 — Live Sample</span>
-          <span className="sandbox-topbar__hint">
-            <span className="pulse-dot" />
-            {isFocused ? 'Designing — type to update' : 'Click the sign · switch material'}
-          </span>
+      {/* Two-column layout */}
+      <div className={styles.content}>
+
+        {/* Left: Authority content */}
+        <div className={styles.editorial}>
+
+          <p className={styles.eyebrow}>Est. 1990 — North Bengal&apos;s signage authority</p>
+
+          <h1 className={styles.headline}>
+            Trusted by
+            <br />
+            North Bengal&apos;s
+            <br />
+            <span className={styles.headlineAccent}>biggest brands.</span>
+          </h1>
+
+          <p className={styles.sub}>
+            From glow signs to full-façade ACP branding — fabricated in-house,
+            installed across North Bengal. Same-day quotes on WhatsApp.
+          </p>
+
+          {/* Trust signals */}
+          <div className={styles.stats}>
+            <div className={styles.stat}>
+              <span className={styles.statNum}>35+</span>
+              <span className={styles.statLabel}>Years</span>
+            </div>
+            <div className={styles.stat}>
+              <span className={styles.statNum}>147+</span>
+              <span className={styles.statLabel}>Brand clients</span>
+            </div>
+            <div className={styles.stat}>
+              <span className={styles.statNum}>9</span>
+              <span className={styles.statLabel}>Districts</span>
+            </div>
+          </div>
+
+          {/* CTAs */}
+          <div className={styles.ctas}>
+            <a
+              href={waUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className={styles.ctaPrimary}
+            >
+              Get a quote on WhatsApp
+              <span aria-hidden="true">↗</span>
+            </a>
+            <Link href="/portfolio" className={styles.ctaSecondary}>
+              View our work
+              <span aria-hidden="true">→</span>
+            </Link>
+          </div>
+
         </div>
 
-        {/* Manifesto headline */}
-        <h1 className="sandbox-manifesto">
-          Type your brand.<br />
-          <span className="sandbox-manifesto__ital">We&apos;ll show you</span> how it looks
-          <br />
-          <span className="sandbox-manifesto__hl">lit</span>,{' '}
-          <span className="sandbox-manifesto__hl">painted</span>, or{' '}
-          <span className="sandbox-manifesto__hl">carved</span>.
-        </h1>
+        {/* Right: Interactive sign demo */}
+        <div className={styles.demo}>
 
-        {/* Stage — sign + spec card */}
-        <div className="sandbox-stage">
+          {/* Material switcher */}
+          <div className={styles.materialBar} role="group" aria-label="Preview sign material">
+            <span className={styles.materialBarLabel}>Preview as</span>
+            {MATERIALS.map(m => (
+              <button
+                key={m.id}
+                onClick={() => setMaterial(m.id)}
+                className={`${styles.matBtn} ${material === m.id ? styles.matBtnActive : ''}`}
+                aria-pressed={material === m.id}
+              >
+                {m.label}
+              </button>
+            ))}
+          </div>
 
-          {/* Sign sample */}
+          {/* Sign display */}
           <div
-            className="signage-container"
-            onClick={handleContainerClick}
-            title="Click to edit your sign"
+            className={styles.signWrap}
+            onClick={() => inputRef.current?.focus()}
+            title="Click to type your brand name"
           >
             <motion.div
               key={material}
@@ -124,13 +179,11 @@ export function Hero() {
               }}
               transition={{ duration: 0.7, ease: 'easeOut', times: [0, 0.15, 0.3, 0.5, 0.7, 1] }}
             >
-              {/* Rivets — only ACP shows them */}
               <span className="rivet rivet-tl" />
               <span className="rivet rivet-tr" />
               <span className="rivet rivet-bl" />
               <span className="rivet rivet-br" />
 
-              {/* Hidden input for keystrokes */}
               <input
                 ref={inputRef}
                 type="text"
@@ -144,7 +197,6 @@ export function Hero() {
                 aria-label="Edit sign text"
               />
 
-              {/* Visible sign text */}
               <h2 className="signage-text">
                 {text === '' ? (
                   <span className="signage-placeholder">YOUR BRAND</span>
@@ -168,7 +220,6 @@ export function Hero() {
               </h2>
             </motion.div>
 
-            {/* Cabinet shadow / floor reflection */}
             <div className="signage-floor" aria-hidden="true" />
           </div>
 
@@ -187,40 +238,17 @@ export function Hero() {
               ))}
             </div>
             <div className="spec-card__foot">
-              <span className="spec-card__sample">SAMPLE</span>
-              <span className="spec-card__qty">01 / {MATERIALS.length}</span>
+              <span className="spec-card__sample">Sample spec</span>
+              <span className="spec-card__qty">0{matIndex} / {MATERIALS.length}</span>
             </div>
           </aside>
-        </div>
 
-        {/* Material picker */}
-        <div className="material-picker">
-          <span className="picker-label">MATERIAL —</span>
-          {MATERIALS.map(m => (
-            <button
-              key={m.id}
-              onClick={() => setMaterial(m.id)}
-              className={`material-btn ${material === m.id ? 'active' : ''}`}
-            >
-              <span className="material-btn__label">{m.label}</span>
-              <span className="material-btn__sub">{m.sub}</span>
-            </button>
-          ))}
-        </div>
+          {/* Hint */}
+          <p className={styles.demoHint}>
+            <span className={styles.demoHintDot} aria-hidden="true" />
+            {isFocused ? 'Typing · click away when done' : 'Click sign · type your brand name'}
+          </p>
 
-        {/* CTAs */}
-        <div className="sandbox-ctas">
-          <a
-            href={waUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="btn-primary-signage"
-          >
-            Build this sign <span aria-hidden="true">↗</span>
-          </a>
-          <Link href="/portfolio" className="btn-secondary-outline">
-            View portfolio
-          </Link>
         </div>
 
       </div>

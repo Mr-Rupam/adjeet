@@ -1,8 +1,9 @@
-# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
+# This project's .gitignore is managed at the repo root (../.gitignore).
+# This file exists for tools that look for .gitignore in the project directory.
 
-# dependencies
-/node_modules
-/.pnp
+# ─── Dependencies ─────────────────────────────────────
+node_modules/
+.pnp
 .pnp.*
 .yarn/*
 !.yarn/patches
@@ -10,32 +11,39 @@
 !.yarn/releases
 !.yarn/versions
 
-# testing
-/coverage
+# ─── Next.js ──────────────────────────────────────────
+.next/
+out/
+build/
 
-# next.js
-/.next/
-/out/
+# ─── Environment variables (SECRETS — never commit) ──
+.env
+.env.*
+!.env.example
 
-# production
-/build
+# ─── TypeScript build artifacts ───────────────────────
+*.tsbuildinfo
+next-env.d.ts
 
-# misc
+# ─── Testing ──────────────────────────────────────────
+coverage/
+test-results/
+playwright-report/
+blob-report/
+
+# ─── OS files ─────────────────────────────────────────
 .DS_Store
-*.pem
+Thumbs.db
+Desktop.ini
 
-# debug
+# ─── Debug logs ───────────────────────────────────────
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 .pnpm-debug.log*
 
-# env files (can opt-in for committing if needed)
-.env*
+# ─── Certificates ────────────────────────────────────
+*.pem
 
-# vercel
+# ─── Vercel ───────────────────────────────────────────
 .vercel
-
-# typescript
-*.tsbuildinfo
-next-env.d.ts

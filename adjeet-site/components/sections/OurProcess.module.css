@@ -1,0 +1,390 @@
+/* ─── OurProcess — Signal Line Timeline ─────────────────────────────────── */
+
+.section {
+  background: var(--paper);
+  border-bottom: 1px solid var(--rule);
+  overflow-x: hidden;
+}
+
+/* ─── Header ─────────────────────────────────────────────────────────────── */
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  max-width: var(--content-max);
+  margin: 0 auto;
+  padding: 14px 48px;
+  border-bottom: 1px solid var(--rule);
+}
+
+.headerLabel,
+.headerMeta {
+  font-family: var(--font-mono), monospace;
+  font-size: 11px;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+  color: var(--ink-subtle);
+}
+
+/* ─── Intro ──────────────────────────────────────────────────────────────── */
+
+.intro {
+  max-width: var(--content-max);
+  margin: 0 auto;
+  padding: 60px 48px 0;
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 48px;
+}
+
+.heading {
+  font-family: var(--font-fraunces), serif;
+  font-size: clamp(2.5rem, 5.5vw, 4.75rem);
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: -0.035em;
+  color: var(--ink);
+  margin: 0;
+  max-width: 16ch;
+}
+
+.headingAccent {
+  color: var(--ochre);
+  font-style: italic;
+}
+
+.introBadge {
+  flex-shrink: 0;
+  text-align: right;
+  padding-bottom: 10px;
+}
+
+.introBadgeNum {
+  display: block;
+  font-family: var(--font-fraunces), serif;
+  font-size: clamp(3.5rem, 7vw, 6rem);
+  font-weight: 900;
+  line-height: 1;
+  letter-spacing: -0.06em;
+  color: var(--ochre);
+}
+
+.introBadgeLabel {
+  display: block;
+  font-family: var(--font-mono), monospace;
+  font-size: 9px;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: var(--ink-subtle);
+  margin-top: 8px;
+}
+
+/* ─── Desktop: horizontal signal line ────────────────────────────────────── */
+
+.timelineOuter {
+  max-width: var(--content-max);
+  margin: 0 auto;
+  padding: 0 48px 72px;
+}
+
+/* Top row — steps 01, 03, 05 hang above the track */
+.rowAbove {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  height: 268px;
+  align-items: flex-end;
+}
+
+/* The track itself */
+.track {
+  position: relative;
+  height: 48px;
+  display: flex;
+  align-items: center;
+}
+
+/* Animated draw line */
+.trackLine {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 2px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: linear-gradient(
+    to right,
+    var(--ochre) 0%,
+    var(--ochre) 85%,
+    rgba(201, 150, 46, 0.3) 100%
+  );
+  animation: trackDraw 1.6s cubic-bezier(0.25, 0, 0.1, 1) 0.3s both;
+}
+
+@keyframes trackDraw {
+  from { clip-path: inset(0 100% 0 0); }
+  to   { clip-path: inset(0 0% 0 0); }
+}
+
+/* Day tick marks along the track */
+.tickRow {
+  position: absolute;
+  left: 0;
+  right: 0;
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  align-items: center;
+  pointer-events: none;
+}
+
+.tick {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0;
+}
+
+.tickDot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--ochre);
+  box-shadow:
+    0 0 0 3px var(--paper),
+    0 0 0 5px var(--ochre);
+  animation: dotPop 0.35s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+  flex-shrink: 0;
+}
+
+@keyframes dotPop {
+  from { transform: scale(0); opacity: 0; }
+  to   { transform: scale(1); opacity: 1; }
+}
+
+/* Bottom row — steps 02, 04 sit below the track */
+.rowBelow {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  height: 268px;
+  align-items: flex-start;
+}
+
+/* ─── Step (desktop) ─────────────────────────────────────────────────────── */
+
+.step {
+  display: flex;
+  flex-direction: column;
+  padding: 0 8px;
+  animation: stepReveal 0.55s cubic-bezier(0.4, 0, 0.2, 1) both;
+}
+
+@keyframes stepReveal {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* Above: card on top, connector below (column-reverse so DOM order is connector,card) */
+.stepAbove {
+  flex-direction: column-reverse;
+}
+
+/* Below: connector on top, card below */
+.stepBelow {
+  flex-direction: column;
+}
+
+/* Thin vertical connector */
+.connector {
+  height: 24px;
+  width: 1px;
+  background: var(--ochre);
+  opacity: 0.4;
+  margin: 0 auto;
+  flex-shrink: 0;
+}
+
+/* ─── Card (desktop) ─────────────────────────────────────────────────────── */
+
+.card {
+  background: var(--paper-elevated);
+  border: 1px solid var(--rule);
+  padding: 18px 16px;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
+  cursor: default;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+}
+
+.stepAbove .card:hover {
+  border-color: var(--ochre);
+  box-shadow: 0 -4px 20px rgba(201, 150, 46, 0.1);
+  transform: translateY(-3px);
+}
+
+.stepBelow .card:hover {
+  border-color: var(--ochre);
+  box-shadow: 0 4px 20px rgba(201, 150, 46, 0.1);
+  transform: translateY(3px);
+}
+
+.cardMeta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.cardNum {
+  font-family: var(--font-mono), monospace;
+  font-size: 10px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--ink-subtle);
+}
+
+.cardDay {
+  font-family: var(--font-mono), monospace;
+  font-size: 9px;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+  color: var(--ochre);
+  border: 1px solid rgba(201, 150, 46, 0.25);
+  background: rgba(201, 150, 46, 0.07);
+  padding: 2px 7px;
+}
+
+.cardIcon {
+  color: var(--ochre);
+  flex-shrink: 0;
+}
+
+.cardTitle {
+  font-family: var(--font-fraunces), serif;
+  font-size: clamp(0.9375rem, 1.4vw, 1.2rem);
+  font-weight: 700;
+  line-height: 1.2;
+  letter-spacing: -0.02em;
+  color: var(--ink);
+  margin: 0;
+}
+
+.cardBody {
+  font-family: var(--font-inter), system-ui, sans-serif;
+  font-size: 0.8rem;
+  line-height: 1.6;
+  color: var(--ink-muted);
+  margin: 0;
+  flex: 1;
+}
+
+/* ─── Mobile: vertical stacked list ─────────────────────────────────────── */
+
+.mobileList {
+  display: none;
+}
+
+.mobileStep {
+  display: grid;
+  grid-template-columns: 56px 1fr;
+  gap: 0 16px;
+  padding: 28px 20px;
+  border-top: 1px solid var(--rule);
+  align-items: start;
+}
+
+.mobileNum {
+  font-family: var(--font-fraunces), serif;
+  font-size: 2.25rem;
+  font-weight: 700;
+  color: var(--ochre);
+  line-height: 1;
+  letter-spacing: -0.04em;
+}
+
+.mobileContent {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding-top: 4px;
+}
+
+.mobileDay {
+  font-family: var(--font-mono), monospace;
+  font-size: 9px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--ochre);
+}
+
+.mobileTitle {
+  font-family: var(--font-fraunces), serif;
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: var(--ink);
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+  margin: 0;
+}
+
+.mobileBody {
+  font-family: var(--font-inter), system-ui, sans-serif;
+  font-size: 0.875rem;
+  line-height: 1.65;
+  color: var(--ink-muted);
+  margin: 0;
+}
+
+/* ─── Responsive ─────────────────────────────────────────────────────────── */
+
+@media (max-width: 1000px) {
+  .header { padding: 14px 32px; }
+  .intro  { padding: 48px 32px 0; }
+  .timelineOuter { padding: 0 32px 56px; }
+
+  .rowAbove, .rowBelow { height: 240px; }
+
+  .card { padding: 14px 12px; gap: 7px; }
+  .cardBody { display: none; }
+  .card:hover .cardBody { display: block; }
+}
+
+@media (max-width: 680px) {
+  .header { padding: 12px 20px; }
+  .headerMeta { display: none; }
+
+  .intro {
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 36px 20px 0;
+    gap: 24px;
+  }
+
+  .introBadge { text-align: left; }
+
+  /* Kill desktop timeline, show mobile list */
+  .timelineOuter { display: none; }
+  .mobileList {
+    display: block;
+    border-bottom: 1px solid var(--rule);
+    margin-top: 40px;
+  }
+}
+
+/* ─── Reduced motion ─────────────────────────────────────────────────────── */
+
+@media (prefers-reduced-motion: reduce) {
+  .trackLine,
+  .tickDot,
+  .step {
+    animation: none;
+    opacity: 1;
+    clip-path: none;
+  }
+
+  .stepAbove .card:hover,
+  .stepBelow .card:hover {
+    transform: none;
+  }
+}

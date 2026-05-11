@@ -40,7 +40,7 @@ export function ServicesIndex() {
           <Link
             key={service.slug}
             href={`/services/${service.slug}`}
-            className="group flex items-baseline gap-5 px-6 py-5 hover:bg-paper-elevated transition-colors"
+            className="group flex items-baseline gap-5 px-6 py-5 hover:bg-paper-elevated transition-all duration-300 hover:px-8 border-l-4 border-transparent hover:border-blue"
             style={{ borderBottom: '1px solid var(--rule)' }}
           >
             {/* Row number */}
@@ -60,7 +60,7 @@ export function ServicesIndex() {
 
             {/* Service name */}
             <span
-              className="flex-1 text-ink group-hover:text-blue transition-colors"
+              className="flex-1 text-ink group-hover:text-blue transition-colors duration-300"
               style={{
                 fontFamily: 'var(--font-fraunces)',
                 fontSize: 'clamp(1.0625rem, 2.4vw, 1.375rem)',
@@ -86,7 +86,7 @@ export function ServicesIndex() {
 
             {/* Arrow */}
             <span
-              className="flex-shrink-0 text-ink-subtle group-hover:text-blue group-hover:translate-x-1 transition-all"
+              className="flex-shrink-0 text-ink-subtle group-hover:text-blue group-hover:translate-x-2 transition-all duration-300"
               style={{ fontSize: '0.9rem' }}
               aria-hidden="true"
             >

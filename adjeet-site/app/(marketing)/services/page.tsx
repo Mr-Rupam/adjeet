@@ -3,7 +3,6 @@ import { ServicesSpecimenHero } from '@/components/sections/ServicesSpecimenHero
 import { ServicesManifesto } from '@/components/sections/ServicesManifesto'
 import { ServicesCatalogue } from '@/components/sections/ServicesCatalogue'
 import { OurProcess } from '@/components/sections/OurProcess'
-import { MaterialsLibrary } from '@/components/sections/MaterialsLibrary'
 
 
 export const metadata: Metadata = {
@@ -20,7 +19,6 @@ export default function ServicesPage() {
       <ServicesManifesto />
       <ServicesCatalogue />
       <OurProcess />
-      <MaterialsLibrary />
     </>
   )
 }

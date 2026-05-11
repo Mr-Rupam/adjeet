@@ -57,16 +57,16 @@ export function SelectedWork() {
           {/* Hero photo — left, large */}
           <button
             onClick={() => open(0)}
-            className="group relative flex-[3] overflow-hidden bg-paper-elevated focus-visible:outline-2 focus-visible:outline-blue focus-visible:outline-offset-2"
+            className="group relative flex-[3] overflow-hidden bg-paper-elevated focus-visible:outline-2 focus-visible:outline-blue focus-visible:outline-offset-2 shadow-sm hover:shadow-md transition-shadow duration-300"
             aria-label={hero ? `View: ${hero.alt}` : 'Gallery image 1'}
-            style={{ borderRadius: '2px' }}
+            style={{ borderRadius: '4px' }}
           >
             {hero ? (
               /* eslint-disable-next-line @next/next/no-img-element */
               <img
                 src={hero.src}
                 alt={hero.alt}
-                className="absolute inset-0 w-full h-full object-cover group-hover:scale-[1.03] transition-transform duration-700"
+                className="absolute inset-0 w-full h-full object-cover group-hover:scale-[1.03] group-hover:brightness-95 transition-all duration-700"
               />
             ) : (
               <PlaceholderBox label="01" />
@@ -81,16 +81,16 @@ export function SelectedWork() {
                 <button
                   key={i}
                   onClick={() => open(i + 1)}
-                  className="group relative flex-1 overflow-hidden bg-paper-elevated focus-visible:outline-2 focus-visible:outline-blue focus-visible:outline-offset-2"
+                  className="group relative flex-1 overflow-hidden bg-paper-elevated focus-visible:outline-2 focus-visible:outline-blue focus-visible:outline-offset-2 shadow-sm hover:shadow-md transition-shadow duration-300"
                   aria-label={photo ? `View: ${photo.alt}` : `Gallery image ${i + 2}`}
-                  style={{ borderRadius: '2px' }}
+                  style={{ borderRadius: '4px' }}
                 >
                   {photo ? (
                     /* eslint-disable-next-line @next/next/no-img-element */
                     <img
                       src={photo.src}
                       alt={photo.alt}
-                      className="absolute inset-0 w-full h-full object-cover group-hover:scale-[1.04] transition-transform duration-700"
+                      className="absolute inset-0 w-full h-full object-cover group-hover:scale-[1.04] group-hover:brightness-95 transition-all duration-700"
                     />
                   ) : (
                     <PlaceholderBox label={`0${i + 2}`} />

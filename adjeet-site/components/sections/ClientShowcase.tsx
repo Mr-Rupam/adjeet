@@ -35,13 +35,13 @@ const CLIENTS_ROW2 = [
 
 // Accent colours per sector for visual variety
 const SECTOR_COLORS: Record<string, { bg: string; text: string; border: string }> = {
-  Banking:    { bg: "bg-blue/10",  text: "text-blue",      border: "border-blue/20" },
-  Telecom:    { bg: "bg-clay/10",  text: "text-clay",      border: "border-clay/20" },
-  FMCG:       { bg: "bg-sage/10",  text: "text-sage",      border: "border-sage/20" },
-  Fuel:       { bg: "bg-ochre/10", text: "text-ochre",     border: "border-ochre/20" },
-  Automotive: { bg: "bg-slate/10", text: "text-slate",     border: "border-slate/20" },
-  Healthcare: { bg: "bg-sage/10",  text: "text-sage",      border: "border-sage/20" },
-  Hospitality:{ bg: "bg-clay/10",  text: "text-clay",      border: "border-clay/20" },
+  Banking:    { bg: "bg-blue/5",   text: "text-blue",      border: "border-blue/20" },
+  Telecom:    { bg: "bg-slate/5",  text: "text-slate",     border: "border-slate/20" },
+  FMCG:       { bg: "bg-slate/10", text: "text-ink-muted", border: "border-slate/20" },
+  Fuel:       { bg: "bg-blue/10",  text: "text-blue",      border: "border-blue/30" },
+  Automotive: { bg: "bg-slate/5",  text: "text-ink-subtle",border: "border-slate/15" },
+  Healthcare: { bg: "bg-blue/5",   text: "text-blue-deep", border: "border-blue/15" },
+  Hospitality:{ bg: "bg-slate/5",  text: "text-slate",     border: "border-slate/20" },
 };
 
 const repeat = <T,>(items: T[], count = 4): T[] =>
@@ -104,7 +104,7 @@ export function ClientShowcase() {
               return (
                 <div
                   key={i}
-                  className={`flex-shrink-0 flex items-center gap-3 px-5 py-3 rounded-full border ${colors.border} ${colors.bg} shadow-sm`}
+                  className={`group flex-shrink-0 flex items-center gap-3 px-5 py-3 rounded-full border ${colors.border} ${colors.bg} shadow-sm backdrop-blur-sm hover:scale-[1.03] hover:shadow-md hover:border-blue/30 transition-all duration-300 cursor-default`}
                 >
                   <span className={`text-sm font-bold ${colors.text}`}>
                     {client.name}
@@ -124,7 +124,7 @@ export function ClientShowcase() {
               return (
                 <div
                   key={i}
-                  className={`flex-shrink-0 flex items-center gap-3 px-5 py-3 rounded-full border ${colors.border} ${colors.bg} shadow-sm`}
+                  className={`group flex-shrink-0 flex items-center gap-3 px-5 py-3 rounded-full border ${colors.border} ${colors.bg} shadow-sm backdrop-blur-sm hover:scale-[1.03] hover:shadow-md hover:border-blue/30 transition-all duration-300 cursor-default`}
                 >
                   <span className={`text-sm font-bold ${colors.text}`}>
                     {client.name}

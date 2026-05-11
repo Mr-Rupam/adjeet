@@ -1,9 +1,0 @@
-{"ts":"2026-04-26T10:09:43.604Z","cmd":"goto","args":"https://adjeet.vercel.app","origin":"https://adjeet.vercel.app/","durationMs":3636,"status":"ok","hasCookies":false,"mode":"launched"}
-{"ts":"2026-04-26T10:09:54.043Z","cmd":"screenshot","args":"C:/Users/KIIT0001/Downloads/AD_JEET/adjeet-site/public/browse-home.png","origin":"https://adjeet.vercel.app/","durationMs":1258,"status":"ok","hasCookies":false,"mode":"launched"}
-{"ts":"2026-04-26T10:10:09.189Z","cmd":"viewport","args":"1440x900","origin":"https://adjeet.vercel.app/","durationMs":13,"status":"ok","hasCookies":false,"mode":"launched"}
-{"ts":"2026-04-26T10:10:10.796Z","cmd":"screenshot","args":"C:/Users/KIIT0001/Downloads/AD_JEET/adjeet-site/public/browse-home-desktop.png","origin":"https://adjeet.vercel.app/","durationMs":1341,"status":"ok","hasCookies":false,"mode":"launched"}
-{"ts":"2026-04-26T10:10:38.804Z","cmd":"goto","args":"https://adjeet.vercel.app/services","origin":"https://adjeet.vercel.app/services","durationMs":866,"status":"ok","hasCookies":false,"mode":"launched"}
-{"ts":"2026-04-26T10:10:41.616Z","cmd":"screenshot","args":"C:/Users/KIIT0001/Downloads/AD_JEET/adjeet-site/public/browse-services.png","origin":"https://adjeet.vercel.app/services","durationMs":2582,"status":"ok","hasCookies":false,"mode":"launched"}
-{"ts":"2026-04-26T10:10:57.449Z","cmd":"goto","args":"https://adjeet.vercel.app","origin":"https://adjeet.vercel.app/","durationMs":227,"status":"ok","hasCookies":false,"mode":"launched"}
-{"ts":"2026-04-26T10:10:57.713Z","cmd":"viewport","args":"390x844","origin":"https://adjeet.vercel.app/","durationMs":45,"status":"ok","hasCookies":false,"mode":"launched"}
-{"ts":"2026-04-26T10:10:58.377Z","cmd":"screenshot","args":"C:/Users/KIIT0001/Downloads/AD_JEET/adjeet-site/public/browse-mobile.png","origin":"https://adjeet.vercel.app/","durationMs":434,"status":"ok","hasCookies":false,"mode":"launched"}

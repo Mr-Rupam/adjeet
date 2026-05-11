@@ -1,0 +1,391 @@
+/* ─── Hero Section ───────────────────────────────────────────────────────── */
+
+.section {
+  min-height: 100svh;
+  position: relative;
+  overflow: hidden;
+  background-color: var(--surface-inverse);
+  display: flex;
+  flex-direction: column;
+}
+
+/* Blue top accent */
+.section::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: var(--adjeet-blue);
+  z-index: 20;
+}
+
+/* Background: warm dark with subtle noise + vignette */
+.bg {
+  position: absolute;
+  inset: 0;
+  background-image:
+    radial-gradient(ellipse 90% 70% at 75% 40%, rgba(28, 22, 10, 0.7), transparent 65%),
+    radial-gradient(ellipse 50% 40% at 10% 80%, rgba(20, 15, 5, 0.5), transparent 60%);
+  z-index: 0;
+}
+
+.bg::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 0.9 0 0 0 0 0.7 0 0 0 0.04 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  opacity: 0.6;
+}
+
+/* ─── Top Meta Bar ──────────────────────────────────────────────────────── */
+
+.topbar {
+  position: relative;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 18px 48px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  font-family: var(--font-mono), monospace;
+  font-size: 10px;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: rgba(245, 240, 232, 0.3);
+}
+
+.topbarBrand {
+  color: rgba(245, 240, 232, 0.7);
+  letter-spacing: 0.2em;
+  font-weight: 400;
+}
+
+.topbarDot {
+  width: 3px;
+  height: 3px;
+  border-radius: 50%;
+  background: rgba(245, 240, 232, 0.2);
+  flex-shrink: 0;
+}
+
+.topbarPush {
+  margin-left: auto;
+}
+
+.liveDot {
+  display: inline-block;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--ochre);
+  margin-right: 7px;
+  vertical-align: middle;
+  animation: livePulse 2s ease-in-out infinite;
+}
+
+@keyframes livePulse {
+  0%, 100% { opacity: 0.4; transform: scale(0.8); }
+  50% { opacity: 1; transform: scale(1); }
+}
+
+/* ─── Main Content Grid ─────────────────────────────────────────────────── */
+
+.content {
+  position: relative;
+  z-index: 10;
+  flex: 1;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 80px;
+  max-width: 1360px;
+  margin: 0 auto;
+  width: 100%;
+  padding: 40px 48px 56px;
+  align-items: start;
+}
+
+/* ─── Left: Editorial ───────────────────────────────────────────────────── */
+
+.editorial {
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+  padding-top: 24px;
+}
+
+.eyebrow {
+  font-family: var(--font-mono), monospace;
+  font-size: 10px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--ochre);
+  margin: 0;
+}
+
+.headline {
+  font-family: var(--font-fraunces), serif;
+  font-size: clamp(2.75rem, 5.5vw, 5rem);
+  font-weight: 700;
+  line-height: 1.0;
+  letter-spacing: -0.03em;
+  color: #F5F0E8;
+  margin: 0;
+}
+
+.headlineAccent {
+  display: block;
+  color: var(--ochre);
+  font-style: italic;
+  font-weight: 400;
+}
+
+.sub {
+  font-family: var(--font-inter), system-ui, sans-serif;
+  font-size: 1rem;
+  line-height: 1.75;
+  color: rgba(245, 240, 232, 0.5);
+  margin: 0;
+  max-width: 40ch;
+}
+
+/* Stats */
+.stats {
+  display: flex;
+  align-items: stretch;
+  gap: 0;
+}
+
+.stat {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding-right: 28px;
+  margin-right: 28px;
+  border-right: 1px solid rgba(245, 240, 232, 0.1);
+}
+
+.stat:last-child {
+  border-right: none;
+  padding-right: 0;
+  margin-right: 0;
+}
+
+.statNum {
+  font-family: var(--font-fraunces), serif;
+  font-size: clamp(1.75rem, 2.8vw, 2.5rem);
+  font-weight: 700;
+  line-height: 1;
+  color: #F5F0E8;
+  letter-spacing: -0.02em;
+}
+
+.statLabel {
+  font-family: var(--font-mono), monospace;
+  font-size: 9px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: rgba(245, 240, 232, 0.3);
+}
+
+/* CTAs */
+.ctas {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+
+.ctaPrimary {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 15px 28px;
+  background: var(--adjeet-blue);
+  color: #FFFFFF;
+  font-family: var(--font-inter), system-ui, sans-serif;
+  font-weight: 600;
+  font-size: 14px;
+  letter-spacing: 0.01em;
+  text-decoration: none;
+  border-radius: 4px;
+  box-shadow: 0 4px 14px rgba(37, 99, 235, 0.25);
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.ctaPrimary:hover {
+  background: var(--adjeet-blue-deep);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(37, 99, 235, 0.4);
+}
+
+.ctaSecondary {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 15px 24px;
+  background: transparent;
+  color: rgba(255, 255, 255, 0.7);
+  font-family: var(--font-inter), system-ui, sans-serif;
+  font-size: 14px;
+  font-weight: 500;
+  text-decoration: none;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 4px;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.ctaSecondary:hover {
+  color: #FFFFFF;
+  border-color: rgba(255, 255, 255, 0.5);
+  background: rgba(255, 255, 255, 0.05);
+}
+
+/* ─── Right: Demo ───────────────────────────────────────────────────────── */
+
+.demo {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+/* Material picker */
+.materialBar {
+  display: flex;
+  align-items: center;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  align-self: flex-start;
+  overflow: hidden;
+}
+
+.materialBarLabel {
+  font-family: var(--font-mono), monospace;
+  font-size: 9px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: rgba(245, 240, 232, 0.25);
+  padding: 10px 14px;
+  border-right: 1px solid rgba(255, 255, 255, 0.07);
+  white-space: nowrap;
+}
+
+.matBtn {
+  padding: 10px 18px;
+  background: transparent;
+  border: none;
+  border-right: 1px solid rgba(255, 255, 255, 0.07);
+  color: rgba(245, 240, 232, 0.4);
+  font-family: var(--font-inter), system-ui, sans-serif;
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.01em;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+  white-space: nowrap;
+}
+
+.matBtn:last-child {
+  border-right: none;
+}
+
+.matBtn:hover {
+  background: rgba(255, 255, 255, 0.04);
+  color: rgba(245, 240, 232, 0.8);
+}
+
+.matBtnActive {
+  background: rgba(255, 255, 255, 0.07) !important;
+  color: #F5F0E8 !important;
+}
+
+/* Sign display area */
+.signWrap {
+  position: relative;
+  min-height: 260px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: text;
+  padding: 20px 0 52px;
+}
+
+/* Demo hint */
+.demoHint {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--font-mono), monospace;
+  font-size: 9.5px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: rgba(245, 240, 232, 0.25);
+  margin: 0;
+}
+
+.demoHintDot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--ochre);
+  flex-shrink: 0;
+  animation: dotPulse 1.8s ease-in-out infinite;
+}
+
+@keyframes dotPulse {
+  0%, 100% { opacity: 0.3; transform: scale(0.8); }
+  50% { opacity: 1; transform: scale(1); }
+}
+
+/* ─── Responsive ────────────────────────────────────────────────────────── */
+
+@media (max-width: 1100px) {
+  .content {
+    grid-template-columns: 1fr;
+    gap: 52px;
+    padding: 44px 40px 60px;
+  }
+
+  .headline {
+    font-size: clamp(2.5rem, 8vw, 4rem);
+  }
+}
+
+@media (max-width: 640px) {
+  .topbar {
+    padding: 14px 20px;
+    gap: 10px;
+  }
+
+  .content {
+    padding: 32px 20px 48px;
+    gap: 40px;
+  }
+
+  .materialBar {
+    flex-wrap: wrap;
+  }
+
+  .ctas {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .ctaPrimary,
+  .ctaSecondary {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+/* ─── Reduced motion ────────────────────────────────────────────────────── */
+
+@media (prefers-reduced-motion: reduce) {
+  .liveDot,
+  .demoHintDot {
+    animation: none;
+    opacity: 0.6;
+  }
+}
