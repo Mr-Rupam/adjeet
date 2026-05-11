@@ -33,7 +33,7 @@ export function MobileNav({ links }: { links: NavLink[] }) {
   return (
     <>
       <button
-        className="md:hidden p-2 text-ink-muted hover:text-ink"
+        className="md:hidden p-3 text-ink-muted hover:text-ink"
         aria-label={open ? 'Close navigation menu' : 'Open navigation menu'}
         aria-expanded={open}
         aria-controls="mobile-nav-drawer"
@@ -65,21 +65,27 @@ export function MobileNav({ links }: { links: NavLink[] }) {
                 ref={closeRef}
                 onClick={() => setOpen(false)}
                 aria-label="Close navigation menu"
-                className="p-2 text-ink-muted hover:text-ink text-xl"
+                className="p-3 text-ink-muted hover:text-ink text-xl"
               >
                 ✕
               </button>
             </div>
             <nav className="flex flex-col gap-8 px-10 pt-8">
-              {links.map(({ href, label }) => (
-                <Link
-                  key={href}
-                  href={href}
-                  className="text-4xl font-serif font-bold text-ink hover:text-blue transition-colors"
-                >
-                  {label}
-                </Link>
-              ))}
+              {links.map(({ href, label }) => {
+                const isActive = pathname === href || pathname.startsWith(href + '/')
+                return (
+                  <Link
+                    key={href}
+                    href={href}
+                    aria-current={isActive ? 'page' : undefined}
+                    className={`text-4xl font-serif font-bold transition-colors ${
+                      isActive ? 'text-ink' : 'text-ink-muted hover:text-ink'
+                    }`}
+                  >
+                    {label}
+                  </Link>
+                )
+              })}
             </nav>
           </div>
         </>
