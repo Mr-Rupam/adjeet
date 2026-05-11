@@ -45,7 +45,7 @@ export function Nav() {
                   aria-current={isActive ? 'page' : undefined}
                   className={`inline-flex items-center py-3.5 text-sm font-medium transition-colors ${
                     isActive
-                      ? 'text-ink border-b-2 border-ochre'
+                      ? 'text-ink border-b-2 border-blue'
                       : 'text-ink-muted hover:text-ink'
                   }`}
                 >

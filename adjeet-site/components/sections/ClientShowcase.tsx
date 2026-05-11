@@ -32,7 +32,7 @@ const SECTOR_COLORS: Record<string, { bg: string; text: string; border: string }
   Banking:    { bg: "bg-blue/5",   text: "text-blue",       border: "border-blue/20" },
   Telecom:    { bg: "bg-slate/5",  text: "text-slate",      border: "border-slate/20" },
   FMCG:       { bg: "bg-slate/10", text: "text-ink-muted",  border: "border-slate/20" },
-  Fuel:       { bg: "bg-ochre/5",  text: "text-ochre",      border: "border-ochre/20" },
+  Fuel:       { bg: "bg-blue/10",  text: "text-blue",       border: "border-blue/30" },
   Automotive: { bg: "bg-slate/5",  text: "text-ink-subtle", border: "border-slate/15" },
   Healthcare: { bg: "bg-blue/5",   text: "text-blue",       border: "border-blue/15" },
   Hospitality:{ bg: "bg-slate/5",  text: "text-slate",      border: "border-slate/20" },
@@ -60,7 +60,7 @@ export function ClientShowcase() {
 
         {/* Left-aligned editorial header */}
         <div className="mb-14 max-w-2xl">
-          <span className="inline-block mb-5 font-mono text-xs uppercase tracking-widest text-ochre border-l-2 border-ochre pl-3">
+          <span className="inline-block mb-5 font-mono text-xs uppercase tracking-widest text-blue border-l-2 border-blue pl-3">
             Trusted by 200+ brands
           </span>
           <h2 className="text-4xl md:text-5xl font-serif font-bold text-ink leading-tight">
@@ -77,7 +77,7 @@ export function ClientShowcase() {
           <div className="flex flex-wrap gap-4 mt-8">
             <Link
               href="/portfolio"
-              className="inline-flex items-center justify-center rounded bg-ochre text-ink font-medium px-7 py-3.5 text-sm hover:opacity-90 transition-opacity active:scale-[0.98]"
+              className="inline-flex items-center justify-center rounded bg-blue text-white font-medium px-7 py-3.5 text-sm hover:bg-blue-deep transition-colors active:scale-[0.98]"
             >
               View our work
             </Link>

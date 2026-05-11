@@ -74,7 +74,7 @@ export function ByTheNumbers() {
                   style={{
                     width: '24px',
                     height: '1px',
-                    background: 'var(--ochre)',
+                    background: 'var(--adjeet-blue)',
                     marginTop: '0.6rem',
                   }}
                   aria-hidden="true"
