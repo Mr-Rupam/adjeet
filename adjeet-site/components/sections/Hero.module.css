@@ -331,7 +331,7 @@
   width: 5px;
   height: 5px;
   border-radius: 50%;
-  background: var(--ochre);
+  background: var(--adjeet-blue);
   flex-shrink: 0;
   animation: dotPulse 1.8s ease-in-out infinite;
 }
