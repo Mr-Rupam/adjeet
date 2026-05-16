@@ -2,6 +2,7 @@
 
 import { CountUp } from '@/components/motion/CountUp'
 import { FadeIn } from '@/components/motion/FadeIn'
+import { SectionLabel } from '@/components/ui/SectionLabel'
 
 const STATS = [
   { value: 500, suffix: '+', label: 'Projects completed' },
@@ -20,23 +21,7 @@ const TESTIMONIAL = {
 export function ByTheNumbers() {
   return (
     <section style={{ borderBottom: '1px solid var(--rule)' }}>
-      {/* Section label bar */}
-      <div
-        className="mx-auto max-w-content px-6 py-4"
-        style={{ borderBottom: '1px solid var(--rule)' }}
-      >
-        <span
-          style={{
-            fontFamily: 'var(--font-mono)',
-            fontSize: '11px',
-            letterSpacing: '0.14em',
-            color: 'var(--ink-subtle)',
-            textTransform: 'uppercase',
-          }}
-        >
-          № 04 — By the Numbers
-        </span>
-      </div>
+      <SectionLabel number="04" label="By the Numbers" />
 
       <div className="mx-auto max-w-content px-6 py-12 md:py-20 grid md:grid-cols-2 gap-12 md:gap-20 items-start">
 

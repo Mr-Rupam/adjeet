@@ -1,216 +1,276 @@
-'use client'
-
 import { useState, useRef } from 'react'
-import { AnimatePresence, motion, useReducedMotion } from 'framer-motion'
 import Link from 'next/link'
-import styles from './Hero.sandbox.module.css'
+import { Anek_Latin, Khand } from 'next/font/google'
 import { defaultWhatsAppUrl } from '@/lib/whatsapp'
+import { motion, AnimatePresence } from 'framer-motion'
+import styles from './Hero.sandbox.module.css'
 
-// ─── Types ────────────────────────────────────────────────────────────────────
+const heroDisplay = Khand({
+  subsets: ['latin'],
+  weight: ['500', '600', '700'],
+  variable: '--font-hero-display',
+  display: 'swap',
+})
 
-type MaterialTheme = 'glowsign' | 'acpled' | 'wallpaint'
+const heroBody = Anek_Latin({
+  subsets: ['latin'],
+  weight: ['400', '500', '600', '700'],
+  variable: '--font-hero-body',
+  display: 'swap',
+})
 
-interface Material {
-  id: MaterialTheme
-  label: string
-  sub: string
+type Material = 'glowsign' | 'acpled' | 'wallpaint'
+
+type CharEntry = { id: string; char: string }
+
+function getUpdatedChars(prev: CharEntry[], newText: string): CharEntry[] {
+  // Find longest common prefix
+  let prefixLen = 0
+  while (prefixLen < prev.length && prefixLen < newText.length && prev[prefixLen].char === newText[prefixLen]) {
+    prefixLen++
+  }
+  // Find longest common suffix (beyond the differing prefix)
+  let oldEnd = prev.length
+  let newEnd = newText.length
+  while (oldEnd > prefixLen && newEnd > prefixLen && prev[oldEnd - 1].char === newText[newEnd - 1]) {
+    oldEnd--
+    newEnd--
+  }
+  const prefix = prev.slice(0, prefixLen)
+  const suffix = prev.slice(oldEnd)
+  const newMiddle = Array.from(newText.slice(prefixLen, newEnd)).map(char => ({
+    id: crypto.randomUUID(),
+    char,
+  }))
+  return [...prefix, ...newMiddle, ...suffix]
 }
 
-// ─── Constants ────────────────────────────────────────────────────────────────
+const THEME_CLASS: Record<Material, string> = {
+  glowsign:  styles.themeGlowsign,
+  acpled:    styles.themeAcpled,
+  wallpaint: styles.themeWallpaint,
+}
 
-const MATERIALS: Material[] = [
-  { id: 'glowsign', label: 'Glow Sign', sub: 'Neon / LED backlit' },
-  { id: 'acpled', label: 'ACP / LED', sub: 'Face-lit aluminium' },
-  { id: 'wallpaint', label: 'Wall Paint', sub: 'Terracotta brush' },
+const SPECS: Record<Material, {
+  label: string
+  serial: string
+  rows: { k: string; v: string }[]
+}> = {
+  glowsign: {
+    label: 'Glow Sign Board',
+    serial: 'GS-01',
+    rows: [
+      { k: 'Cabinet',    v: 'Aluminium - 4 in deep' },
+      { k: 'Face',       v: 'White acrylic 3mm' },
+      { k: 'Lighting',   v: 'SMD LED - 12V' },
+      { k: 'Dimensions', v: '3 x 6 ft (custom)' },
+      { k: 'Turnaround', v: '5-7 working days' },
+      { k: 'Warranty',   v: '12 months - hardware' },
+    ],
+  },
+  acpled: {
+    label: 'ACP Face-Lit Channel',
+    serial: 'AC-02',
+    rows: [
+      { k: 'Panel',      v: 'Alucobond - 4mm' },
+      { k: 'Letters',    v: 'Channel - acrylic face' },
+      { k: 'Lighting',   v: 'LED face module - 12V' },
+      { k: 'Dimensions', v: 'Custom up to facade' },
+      { k: 'Turnaround', v: '7-10 working days' },
+      { k: 'Warranty',   v: '12 months - hardware' },
+    ],
+  },
+  wallpaint: {
+    label: 'Hand-Painted Wall',
+    serial: 'WP-03',
+    rows: [
+      { k: 'Paint',      v: 'Exterior enamel + sealer' },
+      { k: 'Style',      v: 'Hand-painted / stencil' },
+      { k: 'Substrate',  v: 'Brick - concrete - plaster' },
+      { k: 'Dimensions', v: '10 x 20 ft (typical)' },
+      { k: 'Turnaround', v: '3-7 working days' },
+      { k: 'Lifespan',   v: '3-5 years' },
+    ],
+  },
+}
+
+const MATERIALS: { id: Material; label: string; sub: string }[] = [
+  { id: 'glowsign',  label: 'Glow Sign', sub: 'lit' },
+  { id: 'acpled',    label: 'ACP / LED', sub: 'face-lit' },
+  { id: 'wallpaint', label: 'Wall Paint', sub: 'painted' },
 ]
 
-const MATERIAL_SPECS: Record<MaterialTheme, { finish: string; life: string; material: string }> = {
-  glowsign: { finish: 'Electroluminescent', life: '8–10 yrs', material: 'Acrylic + Flex' },
-  acpled: { finish: 'Brushed Silver', life: '10–15 yrs', material: 'ACP + LED strips' },
-  wallpaint: { finish: 'Weather-proof', life: '5–7 yrs', material: 'Mineral emulsion' },
-}
-
-const PLACEHOLDER = 'YOUR BRAND'
 const MAX_CHARS = 12
 
-// ─── Component ────────────────────────────────────────────────────────────────
-
 export function HeroSandbox() {
-  const prefersReducedMotion = useReducedMotion()
-  const [theme, setTheme] = useState<MaterialTheme>('glowsign')
-  const [text, setText] = useState('')
+  const [chars, setChars] = useState<CharEntry[]>(() =>
+    Array.from('AD-JEET').map(char => ({ id: crypto.randomUUID(), char }))
+  )
+  const text = chars.map(c => c.char).join('')
   const [isFocused, setIsFocused] = useState(false)
+  const [material, setMaterial] = useState<Material>('glowsign')
   const inputRef = useRef<HTMLInputElement>(null)
   const waUrl = defaultWhatsAppUrl()
+  const spec = SPECS[material]
 
-  const displayText = text || PLACEHOLDER
-  const isPlaceholder = !text
-  const chars = displayText.toUpperCase().split('')
-  const charCount = text.length
-  const isWarn = charCount >= 10
-  const specs = MATERIAL_SPECS[theme]
-  const themeClass = styles[`theme-${theme}` as keyof typeof styles]
-
-  // Focus the hidden input on stage click
-  function handleStageClick() {
+  const handleContainerClick = () => {
     inputRef.current?.focus()
   }
 
-  return (
-    <section className={`${styles['sandbox-hero']} ${themeClass}`}>
-      <div className={styles['sandbox-bg']} />
+  const handleTextChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const val = e.target.value.toUpperCase()
+    if (val.length > MAX_CHARS) return
+    setChars(prev => getUpdatedChars(prev, val))
+  }
 
-      <div className={styles['sandbox-content']}>
-        {/* Topbar */}
-        <div className={styles['sandbox-topbar']}>
-          <span className={styles['sandbox-topbar__id']}>
-            AD-JEET / SIGN-STUDIO
-          </span>
-          <span className={styles['sandbox-topbar__hint']}>
-            Click the sign to customise
+  return (
+    <section
+      className={`${styles.sandboxHero} ${THEME_CLASS[material]} ${heroDisplay.variable} ${heroBody.variable}`}
+    >
+      <div className={styles.sandboxBg} />
+
+      <div className={styles.sandboxContent}>
+        <div className={styles.sandboxTopbar}>
+          <span className={styles.sandboxTopbarId}>No. 00 - Live Sample</span>
+          <span className={styles.sandboxTopbarHint}>
+            <span className={styles.pulseDot} />
+            {isFocused ? 'Designing - type to update' : 'Click the sign - switch material'}
           </span>
         </div>
 
-        {/* Manifesto */}
-        <p className={styles['sandbox-manifesto']}>
-          <span className={styles['sandbox-manifesto__ital']}>Every brand deserves a </span>
-          <span className={styles['sandbox-manifesto__hl']}>sign that stops traffic.</span>
-        </p>
+        <h2 className={styles.sandboxManifesto}>
+          Type your brand.<br />
+          <span className={styles.sandboxManifestoItal}>We&apos;ll show you</span> how it looks
+          <br />
+          <span className={styles.sandboxManifestoHl}>lit</span>,{' '}
+          <span className={styles.sandboxManifestoHl}>painted</span>, or{' '}
+          <span className={styles.sandboxManifestoHl}>carved</span>.
+        </h2>
 
-        {/* Stage */}
-        <div
-          className={styles['sandbox-stage']}
-          onClick={handleStageClick}
-          role="button"
-          tabIndex={0}
-          aria-label="Click to type your brand name on the sign"
-          onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') handleStageClick() }}
-        >
-          {/* Visually hidden real input */}
-          <input
-            ref={inputRef}
-            className={styles['hidden-input']}
-            type="text"
-            maxLength={MAX_CHARS}
-            value={text}
-            onChange={(e) => setText(e.target.value.toUpperCase())}
-            onFocus={() => setIsFocused(true)}
-            onBlur={() => setIsFocused(false)}
-            aria-label="Type your brand name"
-            autoCorrect="off"
-            autoCapitalize="characters"
-            spellCheck={false}
-          />
+        <div className={styles.sandboxStage}>
+          <div
+            className={styles.signageContainer}
+            onClick={handleContainerClick}
+            title="Click to edit your sign"
+          >
+            <motion.div
+              key={material}
+              className={styles.mountingSurface}
+              initial={{ opacity: 0, filter: 'brightness(0)' }}
+              animate={{
+                opacity: [0, 0.3, 0.1, 0.7, 0.3, 1],
+                filter: [
+                  'brightness(0)',
+                  'brightness(0.4)',
+                  'brightness(0.1)',
+                  'brightness(0.9)',
+                  'brightness(0.3)',
+                  'brightness(1)',
+                ],
+              }}
+              transition={{ duration: 0.7, ease: 'easeOut', times: [0, 0.15, 0.3, 0.5, 0.7, 1] }}
+            >
+              <span className={`${styles.rivet} ${styles.rivetTl}`} />
+              <span className={`${styles.rivet} ${styles.rivetTr}`} />
+              <span className={`${styles.rivet} ${styles.rivetBl}`} />
+              <span className={`${styles.rivet} ${styles.rivetBr}`} />
 
-          {/* Sign board */}
-          <div className={styles['signage-container']}>
-            <div className={styles['mounting-surface']} />
-            <span className={`${styles.rivet} ${styles['rivet-tl']}`} />
-            <span className={`${styles.rivet} ${styles['rivet-tr']}`} />
-            <span className={`${styles.rivet} ${styles['rivet-bl']}`} />
-            <span className={`${styles.rivet} ${styles['rivet-br']}`} />
+              <input
+                ref={inputRef}
+                type="text"
+                value={text}
+                maxLength={MAX_CHARS}
+                onChange={handleTextChange}
+                onFocus={() => setIsFocused(true)}
+                onBlur={() => setIsFocused(false)}
+                className={styles.hiddenInput}
+                spellCheck={false}
+                autoComplete="off"
+                aria-label="Edit sign text"
+              />
 
-            <div className={styles['signage-text']}>
-              <AnimatePresence mode="popLayout">
-                {chars.map((char, i) => (
-                  <motion.span
-                    key={`${char}-${i}`}
-                    className={`${styles['signage-char']} ${isPlaceholder ? styles['signage-placeholder'] : ''}`}
-                    initial={prefersReducedMotion ? undefined : { opacity: 0, y: -12 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={prefersReducedMotion ? undefined : { opacity: 0, y: 12 }}
-                    transition={{ duration: 0.15, delay: i * 0.03 }}
-                  >
-                    {char === ' ' ? '\u00a0' : char}
-                  </motion.span>
-                ))}
-              </AnimatePresence>
-              <span className={`${styles['signage-cursor']} ${isFocused ? styles.active : ''}`} aria-hidden="true" />
-            </div>
+              <h3 className={styles.signageText}>
+                {text === '' ? (
+                  <span className={styles.signagePlaceholder}>YOUR BRAND</span>
+                ) : (
+                  <AnimatePresence mode="popLayout">
+                    {chars.map((entry, i) => (
+                      <motion.span
+                        key={entry.id}
+                        initial={{ opacity: 0, y: 6, filter: 'brightness(0.2)' }}
+                        animate={{ opacity: 1, y: 0, filter: 'brightness(1)' }}
+                        exit={{ opacity: 0, scale: 0.9, filter: 'brightness(0)' }}
+                        transition={{ duration: 0.2, delay: i * 0.02 }}
+                        className={styles.signageChar}
+                      >
+                        {entry.char === ' ' ? ' ' : entry.char}
+                      </motion.span>
+                    ))}
+                  </AnimatePresence>
+                )}
+                <span
+                  className={`${styles.signageCursor} ${isFocused ? styles.signageCursorActive : ''}`}
+                />
+              </h3>
+            </motion.div>
+
+            <div className={styles.signageFloor} aria-hidden="true" />
+
+            <p
+              className={`${styles.counter} ${text.length >= 10 ? styles.counterWarn : ''}`}
+              aria-live="polite"
+              aria-label={`${text.length} of ${MAX_CHARS} characters used`}
+            >
+              {text.length} / {MAX_CHARS}
+            </p>
           </div>
 
-          <div className={styles['signage-floor']} />
-
-          {/* Character counter */}
-          <p className={`${isWarn ? styles['counter--warn'] : ''}`}
-            style={{ color: 'var(--sandbox-fg)', opacity: 0.6, fontFamily: 'var(--font-mono, monospace)', fontSize: '0.8rem', marginTop: '0.75rem' }}>
-            {charCount} / {MAX_CHARS}
-          </p>
-        </div>
-
-        {/* Spec card + material picker row */}
-        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '2rem', alignItems: 'flex-start' }}>
-          {/* Spec card */}
-          <AnimatePresence mode="wait">
-            <motion.div
-              key={theme}
-              className={styles['spec-card']}
-              initial={prefersReducedMotion ? undefined : { opacity: 0, x: -8 }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={prefersReducedMotion ? undefined : { opacity: 0, x: 8 }}
-              transition={{ duration: 0.2 }}
-            >
-              <div className={styles['spec-card__head']}>
-                <span className={styles['spec-card__serial']}>SPC-001</span>
-                <span className={styles['spec-card__label']}>{MATERIALS.find(m => m.id === theme)?.label}</span>
-              </div>
-              <div className={styles['spec-card__rows']}>
-                <div className={styles['spec-card__row']}>
-                  <span className={styles['spec-k']}>Finish</span>
-                  <span className={styles['spec-v']}>{specs.finish}</span>
+          <aside className={styles.specCard}>
+            <div className={styles.specCardHead}>
+              <span className={styles.specCardSerial}>No. {spec.serial}</span>
+              <span className={styles.specCardLabel}>{spec.label}</span>
+            </div>
+            <div className={styles.specCardRows}>
+              {spec.rows.map(r => (
+                <div className={styles.specCardRow} key={r.k}>
+                  <span className={styles.specK}>{r.k}</span>
+                  <span className={styles.specV}>{r.v}</span>
                 </div>
-                <div className={styles['spec-card__row']}>
-                  <span className={styles['spec-k']}>Material</span>
-                  <span className={styles['spec-v']}>{specs.material}</span>
-                </div>
-                <div className={styles['spec-card__row']}>
-                  <span className={styles['spec-k']}>Est. Life</span>
-                  <span className={styles['spec-v']}>{specs.life}</span>
-                </div>
-                <div className={styles['spec-card__row']}>
-                  <span className={styles['spec-k']}>Custom text</span>
-                  <span className={styles['spec-v']}>{text || '—'}</span>
-                </div>
-              </div>
-              <div className={styles['spec-card__foot']}>
-                <div className={styles['spec-card__sample']} />
-                <span className={styles['spec-card__qty']}>Min. qty: 1 unit</span>
-              </div>
-            </motion.div>
-          </AnimatePresence>
-
-          {/* Material picker + CTAs */}
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem', flex: 1 }}>
-            <div className={styles['material-picker']}>
-              <span className={styles['picker-label']}>Material:</span>
-              {MATERIALS.map((m) => (
-                <button
-                  key={m.id}
-                  className={`${styles['material-btn']} ${theme === m.id ? styles.active : ''}`}
-                  onClick={() => setTheme(m.id)}
-                  aria-pressed={theme === m.id}
-                >
-                  <span className={styles['material-btn__label']}>{m.label}</span>
-                  <span className={styles['material-btn__sub']}>{m.sub}</span>
-                </button>
               ))}
             </div>
-
-            <div className={styles['sandbox-ctas']}>
-              <a
-                href={waUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className={styles['btn-primary-signage']}
-              >
-                <span className={styles['pulse-dot']} style={{ marginRight: '0.5rem' }} />
-                Get this quote on WhatsApp
-              </a>
-              <Link href="/services" className={styles['btn-secondary-outline']}>
-                Explore all sign types →
-              </Link>
+            <div className={styles.specCardFoot}>
+              <span className={styles.specCardSample}>SAMPLE</span>
+              <span className={styles.specCardQty}>01 / {MATERIALS.length}</span>
             </div>
-          </div>
+          </aside>
+        </div>
+
+        <div className={styles.materialPicker}>
+          <span className={styles.pickerLabel}>MATERIAL -</span>
+          {MATERIALS.map(m => (
+            <button
+              key={m.id}
+              onClick={() => setMaterial(m.id)}
+              className={`${styles.materialBtn} ${material === m.id ? styles.materialBtnActive : ''}`}
+            >
+              <span className={styles.materialBtnLabel}>{m.label}</span>
+              <span className={styles.materialBtnSub}>{m.sub}</span>
+            </button>
+          ))}
+        </div>
+
+        <div className={styles.sandboxCtas}>
+          <a
+            href={waUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className={styles.btnPrimarySignage}
+          >
+            Build this sign <span aria-hidden="true">&nearr;</span>
+          </a>
+          <Link href="/portfolio" className={styles.btnSecondaryOutline}>
+            View portfolio
+          </Link>
         </div>
       </div>
     </section>

@@ -5,25 +5,7 @@ import { SectionLabel } from '@/components/ui/SectionLabel'
 export function ServicesIndex() {
   return (
     <section style={{ borderBottom: '1px solid var(--rule)' }}>
-      {/* Section label bar */}
-      <div
-        className="mx-auto max-w-content px-6 py-4 flex items-center justify-between"
-        style={{ borderBottom: '1px solid var(--rule)' }}
-      >
-        <SectionLabel>№ 01 — Services</SectionLabel>
-        <Link
-          href="/services"
-          className="hover:text-blue transition-colors"
-          style={{
-            fontFamily: 'var(--font-mono)',
-            fontSize: '11px',
-            letterSpacing: '0.08em',
-            color: 'var(--ink-subtle)',
-          }}
-        >
-          View all →
-        </Link>
-      </div>
+      <SectionLabel number="01" label="Services" href="/services" linkText="View all →" />
 
       {/* Index rows */}
       <div className="mx-auto max-w-content">

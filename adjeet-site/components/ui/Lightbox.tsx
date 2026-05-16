@@ -125,7 +125,7 @@ export function Lightbox({ photos, initialIndex, onClose }: LightboxProps) {
       )}
 
       {/* Counter */}
-      <p className="absolute bottom-4 text-xs text-ink-muted">
+      <p className="absolute bottom-4 text-xs text-white/60">
         {idx + 1} / {total}
       </p>
     </div>

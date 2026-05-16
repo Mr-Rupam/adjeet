@@ -1,23 +1,24 @@
-import type { CSSProperties, ReactNode } from 'react'
+import Link from 'next/link'
+import styles from './SectionLabel.module.css'
 
 interface SectionLabelProps {
-  children: ReactNode
-  className?: string
-  style?: CSSProperties
+  number: string
+  label: string
+  href?: string
+  linkText?: string
 }
 
-const style: CSSProperties = {
-  fontFamily: 'var(--font-mono)',
-  fontSize: '11px',
-  letterSpacing: '0.14em',
-  color: 'var(--ink-subtle)',
-  textTransform: 'uppercase',
-}
-
-export function SectionLabel({ children, className, style: inlineStyle }: SectionLabelProps) {
+export function SectionLabel({ number, label, href, linkText }: SectionLabelProps) {
   return (
-    <span style={{ ...style, ...inlineStyle }} className={className}>
-      {children}
-    </span>
+    <div className={`mx-auto max-w-content px-6 py-4 flex items-center justify-between ${styles.container}`}>
+      <span className={styles.label}>
+        № {number} — {label}
+      </span>
+      {href && linkText && (
+        <Link href={href} className={styles.link}>
+          {linkText}
+        </Link>
+      )}
+    </div>
   )
 }

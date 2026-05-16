@@ -1,10 +1,28 @@
 'use client'
 
 import { useState, useRef } from 'react'
+import Image from 'next/image'
 import Link from 'next/link'
+import { Anek_Latin, Khand } from 'next/font/google'
 import { defaultWhatsAppUrl } from '@/lib/whatsapp'
 import { motion, AnimatePresence } from 'framer-motion'
 import styles from './Hero.module.css'
+
+const heroDisplay = Khand({
+  subsets: ['latin'],
+  weight: ['500', '600', '700'],
+  variable: '--font-hero-display',
+  display: 'swap',
+  preload: true,
+})
+
+const heroBody = Anek_Latin({
+  subsets: ['latin'],
+  weight: ['400', '500', '600', '700'],
+  variable: '--font-hero-body',
+  display: 'swap',
+  preload: true,
+})
 
 type Material = 'glowsign' | 'acpled' | 'wallpaint'
 
@@ -54,11 +72,12 @@ const MATERIALS: { id: Material; label: string }[] = [
 ]
 
 export function Hero() {
+  const [material, setMaterial] = useState<Material>('glowsign')
   const [text, setText] = useState('AD-JEET')
   const [isFocused, setIsFocused] = useState(false)
-  const [material, setMaterial] = useState<Material>('glowsign')
   const inputRef = useRef<HTMLInputElement>(null)
   const waUrl = defaultWhatsAppUrl()
+  
   const spec = SPECS[material]
   const matIndex = MATERIALS.findIndex(m => m.id === material) + 1
 
@@ -68,7 +87,7 @@ export function Hero() {
   }
 
   return (
-    <section className={`${styles.section} theme-${material}`}>
+    <section className={`${styles.section} theme-${material} ${heroDisplay.variable} ${heroBody.variable}`}>
       <div className={styles.bg} />
 
       {/* Meta bar */}
@@ -250,7 +269,6 @@ export function Hero() {
           </p>
 
         </div>
-
       </div>
     </section>
   )

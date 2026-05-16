@@ -1,140 +1,94 @@
-"use client";
-
-import React from "react";
 import Link from "next/link";
 import { defaultWhatsAppUrl } from "@/lib/whatsapp";
-import "./ClientShowcase.css";
+import styles from "./ClientShowcase.module.css";
 
-const CLIENTS_ROW1 = [
-  { name: "SBI", sector: "Banking" },
-  { name: "Airtel", sector: "Telecom" },
-  { name: "Jio", sector: "Telecom" },
-  { name: "Indian Oil", sector: "Fuel" },
-  { name: "HDFC Bank", sector: "Banking" },
-  { name: "Bandhan Bank", sector: "Banking" },
-  { name: "ITC", sector: "FMCG" },
-  { name: "Vi", sector: "Telecom" },
-  { name: "Apollo Pharmacy", sector: "Healthcare" },
+type Client = { name: string; sector: string; national?: boolean };
+
+const CLIENTS_ROW1: Client[] = [
+  { name: "Airtel",        sector: "Telecom",      national: true },
+  { name: "Supreme Pipe",  sector: "Piping" },
+  { name: "Havells",       sector: "Electricals",  national: true },
+  { name: "Star Cement",   sector: "Cement" },
+  { name: "SRMB",          sector: "Steel" },
+  { name: "Shyam Steel",   sector: "Steel" },
+  { name: "Emami",         sector: "FMCG",         national: true },
+  { name: "OYO",           sector: "Hospitality",  national: true },
+  { name: "Dalmia Cement", sector: "Cement" },
+  { name: "Jio",           sector: "Telecom",      national: true },
 ];
 
-const CLIENTS_ROW2 = [
-  { name: "Tata Motors", sector: "Automotive" },
-  { name: "Maruti Suzuki", sector: "Automotive" },
-  { name: "Hero MotoCorp", sector: "Automotive" },
-  { name: "BPCL", sector: "Fuel" },
-  { name: "Axis Bank", sector: "Banking" },
-  { name: "ICICI Bank", sector: "Banking" },
-  { name: "Coca-Cola", sector: "FMCG" },
-  { name: "HP Petrol", sector: "Fuel" },
-  { name: "OYO", sector: "Hospitality" },
+const CLIENTS_ROW2: Client[] = [
+  { name: "Vivo",            sector: "Smartphones", national: true },
+  { name: "Toptech TMT",     sector: "Steel" },
+  { name: "Captain TMT Bar", sector: "Steel" },
+  { name: "Supershakti",     sector: "Steel" },
+  { name: "Elegant TMT Bar", sector: "Steel" },
+  { name: "Astral Pipe",     sector: "Piping" },
+  { name: "SEL TMT",         sector: "Steel" },
+  { name: "Adani Cement",    sector: "Cement",      national: true },
+  { name: "Anchor",          sector: "Electricals" },
 ];
 
-const SECTOR_COLORS: Record<string, { bg: string; text: string; border: string }> = {
-  Banking:    { bg: "bg-blue/5",   text: "text-blue",       border: "border-blue/20" },
-  Telecom:    { bg: "bg-slate/5",  text: "text-slate",      border: "border-slate/20" },
-  FMCG:       { bg: "bg-slate/10", text: "text-ink-muted",  border: "border-slate/20" },
-  Fuel:       { bg: "bg-blue/10",  text: "text-blue",       border: "border-blue/30" },
-  Automotive: { bg: "bg-slate/5",  text: "text-ink-subtle", border: "border-slate/15" },
-  Healthcare: { bg: "bg-blue/5",   text: "text-blue",       border: "border-blue/15" },
-  Hospitality:{ bg: "bg-slate/5",  text: "text-slate",      border: "border-slate/20" },
-};
-
-const repeat = <T,>(items: T[], count = 4): T[] =>
+const repeat = <T,>(items: T[], count = 2): T[] =>
   Array.from({ length: count }).flatMap(() => items);
 
 export function ClientShowcase() {
   const waUrl = defaultWhatsAppUrl();
 
   return (
-    <section className="relative py-24 overflow-hidden bg-paper">
-      {/* Subtle dot grid */}
-      <div
-        className="absolute inset-0 opacity-20"
-        style={{
-          backgroundImage:
-            "radial-gradient(circle at center, var(--rule) 1px, transparent 1px)",
-          backgroundSize: "24px 24px",
-        }}
-      />
-
+    <section className={`relative py-24 overflow-hidden bg-paper ${styles.section}`}>
       <div className="relative max-w-content mx-auto px-6">
+        <h2 className="text-4xl md:text-5xl font-serif font-bold text-ink leading-tight max-w-2xl">
+          Airtel. Jio. Havells.{" "}
+          <span className="text-ink/60">They chose AD-JEET for North Bengal.</span>
+        </h2>
+        <p className="mt-4 text-base text-ink/60 max-w-xl leading-relaxed">
+          35 years of outdoor fabrication. Every brand below has a sign somewhere
+          in North Bengal that we built.
+        </p>
 
-        {/* Left-aligned editorial header */}
-        <div className="mb-14 max-w-2xl">
-          <h2 className="text-4xl md:text-5xl font-serif font-bold text-ink leading-tight">
-            Airtel. Jio. Havells. They chose AD-JEET for North Bengal.
-          </h2>
-          <p className="mt-4 text-lg text-ink-muted max-w-xl">
-            From national banks to telecom giants — we&apos;ve built signage
-            for leading brands across banking, FMCG, automotive, healthcare,
-            and fuel sectors.
-          </p>
-
-          <div className="flex flex-wrap gap-4 mt-8">
-            <Link
-              href="/portfolio"
-              className="inline-flex items-center justify-center rounded bg-blue text-white font-medium px-7 py-3.5 text-sm hover:bg-blue-deep transition-colors active:scale-[0.98]"
-            >
-              View our work
-            </Link>
-            <a
-              href={waUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center justify-center rounded border border-rule text-ink font-medium px-7 py-3.5 text-sm hover:bg-paper-elevated transition-colors active:scale-[0.98]"
-            >
-              Get a quote →
-            </a>
-          </div>
+        <div className="flex flex-wrap gap-3 mt-8">
+          <Link href="/portfolio" className={styles.btnPrimary}>
+            View our work
+          </Link>
+          <a
+            href={waUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className={styles.btnSecondary}
+          >
+            Get a quote &rarr;
+          </a>
         </div>
 
-        {/* Client carousel */}
-        <div className="carousel-wrap overflow-hidden relative">
-          {/* Row 1 — scrolls left */}
-          <div className="animate-scroll-left flex gap-5 whitespace-nowrap animate-[scroll-left_35s_linear_infinite]">
-            {repeat(CLIENTS_ROW1).map((client, i) => {
-              const colors = SECTOR_COLORS[client.sector] ?? SECTOR_COLORS.Banking;
-              return (
-                <div
-                  key={i}
-                  className={`group flex-shrink-0 flex items-center gap-3 px-5 py-3 rounded border ${colors.border} ${colors.bg} shadow-sm backdrop-blur-sm hover:scale-[1.03] hover:shadow-md transition-all duration-300 cursor-default`}
-                >
-                  <span className={`text-sm font-bold ${colors.text}`}>
-                    {client.name}
-                  </span>
-                  <span className="text-[10px] font-medium uppercase tracking-wider text-ink-subtle">
-                    {client.sector}
-                  </span>
-                </div>
-              );
-            })}
+        <div className={`mt-12 overflow-hidden relative ${styles.carouselWrap}`}>
+          <div className={`flex gap-3 whitespace-nowrap ${styles.animateScrollLeft}`}>
+            {repeat(CLIENTS_ROW1).map((client, i) => (
+              <div
+                key={i}
+                className={`${styles.plate} ${client.national ? styles.plateNational : ""}`}
+              >
+                <span className={styles.plateName}>{client.name}</span>
+                <span className={styles.plateSector}>{client.sector}</span>
+              </div>
+            ))}
           </div>
 
-          {/* Row 2 — scrolls right */}
-          <div className="animate-scroll-right flex gap-5 whitespace-nowrap mt-4 animate-[scroll-right_35s_linear_infinite]">
-            {repeat(CLIENTS_ROW2).map((client, i) => {
-              const colors = SECTOR_COLORS[client.sector] ?? SECTOR_COLORS.Banking;
-              return (
-                <div
-                  key={i}
-                  className={`group flex-shrink-0 flex items-center gap-3 px-5 py-3 rounded border ${colors.border} ${colors.bg} shadow-sm backdrop-blur-sm hover:scale-[1.03] hover:shadow-md transition-all duration-300 cursor-default`}
-                >
-                  <span className={`text-sm font-bold ${colors.text}`}>
-                    {client.name}
-                  </span>
-                  <span className="text-[10px] font-medium uppercase tracking-wider text-ink-subtle">
-                    {client.sector}
-                  </span>
-                </div>
-              );
-            })}
+          <div className={`flex gap-3 whitespace-nowrap mt-3 ${styles.animateScrollRight}`}>
+            {repeat(CLIENTS_ROW2).map((client, i) => (
+              <div
+                key={i}
+                className={`${styles.plate} ${client.national ? styles.plateNational : ""}`}
+              >
+                <span className={styles.plateName}>{client.name}</span>
+                <span className={styles.plateSector}>{client.sector}</span>
+              </div>
+            ))}
           </div>
 
-          {/* Fade edges */}
-          <div className="absolute left-0 top-0 h-full w-24 bg-gradient-to-r from-paper to-transparent pointer-events-none" />
-          <div className="absolute right-0 top-0 h-full w-24 bg-gradient-to-l from-paper to-transparent pointer-events-none" />
+          <div className="absolute left-0 top-0 h-full w-16 bg-gradient-to-r from-paper to-transparent pointer-events-none" />
+          <div className="absolute right-0 top-0 h-full w-16 bg-gradient-to-l from-paper to-transparent pointer-events-none" />
         </div>
-
       </div>
     </section>
   );

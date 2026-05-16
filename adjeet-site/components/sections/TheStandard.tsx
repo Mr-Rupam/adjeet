@@ -26,13 +26,7 @@ const STANDARDS = [
 export function TheStandard() {
   return (
     <section style={{ borderBottom: '1px solid var(--rule)' }}>
-      {/* Section label bar */}
-      <div
-        className="mx-auto max-w-content px-6 py-4"
-        style={{ borderBottom: '1px solid var(--rule)' }}
-      >
-        <SectionLabel>№ 02 — Our Standard</SectionLabel>
-      </div>
+      <SectionLabel number="02" label="Our Standard" />
 
       {/* Principles grid */}
       <div className="mx-auto max-w-content px-6 py-12 md:py-16">
