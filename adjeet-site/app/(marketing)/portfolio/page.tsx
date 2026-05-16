@@ -245,7 +245,7 @@ export default function PortfolioPage() {
       >
         <div className="mx-auto max-w-content px-6 py-3">
           <div className="flex items-center gap-6 overflow-x-auto no-scrollbar">
-            <SectionLabel className="flex-shrink-0">Jump to:</SectionLabel>
+            <span style={{ ...MONO, color: 'var(--ink-subtle)', flexShrink: 0 }}>Jump to:</span>
             {services.slice(0, 6).map((s, i) => (
               <Link
                 key={s.slug}
@@ -292,12 +292,7 @@ export default function PortfolioPage() {
           § PROCESS — From sketch to street (light bg, no dark section)
       ══════════════════════════════════════════════════════════════════ */}
       <section style={{ borderBottom: '1px solid var(--rule)' }}>
-        <div
-          className="mx-auto max-w-content px-6 py-4"
-          style={{ borderBottom: '1px solid var(--rule)' }}
-        >
-          <SectionLabel>№ 01 — From sketch to street</SectionLabel>
-        </div>
+        <SectionLabel number="01" label="From sketch to street" />
 
         <div className="mx-auto max-w-content px-6 py-12 md:py-16">
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-12 gap-y-0">
@@ -349,14 +344,7 @@ export default function PortfolioPage() {
           § CTA — Always-dark closing
       ══════════════════════════════════════════════════════════════════ */}
       <section className="section-inverse">
-        <div
-          className="mx-auto max-w-content px-6 py-4"
-          style={{ borderBottom: '1px solid rgba(255,255,255,0.08)' }}
-        >
-          <SectionLabel style={{ color: 'rgba(240,235,222,0.4)' }}>
-            Commission a sign
-          </SectionLabel>
-        </div>
+        <SectionLabel label="Commission a sign" invert />
 
         <div className="mx-auto max-w-content px-6 py-16 md:py-24">
           <h2

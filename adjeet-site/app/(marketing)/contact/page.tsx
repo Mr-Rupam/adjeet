@@ -202,12 +202,7 @@ export default function ContactPage() {
           § CONTACT METHODS — Rule-separated list, no emoji cards
       ══════════════════════════════════════════════════════════════════ */}
       <section style={{ borderBottom: '1px solid var(--rule)' }}>
-        <div
-          className="mx-auto max-w-content px-6 py-4"
-          style={{ borderBottom: '1px solid var(--rule)' }}
-        >
-          <SectionLabel>Ways to reach us</SectionLabel>
-        </div>
+        <SectionLabel label="Ways to reach us" />
 
         <div className="mx-auto max-w-content px-6">
           {[
@@ -302,12 +297,7 @@ export default function ContactPage() {
           § FORM + LOCATIONS — The main act
       ══════════════════════════════════════════════════════════════════ */}
       <section style={{ borderBottom: '1px solid var(--rule)' }}>
-        <div
-          className="mx-auto max-w-content px-6 py-4"
-          style={{ borderBottom: '1px solid var(--rule)' }}
-        >
-          <SectionLabel>№ 01 — Send a message</SectionLabel>
-        </div>
+        <SectionLabel number="01" label="Send a message" />
 
         <div className="mx-auto max-w-content px-6 py-12 md:py-16">
           <div className="grid lg:grid-cols-5 gap-12 lg:gap-16">
@@ -488,14 +478,7 @@ export default function ContactPage() {
           § COVERAGE — Clean district grid
       ══════════════════════════════════════════════════════════════════ */}
       <section className="section-inverse">
-        <div
-          className="mx-auto max-w-content px-6 py-4"
-          style={{ borderBottom: '1px solid rgba(255,255,255,0.08)' }}
-        >
-          <SectionLabel style={{ color: 'rgba(240,235,222,0.4)' }}>
-            Service coverage
-          </SectionLabel>
-        </div>
+        <SectionLabel label="Service coverage" invert />
 
         <div className="mx-auto max-w-content px-6 py-12 md:py-16">
           <div className="grid lg:grid-cols-2 gap-12 items-start">

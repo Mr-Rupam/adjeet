@@ -243,12 +243,7 @@ export default function AboutPage() {
           § 01 — THE STORY
       ══════════════════════════════════════════════════════════════════ */}
       <section style={{ borderBottom: '1px solid var(--rule)' }}>
-        <div
-          className="mx-auto max-w-content px-6 py-4"
-          style={{ borderBottom: '1px solid var(--rule)' }}
-        >
-          <SectionLabel>№ 01 — The Story</SectionLabel>
-        </div>
+        <SectionLabel number="01" label="The Story" />
 
         <div className="mx-auto max-w-content px-6 py-12 md:py-20">
           <div className="grid lg:grid-cols-5 gap-12 lg:gap-16 items-start">
@@ -338,12 +333,7 @@ export default function AboutPage() {
           § 02 — MILESTONES
       ══════════════════════════════════════════════════════════════════ */}
       <section style={{ borderBottom: '1px solid var(--rule)' }}>
-        <div
-          className="mx-auto max-w-content px-6 py-4"
-          style={{ borderBottom: '1px solid var(--rule)' }}
-        >
-          <SectionLabel>№ 02 — Milestones</SectionLabel>
-        </div>
+        <SectionLabel number="02" label="Milestones" />
 
         <div className="mx-auto max-w-content px-6 py-12 md:py-16">
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-12 gap-y-0">
@@ -400,12 +390,7 @@ export default function AboutPage() {
           § 03 — OUR STANDARD
       ══════════════════════════════════════════════════════════════════ */}
       <section style={{ borderBottom: '1px solid var(--rule)' }}>
-        <div
-          className="mx-auto max-w-content px-6 py-4"
-          style={{ borderBottom: '1px solid var(--rule)' }}
-        >
-          <SectionLabel>№ 03 — Our Standard</SectionLabel>
-        </div>
+        <SectionLabel number="03" label="Our Standard" />
 
         <div className="mx-auto max-w-content px-6 py-12 md:py-16">
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-12 gap-y-0">
@@ -460,9 +445,7 @@ export default function AboutPage() {
         className="bg-paper-elevated"
         style={{ borderBottom: '1px solid var(--rule)' }}
       >
-        <div className="mx-auto max-w-content px-6 py-4" style={{ borderBottom: '1px solid var(--rule)' }}>
-          <SectionLabel>By the numbers</SectionLabel>
-        </div>
+        <SectionLabel label="By the numbers" />
         <div className="mx-auto max-w-content px-6 py-10">
           <div className="grid grid-cols-3 lg:grid-cols-6 gap-6 text-center">
             {[
@@ -499,12 +482,7 @@ export default function AboutPage() {
           § 04 — THE WORKSHOP
       ══════════════════════════════════════════════════════════════════ */}
       <section style={{ borderBottom: '1px solid var(--rule)' }}>
-        <div
-          className="mx-auto max-w-content px-6 py-4"
-          style={{ borderBottom: '1px solid var(--rule)' }}
-        >
-          <SectionLabel>№ 04 — The Workshop</SectionLabel>
-        </div>
+        <SectionLabel number="04" label="The Workshop" />
 
         <div className="mx-auto max-w-content px-6 py-12 md:py-16">
           <div className="grid lg:grid-cols-2 gap-12 lg:gap-20 items-start">
@@ -612,14 +590,7 @@ export default function AboutPage() {
           § CTA — Always-dark closing section
       ══════════════════════════════════════════════════════════════════ */}
       <section className="section-inverse">
-        <div
-          className="mx-auto max-w-content px-6 py-4"
-          style={{ borderBottom: '1px solid rgba(255,255,255,0.08)' }}
-        >
-          <SectionLabel style={{ color: 'rgba(240,235,222,0.4)' }}>
-            Commission a sign
-          </SectionLabel>
-        </div>
+        <SectionLabel label="Commission a sign" invert />
 
         <div className="mx-auto max-w-content px-6 py-16 md:py-24">
           <h2

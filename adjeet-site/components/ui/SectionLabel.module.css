@@ -5,11 +5,23 @@
   border-bottom: 1px solid var(--rule);
 }
 
+.containerInvert {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
 .label {
   font-family: var(--font-mono);
   font-size: 11px;
   letter-spacing: 0.14em;
   color: var(--ink-subtle);
+  text-transform: uppercase;
+}
+
+.labelInvert {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  color: rgba(240, 235, 222, 0.4);
   text-transform: uppercase;
 }
 
@@ -24,4 +36,17 @@
 
 .link:hover {
   color: var(--blue);
+}
+
+.linkInvert {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  color: rgba(240, 235, 222, 0.4);
+  text-decoration: none;
+  transition: color 150ms;
+}
+
+.linkInvert:hover {
+  color: rgba(240, 235, 222, 0.7);
 }
