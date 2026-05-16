@@ -1,7 +1,7 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import { defaultWhatsAppUrl } from '@/lib/whatsapp'
-import { buildBreadcrumbJsonLd, siteConfig } from '@/lib/seo'
+import { buildBreadcrumbJsonLd, jsonLdString, siteConfig } from '@/lib/seo'
 
 export const metadata: Metadata = {
   title: 'About AD-JEET — North Bengal Signage Since 1990',
@@ -66,7 +66,7 @@ export default function AboutPage() {
     <>
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumb) }}
+        dangerouslySetInnerHTML={{ __html: jsonLdString(breadcrumb) }}
       />
 
       {/* ═══════════════════ HERO — Cinematic opening ═══════════════════ */}
@@ -87,29 +87,14 @@ export default function AboutPage() {
               )`,
             }}
           />
-          {/* Radial warmth */}
-          <div className="absolute inset-0 bg-[radial-gradient(ellipse_50%_80%_at_80%_20%,rgba(201,150,46,0.06),transparent)]" />
           <div className="absolute inset-0 bg-[radial-gradient(ellipse_60%_60%_at_10%_90%,rgba(30,127,184,0.08),transparent)]" />
-        </div>
-
-        {/* Giant ghost year */}
-        <div className="absolute top-1/2 right-0 -translate-y-1/2 translate-x-[5%] select-none pointer-events-none">
-          <span
-            className="block font-serif font-black text-transparent leading-none"
-            style={{
-              fontSize: 'clamp(12rem, 30vw, 35rem)',
-              WebkitTextStroke: '1px rgba(201,150,46,0.06)',
-            }}
-          >
-            1990
-          </span>
         </div>
 
         <div className="relative z-10 mx-auto w-full max-w-content px-6">
           {/* Eyebrow */}
           <div className="flex items-center gap-4 mb-10">
-            <div className="w-20 h-[1px] bg-ochre/60" />
-            <span className="text-[10px] font-mono uppercase tracking-[0.3em] text-ochre/60">
+            <div className="w-20 h-[1px] bg-blue/60" />
+            <span className="text-[10px] font-mono uppercase tracking-[0.3em] text-white/40">
               Est. 1990 · Siliguri, West Bengal
             </span>
           </div>
@@ -129,13 +114,8 @@ export default function AboutPage() {
               make signs.
             </span>
             <span
-              className="block font-serif font-black leading-[0.82] tracking-tight mt-2"
-              style={{
-                fontSize: 'clamp(3rem, 8vw, 7rem)',
-                background: 'linear-gradient(135deg, var(--ochre), #E8C06A)',
-                WebkitBackgroundClip: 'text',
-                WebkitTextFillColor: 'transparent',
-              }}
+              className="block font-serif font-black text-white italic leading-[0.82] tracking-tight mt-2"
+              style={{ fontSize: 'clamp(3rem, 8vw, 7rem)' }}
             >
               We build legacies.
             </span>
@@ -201,7 +181,7 @@ export default function AboutPage() {
                 Proven by<br />
                 decades.
               </h2>
-              <div className="w-16 h-1 bg-ochre/40 rounded-full" />
+              <div className="w-16 h-[1px] bg-blue/30" />
             </div>
 
             {/* Right — story text with alternating highlights */}
@@ -265,7 +245,7 @@ export default function AboutPage() {
 
         <div className="relative max-w-content mx-auto px-6 mb-16">
           <div className="flex items-center gap-4 mb-6">
-            <div className="w-12 h-[1px] bg-ochre/60" />
+            <div className="w-12 h-[1px] bg-blue/60" />
             <span className="text-[10px] font-mono uppercase tracking-[0.3em] text-white/40">
               Milestones
             </span>
@@ -288,16 +268,14 @@ export default function AboutPage() {
               {MILESTONES.map((m, i) => (
                 <div
                   key={m.year}
-                  className="group relative rounded-2xl border border-white/[0.06] bg-white/[0.02] p-8 hover:border-white/[0.12] hover:bg-white/[0.04] transition-all duration-500"
+                  className="group relative rounded-lg border border-white/[0.06] bg-white/[0.02] p-8 hover:border-white/[0.12] hover:bg-white/[0.04] transition-all duration-500"
                 >
                   {/* Year — massive */}
                   <span
                     className="block font-serif font-black leading-none mb-4"
                     style={{
                       fontSize: '3.5rem',
-                      background: `linear-gradient(135deg, ${i % 2 === 0 ? 'var(--adjeet-blue)' : 'var(--ochre)'}, rgba(255,255,255,0.2))`,
-                      WebkitBackgroundClip: 'text',
-                      WebkitTextFillColor: 'transparent',
+                      color: 'var(--adjeet-blue)',
                     }}
                   >
                     {m.year}
@@ -334,7 +312,7 @@ export default function AboutPage() {
             {VALUES.map(v => (
               <div
                 key={v.number}
-                className="group relative rounded-2xl border border-rule p-8 hover:border-blue/30 transition-all duration-300 overflow-hidden"
+                className="group relative rounded-lg border border-rule p-8 hover:border-blue/30 transition-all duration-300 overflow-hidden"
               >
                 {/* Background number */}
                 <span
@@ -389,7 +367,7 @@ export default function AboutPage() {
             {/* Text */}
             <div>
               <div className="flex items-center gap-4 mb-6">
-                <div className="w-12 h-[1px] bg-ochre/60" />
+                <div className="w-12 h-[1px] bg-blue" />
                 <span className="text-[10px] font-mono uppercase tracking-[0.3em] text-ink-subtle">
                   The Workshop
                 </span>
@@ -420,7 +398,7 @@ export default function AboutPage() {
                   { val: '3', unit: 'vehicles', label: 'Installation fleet' },
                   { val: '15+', unit: 'team', label: 'Skilled workers' },
                 ].map(spec => (
-                  <div key={spec.label} className="rounded-xl border border-rule p-4">
+                  <div key={spec.label} className="rounded-lg border border-rule p-4">
                     <div className="flex items-baseline gap-1 mb-0.5">
                       <span className="font-serif text-2xl font-black text-ink leading-none">
                         {spec.val}
@@ -435,28 +413,28 @@ export default function AboutPage() {
               </div>
             </div>
 
-            {/* Visual — abstract workshop representation */}
+            {/* Visual — workshop process panels */}
             <div className="relative">
               <div className="grid grid-cols-2 gap-3">
-                <div className="rounded-2xl bg-gradient-to-br from-slate to-slate/60 aspect-[3/4] flex items-end p-6">
+                <div className="rounded-lg bg-ink text-paper aspect-[3/4] flex items-end p-6">
                   <div>
                     <span className="text-[10px] font-mono uppercase tracking-wider text-white/40 block mb-1">Metal</span>
                     <span className="text-white font-bold text-sm">Cutting & Welding</span>
                   </div>
                 </div>
-                <div className="rounded-2xl bg-gradient-to-br from-blue to-blue-deep aspect-square flex items-end p-6 mt-8">
+                <div className="rounded-lg bg-blue text-white aspect-square flex items-end p-6 mt-8">
                   <div>
                     <span className="text-[10px] font-mono uppercase tracking-wider text-white/40 block mb-1">LED</span>
                     <span className="text-white font-bold text-sm">Wiring & Testing</span>
                   </div>
                 </div>
-                <div className="rounded-2xl bg-gradient-to-br from-ochre to-ochre/60 aspect-square flex items-end p-6 -mt-4">
+                <div className="rounded-lg bg-ink/80 text-paper aspect-square flex items-end p-6 -mt-4">
                   <div>
                     <span className="text-[10px] font-mono uppercase tracking-wider text-white/40 block mb-1">Acrylic</span>
                     <span className="text-white font-bold text-sm">Routing & Bending</span>
                   </div>
                 </div>
-                <div className="rounded-2xl bg-gradient-to-br from-sage to-sage/60 aspect-[3/4] flex items-end p-6 mt-4">
+                <div className="rounded-lg bg-blue-deep text-white aspect-[3/4] flex items-end p-6 mt-4">
                   <div>
                     <span className="text-[10px] font-mono uppercase tracking-wider text-white/40 block mb-1">Paint</span>
                     <span className="text-white font-bold text-sm">Finish & QC</span>
@@ -464,7 +442,7 @@ export default function AboutPage() {
                 </div>
               </div>
               {/* Floating badge */}
-              <div className="absolute -bottom-4 left-1/2 -translate-x-1/2 px-5 py-2.5 rounded-full bg-paper border border-rule shadow-lg">
+              <div className="absolute -bottom-4 left-1/2 -translate-x-1/2 px-5 py-2.5 rounded-lg bg-paper border border-rule shadow-lg">
                 <span className="text-xs font-bold text-ink">All in-house ✓</span>
               </div>
             </div>
@@ -502,13 +480,13 @@ export default function AboutPage() {
                 href={waUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center justify-center rounded-xl bg-white text-blue-deep font-bold px-8 py-4 text-sm hover:bg-white/90 transition-colors active:scale-[0.98]"
+                className="inline-flex items-center justify-center rounded-lg bg-white text-blue-deep font-bold px-8 py-4 text-sm hover:bg-white/90 transition-colors active:scale-[0.98]"
               >
                 Chat on WhatsApp
               </a>
               <Link
                 href="/contact"
-                className="inline-flex items-center justify-center rounded-xl border border-white/30 text-white font-medium px-8 py-4 text-sm hover:bg-white/10 transition-colors active:scale-[0.98]"
+                className="inline-flex items-center justify-center rounded-lg border border-white/30 text-white font-medium px-8 py-4 text-sm hover:bg-white/10 transition-colors active:scale-[0.98]"
               >
                 Send a message →
               </Link>

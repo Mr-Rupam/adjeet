@@ -224,7 +224,7 @@ export function ServicesSpecimenHero() {
                     letterSpacing: '0.1em',
                   }}
                 >
-                  <span style={{ color: 'var(--ochre)', fontWeight: 700 }}>{`N°${s.n}`}</span>
+                  <span style={{ color: 'var(--ink-subtle)', fontWeight: 600 }}>{`N°${s.n}`}</span>
                   <span style={{ width: '16px', height: '1px', background: 'var(--rule)', display: 'inline-block' }} />
                   <span style={{ fontWeight: 600, color: 'var(--ink-muted)' }}>{s.service}</span>
                   <span style={{ width: '16px', height: '1px', background: 'var(--rule)', display: 'inline-block' }} className="hidden sm:inline-block" />

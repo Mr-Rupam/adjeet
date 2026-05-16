@@ -2,8 +2,9 @@
 
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { useState } from 'react'
+import { useState, useRef } from 'react'
 import { leadSchema, type LeadInput, TIMELINE_OPTIONS, COVERAGE_CITIES } from '@/lib/lead-schema'
+import { Turnstile, type TurnstileInstance } from '@marsidev/react-turnstile'
 import { services } from '@/content/services'
 
 export function LeadForm() {
@@ -13,12 +14,15 @@ export function LeadForm() {
   const {
     register,
     handleSubmit,
+    setValue,
     formState: { errors, isSubmitting },
   } = useForm<LeadInput>({
     resolver: zodResolver(leadSchema),
     mode: 'onBlur',
-    defaultValues: { serviceInterest: [], timeline: 'immediate' },
+    defaultValues: { serviceInterest: [], timeline: 'immediate', cfTurnstileResponse: '' },
   })
+
+  const turnstileRef = useRef<TurnstileInstance>(null)
 
   async function onSubmit(data: LeadInput) {
     setServerError(null)
@@ -31,6 +35,8 @@ export function LeadForm() {
       if (!res.ok) {
         const body = await res.json().catch(() => ({}))
         setServerError(body.error ?? 'Something went wrong. Please try WhatsApp instead.')
+        turnstileRef.current?.reset()
+        setValue('cfTurnstileResponse', '')
         return
       }
       setSubmitted(true)
@@ -48,8 +54,8 @@ export function LeadForm() {
 
   if (submitted) {
     return (
-      <div className="rounded-2xl border border-blue/20 bg-blue/5 p-10 text-center">
-        <div className="inline-flex items-center justify-center w-14 h-14 rounded-full bg-blue/10 mb-4">
+      <div className="rounded-lg border border-blue/20 bg-blue/5 p-10 text-center">
+        <div className="inline-flex items-center justify-center w-14 h-14 rounded-lg bg-blue/10 mb-4">
           <span className="text-2xl">✓</span>
         </div>
         <h3 className="font-serif font-bold text-ink text-xl mb-2">
@@ -63,7 +69,7 @@ export function LeadForm() {
   }
 
   const fieldBase =
-    'block w-full rounded-xl border bg-paper px-4 py-3 text-sm text-ink placeholder:text-ink-subtle/60 focus:outline-none transition-all duration-200'
+    'block w-full rounded-lg border bg-paper px-4 py-3 text-sm text-ink placeholder:text-ink-subtle/60 focus:outline-none transition-all duration-200'
   const fieldNormal = `${fieldBase} border-rule focus:border-blue focus:ring-2 focus:ring-blue/10`
   const fieldError = `${fieldBase} border-error focus:border-error focus:ring-2 focus:ring-error/10`
   const label = 'block text-xs font-semibold text-ink-muted mb-2'
@@ -72,7 +78,24 @@ export function LeadForm() {
   return (
     <form onSubmit={handleSubmit(onSubmit)} noValidate className="space-y-5">
       {/* Honeypot */}
-      <input {...register('_hp')} type="text" className="hidden" tabIndex={-1} autoComplete="off" aria-hidden="true" />
+      <input
+        {...register('_hp')}
+        type="text"
+        tabIndex={-1}
+        autoComplete="off"
+        aria-hidden="true"
+        style={{
+          position: 'absolute',
+          width: '1px',
+          height: '1px',
+          padding: 0,
+          margin: '-1px',
+          overflow: 'hidden',
+          clip: 'rect(0,0,0,0)',
+          whiteSpace: 'nowrap',
+          border: 0,
+        }}
+      />
 
       {/* Name + Phone */}
       <div className="grid sm:grid-cols-2 gap-4">
@@ -186,9 +209,39 @@ export function LeadForm() {
         />
       </div>
 
+      {/* Turnstile — dev test key only outside production */}
+      <div className="flex flex-col items-center">
+        {(() => {
+          const siteKey = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY
+            || (process.env.NODE_ENV !== 'production' ? '1x00000000000000000000AA' : '')
+          if (!siteKey) {
+            return (
+              <p className="text-xs text-error text-center max-w-sm">
+                CAPTCHA is temporarily unavailable. Please reach us on WhatsApp at +91 98320 11524.
+              </p>
+            )
+          }
+          return (
+            <Turnstile
+              ref={turnstileRef}
+              siteKey={siteKey}
+              onSuccess={(token) => setValue('cfTurnstileResponse', token, { shouldValidate: true })}
+              onError={() => setServerError('CAPTCHA failed. Please try again.')}
+              onExpire={() => setValue('cfTurnstileResponse', '', { shouldValidate: true })}
+              options={{ theme: 'light' }}
+            />
+          )
+        })()}
+        {errors.cfTurnstileResponse && (
+          <p className={errMsg}>
+            <span className="text-[10px]">⚠</span> {errors.cfTurnstileResponse.message}
+          </p>
+        )}
+      </div>
+
       {/* Server error */}
       {serverError && (
-        <div className="flex items-start gap-2 text-sm text-error bg-error/5 border border-error/20 rounded-xl px-4 py-3">
+        <div className="flex items-start gap-2 text-sm text-error bg-error/5 border border-error/20 rounded-lg px-4 py-3">
           <span className="mt-0.5">⚠</span>
           <p>{serverError}</p>
         </div>
@@ -198,7 +251,7 @@ export function LeadForm() {
       <button
         type="submit"
         disabled={isSubmitting}
-        className="group relative w-full rounded-xl bg-blue text-white font-bold py-4 text-sm hover:opacity-90 transition-all disabled:opacity-50 active:scale-[0.98] overflow-hidden"
+        className="group relative w-full rounded-lg bg-blue text-white font-bold py-4 text-sm hover:opacity-90 transition-all disabled:opacity-50 active:scale-[0.98] overflow-hidden"
       >
         {/* Shimmer effect */}
         <span className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent translate-x-[-200%] group-hover:translate-x-[200%] transition-transform duration-700" />

@@ -51,6 +51,8 @@ export const leadSchema = z.object({
     .or(z.literal('')), // Allows empty strings when optional fails
 
   _hp: z.string().max(0, 'Bot detected').optional(),
+
+  cfTurnstileResponse: z.string().min(1, 'Please complete the CAPTCHA'),
 })
 
 export type LeadInput = z.infer<typeof leadSchema>

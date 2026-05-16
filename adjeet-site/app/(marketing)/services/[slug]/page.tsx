@@ -11,6 +11,7 @@ import {
   buildFaqJsonLd,
   buildBreadcrumbJsonLd,
   generateServiceMetadata,
+  jsonLdString,
 } from '@/lib/seo'
 import { defaultWhatsAppUrl } from '@/lib/whatsapp'
 import { ServicePageTracker } from '@/components/PageViewTracker'
@@ -61,15 +62,15 @@ export default async function ServiceDetailPage({
       <ServicePageTracker service={service.slug} />
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(serviceSchema) }}
+        dangerouslySetInnerHTML={{ __html: jsonLdString(serviceSchema) }}
       />
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
+        dangerouslySetInnerHTML={{ __html: jsonLdString(faqSchema) }}
       />
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
+        dangerouslySetInnerHTML={{ __html: jsonLdString(breadcrumbSchema) }}
       />
 
       {/* ── Hero ── */}

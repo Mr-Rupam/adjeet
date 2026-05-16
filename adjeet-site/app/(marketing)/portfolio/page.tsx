@@ -4,7 +4,7 @@ import Link from 'next/link'
 import { PortfolioContent } from './PortfolioContent'
 import { services } from '@/content/services'
 import { defaultWhatsAppUrl } from '@/lib/whatsapp'
-import { buildBreadcrumbJsonLd, siteConfig } from '@/lib/seo'
+import { buildBreadcrumbJsonLd, jsonLdString, siteConfig } from '@/lib/seo'
 
 export const metadata: Metadata = {
   title: 'Portfolio — 500+ Installations Across North Bengal',
@@ -32,7 +32,7 @@ export default function PortfolioPage() {
     <>
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumb) }}
+        dangerouslySetInnerHTML={{ __html: jsonLdString(breadcrumb) }}
       />
 
       {/* ═══════════════════ HERO — Full-bleed dramatic entry ═══════════════════ */}
@@ -58,19 +58,6 @@ export default function PortfolioPage() {
           <div className="absolute top-0 right-0 w-[1px] h-full bg-gradient-to-b from-transparent via-blue to-transparent opacity-20 translate-x-[-120px]" />
         </div>
 
-        {/* Oversized background number */}
-        <div className="absolute top-1/2 right-0 -translate-y-1/2 translate-x-[10%] select-none pointer-events-none">
-          <span
-            className="block font-serif font-black text-transparent leading-none"
-            style={{
-              fontSize: 'clamp(15rem, 35vw, 40rem)',
-              WebkitTextStroke: '1px rgba(30,127,184,0.08)',
-            }}
-          >
-            500
-          </span>
-        </div>
-
         {/* Content */}
         <div className="relative z-10 mx-auto w-full max-w-content px-6 pb-16 pt-32">
           {/* Eyebrow with animated line */}
@@ -90,13 +77,8 @@ export default function PortfolioPage() {
               Our
             </span>
             <span
-              className="block font-serif font-black leading-[0.85] tracking-tight"
-              style={{
-                fontSize: 'clamp(3.5rem, 10vw, 9rem)',
-                background: 'linear-gradient(135deg, var(--adjeet-blue), #7EC8E3)',
-                WebkitBackgroundClip: 'text',
-                WebkitTextFillColor: 'transparent',
-              }}
+              className="block font-serif font-black text-blue leading-[0.85] tracking-tight"
+              style={{ fontSize: 'clamp(3.5rem, 10vw, 9rem)' }}
             >
               Craft.
             </span>

@@ -1,5 +1,5 @@
 import type React from 'react'
-import { buildLocalBusinessJsonLd } from '@/lib/seo'
+import { buildLocalBusinessJsonLd, jsonLdString } from '@/lib/seo'
 
 export default function MarketingLayout({ children }: { children: React.ReactNode }) {
   const schema = buildLocalBusinessJsonLd()
@@ -7,7 +7,7 @@ export default function MarketingLayout({ children }: { children: React.ReactNod
     <>
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }}
+        dangerouslySetInnerHTML={{ __html: jsonLdString(schema) }}
       />
       {children}
     </>

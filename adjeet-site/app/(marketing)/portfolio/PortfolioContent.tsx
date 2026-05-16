@@ -149,7 +149,7 @@ export function PortfolioContent() {
           <div className="flex gap-2 overflow-x-auto no-scrollbar pb-2">
             <button
               onClick={() => setFilter('service', 'all')}
-              className={`flex-shrink-0 px-3 py-1.5 rounded-full text-xs font-medium border transition-all ${
+              className={`flex-shrink-0 px-3 py-1.5 rounded text-xs font-medium border transition-all ${
                 serviceFilter === 'all'
                   ? 'bg-ink text-paper border-ink'
                   : 'border-rule text-ink-muted hover:border-ink hover:text-ink'
@@ -161,7 +161,7 @@ export function PortfolioContent() {
               <button
                 key={s.slug}
                 onClick={() => setFilter('service', s.slug)}
-                className={`flex-shrink-0 px-3 py-1.5 rounded-full text-xs font-medium border transition-all ${
+                className={`flex-shrink-0 px-3 py-1.5 rounded text-xs font-medium border transition-all ${
                   serviceFilter === s.slug
                     ? 'bg-blue text-white border-blue'
                     : 'border-rule text-ink-muted hover:border-blue hover:text-blue'
@@ -176,7 +176,7 @@ export function PortfolioContent() {
           <div className="flex gap-2 mt-2 overflow-x-auto no-scrollbar">
             <button
               onClick={() => setFilter('city', 'all')}
-              className={`flex-shrink-0 px-3 py-1.5 rounded-full text-xs font-medium border transition-all ${
+              className={`flex-shrink-0 px-3 py-1.5 rounded text-xs font-medium border transition-all ${
                 cityFilter === 'all'
                   ? 'bg-ink text-paper border-ink'
                   : 'border-rule text-ink-muted hover:border-ink hover:text-ink'
@@ -188,10 +188,10 @@ export function PortfolioContent() {
               <button
                 key={city}
                 onClick={() => setFilter('city', city)}
-                className={`flex-shrink-0 px-3 py-1.5 rounded-full text-xs font-medium border transition-all ${
+                className={`flex-shrink-0 px-3 py-1.5 rounded text-xs font-medium border transition-all ${
                   cityFilter === city
-                    ? 'bg-ochre text-white border-ochre'
-                    : 'border-rule text-ink-muted hover:border-ochre hover:text-ochre'
+                    ? 'bg-ink text-paper border-ink'
+                    : 'border-rule text-ink-muted hover:border-ink hover:text-ink'
                 }`}
               >
                 {CITY_LABELS[city]}
@@ -281,7 +281,7 @@ export function PortfolioContent() {
                     {/* Featured indicator */}
                     {photo.featured && (
                       <div className="absolute top-3 left-3 group-hover:opacity-0 transition-opacity">
-                        <div className="w-2 h-2 rounded-full bg-blue shadow-[0_0_8px_rgba(30,127,184,0.6)]" />
+                        <div className="w-2 h-2 rounded bg-blue shadow-[0_0_8px_rgba(30,127,184,0.6)]" />
                       </div>
                     )}
                   </motion.button>

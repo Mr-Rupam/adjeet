@@ -1,3 +1,5 @@
+import { SectionLabel } from '@/components/ui/SectionLabel'
+
 const STANDARDS = [
   {
     n: '01',
@@ -29,17 +31,7 @@ export function TheStandard() {
         className="mx-auto max-w-content px-6 py-4"
         style={{ borderBottom: '1px solid var(--rule)' }}
       >
-        <span
-          style={{
-            fontFamily: 'var(--font-mono)',
-            fontSize: '11px',
-            letterSpacing: '0.14em',
-            color: 'var(--ink-subtle)',
-            textTransform: 'uppercase',
-          }}
-        >
-          № 02 — Our Standard
-        </span>
+        <SectionLabel>№ 02 — Our Standard</SectionLabel>
       </div>
 
       {/* Principles grid */}

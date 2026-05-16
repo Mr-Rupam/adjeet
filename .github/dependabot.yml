@@ -1,0 +1,7 @@
+version: 2
+updates:
+  - package-ecosystem: npm
+    directory: /adjeet-site
+    schedule: { interval: weekly }
+    groups:
+      patch-updates: { update-types: [patch] }

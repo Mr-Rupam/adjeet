@@ -3,9 +3,16 @@ import type { Service } from '@/content/services'
 
 export const siteConfig = {
   name: 'AD-JEET',
-  url: 'https://adjeet.vercel.app',
+  url: 'https://adjeet.in',
   ogImage: '/og-image.jpg',
   description: "North Bengal's most trusted signage and outdoor advertising partner since 1990.",
+}
+
+// Defense in depth: escape `<` so a stray `</script>` inside JSON-LD can never
+// break out of the inline script tag, even if user-controllable strings ever
+// flow into a schema object. Use this on every dangerouslySetInnerHTML JSON-LD.
+export function jsonLdString(schema: unknown): string {
+  return JSON.stringify(schema).replace(/</g, '\\u003c')
 }
 
 export function generateServiceMetadata(service: Service): Metadata {

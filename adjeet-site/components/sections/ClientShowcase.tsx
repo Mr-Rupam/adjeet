@@ -3,6 +3,7 @@
 import React from "react";
 import Link from "next/link";
 import { defaultWhatsAppUrl } from "@/lib/whatsapp";
+import "./ClientShowcase.css";
 
 const CLIENTS_ROW1 = [
   { name: "SBI", sector: "Banking" },
@@ -60,13 +61,8 @@ export function ClientShowcase() {
 
         {/* Left-aligned editorial header */}
         <div className="mb-14 max-w-2xl">
-          <span className="inline-block mb-5 font-mono text-xs uppercase tracking-widest text-blue border-l-2 border-blue pl-3">
-            Trusted by 200+ brands
-          </span>
           <h2 className="text-4xl md:text-5xl font-serif font-bold text-ink leading-tight">
-            Signage partner for
-            <br className="hidden sm:block" />
-            India&apos;s biggest brands
+            Airtel. Jio. Havells. They chose AD-JEET for North Bengal.
           </h2>
           <p className="mt-4 text-lg text-ink-muted max-w-xl">
             From national banks to telecom giants — we&apos;ve built signage
@@ -140,35 +136,6 @@ export function ClientShowcase() {
         </div>
 
       </div>
-
-      <style jsx>{`
-        @keyframes scroll-left {
-          0% { transform: translateX(0); }
-          100% { transform: translateX(-50%); }
-        }
-        @keyframes scroll-right {
-          0% { transform: translateX(-50%); }
-          100% { transform: translateX(0); }
-        }
-        @media (prefers-reduced-motion: reduce) {
-          .animate-scroll-left,
-          .animate-scroll-right {
-            animation: none !important;
-          }
-        }
-        @media (max-width: 480px) {
-          .animate-scroll-left,
-          .animate-scroll-right {
-            animation: none !important;
-          }
-        }
-        .carousel-wrap:hover .animate-scroll-left,
-        .carousel-wrap:focus-within .animate-scroll-left,
-        .carousel-wrap:hover .animate-scroll-right,
-        .carousel-wrap:focus-within .animate-scroll-right {
-          animation-play-state: paused;
-        }
-      `}</style>
     </section>
   );
 }

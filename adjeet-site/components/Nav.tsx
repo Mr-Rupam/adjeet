@@ -5,6 +5,7 @@ import Image from 'next/image'
 import { usePathname } from 'next/navigation'
 import { ThemeToggle } from '@/components/ui/ThemeToggle'
 import { MobileNav } from '@/components/MobileNav'
+import { QuoteCTA } from '@/components/ui/QuoteCTA'
 
 const NAV_LINKS = [
   { href: '/services', label: 'Services' },
@@ -57,6 +58,7 @@ export function Nav() {
         </ul>
 
         <div className="flex items-center gap-2">
+          <QuoteCTA source="nav" size="sm" className="hidden md:inline-flex" />
           <ThemeToggle />
           <MobileNav links={NAV_LINKS} />
         </div>

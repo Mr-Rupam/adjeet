@@ -51,6 +51,14 @@ export function Footer() {
                 WhatsApp: {WHATSAPP_DISPLAY}
               </a>
             </li>
+            <li>
+              <a
+                href="tel:"
+                className="transition-colors hover:text-[rgba(245,240,232,0.9)]"
+              >
+                Phone: {/* TODO: add telephone */}
+              </a>
+            </li>
           </ul>
           <div
             className="mt-8 pt-6 text-xs space-y-1"

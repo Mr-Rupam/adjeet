@@ -1,13 +1,13 @@
 import type { Metadata } from 'next'
 import { LeadForm } from '@/components/sections/LeadForm'
 import { defaultWhatsAppUrl } from '@/lib/whatsapp'
-import { buildBreadcrumbJsonLd } from '@/lib/seo'
+import { buildBreadcrumbJsonLd, jsonLdString, siteConfig } from '@/lib/seo'
 
 export const metadata: Metadata = {
   title: 'Contact AD-JEET — Get a Signage Quote',
   description:
     'Contact AD-JEET for signage and outdoor advertising across North Bengal. Office in Siliguri, workshop at Patiram Jote. WhatsApp, call, or use the lead form.',
-  alternates: { canonical: `https://adjeet.vercel.app/contact` },
+  alternates: { canonical: `${siteConfig.url}/contact` },
 }
 
 const waUrl = defaultWhatsAppUrl()
@@ -68,7 +68,7 @@ export default function ContactPage() {
     <>
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumb) }}
+        dangerouslySetInnerHTML={{ __html: jsonLdString(breadcrumb) }}
       />
 
       {/* ═══════════════════ HERO — Dramatic split ═══════════════════ */}
@@ -91,19 +91,6 @@ export default function ContactPage() {
           <div className="absolute inset-0 bg-[radial-gradient(ellipse_60%_60%_at_70%_100%,rgba(30,127,184,0.12),transparent)]" />
         </div>
 
-        {/* Huge ghost text */}
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 select-none pointer-events-none whitespace-nowrap">
-          <span
-            className="block font-serif font-black text-transparent leading-none"
-            style={{
-              fontSize: 'clamp(10rem, 25vw, 30rem)',
-              WebkitTextStroke: '1px rgba(30,127,184,0.05)',
-            }}
-          >
-            SAY HI
-          </span>
-        </div>
-
         <div className="relative z-10 mx-auto w-full max-w-content px-6 pb-20 pt-32">
           <div className="flex items-center gap-4 mb-8">
             <div className="w-16 h-[1px] bg-blue" />
@@ -120,13 +107,8 @@ export default function ContactPage() {
               Let&apos;s
             </span>
             <span
-              className="block font-serif font-black leading-[0.85] tracking-tight"
-              style={{
-                fontSize: 'clamp(3rem, 9vw, 8rem)',
-                background: 'linear-gradient(135deg, var(--adjeet-blue), #7EC8E3)',
-                WebkitBackgroundClip: 'text',
-                WebkitTextFillColor: 'transparent',
-              }}
+              className="block font-serif font-black text-blue leading-[0.85] tracking-tight"
+              style={{ fontSize: 'clamp(3rem, 9vw, 8rem)' }}
             >
               Talk.
             </span>
@@ -155,7 +137,7 @@ export default function ContactPage() {
                 href={method.href}
                 target={method.label === 'WhatsApp' ? '_blank' : undefined}
                 rel={method.label === 'WhatsApp' ? 'noopener noreferrer' : undefined}
-                className={`group relative rounded-2xl border p-6 transition-all duration-300 hover:-translate-y-1 hover:shadow-lg ${
+                className={`group relative rounded-lg border p-6 transition-all duration-300 hover:-translate-y-1 hover:shadow-lg ${
                   method.accent
                     ? 'border-blue/30 bg-blue/5 hover:border-blue/60 hover:bg-blue/10'
                     : 'border-rule bg-paper-elevated hover:border-blue/30'
@@ -163,7 +145,7 @@ export default function ContactPage() {
               >
                 {/* Glow on accent card */}
                 {method.accent && (
-                  <div className="absolute -inset-px rounded-2xl bg-gradient-to-br from-blue/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity -z-10 blur-xl" />
+                  <div className="absolute -inset-px rounded-lg bg-gradient-to-br from-blue/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity -z-10 blur-xl" />
                 )}
 
                 <span className="text-2xl mb-4 block">{method.icon}</span>
@@ -199,7 +181,7 @@ export default function ContactPage() {
           <div className="grid lg:grid-cols-5 gap-12 lg:gap-16">
             {/* Form — takes 3 columns */}
             <div className="lg:col-span-3">
-              <div className="rounded-2xl border border-rule bg-paper-elevated p-8 sm:p-10 shadow-sm">
+              <div className="rounded-lg border border-rule bg-paper-elevated p-8 sm:p-10 shadow-sm">
                 <h2
                   className="font-serif font-bold text-ink mb-2"
                   style={{ fontSize: 'clamp(1.5rem, 3vw, 2rem)' }}
@@ -219,7 +201,7 @@ export default function ContactPage() {
               {LOCATIONS.map(loc => (
                 <div
                   key={loc.type}
-                  className="rounded-2xl border border-rule p-6 relative overflow-hidden group hover:border-blue/30 transition-colors"
+                  className="rounded-lg border border-rule p-6 relative overflow-hidden group hover:border-blue/30 transition-colors"
                 >
                   {/* Subtle corner accent */}
                   <div className="absolute top-0 right-0 w-20 h-20 bg-gradient-to-bl from-blue/5 to-transparent rounded-bl-full" />
@@ -240,7 +222,7 @@ export default function ContactPage() {
               ))}
 
               {/* Map */}
-              <div className="rounded-2xl overflow-hidden border border-rule aspect-[4/3] relative group">
+              <div className="rounded-lg overflow-hidden border border-rule aspect-[4/3] relative group">
                 <iframe
                   src={LOCATIONS[0].mapSrc!}
                   width="100%"
@@ -261,7 +243,7 @@ export default function ContactPage() {
               </div>
 
               {/* Quick info card */}
-              <div className="rounded-2xl border border-rule bg-paper-elevated p-6">
+              <div className="rounded-lg border border-rule bg-paper-elevated p-6">
                 <h3 className="text-sm font-bold text-ink mb-4">Quick Info</h3>
                 <div className="space-y-3">
                   {[

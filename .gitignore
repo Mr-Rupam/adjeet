@@ -1,0 +1,76 @@
+# ═══════════════════════════════════════════════════════
+# AD-JEET Repository — .gitignore
+# ═══════════════════════════════════════════════════════
+
+# ─── Dependencies ─────────────────────────────────────
+node_modules/
+.pnp
+.pnp.*
+.yarn/*
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/versions
+
+# ─── Next.js ──────────────────────────────────────────
+.next/
+out/
+build/
+
+# ─── Environment variables (SECRETS — never commit) ──
+.env
+.env.*
+!.env.example
+
+# ─── TypeScript build artifacts ───────────────────────
+*.tsbuildinfo
+next-env.d.ts
+
+# ─── Testing ──────────────────────────────────────────
+coverage/
+test-results/
+playwright-report/
+blob-report/
+
+# ─── OS files ─────────────────────────────────────────
+.DS_Store
+Thumbs.db
+Desktop.ini
+*.swp
+*.swo
+*~
+
+# ─── IDE / Editor ─────────────────────────────────────
+.idea/
+.vscode/
+*.code-workspace
+*.sublime-project
+*.sublime-workspace
+
+# ─── Debug logs ───────────────────────────────────────
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+
+# ─── Certificates ────────────────────────────────────
+*.pem
+*.key
+*.crt
+
+# ─── Vercel ───────────────────────────────────────────
+.vercel
+
+# ─── AI Agent tool directories ────────────────────────
+# These are local-only tool configs and audit logs
+.claude/
+.gstack/
+.superpowers/
+.gemini/
+.antigravityignore
+
+# ─── Misc build artifacts ────────────────────────────
+*.log
+*.pid
+*.seed
+*.pid.lock

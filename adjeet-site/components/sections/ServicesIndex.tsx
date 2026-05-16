@@ -1,5 +1,6 @@
 import Link from 'next/link'
 import { services } from '@/content/services'
+import { SectionLabel } from '@/components/ui/SectionLabel'
 
 export function ServicesIndex() {
   return (
@@ -9,17 +10,7 @@ export function ServicesIndex() {
         className="mx-auto max-w-content px-6 py-4 flex items-center justify-between"
         style={{ borderBottom: '1px solid var(--rule)' }}
       >
-        <span
-          style={{
-            fontFamily: 'var(--font-mono)',
-            fontSize: '11px',
-            letterSpacing: '0.14em',
-            color: 'var(--ink-subtle)',
-            textTransform: 'uppercase',
-          }}
-        >
-          № 01 — Services
-        </span>
+        <SectionLabel>№ 01 — Services</SectionLabel>
         <Link
           href="/services"
           className="hover:text-blue transition-colors"
