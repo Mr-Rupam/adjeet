@@ -53,10 +53,10 @@ export function Footer() {
             </li>
             <li>
               <a
-                href="tel:"
+                href="tel:+919832011524"
                 className="transition-colors hover:text-[rgba(245,240,232,0.9)]"
               >
-                Phone: {/* TODO: add telephone */}
+                Phone: {WHATSAPP_DISPLAY}
               </a>
             </li>
           </ul>
