@@ -3,6 +3,7 @@ import type { CSSProperties, ReactNode } from 'react'
 interface SectionLabelProps {
   children: ReactNode
   className?: string
+  style?: CSSProperties
 }
 
 const style: CSSProperties = {
@@ -13,9 +14,9 @@ const style: CSSProperties = {
   textTransform: 'uppercase',
 }
 
-export function SectionLabel({ children, className }: SectionLabelProps) {
+export function SectionLabel({ children, className, style: inlineStyle }: SectionLabelProps) {
   return (
-    <span style={style} className={className}>
+    <span style={{ ...style, ...inlineStyle }} className={className}>
       {children}
     </span>
   )

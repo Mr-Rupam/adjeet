@@ -1,7 +1,9 @@
 import type { Metadata } from 'next'
+import type { CSSProperties } from 'react'
 import Link from 'next/link'
 import { defaultWhatsAppUrl } from '@/lib/whatsapp'
 import { buildBreadcrumbJsonLd, jsonLdString, siteConfig } from '@/lib/seo'
+import { SectionLabel } from '@/components/ui/SectionLabel'
 
 export const metadata: Metadata = {
   title: 'About AD-JEET — North Bengal Signage Since 1990',
@@ -18,48 +20,52 @@ const breadcrumb = buildBreadcrumbJsonLd([
 
 const MILESTONES = [
   { year: '1990', title: 'The Beginning', desc: 'Jeet Kumar Sarkar opens a small fabrication workshop in Siliguri with hand-painted boards and basic neon installations.' },
-  { year: '1998', title: 'Expansion', desc: 'Added flex printing and vehicle branding to our services. Started serving Jalpaiguri and Cooch Behar.' },
+  { year: '1998', title: 'Expansion', desc: 'Added flex printing and vehicle branding. Started serving Jalpaiguri and Cooch Behar.' },
   { year: '2005', title: 'The Workshop', desc: 'Opened the dedicated Patiram Jote fabrication facility — full control over every stage of production.' },
-  { year: '2012', title: 'LED Revolution', desc: 'Adopted SMD LED technology across all sign types. 60–70% less power consumption, 50,000-hour lifespan.' },
-  { year: '2018', title: '12 Districts', desc: 'Our coverage expands to 12 districts across North Bengal, from Darjeeling hills to Malda plains.' },
+  { year: '2012', title: 'LED Revolution', desc: 'Adopted SMD LED technology. 60–70% less power consumption, 50,000-hour lifespan.' },
+  { year: '2018', title: '12 Districts', desc: 'Coverage expands across North Bengal, from Darjeeling hills to Malda plains.' },
   { year: '2024', title: 'New Generation', desc: '500+ installations complete. Second-generation Sarkar family leadership carries the craft forward.' },
 ]
 
-const VALUES = [
+const STANDARDS = [
   {
-    number: '01',
-    title: 'In-House Everything',
-    desc: 'We never outsource fabrication or installation. Every cut, every weld, every wire — done by our own team at Patiram Jote.',
-    icon: '🔧',
+    n: '01',
+    title: 'In-house everything',
+    body: 'We never outsource fabrication or installation. Every cut, every weld, every wire — done by our own team at Patiram Jote. Full accountability from brief to final fixing.',
   },
   {
-    number: '02',
-    title: 'Built for Monsoon',
-    desc: 'North Bengal gets 3,000mm of rain annually. Our signs use sealed enclosures, stainless fixings, and IP65-rated LED drivers.',
-    icon: '🌧️',
+    n: '02',
+    title: 'Monsoon-proven builds',
+    body: "North Bengal gets 3,000 mm of rain annually. Our signs use sealed enclosures, stainless fixings, and IP65-rated LED drivers designed for humidity and Nor'westers.",
   },
   {
-    number: '03',
-    title: 'One-Year Warranty',
-    desc: 'Every installation comes with a full one-year warranty on LED components. Problems? We fix them, no questions asked.',
-    icon: '🛡️',
+    n: '03',
+    title: 'One-year warranty',
+    body: 'Every installation comes with a full one-year warranty on LED components and fabrication workmanship — driver replacements, resealing, electrical faults included.',
   },
   {
-    number: '04',
-    title: 'Same-Day Site Visits',
-    desc: 'In Siliguri, we do same-day site surveys. For district projects, we coordinate with our weekly transport runs.',
-    icon: '🚐',
+    n: '04',
+    title: 'Same-day site visit',
+    body: 'In Siliguri, we do same-day site surveys. For district projects, we coordinate within 24 hours and quote accurately before any work begins.',
   },
 ]
 
-const STATS = [
-  { value: '1990', label: 'Year founded' },
-  { value: '500+', label: 'Signs installed' },
-  { value: '12', label: 'Districts served' },
-  { value: '35', label: 'Years of craft' },
-  { value: '2', label: 'Generations' },
-  { value: '1', label: 'Year warranty' },
-]
+const MONO: CSSProperties = {
+  fontFamily: 'var(--font-mono)',
+  fontSize: '10px',
+  letterSpacing: '0.18em',
+  textTransform: 'uppercase',
+}
+
+function RegMark({ style }: { style?: CSSProperties }) {
+  return (
+    <svg style={style} width="22" height="22" viewBox="0 0 22 22" fill="none" aria-hidden="true">
+      <line x1="11" y1="0" x2="11" y2="22" stroke="currentColor" strokeWidth="0.7" />
+      <line x1="0" y1="11" x2="22" y2="11" stroke="currentColor" strokeWidth="0.7" />
+      <circle cx="11" cy="11" r="3" stroke="currentColor" strokeWidth="0.7" fill="none" />
+    </svg>
+  )
+}
 
 export default function AboutPage() {
   return (
@@ -69,123 +75,207 @@ export default function AboutPage() {
         dangerouslySetInnerHTML={{ __html: jsonLdString(breadcrumb) }}
       />
 
-      {/* ═══════════════════ HERO — Cinematic opening ═══════════════════ */}
-      <section className="relative min-h-[90vh] flex flex-col justify-center overflow-hidden section-inverse">
-        {/* Multi-layer background */}
-        <div className="absolute inset-0">
-          <div className="absolute inset-0 bg-gradient-to-br from-[#080807] via-[#1A1916] to-[#0a0f14]" />
-          {/* Diagonal lines */}
-          <div
-            className="absolute inset-0 opacity-[0.03]"
-            style={{
-              backgroundImage: `repeating-linear-gradient(
-                -45deg,
-                var(--adjeet-blue),
-                var(--adjeet-blue) 1px,
-                transparent 1px,
-                transparent 80px
-              )`,
-            }}
-          />
-          <div className="absolute inset-0 bg-[radial-gradient(ellipse_60%_60%_at_10%_90%,rgba(30,127,184,0.08),transparent)]" />
-        </div>
+      {/* ══════════════════════════════════════════════════════════════════
+          § MASTHEAD — Editorial printed-sheet opener
+      ══════════════════════════════════════════════════════════════════ */}
+      <section
+        className="relative overflow-hidden bg-paper px-5 pt-4 pb-14 md:px-10"
+        style={{ paddingTop: '1rem' }}
+      >
+        {/* Paper grain */}
+        <div
+          aria-hidden="true"
+          className="absolute inset-0 pointer-events-none mix-blend-multiply opacity-[0.04]"
+          style={{
+            backgroundImage:
+              "url(\"data:image/svg+xml;utf8,<svg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.7 0'/></filter><rect width='200' height='200' filter='url(%23n)'/></svg>\")",
+          }}
+        />
 
-        <div className="relative z-10 mx-auto w-full max-w-content px-6">
-          {/* Eyebrow */}
-          <div className="flex items-center gap-4 mb-10">
-            <div className="w-20 h-[1px] bg-blue/60" />
-            <span className="text-[10px] font-mono uppercase tracking-[0.3em] text-white/40">
-              Est. 1990 · Siliguri, West Bengal
-            </span>
+        {/* The printed sheet */}
+        <div
+          className="relative mx-auto flex flex-col"
+          style={{
+            maxWidth: '1280px',
+            border: '1px solid var(--rule)',
+            padding: 'clamp(36px, 5vw, 64px) clamp(24px, 4vw, 56px)',
+            minHeight: 'calc(85svh - 120px)',
+          }}
+        >
+          {/* Registration marks */}
+          <RegMark style={{ position: 'absolute', top: '-11px', left: '-11px', color: 'var(--ink-subtle)' }} />
+          <RegMark style={{ position: 'absolute', top: '-11px', right: '-11px', color: 'var(--ink-subtle)' }} />
+          <RegMark style={{ position: 'absolute', bottom: '-11px', left: '-11px', color: 'var(--ink-subtle)' }} />
+          <RegMark style={{ position: 'absolute', bottom: '-11px', right: '-11px', color: 'var(--ink-subtle)' }} />
+
+          {/* Masthead row */}
+          <header className="flex justify-between items-start gap-6">
+            <div>
+              <div
+                style={{
+                  fontFamily: 'var(--font-serif)',
+                  fontWeight: 800,
+                  fontSize: 'clamp(1.5rem, 3vw, 2.25rem)',
+                  letterSpacing: '0.04em',
+                  lineHeight: 1,
+                  color: 'var(--ink)',
+                }}
+              >
+                AD-JEET
+              </div>
+              <div style={{ ...MONO, marginTop: '6px', color: 'var(--ink-muted)', letterSpacing: '0.22em' }}>
+                Company Profile
+              </div>
+            </div>
+            <div
+              style={{
+                ...MONO,
+                fontSize: '9.5px',
+                color: 'var(--ink-subtle)',
+                textAlign: 'right',
+                lineHeight: 1.7,
+                letterSpacing: '0.22em',
+              }}
+            >
+              <div>EST. 1990</div>
+              <div>SILIGURI, WB</div>
+              <div>35 YRS CRAFT</div>
+            </div>
+          </header>
+
+          {/* Rule */}
+          <div style={{ height: '1px', background: 'var(--rule)', margin: '20px 0' }} />
+
+          {/* Main headline */}
+          <div className="flex-1 flex flex-col justify-center py-8 md:py-12">
+            <h1
+              className="text-ink"
+              style={{
+                fontFamily: 'var(--font-serif)',
+                fontWeight: 900,
+                fontSize: 'clamp(2.75rem, 8vw, 7.5rem)',
+                lineHeight: 0.86,
+                letterSpacing: '-0.025em',
+              }}
+            >
+              Built by hand.
+            </h1>
+            <h1
+              className="text-ink-muted"
+              style={{
+                fontFamily: 'var(--font-serif)',
+                fontWeight: 900,
+                fontStyle: 'italic',
+                fontSize: 'clamp(2.75rem, 8vw, 7.5rem)',
+                lineHeight: 0.86,
+                letterSpacing: '-0.025em',
+                marginTop: '0.15em',
+              }}
+            >
+              Proven by decades.
+            </h1>
+
+            <p
+              className="text-ink-muted"
+              style={{
+                marginTop: '2rem',
+                maxWidth: '52ch',
+                lineHeight: 1.65,
+                fontSize: '1rem',
+              }}
+            >
+              From a one-man workshop in Siliguri in 1990 to North Bengal&apos;s most trusted
+              signage company — 500+ installations, 12 districts, two generations of craft.
+            </p>
           </div>
 
-          {/* Headline — stacked, oversized */}
-          <h1 className="mb-8">
-            <span
-              className="block font-serif font-black text-white leading-[0.82] tracking-tight"
-              style={{ fontSize: 'clamp(3rem, 8vw, 7rem)' }}
-            >
-              We don&apos;t just
-            </span>
-            <span
-              className="block font-serif font-black text-white leading-[0.82] tracking-tight"
-              style={{ fontSize: 'clamp(3rem, 8vw, 7rem)' }}
-            >
-              make signs.
-            </span>
-            <span
-              className="block font-serif font-black text-white italic leading-[0.82] tracking-tight mt-2"
-              style={{ fontSize: 'clamp(3rem, 8vw, 7rem)' }}
-            >
-              We build legacies.
-            </span>
-          </h1>
+          {/* Rule */}
+          <div style={{ height: '1px', background: 'var(--rule)', margin: '0 0 20px' }} />
 
-          <p className="text-white/40 text-lg max-w-lg leading-relaxed mb-12">
-            From a one-man workshop in 1990 to North Bengal&apos;s most trusted signage company
-            — this is our story.
-          </p>
-
-          {/* Mini stats row */}
-          <div className="flex flex-wrap gap-8 sm:gap-12">
+          {/* Stats footer */}
+          <footer className="flex flex-wrap gap-8 sm:gap-12">
             {[
-              { val: '35+', label: 'Years' },
-              { val: '500+', label: 'Signs' },
+              { val: '1990', label: 'Founded' },
+              { val: '500+', label: 'Installations' },
               { val: '12', label: 'Districts' },
+              { val: '35', label: 'Years' },
             ].map(s => (
               <div key={s.label}>
-                <span className="block font-serif text-3xl font-black text-white leading-none">
+                <div
+                  style={{
+                    fontFamily: 'var(--font-serif)',
+                    fontWeight: 900,
+                    fontSize: 'clamp(1.5rem, 3vw, 2.25rem)',
+                    lineHeight: 1,
+                    color: 'var(--ink)',
+                  }}
+                >
                   {s.val}
-                </span>
-                <span className="block text-[10px] font-mono uppercase tracking-[0.2em] text-white/25 mt-1">
+                </div>
+                <div style={{ ...MONO, color: 'var(--ink-subtle)', marginTop: '4px' }}>
                   {s.label}
-                </span>
+                </div>
               </div>
             ))}
+          </footer>
+
+          {/* cont. cue */}
+          <div
+            aria-hidden="true"
+            style={{
+              position: 'absolute',
+              bottom: '14px',
+              right: '22px',
+              ...MONO,
+              fontSize: '9.5px',
+              color: 'var(--ink-subtle)',
+              letterSpacing: '0.22em',
+              opacity: 0.7,
+              pointerEvents: 'none',
+            }}
+          >
+            cont. ↓
           </div>
-        </div>
-
-        {/* Scroll indicator */}
-        <div className="absolute bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2">
-          <div className="w-[1px] h-10 bg-gradient-to-b from-transparent to-white/20" />
-          <span className="text-[9px] font-mono uppercase tracking-[0.3em] text-white/20">
-            Scroll
-          </span>
-        </div>
-
-        {/* Angled cut */}
-        <div className="absolute bottom-0 left-0 right-0 h-20">
-          <svg viewBox="0 0 1440 80" fill="none" className="w-full h-full" preserveAspectRatio="none">
-            <path d="M0 80h1440V30L960 0 0 30v50z" fill="var(--paper)" />
-          </svg>
         </div>
       </section>
 
-      {/* ═══════════════════ THE STORY — Editorial split ═══════════════════ */}
-      <section className="py-24 relative">
-        <div className="mx-auto max-w-content px-6">
-          <div className="grid lg:grid-cols-5 gap-16 items-start">
-            {/* Left — sticky label */}
+      {/* ══════════════════════════════════════════════════════════════════
+          § 01 — THE STORY
+      ══════════════════════════════════════════════════════════════════ */}
+      <section style={{ borderBottom: '1px solid var(--rule)' }}>
+        <div
+          className="mx-auto max-w-content px-6 py-4"
+          style={{ borderBottom: '1px solid var(--rule)' }}
+        >
+          <SectionLabel>№ 01 — The Story</SectionLabel>
+        </div>
+
+        <div className="mx-auto max-w-content px-6 py-12 md:py-20">
+          <div className="grid lg:grid-cols-5 gap-12 lg:gap-16 items-start">
+            {/* Left — sticky label + pull headline */}
             <div className="lg:col-span-2 lg:sticky lg:top-24">
-              <div className="flex items-center gap-4 mb-6">
-                <div className="w-12 h-[1px] bg-blue" />
-                <span className="text-[10px] font-mono uppercase tracking-[0.3em] text-ink-subtle">
-                  Our Story
-                </span>
-              </div>
               <h2
-                className="font-serif font-black text-ink leading-[0.9] mb-6"
-                style={{ fontSize: 'clamp(2rem, 4vw, 3.5rem)' }}
+                className="text-ink"
+                style={{
+                  fontFamily: 'var(--font-serif)',
+                  fontWeight: 900,
+                  fontSize: 'clamp(2rem, 4vw, 3.25rem)',
+                  lineHeight: 0.9,
+                  letterSpacing: '-0.02em',
+                  marginBottom: '1.5rem',
+                }}
               >
-                Built by hand.<br />
-                Proven by<br />
-                decades.
+                A workshop.<br />
+                A craft.<br />
+                <span style={{ color: 'var(--ink-muted)', fontStyle: 'italic' }}>
+                  A legacy.
+                </span>
               </h2>
-              <div className="w-16 h-[1px] bg-blue/30" />
+              <div style={{ height: '1px', background: 'var(--rule)', width: '4rem' }} />
             </div>
 
-            {/* Right — story text with alternating highlights */}
-            <div className="lg:col-span-3 space-y-8">
+            {/* Right — editorial prose */}
+            <div className="lg:col-span-3">
               {[
                 {
                   highlight: null,
@@ -198,30 +288,44 @@ export default function AboutPage() {
                 },
                 {
                   highlight: null,
-                  text: 'In 2005 we opened our dedicated fabrication workshop at Patiram Jote, outside Siliguri, giving us full control over quality at every stage — from metal cutting and acrylic routing to LED wiring and final paint finish. Every sign that leaves our workshop is inspected before installation.',
+                  text: 'In 2005 we opened our dedicated fabrication workshop at Patiram Jote, outside Siliguri, giving us full control over quality at every stage — from metal cutting and acrylic routing to LED wiring and final paint finish.',
                 },
                 {
                   highlight: '60–70%',
                   highlightLabel: 'less power consumption with LED',
-                  text: 'We adopted LED illumination in 2012 and have not looked back. Modern SMD LEDs consume dramatically less power than the fluorescent tubes they replaced, last 30,000–50,000 hours, and produce consistently brighter, more even light. Combined with weatherproofed enclosures designed for North Bengal\'s monsoon conditions, our signs routinely outlast their five-year maintenance agreements.',
+                  text: 'We adopted LED illumination in 2012. Modern SMD LEDs consume dramatically less power, last 30,000–50,000 hours, and produce consistently brighter light. Combined with weatherproofed enclosures, our signs routinely outlast their five-year maintenance agreements.',
                 },
                 {
                   highlight: null,
-                  text: 'Today, AD-JEET is run by the second generation of the Sarkar family, with the same commitment to craftsmanship that built our reputation. We do not outsource fabrication or installation. Every project — from a small shop fascia in Jalpaiguri to a full building wrap in Cooch Behar — is handled by our own team.',
+                  text: 'Today, AD-JEET is run by the second generation of the Sarkar family, with the same commitment to craftsmanship that built our reputation. We do not outsource fabrication or installation. Every project is handled by our own team.',
                 },
               ].map((block, i) => (
                 <div key={i} className="relative">
                   {block.highlight && (
-                    <div className="mb-4 flex items-end gap-3">
-                      <span className="font-serif text-4xl font-black text-blue leading-none">
+                    <div className="mb-3 flex items-end gap-3">
+                      <span
+                        style={{
+                          fontFamily: 'var(--font-serif)',
+                          fontSize: 'clamp(2rem, 5vw, 3rem)',
+                          fontWeight: 900,
+                          lineHeight: 1,
+                          color: 'var(--ink)',
+                        }}
+                      >
                         {block.highlight}
                       </span>
-                      <span className="text-xs text-ink-subtle pb-1">{block.highlightLabel}</span>
+                      <span
+                        style={{ ...MONO, color: 'var(--ink-subtle)', paddingBottom: '4px' }}
+                      >
+                        {block.highlightLabel}
+                      </span>
                     </div>
                   )}
-                  <p className="text-ink-muted leading-relaxed">{block.text}</p>
+                  <p className="text-ink-muted" style={{ lineHeight: 1.7, fontSize: '0.9375rem' }}>
+                    {block.text}
+                  </p>
                   {i < 4 && (
-                    <div className="mt-8 w-8 h-[1px] bg-rule" />
+                    <div style={{ marginTop: '2rem', marginBottom: '2rem', height: '1px', background: 'var(--rule)', width: '2rem' }} />
                   )}
                 </div>
               ))}
@@ -230,271 +334,375 @@ export default function AboutPage() {
         </div>
       </section>
 
-      {/* ═══════════════════ TIMELINE — Horizontal, dramatic ═══════════════════ */}
-      <section className="py-24 section-inverse relative overflow-hidden">
+      {/* ══════════════════════════════════════════════════════════════════
+          § 02 — MILESTONES
+      ══════════════════════════════════════════════════════════════════ */}
+      <section style={{ borderBottom: '1px solid var(--rule)' }}>
         <div
-          className="absolute inset-0 opacity-[0.03]"
-          style={{
-            backgroundImage: `
-              linear-gradient(var(--adjeet-blue) 1px, transparent 1px),
-              linear-gradient(90deg, var(--adjeet-blue) 1px, transparent 1px)
-            `,
-            backgroundSize: '80px 80px',
-          }}
-        />
-
-        <div className="relative max-w-content mx-auto px-6 mb-16">
-          <div className="flex items-center gap-4 mb-6">
-            <div className="w-12 h-[1px] bg-blue/60" />
-            <span className="text-[10px] font-mono uppercase tracking-[0.3em] text-white/40">
-              Milestones
-            </span>
-          </div>
-          <h2
-            className="font-serif font-black text-white leading-[0.9]"
-            style={{ fontSize: 'clamp(2rem, 5vw, 4rem)' }}
-          >
-            35 years of<br />milestones.
-          </h2>
+          className="mx-auto max-w-content px-6 py-4"
+          style={{ borderBottom: '1px solid var(--rule)' }}
+        >
+          <SectionLabel>№ 02 — Milestones</SectionLabel>
         </div>
 
-        {/* Timeline cards */}
-        <div className="relative px-6">
-          {/* Horizontal line */}
-          <div className="hidden lg:block absolute top-[5.5rem] left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-white/10 to-transparent" />
-
-          <div className="max-w-content mx-auto">
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-              {MILESTONES.map((m, i) => (
+        <div className="mx-auto max-w-content px-6 py-12 md:py-16">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-12 gap-y-0">
+            {MILESTONES.map((m, i) => {
+              const isLastRow = i >= MILESTONES.length - (MILESTONES.length % 3 || 3)
+              return (
                 <div
                   key={m.year}
-                  className="group relative rounded-lg border border-white/[0.06] bg-white/[0.02] p-8 hover:border-white/[0.12] hover:bg-white/[0.04] transition-all duration-500"
+                  className="py-8"
+                  style={{
+                    borderBottom: isLastRow ? 'none' : '1px solid var(--rule)',
+                  }}
                 >
-                  {/* Year — massive */}
-                  <span
-                    className="block font-serif font-black leading-none mb-4"
+                  <div
+                    aria-hidden="true"
                     style={{
-                      fontSize: '3.5rem',
-                      color: 'var(--adjeet-blue)',
+                      fontFamily: 'var(--font-serif)',
+                      fontSize: 'clamp(2.5rem, 5vw, 4rem)',
+                      fontWeight: 700,
+                      lineHeight: 1,
+                      color: 'var(--rule)',
+                      marginBottom: '0.75rem',
+                      userSelect: 'none',
                     }}
                   >
                     {m.year}
-                  </span>
-                  <h3 className="text-white font-bold text-lg mb-2">{m.title}</h3>
-                  <p className="text-white/40 text-sm leading-relaxed">{m.desc}</p>
-
-                  {/* Corner dot */}
-                  <div className="absolute top-4 right-4 w-2 h-2 rounded-full bg-white/10 group-hover:bg-blue/40 transition-colors" />
+                  </div>
+                  <h3
+                    className="text-ink"
+                    style={{
+                      fontFamily: 'var(--font-serif)',
+                      fontSize: 'clamp(1.125rem, 2vw, 1.25rem)',
+                      fontWeight: 600,
+                      lineHeight: 1.2,
+                      marginBottom: '0.5rem',
+                    }}
+                  >
+                    {m.title}
+                  </h3>
+                  <p
+                    className="text-ink-muted"
+                    style={{ fontSize: '0.875rem', lineHeight: 1.65, maxWidth: '36ch' }}
+                  >
+                    {m.desc}
+                  </p>
                 </div>
-              ))}
-            </div>
+              )
+            })}
           </div>
         </div>
       </section>
 
-      {/* ═══════════════════ VALUES — Bold grid ═══════════════════ */}
-      <section className="py-24">
-        <div className="mx-auto max-w-content px-6">
-          <div className="flex items-center gap-4 mb-6">
-            <div className="w-12 h-[1px] bg-blue" />
-            <span className="text-[10px] font-mono uppercase tracking-[0.3em] text-ink-subtle">
-              Why AD-JEET
-            </span>
-          </div>
-          <h2
-            className="font-serif font-black text-ink leading-[0.9] mb-16"
-            style={{ fontSize: 'clamp(2rem, 5vw, 4rem)' }}
-          >
-            What sets us<br />apart.
-          </h2>
+      {/* ══════════════════════════════════════════════════════════════════
+          § 03 — OUR STANDARD
+      ══════════════════════════════════════════════════════════════════ */}
+      <section style={{ borderBottom: '1px solid var(--rule)' }}>
+        <div
+          className="mx-auto max-w-content px-6 py-4"
+          style={{ borderBottom: '1px solid var(--rule)' }}
+        >
+          <SectionLabel>№ 03 — Our Standard</SectionLabel>
+        </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
-            {VALUES.map(v => (
+        <div className="mx-auto max-w-content px-6 py-12 md:py-16">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-12 gap-y-0">
+            {STANDARDS.map((s, i) => (
               <div
-                key={v.number}
-                className="group relative rounded-lg border border-rule p-8 hover:border-blue/30 transition-all duration-300 overflow-hidden"
+                key={s.n}
+                className="py-8"
+                style={{ borderBottom: i < 2 ? '1px solid var(--rule)' : 'none' }}
               >
-                {/* Background number */}
-                <span
-                  className="absolute -top-4 -right-2 font-serif font-black text-transparent leading-none select-none pointer-events-none"
+                <div
+                  aria-hidden="true"
                   style={{
-                    fontSize: '8rem',
-                    WebkitTextStroke: '1px rgba(30,127,184,0.06)',
+                    fontFamily: 'var(--font-serif)',
+                    fontSize: 'clamp(3rem, 7vw, 5rem)',
+                    fontWeight: 700,
+                    lineHeight: 1,
+                    color: 'var(--rule)',
+                    marginBottom: '1rem',
+                    userSelect: 'none',
                   }}
                 >
-                  {v.number}
-                </span>
-
-                <div className="relative">
-                  <span className="text-3xl mb-4 block">{v.icon}</span>
-                  <span className="text-[10px] font-mono uppercase tracking-[0.2em] text-blue mb-3 block">
-                    {v.number}
-                  </span>
-                  <h3 className="text-xl font-bold text-ink mb-3">{v.title}</h3>
-                  <p className="text-sm text-ink-muted leading-relaxed">{v.desc}</p>
+                  {s.n}
                 </div>
-
-                {/* Hover accent line */}
-                <div className="absolute bottom-0 left-0 right-0 h-[2px] bg-gradient-to-r from-blue to-blue/0 scale-x-0 group-hover:scale-x-100 origin-left transition-transform duration-500" />
+                <h3
+                  className="text-ink"
+                  style={{
+                    fontFamily: 'var(--font-serif)',
+                    fontSize: 'clamp(1.125rem, 2vw, 1.375rem)',
+                    fontWeight: 600,
+                    lineHeight: 1.2,
+                    marginBottom: '0.625rem',
+                  }}
+                >
+                  {s.title}
+                </h3>
+                <p
+                  className="text-ink-muted"
+                  style={{ fontSize: '0.9rem', lineHeight: 1.65, maxWidth: '38ch' }}
+                >
+                  {s.body}
+                </p>
               </div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* ═══════════════════ STATS BAND — Full-width numbers ═══════════════════ */}
-      <section className="py-16 border-y border-rule bg-paper-elevated">
-        <div className="mx-auto max-w-content px-6">
-          <div className="grid grid-cols-3 lg:grid-cols-6 gap-6 sm:gap-8 text-center">
-            {STATS.map(s => (
+      {/* ══════════════════════════════════════════════════════════════════
+          § STATS BAND
+      ══════════════════════════════════════════════════════════════════ */}
+      <section
+        className="bg-paper-elevated"
+        style={{ borderBottom: '1px solid var(--rule)' }}
+      >
+        <div className="mx-auto max-w-content px-6 py-4" style={{ borderBottom: '1px solid var(--rule)' }}>
+          <SectionLabel>By the numbers</SectionLabel>
+        </div>
+        <div className="mx-auto max-w-content px-6 py-10">
+          <div className="grid grid-cols-3 lg:grid-cols-6 gap-6 text-center">
+            {[
+              { value: '1990', label: 'Founded' },
+              { value: '500+', label: 'Installations' },
+              { value: '12', label: 'Districts' },
+              { value: '35', label: 'Years craft' },
+              { value: '2', label: 'Generations' },
+              { value: '1yr', label: 'Warranty' },
+            ].map(s => (
               <div key={s.label}>
-                <span className="block font-serif text-3xl sm:text-4xl font-black text-ink leading-none mb-1">
+                <div
+                  style={{
+                    fontFamily: 'var(--font-serif)',
+                    fontWeight: 900,
+                    fontSize: 'clamp(1.75rem, 4vw, 2.5rem)',
+                    lineHeight: 1,
+                    color: 'var(--ink)',
+                    marginBottom: '0.25rem',
+                  }}
+                >
                   {s.value}
-                </span>
-                <span className="block text-[10px] font-mono uppercase tracking-[0.15em] text-ink-subtle">
+                </div>
+                <div style={{ ...MONO, color: 'var(--ink-subtle)', fontSize: '10px' }}>
                   {s.label}
-                </span>
+                </div>
               </div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* ═══════════════════ WORKSHOP — Visual showcase ═══════════════════ */}
-      <section className="py-24">
-        <div className="mx-auto max-w-content px-6">
-          <div className="grid lg:grid-cols-2 gap-16 items-center">
+      {/* ══════════════════════════════════════════════════════════════════
+          § 04 — THE WORKSHOP
+      ══════════════════════════════════════════════════════════════════ */}
+      <section style={{ borderBottom: '1px solid var(--rule)' }}>
+        <div
+          className="mx-auto max-w-content px-6 py-4"
+          style={{ borderBottom: '1px solid var(--rule)' }}
+        >
+          <SectionLabel>№ 04 — The Workshop</SectionLabel>
+        </div>
+
+        <div className="mx-auto max-w-content px-6 py-12 md:py-16">
+          <div className="grid lg:grid-cols-2 gap-12 lg:gap-20 items-start">
             {/* Text */}
             <div>
-              <div className="flex items-center gap-4 mb-6">
-                <div className="w-12 h-[1px] bg-blue" />
-                <span className="text-[10px] font-mono uppercase tracking-[0.3em] text-ink-subtle">
-                  The Workshop
-                </span>
-              </div>
               <h2
-                className="font-serif font-black text-ink leading-[0.9] mb-6"
-                style={{ fontSize: 'clamp(2rem, 4vw, 3rem)' }}
+                className="text-ink"
+                style={{
+                  fontFamily: 'var(--font-serif)',
+                  fontWeight: 900,
+                  fontSize: 'clamp(2rem, 4vw, 3rem)',
+                  lineHeight: 0.9,
+                  letterSpacing: '-0.02em',
+                  marginBottom: '1.5rem',
+                }}
               >
                 Where signs<br />come to life.
               </h2>
-              <div className="space-y-4 text-ink-muted leading-relaxed">
+
+              <div className="space-y-4 text-ink-muted" style={{ lineHeight: 1.7, fontSize: '0.9375rem' }}>
                 <p>
-                  Our 4,000 sq ft fabrication facility at Patiram Jote is where every AD-JEET sign is born.
-                  Metal cutting, CNC routing, acrylic bending, LED wiring, painting — everything happens under one roof.
+                  Our 4,000 sq ft fabrication facility at Patiram Jote is where every AD-JEET sign
+                  is born. Metal cutting, CNC routing, acrylic bending, LED wiring, painting —
+                  everything under one roof.
                 </p>
                 <p>
-                  The workshop runs six days a week, with a dedicated quality inspection station before
-                  any sign is cleared for dispatch. We maintain a fleet of installation vehicles equipped
-                  with scaffolding, generators, and wiring tools.
+                  The workshop runs six days a week with a dedicated quality inspection station.
+                  We maintain a fleet of installation vehicles equipped with scaffolding, generators,
+                  and wiring tools.
                 </p>
               </div>
 
-              {/* Workshop specs */}
-              <div className="grid grid-cols-2 gap-4 mt-8">
+              {/* Workshop specs — rule-separated list */}
+              <div style={{ marginTop: '2rem', borderTop: '1px solid var(--rule)' }}>
                 {[
-                  { val: '4,000', unit: 'sq ft', label: 'Workshop area' },
-                  { val: '6', unit: 'days/week', label: 'Operating schedule' },
-                  { val: '3', unit: 'vehicles', label: 'Installation fleet' },
-                  { val: '15+', unit: 'team', label: 'Skilled workers' },
-                ].map(spec => (
-                  <div key={spec.label} className="rounded-lg border border-rule p-4">
-                    <div className="flex items-baseline gap-1 mb-0.5">
-                      <span className="font-serif text-2xl font-black text-ink leading-none">
-                        {spec.val}
-                      </span>
-                      <span className="text-xs text-ink-subtle">{spec.unit}</span>
-                    </div>
-                    <span className="text-[10px] font-mono uppercase tracking-wider text-ink-subtle">
-                      {spec.label}
+                  { val: '4,000 sq ft', label: 'Workshop area' },
+                  { val: '6 days/week', label: 'Operating schedule' },
+                  { val: '3 vehicles', label: 'Installation fleet' },
+                  { val: '15+ skilled workers', label: 'Our team' },
+                ].map((spec, i) => (
+                  <div
+                    key={spec.label}
+                    className="flex justify-between items-baseline py-3"
+                    style={{ borderBottom: i < 3 ? '1px solid var(--rule)' : 'none' }}
+                  >
+                    <span style={{ ...MONO, color: 'var(--ink-subtle)' }}>{spec.label}</span>
+                    <span
+                      style={{
+                        fontFamily: 'var(--font-serif)',
+                        fontWeight: 600,
+                        fontSize: '0.9375rem',
+                        color: 'var(--ink)',
+                      }}
+                    >
+                      {spec.val}
                     </span>
                   </div>
                 ))}
               </div>
             </div>
 
-            {/* Visual — workshop process panels */}
-            <div className="relative">
-              <div className="grid grid-cols-2 gap-3">
-                <div className="rounded-lg bg-ink text-paper aspect-[3/4] flex items-end p-6">
-                  <div>
-                    <span className="text-[10px] font-mono uppercase tracking-wider text-white/40 block mb-1">Metal</span>
-                    <span className="text-white font-bold text-sm">Cutting & Welding</span>
+            {/* Visual — process stages as editorial panels */}
+            <div className="grid grid-cols-2 gap-3">
+              {[
+                { label: 'Metal', sub: 'Cutting & Welding', dark: true },
+                { label: 'LED', sub: 'Wiring & Testing', dark: false },
+                { label: 'Acrylic', sub: 'Routing & Bending', dark: false },
+                { label: 'Paint', sub: 'Finish & QC', dark: true },
+              ].map((panel, i) => (
+                <div
+                  key={panel.label}
+                  className={`aspect-square flex flex-col justify-between p-5 ${i === 1 ? 'mt-8' : i === 2 ? '-mt-4' : ''}`}
+                  style={{
+                    background: panel.dark ? 'var(--surface-inverse)' : 'var(--paper-elevated)',
+                    border: '1px solid var(--rule)',
+                  }}
+                >
+                  <div
+                    style={{
+                      ...MONO,
+                      color: panel.dark ? 'rgba(240,235,222,0.35)' : 'var(--ink-subtle)',
+                    }}
+                  >
+                    {panel.label}
+                  </div>
+                  <div
+                    style={{
+                      fontFamily: 'var(--font-serif)',
+                      fontWeight: 600,
+                      fontSize: '0.875rem',
+                      color: panel.dark ? 'var(--paper)' : 'var(--ink)',
+                      lineHeight: 1.3,
+                    }}
+                  >
+                    {panel.sub}
                   </div>
                 </div>
-                <div className="rounded-lg bg-blue text-white aspect-square flex items-end p-6 mt-8">
-                  <div>
-                    <span className="text-[10px] font-mono uppercase tracking-wider text-white/40 block mb-1">LED</span>
-                    <span className="text-white font-bold text-sm">Wiring & Testing</span>
-                  </div>
-                </div>
-                <div className="rounded-lg bg-ink/80 text-paper aspect-square flex items-end p-6 -mt-4">
-                  <div>
-                    <span className="text-[10px] font-mono uppercase tracking-wider text-white/40 block mb-1">Acrylic</span>
-                    <span className="text-white font-bold text-sm">Routing & Bending</span>
-                  </div>
-                </div>
-                <div className="rounded-lg bg-blue-deep text-white aspect-[3/4] flex items-end p-6 mt-4">
-                  <div>
-                    <span className="text-[10px] font-mono uppercase tracking-wider text-white/40 block mb-1">Paint</span>
-                    <span className="text-white font-bold text-sm">Finish & QC</span>
-                  </div>
-                </div>
-              </div>
-              {/* Floating badge */}
-              <div className="absolute -bottom-4 left-1/2 -translate-x-1/2 px-5 py-2.5 rounded-lg bg-paper border border-rule shadow-lg">
-                <span className="text-xs font-bold text-ink">All in-house ✓</span>
-              </div>
+              ))}
             </div>
           </div>
         </div>
       </section>
 
-      {/* ═══════════════════ CTA — Close the loop ═══════════════════ */}
-      <section className="py-24 relative overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-br from-blue via-blue-deep to-[#08192a]" />
+      {/* ══════════════════════════════════════════════════════════════════
+          § CTA — Always-dark closing section
+      ══════════════════════════════════════════════════════════════════ */}
+      <section className="section-inverse">
         <div
-          className="absolute inset-0 opacity-10"
-          style={{
-            backgroundImage: 'radial-gradient(circle, rgba(255,255,255,0.3) 1px, transparent 1px)',
-            backgroundSize: '24px 24px',
-          }}
-        />
+          className="mx-auto max-w-content px-6 py-4"
+          style={{ borderBottom: '1px solid rgba(255,255,255,0.08)' }}
+        >
+          <SectionLabel style={{ color: 'rgba(240,235,222,0.4)' }}>
+            Commission a sign
+          </SectionLabel>
+        </div>
 
-        <div className="relative max-w-content mx-auto px-6">
-          <div className="max-w-2xl mx-auto text-center">
-            <span className="inline-block text-[10px] font-mono uppercase tracking-[0.3em] text-white/40 mb-6">
-              Ready to start?
+        <div className="mx-auto max-w-content px-6 py-16 md:py-24">
+          <h2
+            style={{
+              fontFamily: 'var(--font-serif)',
+              fontWeight: 900,
+              fontSize: 'clamp(2.5rem, 7vw, 6.5rem)',
+              lineHeight: 0.86,
+              letterSpacing: '-0.025em',
+              color: 'var(--paper)',
+              marginBottom: '1.5rem',
+            }}
+          >
+            Your sign is<br />
+            <span style={{ fontStyle: 'italic', color: 'rgba(240,235,222,0.55)' }}>
+              one call away.
             </span>
-            <h2
-              className="font-serif font-black text-white leading-[0.9] mb-6"
-              style={{ fontSize: 'clamp(2.5rem, 6vw, 5rem)' }}
+          </h2>
+          <p
+            style={{
+              color: 'rgba(240,235,222,0.45)',
+              lineHeight: 1.6,
+              maxWidth: '48ch',
+              marginBottom: '2.5rem',
+              fontSize: '1rem',
+            }}
+          >
+            35 years of craft, one simple conversation. Tell us what you need — we handle the rest.
+          </p>
+
+          <div className="flex flex-wrap gap-3">
+            <a
+              href={waUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="transition-all hover:-translate-y-px active:scale-[0.98]"
+              style={{
+                padding: '14px 24px',
+                background: 'var(--paper)',
+                color: 'var(--adjeet-blue)',
+                fontFamily: 'var(--font-serif)',
+                fontWeight: 600,
+                fontSize: '15px',
+                letterSpacing: '0.01em',
+                textDecoration: 'none',
+                borderRadius: '1px',
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '8px',
+              }}
             >
-              Your sign is<br />one call away.
-            </h2>
-            <p className="text-white/50 text-lg mb-10 max-w-md mx-auto">
-              35 years of craft, one simple conversation. Tell us what you need — we handle the rest.
-            </p>
-            <div className="flex flex-wrap gap-4 justify-center">
-              <a
-                href={waUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center justify-center rounded-lg bg-white text-blue-deep font-bold px-8 py-4 text-sm hover:bg-white/90 transition-colors active:scale-[0.98]"
-              >
-                Chat on WhatsApp
-              </a>
-              <Link
-                href="/contact"
-                className="inline-flex items-center justify-center rounded-lg border border-white/30 text-white font-medium px-8 py-4 text-sm hover:bg-white/10 transition-colors active:scale-[0.98]"
-              >
-                Send a message →
-              </Link>
-            </div>
-            <p className="mt-8 text-white/30 text-xs font-mono">
-              Same-day site visits in Siliguri · One-year LED warranty · Free quotes
-            </p>
+              Chat on WhatsApp →
+            </a>
+            <Link
+              href="/contact"
+              className="transition-colors"
+              style={{
+                padding: '13px 18px',
+                border: '1px solid rgba(255,255,255,0.18)',
+                color: 'rgba(240,235,222,0.6)',
+                ...MONO,
+                fontSize: '11px',
+                letterSpacing: '0.18em',
+                textDecoration: 'none',
+                borderRadius: '1px',
+                display: 'inline-flex',
+                alignItems: 'center',
+              }}
+            >
+              Send a message
+            </Link>
           </div>
+
+          <p
+            style={{
+              ...MONO,
+              fontSize: '10px',
+              color: 'rgba(240,235,222,0.25)',
+              marginTop: '2rem',
+            }}
+          >
+            Same-day site visits in Siliguri · One-year LED warranty · Free quotes
+          </p>
         </div>
       </section>
     </>

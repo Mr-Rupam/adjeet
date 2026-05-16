@@ -1,10 +1,12 @@
 import { Suspense } from 'react'
 import type { Metadata } from 'next'
+import type { CSSProperties } from 'react'
 import Link from 'next/link'
 import { PortfolioContent } from './PortfolioContent'
 import { services } from '@/content/services'
 import { defaultWhatsAppUrl } from '@/lib/whatsapp'
 import { buildBreadcrumbJsonLd, jsonLdString, siteConfig } from '@/lib/seo'
+import { SectionLabel } from '@/components/ui/SectionLabel'
 
 export const metadata: Metadata = {
   title: 'Portfolio — 500+ Installations Across North Bengal',
@@ -18,11 +20,44 @@ const breadcrumb = buildBreadcrumbJsonLd([
   { name: 'Portfolio', url: '/portfolio' },
 ])
 
-const STATS = [
-  { number: '500+', label: 'Installations', suffix: 'completed' },
-  { number: '35', label: 'Years', suffix: 'of craft' },
-  { number: '12', label: 'Districts', suffix: 'covered' },
-  { number: '10', label: 'Service', suffix: 'categories' },
+const MONO: CSSProperties = {
+  fontFamily: 'var(--font-mono)',
+  fontSize: '10px',
+  letterSpacing: '0.18em',
+  textTransform: 'uppercase',
+}
+
+function RegMark({ style }: { style?: CSSProperties }) {
+  return (
+    <svg style={style} width="22" height="22" viewBox="0 0 22 22" fill="none" aria-hidden="true">
+      <line x1="11" y1="0" x2="11" y2="22" stroke="currentColor" strokeWidth="0.7" />
+      <line x1="0" y1="11" x2="22" y2="11" stroke="currentColor" strokeWidth="0.7" />
+      <circle cx="11" cy="11" r="3" stroke="currentColor" strokeWidth="0.7" fill="none" />
+    </svg>
+  )
+}
+
+const PROCESS_STEPS = [
+  {
+    n: '01',
+    title: 'Survey',
+    body: 'We visit your site, measure the substrate, and assess power, visibility, and municipal requirements. Same-day in Siliguri.',
+  },
+  {
+    n: '02',
+    title: 'Design',
+    body: 'Our team creates a compliant design mockup matching your brand guidelines and location constraints. Revisions until you\'re happy.',
+  },
+  {
+    n: '03',
+    title: 'Fabricate',
+    body: 'Metal cutting, acrylic routing, LED wiring, and paint — every step at our Patiram Jote workshop. No subcontracting.',
+  },
+  {
+    n: '04',
+    title: 'Install',
+    body: 'Our crew installs on-site with proper scaffolding, wiring, and weatherproofing. One-year warranty on all LED and workmanship.',
+  },
 ]
 
 export default function PortfolioPage() {
@@ -35,219 +70,361 @@ export default function PortfolioPage() {
         dangerouslySetInnerHTML={{ __html: jsonLdString(breadcrumb) }}
       />
 
-      {/* ═══════════════════ HERO — Full-bleed dramatic entry ═══════════════════ */}
-      <section className="relative min-h-[85vh] flex flex-col justify-end overflow-hidden section-inverse">
-        {/* Layered background effects */}
-        <div className="absolute inset-0">
-          {/* Base dark gradient */}
-          <div className="absolute inset-0 bg-gradient-to-br from-[#0a0a08] via-[#1A1916] to-[#0d1117]" />
-          {/* Blueprint-style grid */}
-          <div
-            className="absolute inset-0 opacity-[0.06]"
-            style={{
-              backgroundImage: `
-                linear-gradient(var(--adjeet-blue) 1px, transparent 1px),
-                linear-gradient(90deg, var(--adjeet-blue) 1px, transparent 1px)
-              `,
-              backgroundSize: '60px 60px',
-            }}
-          />
-          {/* Radial spotlight */}
-          <div className="absolute inset-0 bg-[radial-gradient(ellipse_80%_50%_at_20%_80%,rgba(30,127,184,0.15),transparent)]" />
-          {/* Diagonal accent line */}
-          <div className="absolute top-0 right-0 w-[1px] h-full bg-gradient-to-b from-transparent via-blue to-transparent opacity-20 translate-x-[-120px]" />
-        </div>
+      {/* ══════════════════════════════════════════════════════════════════
+          § MASTHEAD — Editorial printed-sheet opener
+      ══════════════════════════════════════════════════════════════════ */}
+      <section className="relative overflow-hidden bg-paper px-5 pt-4 pb-14 md:px-10">
+        {/* Paper grain */}
+        <div
+          aria-hidden="true"
+          className="absolute inset-0 pointer-events-none mix-blend-multiply opacity-[0.04]"
+          style={{
+            backgroundImage:
+              "url(\"data:image/svg+xml;utf8,<svg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.7 0'/></filter><rect width='200' height='200' filter='url(%23n)'/></svg>\")",
+          }}
+        />
 
-        {/* Content */}
-        <div className="relative z-10 mx-auto w-full max-w-content px-6 pb-16 pt-32">
-          {/* Eyebrow with animated line */}
-          <div className="flex items-center gap-4 mb-8">
-            <div className="w-16 h-[1px] bg-blue" />
-            <span className="text-[10px] font-mono uppercase tracking-[0.3em] text-white/40">
-              Portfolio / {new Date().getFullYear()}
-            </span>
-          </div>
+        <div
+          className="relative mx-auto flex flex-col"
+          style={{
+            maxWidth: '1280px',
+            border: '1px solid var(--rule)',
+            padding: 'clamp(36px, 5vw, 64px) clamp(24px, 4vw, 56px)',
+            minHeight: 'calc(80svh - 120px)',
+          }}
+        >
+          <RegMark style={{ position: 'absolute', top: '-11px', left: '-11px', color: 'var(--ink-subtle)' }} />
+          <RegMark style={{ position: 'absolute', top: '-11px', right: '-11px', color: 'var(--ink-subtle)' }} />
+          <RegMark style={{ position: 'absolute', bottom: '-11px', left: '-11px', color: 'var(--ink-subtle)' }} />
+          <RegMark style={{ position: 'absolute', bottom: '-11px', right: '-11px', color: 'var(--ink-subtle)' }} />
 
-          {/* Main headline — massive, editorial */}
-          <h1 className="mb-6">
-            <span
-              className="block font-serif font-black text-white leading-[0.85] tracking-tight"
-              style={{ fontSize: 'clamp(3.5rem, 10vw, 9rem)' }}
+          {/* Masthead row */}
+          <header className="flex justify-between items-start gap-6">
+            <div>
+              <div
+                style={{
+                  fontFamily: 'var(--font-serif)',
+                  fontWeight: 800,
+                  fontSize: 'clamp(1.5rem, 3vw, 2.25rem)',
+                  letterSpacing: '0.04em',
+                  lineHeight: 1,
+                  color: 'var(--ink)',
+                }}
+              >
+                AD-JEET
+              </div>
+              <div style={{ ...MONO, marginTop: '6px', color: 'var(--ink-muted)', letterSpacing: '0.22em' }}>
+                Portfolio / {new Date().getFullYear()}
+              </div>
+            </div>
+            <div
+              style={{
+                ...MONO,
+                fontSize: '9.5px',
+                color: 'var(--ink-subtle)',
+                textAlign: 'right',
+                lineHeight: 1.7,
+                letterSpacing: '0.22em',
+              }}
+            >
+              <div>500+ INSTALLS</div>
+              <div>12 DISTRICTS</div>
+              <div>35 YRS CRAFT</div>
+            </div>
+          </header>
+
+          <div style={{ height: '1px', background: 'var(--rule)', margin: '20px 0' }} />
+
+          {/* Main headline */}
+          <div className="flex-1 flex flex-col justify-center py-8 md:py-12">
+            <h1
+              className="text-ink"
+              style={{
+                fontFamily: 'var(--font-serif)',
+                fontWeight: 900,
+                fontSize: 'clamp(3.5rem, 12vw, 10rem)',
+                lineHeight: 0.82,
+                letterSpacing: '-0.03em',
+              }}
             >
               Our
-            </span>
-            <span
-              className="block font-serif font-black text-blue leading-[0.85] tracking-tight"
-              style={{ fontSize: 'clamp(3.5rem, 10vw, 9rem)' }}
+            </h1>
+            <h1
+              style={{
+                fontFamily: 'var(--font-serif)',
+                fontWeight: 900,
+                fontStyle: 'italic',
+                fontSize: 'clamp(3.5rem, 12vw, 10rem)',
+                lineHeight: 0.82,
+                letterSpacing: '-0.03em',
+                color: 'var(--ink-muted)',
+              }}
             >
               Craft.
-            </span>
-          </h1>
-
-          <p className="text-white/50 text-lg max-w-lg mb-12 leading-relaxed">
-            Three decades of signage installations across North Bengal.
-            Every sign fabricated in-house. Every installation by our own team.
-          </p>
-
-          {/* Stats row — industrial counter style */}
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-6 sm:gap-10 mb-12">
-            {STATS.map((stat, i) => (
-              <div key={i} className="group">
-                <span className="block font-serif text-4xl sm:text-5xl font-black text-white leading-none mb-1">
-                  {stat.number}
-                </span>
-                <span className="block text-[10px] font-mono uppercase tracking-[0.2em] text-white/30">
-                  {stat.label}
-                </span>
-                <span className="block text-[10px] text-white/20 mt-0.5">{stat.suffix}</span>
-              </div>
-            ))}
+            </h1>
+            <p
+              className="text-ink-muted"
+              style={{
+                marginTop: '2rem',
+                maxWidth: '52ch',
+                lineHeight: 1.65,
+                fontSize: '1rem',
+              }}
+            >
+              Three decades of signage installations across North Bengal.
+              Every sign fabricated in-house. Every installation by our own team.
+            </p>
           </div>
 
-          {/* Scroll cue */}
-          <div className="flex items-center gap-3 text-white/20">
-            <div className="w-[1px] h-8 bg-white/20 animate-pulse" />
-            <span className="text-[10px] font-mono uppercase tracking-[0.3em]">
-              Scroll to explore
-            </span>
-          </div>
-        </div>
+          <div style={{ height: '1px', background: 'var(--rule)', margin: '0 0 20px' }} />
 
-        {/* Bottom edge — torn/angled cut */}
-        <div className="absolute bottom-0 left-0 right-0 h-16">
-          <svg viewBox="0 0 1440 64" fill="none" className="w-full h-full" preserveAspectRatio="none">
-            <path d="M0 64h1440V20L720 0 0 20v44z" fill="var(--paper)" />
-          </svg>
+          {/* Stats footer */}
+          <footer className="flex flex-wrap gap-8 sm:gap-12 items-end justify-between">
+            <div className="flex flex-wrap gap-8 sm:gap-12">
+              {[
+                { val: '500+', label: 'Installations' },
+                { val: '35', label: 'Years craft' },
+                { val: '12', label: 'Districts' },
+                { val: '10', label: 'Service types' },
+              ].map(s => (
+                <div key={s.label}>
+                  <div
+                    style={{
+                      fontFamily: 'var(--font-serif)',
+                      fontWeight: 900,
+                      fontSize: 'clamp(1.5rem, 3vw, 2.25rem)',
+                      lineHeight: 1,
+                      color: 'var(--ink)',
+                    }}
+                  >
+                    {s.val}
+                  </div>
+                  <div style={{ ...MONO, color: 'var(--ink-subtle)', marginTop: '4px' }}>
+                    {s.label}
+                  </div>
+                </div>
+              ))}
+            </div>
+            <div
+              style={{
+                ...MONO,
+                fontSize: '10px',
+                color: 'var(--ink-subtle)',
+                letterSpacing: '0.22em',
+              }}
+            >
+              {services.length} · Service categories
+            </div>
+          </footer>
+
+          <div
+            aria-hidden="true"
+            style={{
+              position: 'absolute',
+              bottom: '14px',
+              right: '22px',
+              ...MONO,
+              fontSize: '9.5px',
+              color: 'var(--ink-subtle)',
+              letterSpacing: '0.22em',
+              opacity: 0.7,
+              pointerEvents: 'none',
+            }}
+          >
+            cont. ↓
+          </div>
         </div>
       </section>
 
-      {/* ═══════════════════ QUICK SERVICE NAV — Horizontal scroller ═══════════════════ */}
-      <section className="py-8 border-b border-rule bg-paper relative z-10">
-        <div className="mx-auto max-w-content px-6">
-          <div className="flex items-center gap-6 overflow-x-auto no-scrollbar pb-2">
-            <span className="flex-shrink-0 text-[10px] font-mono uppercase tracking-[0.2em] text-ink-subtle">
-              Jump to:
-            </span>
+      {/* ══════════════════════════════════════════════════════════════════
+          § QUICK SERVICE NAV — Horizontal scroller (unchanged — already good)
+      ══════════════════════════════════════════════════════════════════ */}
+      <section
+        className="bg-paper"
+        style={{ borderBottom: '1px solid var(--rule)' }}
+      >
+        <div className="mx-auto max-w-content px-6 py-3">
+          <div className="flex items-center gap-6 overflow-x-auto no-scrollbar">
+            <SectionLabel className="flex-shrink-0">Jump to:</SectionLabel>
             {services.slice(0, 6).map((s, i) => (
               <Link
                 key={s.slug}
                 href={`/portfolio?service=${s.slug}`}
-                className="flex-shrink-0 group flex items-center gap-2 text-sm text-ink-muted hover:text-blue transition-colors"
+                className="flex-shrink-0 group flex items-center gap-2 text-sm text-ink-muted hover:text-ink transition-colors"
+                style={{ textDecoration: 'none' }}
               >
-                <span className="font-mono text-[10px] text-ink-subtle/50 group-hover:text-blue/50">
+                <span
+                  style={{ ...MONO, color: 'var(--ink-subtle)', fontSize: '9px' }}
+                  className="group-hover:text-ink-muted transition-colors"
+                >
                   {String(i + 1).padStart(2, '0')}
                 </span>
-                <span className="font-medium">{s.name}</span>
+                <span style={{ fontWeight: 500 }}>{s.name}</span>
               </Link>
             ))}
           </div>
         </div>
       </section>
 
-      {/* ═══════════════════ GALLERY — The main event ═══════════════════ */}
+      {/* ══════════════════════════════════════════════════════════════════
+          § GALLERY — The main event (unchanged — already excellent)
+      ══════════════════════════════════════════════════════════════════ */}
       <Suspense
         fallback={
           <div className="py-32 text-center">
-            <div className="inline-block w-8 h-8 border-2 border-blue/30 border-t-blue rounded-full animate-spin" />
-            <p className="mt-4 text-ink-muted text-sm font-mono">Loading gallery…</p>
+            <div
+              className="inline-block w-6 h-6 border-2 border-t-ink rounded-full animate-spin"
+              style={{ borderColor: 'var(--rule)', borderTopColor: 'var(--ink)' }}
+            />
+            <p
+              className="mt-4 text-ink-muted"
+              style={{ ...MONO, fontSize: '10px' }}
+            >
+              Loading gallery…
+            </p>
           </div>
         }
       >
         <PortfolioContent />
       </Suspense>
 
-      {/* ═══════════════════ PROCESS — How we build ═══════════════════ */}
-      <section className="py-24 section-inverse relative overflow-hidden">
-        {/* Subtle grid bg */}
+      {/* ══════════════════════════════════════════════════════════════════
+          § PROCESS — From sketch to street (light bg, no dark section)
+      ══════════════════════════════════════════════════════════════════ */}
+      <section style={{ borderBottom: '1px solid var(--rule)' }}>
         <div
-          className="absolute inset-0 opacity-[0.04]"
-          style={{
-            backgroundImage: `
-              linear-gradient(var(--adjeet-blue) 1px, transparent 1px),
-              linear-gradient(90deg, var(--adjeet-blue) 1px, transparent 1px)
-            `,
-            backgroundSize: '40px 40px',
-          }}
-        />
+          className="mx-auto max-w-content px-6 py-4"
+          style={{ borderBottom: '1px solid var(--rule)' }}
+        >
+          <SectionLabel>№ 01 — From sketch to street</SectionLabel>
+        </div>
 
-        <div className="relative max-w-content mx-auto px-6">
-          <div className="flex items-center gap-4 mb-12">
-            <div className="w-12 h-[1px] bg-blue" />
-            <span className="text-[10px] font-mono uppercase tracking-[0.3em] text-white/40">
-              Our Process
-            </span>
-          </div>
-
-          <h2
-            className="font-serif font-black text-white leading-[0.9] mb-16"
-            style={{ fontSize: 'clamp(2rem, 5vw, 4rem)' }}
-          >
-            From sketch<br />to street.
-          </h2>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
-            {[
-              { step: '01', title: 'Survey', desc: 'We visit your site, measure the substrate, and assess power, visibility, and municipal requirements.' },
-              { step: '02', title: 'Design', desc: 'Our team creates a compliant design mockup matching your brand guidelines and location constraints.' },
-              { step: '03', title: 'Fabricate', desc: 'Metal cutting, acrylic routing, LED wiring, and paint — every step at our Patiram Jote workshop.' },
-              { step: '04', title: 'Install', desc: 'Our crew installs on-site with proper scaffolding, wiring, and weatherproofing. One-year warranty included.' },
-            ].map(item => (
-              <div key={item.step} className="group relative">
-                <span
-                  className="block font-serif font-black text-transparent leading-none mb-4"
+        <div className="mx-auto max-w-content px-6 py-12 md:py-16">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-12 gap-y-0">
+            {PROCESS_STEPS.map((step, i) => (
+              <div
+                key={step.n}
+                className="py-8"
+                style={{ borderBottom: i < 2 ? '1px solid var(--rule)' : 'none' }}
+              >
+                <div
+                  aria-hidden="true"
                   style={{
-                    fontSize: '5rem',
-                    WebkitTextStroke: '1px rgba(30,127,184,0.15)',
+                    fontFamily: 'var(--font-serif)',
+                    fontSize: 'clamp(3rem, 7vw, 5rem)',
+                    fontWeight: 700,
+                    lineHeight: 1,
+                    color: 'var(--rule)',
+                    marginBottom: '1rem',
+                    userSelect: 'none',
                   }}
                 >
-                  {item.step}
-                </span>
-                <h3 className="text-white font-bold text-lg mb-2 -mt-4">{item.title}</h3>
-                <p className="text-white/40 text-sm leading-relaxed">{item.desc}</p>
-                <div className="absolute top-0 left-0 w-[1px] h-full bg-gradient-to-b from-blue/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+                  {step.n}
+                </div>
+                <h3
+                  className="text-ink"
+                  style={{
+                    fontFamily: 'var(--font-serif)',
+                    fontSize: 'clamp(1.125rem, 2vw, 1.375rem)',
+                    fontWeight: 600,
+                    lineHeight: 1.2,
+                    marginBottom: '0.625rem',
+                  }}
+                >
+                  {step.title}
+                </h3>
+                <p
+                  className="text-ink-muted"
+                  style={{ fontSize: '0.9rem', lineHeight: 1.65, maxWidth: '38ch' }}
+                >
+                  {step.body}
+                </p>
               </div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* ═══════════════════ CTA — Bold close ═══════════════════ */}
-      <section className="py-24 relative overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-br from-blue via-blue-deep to-[#0a2a40]" />
-        {/* Grid texture */}
+      {/* ══════════════════════════════════════════════════════════════════
+          § CTA — Always-dark closing
+      ══════════════════════════════════════════════════════════════════ */}
+      <section className="section-inverse">
         <div
-          className="absolute inset-0 opacity-10"
-          style={{
-            backgroundImage: 'radial-gradient(circle, rgba(255,255,255,0.3) 1px, transparent 1px)',
-            backgroundSize: '20px 20px',
-          }}
-        />
+          className="mx-auto max-w-content px-6 py-4"
+          style={{ borderBottom: '1px solid rgba(255,255,255,0.08)' }}
+        >
+          <SectionLabel style={{ color: 'rgba(240,235,222,0.4)' }}>
+            Commission a sign
+          </SectionLabel>
+        </div>
 
-        <div className="relative max-w-content mx-auto px-6 text-center">
-          <span className="inline-block text-[10px] font-mono uppercase tracking-[0.3em] text-white/50 mb-6">
-            Ready to start?
-          </span>
+        <div className="mx-auto max-w-content px-6 py-16 md:py-24">
           <h2
-            className="font-serif font-black text-white leading-[0.9] mb-6"
-            style={{ fontSize: 'clamp(2rem, 6vw, 5rem)' }}
+            style={{
+              fontFamily: 'var(--font-serif)',
+              fontWeight: 900,
+              fontSize: 'clamp(2.5rem, 7vw, 6.5rem)',
+              lineHeight: 0.86,
+              letterSpacing: '-0.025em',
+              color: 'var(--paper)',
+              marginBottom: '1.5rem',
+            }}
           >
-            Let&apos;s build<br />your sign.
+            Let&apos;s build<br />
+            <span style={{ fontStyle: 'italic', color: 'rgba(240,235,222,0.55)' }}>
+              your sign.
+            </span>
           </h2>
-          <p className="text-white/60 text-lg max-w-md mx-auto mb-10">
+          <p
+            style={{
+              color: 'rgba(240,235,222,0.45)',
+              lineHeight: 1.6,
+              maxWidth: '46ch',
+              marginBottom: '2.5rem',
+              fontSize: '1rem',
+            }}
+          >
             Share your requirements on WhatsApp — we respond within 2 hours on business days.
           </p>
-          <div className="flex flex-wrap gap-4 justify-center">
+
+          <div className="flex flex-wrap gap-3">
             <a
               href={waUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center justify-center rounded bg-white text-blue-deep font-bold px-8 py-4 text-sm hover:bg-white/90 transition-colors active:scale-[0.98]"
+              className="transition-all hover:-translate-y-px active:scale-[0.98]"
+              style={{
+                padding: '14px 24px',
+                background: 'var(--paper)',
+                color: 'var(--adjeet-blue)',
+                fontFamily: 'var(--font-serif)',
+                fontWeight: 600,
+                fontSize: '15px',
+                letterSpacing: '0.01em',
+                textDecoration: 'none',
+                borderRadius: '1px',
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '8px',
+              }}
             >
-              Chat on WhatsApp
+              Chat on WhatsApp →
             </a>
             <Link
               href="/contact"
-              className="inline-flex items-center justify-center rounded border border-white/30 text-white font-medium px-8 py-4 text-sm hover:bg-white/10 transition-colors active:scale-[0.98]"
+              className="transition-colors"
+              style={{
+                padding: '13px 18px',
+                border: '1px solid rgba(255,255,255,0.18)',
+                color: 'rgba(240,235,222,0.6)',
+                ...MONO,
+                fontSize: '11px',
+                letterSpacing: '0.18em',
+                textDecoration: 'none',
+                borderRadius: '1px',
+                display: 'inline-flex',
+                alignItems: 'center',
+              }}
             >
               Send a message
             </Link>
