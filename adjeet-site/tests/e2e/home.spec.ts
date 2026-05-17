@@ -11,7 +11,7 @@ test.describe('Home page', () => {
   test('hero heading is visible', async ({ page }) => {
     await expect(
       page.getByRole('heading', {
-        name: /built in our workshop.+installed on your street/i,
+        name: /make your brand.+impossible.+to ignore/i,
       })
     ).toBeVisible()
   })
@@ -39,9 +39,9 @@ test.describe('Home page', () => {
     await expect(page.getByText(/siliguri, jalpaiguri, cooch behar, darjeeling, and malda/i)).toBeVisible()
   })
 
-  test('services index renders 5 featured service rows', async ({ page }) => {
+  test('services-detail links present (Expertise teaser + ServicesIndex catalog)', async ({ page }) => {
     const serviceLinks = page.locator('a[href^="/services/"]')
-    await expect(serviceLinks).toHaveCount(5)
+    await expect(serviceLinks).toHaveCount(8)
   })
 
   test('each service tile links to /services/[slug]', async ({ page }) => {

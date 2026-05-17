@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
-import { WorkshopToStreetHero } from '@/components/sections/WorkshopToStreetHero'
+import { PlayfulHero } from '@/components/sections/PlayfulHero'
+import { Expertise } from '@/components/sections/Expertise'
 import { ClientShowcase } from '@/components/sections/ClientShowcase'
 import { ServicesIndex } from '@/components/sections/ServicesIndex'
 import { TheStandard } from '@/components/sections/TheStandard'
@@ -18,7 +19,8 @@ export const metadata: Metadata = {
 export default function HomePage() {
   return (
     <>
-      <WorkshopToStreetHero />
+      <PlayfulHero />
+      <Expertise />
       <ClientShowcase />
       <ServicesIndex />
       <TheStandard />
