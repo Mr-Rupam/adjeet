@@ -11,7 +11,7 @@ test.describe('Home page', () => {
   test('hero heading is visible', async ({ page }) => {
     await expect(
       page.getByRole('heading', {
-        name: /pick a material.+siliguri sign/i,
+        name: /built in our workshop.+installed on your street/i,
       })
     ).toBeVisible()
   })
@@ -28,7 +28,7 @@ test.describe('Home page', () => {
   })
 
   test('hero has WhatsApp link', async ({ page }) => {
-    const waLink = page.getByRole('link', { name: /quote this/i }).first()
+    const waLink = page.getByRole('link', { name: /quote on whatsapp/i }).first()
     const href = await waLink.getAttribute('href')
     expect(href).toMatch(/^https:\/\/wa\.me\//)
   })
