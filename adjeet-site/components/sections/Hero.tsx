@@ -1,7 +1,6 @@
 'use client'
 
 import { useState, useRef } from 'react'
-import Image from 'next/image'
 import Link from 'next/link'
 import { Anek_Latin, Khand } from 'next/font/google'
 import { defaultWhatsAppUrl } from '@/lib/whatsapp'

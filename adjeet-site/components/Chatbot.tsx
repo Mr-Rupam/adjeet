@@ -46,6 +46,7 @@ export function Chatbot() {
 
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const inputRef = useRef<HTMLTextAreaElement>(null)
+  const msgIdRef = useRef(0)
 
   // Auto-scroll to bottom
   const scrollToBottom = useCallback(() => {
@@ -72,7 +73,7 @@ export function Chatbot() {
     if (!text.trim() || isLoading) return
 
     const userMsg: Message = {
-      id: `user-${Date.now()}`,
+      id: `user-${++msgIdRef.current}`,
       role: 'user',
       content: text.trim(),
     }
@@ -100,7 +101,7 @@ export function Chatbot() {
         setMessages((prev) => [
           ...prev,
           {
-            id: `bot-${Date.now()}`,
+            id: `bot-${++msgIdRef.current}`,
             role: 'assistant',
             content: data.error || 'Something went wrong. Please try again or contact us on WhatsApp at +91 98320 11524.',
           },
@@ -109,7 +110,7 @@ export function Chatbot() {
         setMessages((prev) => [
           ...prev,
           {
-            id: `bot-${Date.now()}`,
+            id: `bot-${++msgIdRef.current}`,
             role: 'assistant',
             content: data.content,
           },

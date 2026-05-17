@@ -2,7 +2,7 @@
 
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { useState, useRef } from 'react'
+import { useState, useRef, type FormEvent } from 'react'
 import { leadSchema, type LeadInput, TIMELINE_OPTIONS, COVERAGE_CITIES } from '@/lib/lead-schema'
 import { Turnstile, type TurnstileInstance } from '@marsidev/react-turnstile'
 import { services } from '@/content/services'
@@ -75,8 +75,12 @@ export function LeadForm() {
   const label = 'block text-xs font-semibold text-ink-muted mb-2'
   const errMsg = 'mt-1.5 text-xs text-error flex items-center gap-1'
 
+  function handleFormSubmit(e: FormEvent<HTMLFormElement>) {
+    return handleSubmit(onSubmit)(e)
+  }
+
   return (
-    <form onSubmit={handleSubmit(onSubmit)} noValidate className="space-y-5">
+    <form onSubmit={handleFormSubmit} noValidate className="space-y-5">
       {/* Honeypot */}
       <input
         {...register('_hp')}
