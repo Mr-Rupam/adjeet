@@ -42,7 +42,7 @@ export function TheStandard() {
               {/* Big number */}
               <div
                 style={{
-                  fontFamily: 'var(--font-fraunces)',
+                  fontFamily: 'var(--font-serif)',
                   fontSize: 'clamp(3rem, 7vw, 5rem)',
                   fontWeight: 700,
                   lineHeight: 1,
@@ -59,7 +59,7 @@ export function TheStandard() {
               <h3
                 className="text-ink"
                 style={{
-                  fontFamily: 'var(--font-fraunces)',
+                  fontFamily: 'var(--font-serif)',
                   fontSize: 'clamp(1.125rem, 2vw, 1.375rem)',
                   fontWeight: 600,
                   lineHeight: 1.2,

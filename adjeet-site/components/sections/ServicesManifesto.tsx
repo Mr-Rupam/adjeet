@@ -36,7 +36,7 @@ export function ServicesManifesto() {
           <h2
             className="md:col-span-9 text-ink"
             style={{
-              fontFamily: 'var(--font-fraunces)',
+              fontFamily: 'var(--font-serif)',
               fontSize: 'clamp(2.25rem, 7.5vw, 5.5rem)',
               fontWeight: 700,
               lineHeight: 1.02,
@@ -56,7 +56,7 @@ export function ServicesManifesto() {
           <div className="md:col-span-3 md:text-right">
             <div
               style={{
-                fontFamily: 'var(--font-fraunces)',
+                fontFamily: 'var(--font-serif)',
                 fontSize: 'clamp(2.5rem, 5vw, 3.75rem)',
                 fontWeight: 700,
                 lineHeight: 1,
@@ -99,7 +99,7 @@ export function ServicesManifesto() {
           <p
             className="md:col-span-7 text-ink-muted"
             style={{
-              fontFamily: 'var(--font-fraunces)',
+              fontFamily: 'var(--font-serif)',
               fontSize: 'clamp(1.0625rem, 1.8vw, 1.375rem)',
               lineHeight: 1.55,
               maxWidth: '50ch',

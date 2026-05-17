@@ -45,6 +45,9 @@
   --text-body-lg: 1.125rem;
   --text-body:    1rem;
   --text-sm:      0.875rem;
+
+  /* Legacy alias while older sections migrate from Fraunces naming. */
+  --font-fraunces: var(--font-source-serif);
 }
 
 :root[data-theme="dark"] {
@@ -83,6 +86,6 @@
 
   /* Fonts */
   --font-sans: var(--font-inter), system-ui, sans-serif;
-  --font-serif: var(--font-fraunces), serif;
+  --font-serif: var(--font-source-serif), Georgia, serif;
   --font-mono: var(--font-mono), monospace;
 }

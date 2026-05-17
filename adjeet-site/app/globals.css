@@ -326,7 +326,7 @@ p, li {
   pointer-events: none;
 }
 .theme-wallpaint .signage-text {
-  font-family: var(--font-fraunces), serif;
+  font-family: var(--font-serif), serif;
   font-style: italic;
   font-weight: 600;
   letter-spacing: -0.005em;
@@ -367,7 +367,7 @@ p, li {
   padding: 22px 22px 18px;
   display: flex;
   flex-direction: column;
-  font-family: var(--font-jetbrains-mono), monospace;
+  font-family: var(--font-mono), monospace;
   color: rgba(255,255,255,0.85);
   backdrop-filter: blur(8px);
 }
@@ -387,7 +387,7 @@ p, li {
   color: var(--ochre, #d6a85b);
 }
 .spec-card__label {
-  font-family: var(--font-fraunces), serif;
+  font-family: var(--font-serif), serif;
   font-size: 14px;
   font-weight: 600;
   font-style: italic;

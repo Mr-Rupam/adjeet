@@ -110,7 +110,7 @@
 }
 
 .cardName {
-  font-family: var(--font-fraunces), serif;
+  font-family: var(--font-serif), serif;
   font-size: clamp(0.9375rem, 1.5vw, 1.125rem);
   font-weight: 700;
   line-height: 1.25;
@@ -141,7 +141,7 @@
 }
 
 .cardTagline {
-  font-family: var(--font-fraunces), serif;
+  font-family: var(--font-serif), serif;
   font-style: italic;
   font-size: 0.875rem;
   line-height: 1.45;

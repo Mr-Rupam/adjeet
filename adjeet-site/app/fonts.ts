@@ -1,10 +1,11 @@
-import { Fraunces, Inter, JetBrains_Mono } from 'next/font/google'
+import { Inter, JetBrains_Mono, Source_Serif_4 } from 'next/font/google'
 
-export const fraunces = Fraunces({
+export const sourceSerif = Source_Serif_4({
   subsets: ['latin'],
-  variable: '--font-fraunces',
+  variable: '--font-source-serif',
   display: 'swap',
-  axes: ['opsz', 'SOFT', 'WONK'],
+  style: ['normal', 'italic'],
+  axes: ['opsz'],
   preload: true,
 })
 

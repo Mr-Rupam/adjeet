@@ -35,7 +35,7 @@ export function ServicesIndex() {
             <span
               className="flex-1 text-ink group-hover:text-blue transition-colors duration-300"
               style={{
-                fontFamily: 'var(--font-fraunces)',
+                fontFamily: 'var(--font-serif)',
                 fontSize: 'clamp(1.0625rem, 2.4vw, 1.375rem)',
                 fontWeight: 600,
                 lineHeight: 1.25,

@@ -33,7 +33,7 @@ export function ByTheNumbers() {
                 <dd
                   className="text-ink"
                   style={{
-                    fontFamily: 'var(--font-fraunces)',
+                    fontFamily: 'var(--font-serif)',
                     fontSize: 'clamp(2.5rem, 6vw, 4rem)',
                     fontWeight: 700,
                     lineHeight: 1,
@@ -76,7 +76,7 @@ export function ByTheNumbers() {
               aria-hidden="true"
               className="mb-4"
               style={{
-                fontFamily: 'var(--font-fraunces)',
+                fontFamily: 'var(--font-serif)',
                 fontSize: '4rem',
                 lineHeight: 0.8,
                 color: 'var(--ochre)',
@@ -88,7 +88,7 @@ export function ByTheNumbers() {
             <p
               className="text-ink"
               style={{
-                fontFamily: 'var(--font-fraunces)',
+                fontFamily: 'var(--font-serif)',
                 fontSize: 'clamp(1.0625rem, 2.2vw, 1.3125rem)',
                 fontStyle: 'italic',
                 lineHeight: 1.6,

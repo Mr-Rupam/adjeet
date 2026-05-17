@@ -31,7 +31,7 @@ export function CommissionSign() {
         <div>
           <h2
             style={{
-              fontFamily: 'var(--font-fraunces)',
+              fontFamily: 'var(--font-serif)',
               fontSize: 'clamp(2rem, 5.5vw, 3.75rem)',
               fontWeight: 700,
               lineHeight: 1.1,
@@ -70,7 +70,7 @@ export function CommissionSign() {
             style={{
               backgroundColor: '#ffffff',
               color: 'var(--surface-inverse)',
-              fontFamily: 'var(--font-fraunces)',
+              fontFamily: 'var(--font-serif)',
               fontSize: '1rem',
               padding: '0.875rem 2rem',
               letterSpacing: '-0.01em',

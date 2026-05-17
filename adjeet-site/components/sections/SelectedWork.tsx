@@ -26,7 +26,7 @@ export function SelectedWork() {
         <div className="mx-auto max-w-content px-6 py-16 flex flex-col gap-4">
           <p
             style={{
-              fontFamily: 'var(--font-fraunces)',
+              fontFamily: 'var(--font-serif)',
               fontSize: 'clamp(1.125rem, 2vw, 1.375rem)',
               fontWeight: 600,
               color: 'var(--ink-muted)',

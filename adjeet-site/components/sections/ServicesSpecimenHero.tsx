@@ -43,7 +43,7 @@ const ALIGN_CLASS: Record<Align, string> = {
 
 function specimenStyle(treatment: Spec['treatment'], size: Size): CSSProperties {
   const base: CSSProperties = {
-    fontFamily: 'var(--font-fraunces)',
+    fontFamily: 'var(--font-serif)',
     fontWeight: 900,
     lineHeight: 0.86,
     letterSpacing: '-0.025em',
@@ -104,7 +104,7 @@ function specimenStyle(treatment: Spec['treatment'], size: Size): CSSProperties 
 }
 
 const MONO_STYLE: CSSProperties = {
-  fontFamily: 'var(--font-jetbrains-mono), ui-monospace, monospace',
+  fontFamily: 'var(--font-mono), ui-monospace, monospace',
   fontSize: '10px',
   letterSpacing: '0.18em',
   textTransform: 'uppercase',
@@ -159,7 +159,7 @@ export function ServicesSpecimenHero() {
           <div>
             <div
               style={{
-                fontFamily: 'var(--font-fraunces)',
+                fontFamily: 'var(--font-serif)',
                 fontWeight: 800,
                 fontSize: 'clamp(1.5rem, 3vw, 2.25rem)',
                 letterSpacing: '0.04em',
@@ -245,7 +245,7 @@ export function ServicesSpecimenHero() {
           {...fadeIn(1.05)}
           className="m-0 text-center"
           style={{
-            fontFamily: 'var(--font-fraunces)',
+            fontFamily: 'var(--font-serif)',
             fontStyle: 'italic',
             fontWeight: 500,
             fontSize: 'clamp(1.125rem, 2.4vw, 1.625rem)',
@@ -299,7 +299,7 @@ export function ServicesSpecimenHero() {
                 padding: '14px 24px',
                 background: 'var(--ink)',
                 color: 'var(--paper)',
-                fontFamily: 'var(--font-fraunces)',
+                fontFamily: 'var(--font-serif)',
                 fontWeight: 600,
                 fontSize: '15px',
                 letterSpacing: '0.01em',

@@ -6,10 +6,12 @@
 |------|---------|------|------------|
 | **Khand** | 500 / 600 / 700 | Display / headings | Hero, HeroSandbox **only** |
 | **Anek Latin** | 400 / 500 / 600 / 700 | Body / labels | Hero, HeroSandbox **only** |
-| **Fraunces** | variable | Serif headings | All other sections |
+| **Source Serif 4** | variable, normal + italic, optical size axis | Serif headings | All other sections |
 | **Inter** | variable | Body / UI | All other sections |
 
-**Rule:** Khand and Anek Latin are hero-zone fonts. Do not use them outside `Hero.tsx` or `Hero.sandbox.tsx`. If you're building a new section that is not a dark editorial hero, use Fraunces + Inter.
+**Rule:** Khand and Anek Latin are hero-zone fonts. Do not use them outside `Hero.tsx` or `Hero.sandbox.tsx`. If you're building a new section that is not a dark editorial hero, use Source Serif 4 + Inter.
+
+Source Serif 4 replaces Fraunces for the public site serif voice. It keeps the editorial weight and optical sizing, but reads more precise and procurement-facing. `--font-fraunces` remains only as a compatibility alias for older branches.
 
 Both hero fonts are loaded with `variable` CSS custom properties (`--font-hero-display`, `--font-hero-body`) and applied as className on the hero section root element so they cascade only within that section.
 
@@ -158,7 +160,7 @@ Client plates are sharp rectangular containers. No color-per-sector.
 - **All plates:** `background: var(--paper-elevated)`, `border: 1px solid var(--rule)`, `border-left-width: 3px`
 - **National brands** (Airtel, Jio, Havells, Vivo, OYO, Emami, Adani Cement): amber left border
 - **Regional brands:** `var(--rule)` left border (same as other three sides — visually plain)
-- **Brand name:** Fraunces, 0.88rem, 700 weight, `var(--ink)`
+- **Brand name:** Source Serif 4, 0.88rem, 700 weight, `var(--ink)`
 - **Sector tag:** JetBrains Mono, 9px, 600 weight, `letter-spacing: 0.14em`, uppercase, `var(--ink-subtle)`
 
 No `rounded`, no color-coded backgrounds, no sector-based color mapping.

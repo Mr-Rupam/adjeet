@@ -71,7 +71,7 @@ export function WhereWeWork() {
               <span
                 className="text-ink"
                 style={{
-                  fontFamily: 'var(--font-fraunces)',
+                  fontFamily: 'var(--font-serif)',
                   fontSize: 'clamp(1.0625rem, 2.2vw, 1.3125rem)',
                   fontWeight: 600,
                   lineHeight: 1.2,

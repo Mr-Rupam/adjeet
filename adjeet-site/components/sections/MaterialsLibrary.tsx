@@ -69,7 +69,7 @@ export function MaterialsLibrary() {
       <div className="mx-auto max-w-content px-6 pt-16 md:pt-24 pb-10">
         <h2
           style={{
-            fontFamily: 'var(--font-fraunces)',
+            fontFamily: 'var(--font-serif)',
             fontSize: 'clamp(2rem, 5vw, 3.5rem)',
             fontWeight: 700,
             lineHeight: 1.05,
@@ -113,7 +113,7 @@ export function MaterialsLibrary() {
               <div className="flex items-baseline gap-3 mb-5">
                 <span
                   style={{
-                    fontFamily: 'var(--font-fraunces)',
+                    fontFamily: 'var(--font-serif)',
                     fontSize: '2rem',
                     fontWeight: 700,
                     color: 'var(--ochre)',
@@ -126,7 +126,7 @@ export function MaterialsLibrary() {
                 </span>
                 <h3
                   style={{
-                    fontFamily: 'var(--font-fraunces)',
+                    fontFamily: 'var(--font-serif)',
                     fontSize: '1.125rem',
                     fontWeight: 600,
                     color: '#ffffff',
