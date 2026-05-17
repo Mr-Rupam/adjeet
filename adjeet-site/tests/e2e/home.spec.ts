@@ -11,7 +11,7 @@ test.describe('Home page', () => {
   test('hero heading is visible', async ({ page }) => {
     await expect(
       page.getByRole('heading', {
-        name: /signage in siliguri.+impossible to ignore/i,
+        name: /one siliguri workshop.+twelve districts/i,
       })
     ).toBeVisible()
   })

@@ -1,0 +1,407 @@
+.hero {
+  --nav-h: 4rem;
+  position: relative;
+  isolation: isolate;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  min-height: calc(100svh - var(--nav-h));
+  padding: clamp(1.25rem, 3vw, 2.5rem) clamp(1rem, 4vw, 2.5rem);
+  background: var(--paper);
+  color: var(--ink);
+  overflow: hidden;
+}
+
+.grain {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  opacity: 0.05;
+  mix-blend-mode: multiply;
+  background-image: url("data:image/svg+xml;utf8,<svg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.7 0'/></filter><rect width='200' height='200' filter='url(%23n)'/></svg>");
+}
+
+.sheet {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  width: min(100%, 1280px);
+  padding: clamp(1.8rem, 4vw, 3rem) clamp(1.4rem, 3.6vw, 3rem);
+  border: 1px solid var(--rule);
+}
+
+.regTL, .regTR, .regBL, .regBR { position: absolute; color: var(--ink-subtle); }
+.regTL { top: -11px; left: -11px; }
+.regTR { top: -11px; right: -11px; }
+.regBL { bottom: -11px; left: -11px; }
+.regBR { bottom: -11px; right: -11px; }
+
+/* MASTHEAD */
+.masthead {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 1.5rem;
+}
+.brand {
+  font-family: var(--font-serif);
+  font-weight: 800;
+  font-size: clamp(1.35rem, 2.6vw, 2rem);
+  line-height: 1;
+  letter-spacing: 0.04em;
+}
+.brandSub {
+  margin-top: 8px;
+  color: var(--ink-muted);
+  letter-spacing: 0.22em !important;
+}
+.imprint {
+  color: var(--ink-subtle);
+  text-align: right;
+  line-height: 1.7;
+  font-size: 9.5px !important;
+  letter-spacing: 0.22em !important;
+}
+
+.rule {
+  height: 1px;
+  width: 100%;
+  margin: clamp(0.9rem, 2vw, 1.4rem) 0;
+  border: 0;
+  background: var(--rule);
+}
+
+/* MAP */
+.mapWrap {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: clamp(280px, 42vh, 440px);
+}
+.map {
+  display: block;
+  width: 100%;
+  height: 100%;
+  color: var(--ink);
+}
+
+/* Map outline + contour decoration */
+.outline {
+  color: var(--ink);
+  opacity: 0.55;
+}
+.outlineStroke {
+  stroke: var(--ink);
+  stroke-width: 1;
+  opacity: 0.45;
+}
+.contour {
+  stroke: var(--ink);
+  stroke-width: 0.5;
+  opacity: 0.18;
+  stroke-dasharray: 600;
+  stroke-dashoffset: 600;
+  animation: contourDraw 1400ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* Routes */
+.route {
+  stroke: var(--ochre);
+  stroke-width: 1.1;
+  stroke-linecap: round;
+  opacity: 0.85;
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+  animation: routeDraw 700ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  animation-delay: calc(400ms + var(--route-i) * 70ms);
+}
+
+/* District pins */
+.pin {
+  opacity: 0;
+  animation: pinIn 360ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  animation-delay: calc(900ms + var(--pin-i) * 70ms);
+}
+.pinDot {
+  fill: var(--ink);
+}
+.pinNo {
+  font-family: var(--font-mono), ui-monospace, monospace;
+  font-size: 8.5px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  fill: var(--ink-subtle);
+  font-weight: 600;
+}
+.pinName {
+  font-family: var(--font-serif);
+  font-size: 13.5px;
+  fill: var(--ink);
+  font-weight: 600;
+  font-style: italic;
+}
+
+/* Origin: Siliguri */
+.origin {
+  opacity: 0;
+  animation: pinIn 480ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  animation-delay: 250ms;
+}
+.originHalo {
+  fill: var(--ochre);
+  opacity: 0.25;
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: originPulse 3.2s ease-in-out infinite;
+  animation-delay: 1.6s;
+}
+.originDot {
+  fill: var(--ochre);
+}
+.originLeader {
+  stroke: var(--ink-muted);
+  stroke-width: 0.6;
+  opacity: 0.6;
+}
+.originNo {
+  font-family: var(--font-mono), ui-monospace, monospace;
+  font-size: 9px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  fill: var(--ink-subtle);
+  font-weight: 700;
+}
+.originName {
+  font-family: var(--font-serif);
+  font-size: 15px;
+  font-weight: 800;
+  letter-spacing: 0.02em;
+  fill: var(--ink);
+}
+.originSub {
+  font-family: var(--font-serif);
+  font-size: 11px;
+  fill: var(--ink-muted);
+  font-style: italic;
+}
+
+/* Compass */
+.compass {
+  color: var(--ink-muted);
+}
+.compass line {
+  stroke: currentColor;
+  stroke-width: 0.7;
+  opacity: 0.5;
+}
+.compassArrow {
+  fill: var(--ink);
+}
+.compassN {
+  font-family: var(--font-mono), ui-monospace, monospace;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  fill: var(--ink);
+}
+
+/* Scale bar */
+.scale line {
+  stroke: var(--ink-muted);
+  stroke-width: 0.8;
+}
+.scaleText {
+  font-family: var(--font-mono), ui-monospace, monospace;
+  font-size: 8.5px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  fill: var(--ink-subtle);
+}
+
+/* COPY ROW (H1 + sub on left, CTAs on right) */
+.copyRow {
+  display: grid;
+  grid-template-columns: minmax(0, 1.4fr) auto;
+  gap: clamp(1.2rem, 3vw, 2.5rem);
+  align-items: end;
+}
+.copy {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(0.55rem, 1.2vw, 0.85rem);
+  min-width: 0;
+}
+.headline {
+  margin: 0;
+  font-family: var(--font-serif);
+  font-weight: 700;
+  font-size: clamp(1.5rem, 3.2vw, 2.5rem);
+  line-height: 1.1;
+  letter-spacing: -0.005em;
+  text-wrap: balance;
+}
+.headlineEm {
+  font-style: italic;
+  color: var(--clay);
+  font-weight: 600;
+}
+.subhead {
+  margin: 0;
+  font-family: var(--font-sans);
+  font-weight: 400;
+  font-size: clamp(0.9rem, 1.15vw, 1rem);
+  line-height: 1.5;
+  color: var(--ink-muted);
+  max-width: 60ch;
+}
+
+/* CTAs */
+.ctaCol {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 0.65rem;
+  min-width: 240px;
+}
+.ctaPrimary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.65rem;
+  padding: 0.95rem 1.6rem;
+  background: var(--ink);
+  color: var(--paper);
+  font-family: var(--font-serif);
+  font-weight: 600;
+  font-size: 15px;
+  letter-spacing: 0.01em;
+  text-decoration: none;
+  border-radius: 1px;
+  transition: transform 180ms ease, background-color 180ms ease;
+}
+.ctaPrimary:hover {
+  transform: translateY(-1px);
+  background: oklch(0.22 0.018 60);
+}
+.arrow {
+  display: inline-block;
+  transition: transform 180ms ease;
+}
+.ctaPrimary:hover .arrow {
+  transform: translateX(3px);
+}
+.ctaSecondary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.85rem 1.2rem;
+  border: 1px solid var(--rule);
+  color: var(--ink-muted) !important;
+  text-decoration: none;
+  border-radius: 1px;
+  letter-spacing: 0.18em !important;
+  font-size: 11px !important;
+  transition: border-color 180ms ease, color 180ms ease;
+}
+.ctaSecondary:hover {
+  border-color: var(--ink-muted);
+  color: var(--ink) !important;
+}
+
+/* COLOPHON */
+.colophon {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.75rem;
+}
+.colophonLeft, .colophonRight {
+  color: var(--ink-subtle);
+  letter-spacing: 0.22em !important;
+}
+
+/* ANIMATIONS */
+@keyframes contourDraw {
+  to { stroke-dashoffset: 0; }
+}
+@keyframes routeDraw {
+  to { stroke-dashoffset: 0; }
+}
+@keyframes pinIn {
+  from { opacity: 0; transform: translateY(4px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes originPulse {
+  0%, 100% { opacity: 0.18; transform: scale(1); }
+  50%      { opacity: 0.42; transform: scale(1.3); }
+}
+
+/* RESPONSIVE */
+@media (max-width: 900px) {
+  .copyRow {
+    grid-template-columns: 1fr;
+  }
+  .ctaCol {
+    min-width: 0;
+  }
+  .ctaPrimary, .ctaSecondary {
+    width: 100%;
+  }
+}
+
+@media (max-width: 760px) {
+  .sheet {
+    padding: clamp(1.4rem, 5vw, 2rem) clamp(1rem, 4vw, 1.5rem);
+  }
+  .brand {
+    font-size: 1.25rem;
+  }
+  .imprint {
+    font-size: 8.5px !important;
+    line-height: 1.5;
+  }
+  .pinName {
+    font-size: 10px;
+  }
+  .pinNo {
+    font-size: 7px;
+  }
+  .originName {
+    font-size: 12px;
+  }
+  .originSub {
+    font-size: 9px;
+  }
+  .originNo {
+    font-size: 7.5px;
+  }
+  .headline {
+    font-size: clamp(1.2rem, 5.4vw, 1.6rem);
+  }
+  .subhead {
+    font-size: 0.9rem;
+  }
+  .colophon {
+    justify-content: center;
+    text-align: center;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .contour, .route, .pin, .origin {
+    animation: none !important;
+    opacity: 1 !important;
+    stroke-dashoffset: 0 !important;
+  }
+  .originHalo {
+    animation: none !important;
+  }
+  .ctaPrimary, .ctaSecondary, .arrow {
+    transition: none !important;
+  }
+}
