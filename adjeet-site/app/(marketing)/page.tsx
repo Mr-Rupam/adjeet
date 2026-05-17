@@ -1,5 +1,5 @@
 import type { Metadata } from 'next'
-import { NorthBengalMapHero } from '@/components/sections/NorthBengalMapHero'
+import { SignBuilderHero } from '@/components/sections/SignBuilderHero'
 import { ClientShowcase } from '@/components/sections/ClientShowcase'
 import { ServicesIndex } from '@/components/sections/ServicesIndex'
 import { TheStandard } from '@/components/sections/TheStandard'
@@ -18,7 +18,7 @@ export const metadata: Metadata = {
 export default function HomePage() {
   return (
     <>
-      <NorthBengalMapHero />
+      <SignBuilderHero />
       <ClientShowcase />
       <ServicesIndex />
       <TheStandard />
