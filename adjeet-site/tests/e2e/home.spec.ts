@@ -11,7 +11,7 @@ test.describe('Home page', () => {
   test('hero heading is visible', async ({ page }) => {
     await expect(
       page.getByRole('heading', {
-        name: /north bengal signage that gets seen, built in siliguri since 1990/i,
+        name: /signage in siliguri.+impossible to ignore/i,
       })
     ).toBeVisible()
   })
@@ -20,8 +20,11 @@ test.describe('Home page', () => {
     await expect(page.locator('#hero-section')).toBeVisible()
   })
 
-  test('hero has link to /services', async ({ page }) => {
-    await expect(page.getByRole('link', { name: 'Our Services' })).toBeVisible()
+  test('hero has primary CTA linking to /contact', async ({ page }) => {
+    await expect(page.getByRole('link', { name: /start a sign/i })).toHaveAttribute(
+      'href',
+      '/contact'
+    )
   })
 
   test('hero has WhatsApp link', async ({ page }) => {
