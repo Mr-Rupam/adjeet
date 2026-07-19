@@ -33,7 +33,7 @@ export function WhatsAppFAB() {
           transition={{ type: 'spring', stiffness: 300, damping: 30 }}
           className="fixed bottom-6 right-6 z-50"
         >
-          <QuoteCTA source="fab" className="shadow-lg shadow-blue/25" />
+          <QuoteCTA source="fab" />
         </motion.div>
       )}
     </AnimatePresence>

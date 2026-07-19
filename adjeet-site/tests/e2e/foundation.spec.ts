@@ -33,9 +33,9 @@ test.describe('Foundation', () => {
     await expect(page.getByRole('dialog', { name: /consent/i })).not.toBeVisible()
   })
 
-  test('nav has Services, Portfolio, About, Contact links', async ({ page }) => {
+  test('nav has Services, Work, About, Contact links', async ({ page }) => {
     await page.goto('/')
-    for (const name of ['Services', 'Portfolio', 'About', 'Contact']) {
+    for (const name of ['Services', 'Work', 'About', 'Contact']) {
       await expect(page.getByRole('link', { name })).toBeAttached()
     }
   })

@@ -23,7 +23,7 @@ export function QuoteCTA({
   label = 'Quote on WhatsApp',
 }: QuoteCTAProps) {
   const waUrl = defaultWhatsAppUrl()
-  const padding = size === 'sm' ? 'px-4 py-2 text-xs' : 'px-5 py-3 text-sm'
+  const padding = size === 'sm' ? 'px-4 py-2 text-[11px]' : 'px-6 py-3.5 text-[13px]'
 
   return (
     <a
@@ -31,7 +31,7 @@ export function QuoteCTA({
       target="_blank"
       rel="noopener noreferrer"
       onClick={() => trackWhatsAppClick({ source_page: source })}
-      className={`inline-flex items-center gap-2 rounded-lg bg-blue text-white font-semibold whitespace-nowrap transition-all hover:bg-blue-deep active:scale-[0.97] ${padding} ${className}`}
+      className={`inline-flex items-center gap-2 border-2 border-ink bg-signal text-ink font-bold uppercase tracking-[0.08em] whitespace-nowrap shadow-[4px_4px_0_0_var(--ink)] transition-all hover:-translate-x-px hover:-translate-y-px hover:shadow-[6px_6px_0_0_var(--ink)] active:translate-x-0.5 active:translate-y-0.5 active:shadow-[2px_2px_0_0_var(--ink)] ${padding} ${className}`}
     >
       {WHATSAPP_SVG}
       {label}

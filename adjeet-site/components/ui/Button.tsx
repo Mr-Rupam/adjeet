@@ -5,18 +5,19 @@ type Variant = 'primary' | 'secondary' | 'ghost'
 type Size = 'sm' | 'md' | 'lg'
 
 const VARIANT_CLASSES: Record<Variant, string> = {
-  primary: 'bg-blue text-white hover:opacity-90',
-  secondary: 'border border-ink text-ink hover:bg-paper-elevated',
+  primary:
+    'border-2 border-ink bg-signal text-ink font-bold shadow-[4px_4px_0_0_var(--ink)] hover:-translate-x-px hover:-translate-y-px hover:shadow-[6px_6px_0_0_var(--ink)] active:translate-x-0.5 active:translate-y-0.5 active:shadow-[2px_2px_0_0_var(--ink)]',
+  secondary: 'border-2 border-ink text-ink hover:bg-ink hover:text-paper',
   ghost: 'text-ink-muted hover:text-ink',
 }
 
 const SIZE_CLASSES: Record<Size, string> = {
-  sm: 'px-3 py-1.5 text-sm',
-  md: 'px-5 py-2.5 text-sm font-medium',
-  lg: 'px-7 py-3.5 text-base font-medium',
+  sm: 'px-4 py-2 text-[11px] uppercase tracking-[0.08em]',
+  md: 'px-6 py-3 text-[13px] uppercase tracking-[0.08em]',
+  lg: 'px-8 py-4 text-sm uppercase tracking-[0.08em]',
 }
 
-const BASE = 'inline-flex items-center justify-center rounded transition-all duration-150 active:scale-[0.98] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue disabled:opacity-50 disabled:pointer-events-none'
+const BASE = 'inline-flex items-center justify-center gap-2 transition-all duration-150 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-signal disabled:opacity-50 disabled:pointer-events-none'
 
 interface ButtonBaseProps {
   variant?: Variant

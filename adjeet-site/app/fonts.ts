@@ -1,11 +1,14 @@
-import { Inter, JetBrains_Mono, Source_Serif_4 } from 'next/font/google'
+import { Anton, Inter, JetBrains_Mono } from 'next/font/google'
 
-export const sourceSerif = Source_Serif_4({
+/**
+ * Display face — Anton. The letterform of Indian street hoardings, flex
+ * banners, and painted shop boards. Single weight, all caps by usage.
+ */
+export const anton = Anton({
   subsets: ['latin'],
-  variable: '--font-source-serif',
+  variable: '--font-anton',
   display: 'swap',
-  style: ['normal', 'italic'],
-  axes: ['opsz'],
+  weight: '400',
   preload: true,
 })
 
@@ -20,6 +23,6 @@ export const jetbrainsMono = JetBrains_Mono({
   subsets: ['latin'],
   variable: '--font-mono',
   display: 'swap',
-  weight: '400',
+  weight: ['400', '600'],
   preload: false,
 })

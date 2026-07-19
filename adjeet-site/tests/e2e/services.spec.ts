@@ -50,14 +50,14 @@ test.describe('/services/[slug] detail', () => {
   })
 
   test('WhatsApp CTA href starts with wa.me', async ({ page }) => {
-    const waLink = page.getByRole('link', { name: /chat on whatsapp/i })
+    const waLink = page.getByRole('link', { name: /quote this job/i })
     await expect(waLink).toBeVisible()
     const href = await waLink.getAttribute('href')
     expect(href).toMatch(/^https:\/\/wa\.me\//)
   })
 
   test('related services section renders', async ({ page }) => {
-    await expect(page.getByText('Related Services')).toBeVisible()
+    await expect(page.getByText('Often ordered together')).toBeVisible()
   })
 
   test('returns 404 for unknown slug', async ({ page }) => {

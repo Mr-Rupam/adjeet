@@ -9,7 +9,7 @@ interface CardProps {
 export function Card({ children, className = '', elevated = false }: CardProps) {
   return (
     <div
-      className={`rounded-lg bg-paper-elevated border border-rule ${elevated ? 'shadow-lg' : 'shadow-md'} ${className}`}
+      className={`border-2 border-ink bg-paper-elevated ${elevated ? "shadow-[6px_6px_0_0_var(--ink)]" : ""} ${className}`}
     >
       {children}
     </div>

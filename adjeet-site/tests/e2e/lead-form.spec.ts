@@ -25,7 +25,7 @@ test.describe('Lead Form', () => {
 
     await page.click('button[type="submit"]');
 
-    await expect(page.getByText('Message received!')).toBeVisible();
+    await expect(page.getByText('Message received.')).toBeVisible();
   });
 
   test('Server error shows error message and WhatsApp fallback', async ({ page }) => {

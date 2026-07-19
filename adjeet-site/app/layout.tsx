@@ -1,5 +1,5 @@
 import type { Metadata } from 'next'
-import { sourceSerif, inter, jetbrainsMono } from '@/app/fonts'
+import { anton, inter, jetbrainsMono } from '@/app/fonts'
 import { ThemeScript } from '@/components/ThemeScript'
 import { SkipLink } from '@/components/SkipLink'
 import { Nav } from '@/components/Nav'
@@ -44,7 +44,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html
       lang="en"
       suppressHydrationWarning
-      className={`${sourceSerif.variable} ${inter.variable} ${jetbrainsMono.variable}`}
+      className={`${anton.variable} ${inter.variable} ${jetbrainsMono.variable}`}
     >
       <head>
         <ThemeScript />

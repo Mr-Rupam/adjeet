@@ -28,23 +28,23 @@ export function ConsentBanner() {
       role="dialog"
       aria-label="Cookie and analytics consent"
       aria-live="polite"
-      className="fixed bottom-0 inset-x-0 z-50 p-6 bg-paper-elevated border-t border-rule shadow-lg md:flex md:items-center md:justify-between md:gap-8"
+      className="fixed inset-x-0 bottom-0 z-50 border-t-2 border-ink bg-paper-elevated p-5 md:flex md:items-center md:justify-between md:gap-8"
     >
-      <p className="text-sm text-ink-muted mb-4 md:mb-0 max-w-prose">
+      <p className="mb-4 max-w-prose text-sm text-ink-muted md:mb-0">
         We use analytics cookies (Google Analytics 4) to understand how visitors use our site.
         No personal data is shared with third parties.{' '}
         <Link href="/privacy" className="underline hover:text-ink">Privacy Policy</Link>
       </p>
-      <div className="flex gap-3 shrink-0">
+      <div className="flex shrink-0 gap-3">
         <button
           onClick={() => respond('declined')}
-          className="px-4 py-2 text-sm border border-rule rounded hover:bg-paper transition-colors"
+          className="spec border-2 border-ink/30 px-4 py-2.5 text-ink-muted transition-colors hover:border-ink hover:text-ink"
         >
           Decline
         </button>
         <button
           onClick={() => respond('accepted')}
-          className="px-4 py-2 text-sm bg-blue text-white rounded hover:opacity-90 transition-opacity"
+          className="spec border-2 border-ink bg-signal px-4 py-2.5 font-semibold text-ink shadow-[3px_3px_0_0_var(--ink)] transition-all hover:-translate-x-px hover:-translate-y-px hover:shadow-[4px_4px_0_0_var(--ink)]"
         >
           Accept
         </button>

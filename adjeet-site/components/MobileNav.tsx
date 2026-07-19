@@ -33,7 +33,7 @@ export function MobileNav({ links }: { links: NavLink[] }) {
   return (
     <>
       <button
-        className="md:hidden p-3 text-ink-muted hover:text-ink"
+        className="md:hidden border-2 border-ink px-3 py-1.5 text-ink transition-colors hover:bg-ink hover:text-paper"
         aria-label={open ? 'Close navigation menu' : 'Open navigation menu'}
         aria-expanded={open}
         aria-controls="mobile-nav-drawer"
@@ -70,22 +70,28 @@ export function MobileNav({ links }: { links: NavLink[] }) {
                 ✕
               </button>
             </div>
-            <nav className="flex flex-col gap-8 px-10 pt-8">
-              {links.map(({ href, label }) => {
+            <nav className="flex flex-col px-8 pt-4">
+              {links.map(({ href, label }, i) => {
                 const isActive = pathname === href || pathname.startsWith(href + '/')
                 return (
                   <Link
                     key={href}
                     href={href}
                     aria-current={isActive ? 'page' : undefined}
-                    className={`text-4xl font-serif font-bold transition-colors ${
-                      isActive ? 'text-ink' : 'text-ink-muted hover:text-ink'
+                    className={`display flex items-baseline gap-4 border-b-2 border-rule py-5 text-5xl uppercase transition-colors ${
+                      isActive ? 'text-signal' : 'text-ink hover:text-signal'
                     }`}
                   >
+                    <span aria-hidden="true" className="spec text-ink-subtle">
+                      {String(i + 1).padStart(2, '0')}
+                    </span>
                     {label}
                   </Link>
                 )
               })}
+              <p className="spec mt-8 text-ink-subtle">
+                Est. 1990 — Siliguri · 12 districts · 500+ signs
+              </p>
             </nav>
           </div>
         </>

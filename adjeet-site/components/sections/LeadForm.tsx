@@ -54,14 +54,12 @@ export function LeadForm() {
 
   if (submitted) {
     return (
-      <div className="rounded-lg border border-blue/20 bg-blue/5 p-10 text-center">
-        <div className="inline-flex items-center justify-center w-14 h-14 rounded-lg bg-blue/10 mb-4">
+      <div className="border-2 border-ink bg-paper p-10 text-center shadow-[6px_6px_0_0_var(--signal)]">
+        <div className="mb-4 inline-flex h-14 w-14 items-center justify-center border-2 border-ink bg-signal">
           <span className="text-2xl">✓</span>
         </div>
-        <h3 className="font-serif font-bold text-ink text-xl mb-2">
-          Message received!
-        </h3>
-        <p className="text-sm text-ink-muted max-w-sm mx-auto">
+        <h3 className="display mb-2 text-2xl text-ink">Message received.</h3>
+        <p className="mx-auto max-w-sm text-sm text-ink-muted">
           Our team will review your request and get back to you within 2 business hours.
         </p>
       </div>
@@ -69,10 +67,10 @@ export function LeadForm() {
   }
 
   const fieldBase =
-    'block w-full rounded-lg border bg-paper px-4 py-3 text-sm text-ink placeholder:text-ink-subtle/60 focus:outline-none transition-all duration-200'
-  const fieldNormal = `${fieldBase} border-rule focus:border-blue focus:ring-2 focus:ring-blue/10`
-  const fieldError = `${fieldBase} border-error focus:border-error focus:ring-2 focus:ring-error/10`
-  const label = 'block text-xs font-semibold text-ink-muted mb-2'
+    'block w-full border-2 bg-paper px-4 py-3 text-sm text-ink placeholder:text-ink-subtle/60 focus:outline-none transition-all duration-200'
+  const fieldNormal = `${fieldBase} border-ink/40 focus:border-ink focus:shadow-[3px_3px_0_0_var(--signal)]`
+  const fieldError = `${fieldBase} border-error focus:border-error`
+  const label = 'spec block text-ink-muted mb-2'
   const errMsg = 'mt-1.5 text-xs text-error flex items-center gap-1'
 
   function handleFormSubmit(e: FormEvent<HTMLFormElement>) {
@@ -167,12 +165,12 @@ export function LeadForm() {
             {services.map(s => (
               <label
                 key={s.slug}
-                className="flex items-center gap-2.5 text-sm text-ink cursor-pointer rounded-lg border border-rule px-3 py-2.5 hover:border-blue/30 hover:bg-blue/5 transition-all has-[:checked]:border-blue/40 has-[:checked]:bg-blue/5"
+                className="flex cursor-pointer items-center gap-2.5 border-2 border-ink/30 px-3 py-2.5 text-sm text-ink transition-all hover:border-ink has-[:checked]:border-ink has-[:checked]:bg-signal/15 has-[:checked]:shadow-[2px_2px_0_0_var(--ink)]"
               >
                 <input
                   type="checkbox"
                   value={s.slug}
-                  className="rounded border-rule text-blue focus:ring-blue accent-blue"
+                  className="accent-signal"
                   {...register('serviceInterest')}
                 />
                 <span className="text-xs">{s.name}</span>
@@ -245,7 +243,7 @@ export function LeadForm() {
 
       {/* Server error */}
       {serverError && (
-        <div className="flex items-start gap-2 text-sm text-error bg-error/5 border border-error/20 rounded-lg px-4 py-3">
+        <div className="flex items-start gap-2 border-2 border-error bg-error/5 px-4 py-3 text-sm text-error">
           <span className="mt-0.5">⚠</span>
           <p>{serverError}</p>
         </div>
@@ -255,25 +253,21 @@ export function LeadForm() {
       <button
         type="submit"
         disabled={isSubmitting}
-        className="group relative w-full rounded-lg bg-blue text-white font-bold py-4 text-sm hover:opacity-90 transition-all disabled:opacity-50 active:scale-[0.98] overflow-hidden"
+        className="w-full border-2 border-ink bg-signal py-4 text-sm font-bold uppercase tracking-[0.08em] text-ink shadow-[4px_4px_0_0_var(--ink)] transition-all hover:-translate-x-px hover:-translate-y-px hover:shadow-[6px_6px_0_0_var(--ink)] active:translate-x-0.5 active:translate-y-0.5 active:shadow-[2px_2px_0_0_var(--ink)] disabled:opacity-50"
       >
-        {/* Shimmer effect */}
-        <span className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent translate-x-[-200%] group-hover:translate-x-[200%] transition-transform duration-700" />
-        <span className="relative">
-          {isSubmitting ? (
-            <span className="flex items-center justify-center gap-2">
-              <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-              Sending…
-            </span>
-          ) : (
-            'Send Message →'
-          )}
-        </span>
+        {isSubmitting ? (
+          <span className="flex items-center justify-center gap-2">
+            <span className="h-4 w-4 animate-spin rounded-full border-2 border-ink/30 border-t-ink" />
+            Sending…
+          </span>
+        ) : (
+          'Send the brief →'
+        )}
       </button>
 
       {/* Trust line */}
-      <p className="text-center text-[10px] text-ink-subtle font-mono tracking-wide">
-        🔒 Your data is stored securely. We never share it with third parties.
+      <p className="spec text-center text-ink-subtle">
+        Your data is stored securely. We never share it with third parties.
       </p>
     </form>
   )
