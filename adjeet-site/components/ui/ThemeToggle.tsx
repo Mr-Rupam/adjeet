@@ -43,7 +43,7 @@ export function ThemeToggle() {
       <span aria-hidden="true" className="flex items-center gap-1.5">
         <span
           className={`inline-block h-1.5 w-1.5 rounded-full ${
-            theme === 'light' ? 'bg-ink-subtle' : 'bg-signal shadow-[0_0_8px_1px_rgba(255,140,40,0.9)]'
+            theme === 'light' ? 'bg-ink-subtle' : 'bg-signal shadow-[0_0_8px_1px_rgba(70,175,230,0.9)]'
           }`}
         />
         {theme === 'light' ? 'Night' : 'Day'}

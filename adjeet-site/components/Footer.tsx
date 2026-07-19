@@ -57,7 +57,7 @@ export function Footer() {
             <Link href="/privacy" className="block transition-colors hover:text-signal-hot">
               Privacy policy
             </Link>
-            <p className="m-0">© {new Date().getFullYear()} AD-JEET. All rights reserved.</p>
+            <p className="m-0">© {new Date().getFullYear()} AD JEET. All rights reserved.</p>
           </div>
         </div>
       </div>
@@ -68,7 +68,7 @@ export function Footer() {
           className="display night-glow-tube whitespace-nowrap text-center leading-none"
           style={{ fontSize: 'clamp(4rem, 15.5vw, 15rem)', opacity: 0.9 }}
         >
-          AD-JEET
+          AD JEET
         </div>
       </div>
     </footer>

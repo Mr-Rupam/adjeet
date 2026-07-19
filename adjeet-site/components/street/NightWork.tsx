@@ -52,19 +52,19 @@ export function NightWork() {
 
   return (
     <section className="relative overflow-hidden bg-night">
-      {/* Amber streetlight pools */}
+      {/* Blue streetlight pools */}
       <div
         aria-hidden="true"
         className="pointer-events-none absolute inset-0"
         style={{
           background:
-            'radial-gradient(ellipse 45% 40% at 20% 0%, rgba(255,140,40,0.13), transparent 70%), radial-gradient(ellipse 40% 35% at 85% 10%, rgba(255,170,80,0.09), transparent 70%)',
+            'radial-gradient(ellipse 45% 40% at 20% 0%, rgba(70,175,230,0.13), transparent 70%), radial-gradient(ellipse 40% 35% at 85% 10%, rgba(90,185,235,0.09), transparent 70%)',
         }}
       />
 
       <div className="relative mx-auto max-w-content px-5 pt-16 md:px-8 md:pt-24">
         <p className="spec text-signal-hot">
-          <span className="mr-2 inline-block h-2 w-2 rounded-full bg-signal-hot align-baseline shadow-[0_0_12px_2px_rgba(255,140,40,0.8)]" aria-hidden="true" />
+          <span className="mr-2 inline-block h-2 w-2 rounded-full bg-signal-hot align-baseline shadow-[0_0_12px_2px_rgba(70,175,230,0.8)]" aria-hidden="true" />
           After dark — 6 PM, North Bengal
         </p>
         <h2 className="display mt-4 max-w-4xl text-night-ink" style={{ fontSize: 'var(--text-display-1)' }}>

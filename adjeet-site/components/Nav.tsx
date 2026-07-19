@@ -24,12 +24,12 @@ export function Nav() {
       >
         <Link
           href="/"
-          aria-label="AD-JEET home"
+          aria-label="AD JEET home"
           className="flex shrink-0 items-center gap-2.5 self-center"
         >
           <span aria-hidden="true" className="block h-3.5 w-3.5 shrink-0 bg-signal" />
           <span className="display glow-tube whitespace-nowrap text-2xl leading-none text-ink">
-            AD-JEET
+            AD JEET
           </span>
         </Link>
 

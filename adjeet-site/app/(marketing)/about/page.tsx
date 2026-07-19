@@ -5,9 +5,9 @@ import { StandardPlates } from '@/components/street/StandardPlates'
 import { CommissionCTA } from '@/components/street/CommissionCTA'
 
 export const metadata: Metadata = {
-  title: 'About AD-JEET — North Bengal Signage Since 1990',
+  title: 'About AD JEET — North Bengal Signage Since 1990',
   description:
-    'AD-JEET has been fabricating and installing signage across North Bengal since 1990. Learn our story, our team, and the districts we serve.',
+    'AD JEET has been fabricating and installing signage across North Bengal since 1990. Learn our story, our team, and the districts we serve.',
   alternates: { canonical: `${siteConfig.url}/about` },
 }
 
@@ -27,7 +27,7 @@ const MILESTONES = [
 
 const STORY: { text: string; highlight?: string; highlightLabel?: string }[] = [
   {
-    text: 'AD-JEET was founded in 1990 by Jeet Kumar Sarkar in Siliguri, West Bengal. Starting with hand-painted boards and basic neon installations, the company grew alongside North Bengal\'s commercial expansion — from the early malls on Sevoke Road to the industrial zones near Bagdogra and the tea estates of Darjeeling.',
+    text: 'AD JEET was founded in 1990 by Jeet Kumar Sarkar in Siliguri, West Bengal. Starting with hand-painted boards and basic neon installations, the company grew alongside North Bengal\'s commercial expansion — from the early malls on Sevoke Road to the industrial zones near Bagdogra and the tea estates of Darjeeling.',
   },
   {
     highlight: '3,000+',
@@ -43,7 +43,7 @@ const STORY: { text: string; highlight?: string; highlightLabel?: string }[] = [
     text: 'We adopted LED illumination in 2012. Modern SMD LEDs consume dramatically less power, last 30,000–50,000 hours, and light evenly. Combined with weatherproofed enclosures, our signs routinely outlast their five-year maintenance agreements.',
   },
   {
-    text: 'Today AD-JEET is run by the second generation of the Sarkar family, with the same rule that built the reputation: we do not outsource fabrication or installation. Every project is handled by our own team.',
+    text: 'Today AD JEET is run by the second generation of the Sarkar family, with the same rule that built the reputation: we do not outsource fabrication or installation. Every project is handled by our own team.',
   },
 ]
 
@@ -157,7 +157,7 @@ export default function AboutPage() {
             </h2>
             <div className="mt-6 space-y-4 text-[15px] leading-relaxed text-ink-muted">
               <p>
-                Our 4,000 sq ft fabrication facility is where every AD-JEET sign is
+                Our 4,000 sq ft fabrication facility is where every AD JEET sign is
                 born. Metal cutting, CNC routing, acrylic bending, LED wiring,
                 painting — everything under one roof.
               </p>

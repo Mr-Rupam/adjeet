@@ -1,9 +1,9 @@
 import { test, expect } from '@playwright/test'
 
 test.describe('Foundation', () => {
-  test('page has AD-JEET in the nav', async ({ page }) => {
+  test('page has AD JEET in the nav', async ({ page }) => {
     await page.goto('/')
-    await expect(page.getByRole('link', { name: 'AD-JEET' })).toBeVisible()
+    await expect(page.getByRole('link', { name: 'AD JEET' })).toBeVisible()
   })
 
   test('skip link is focusable and present in DOM', async ({ page }) => {

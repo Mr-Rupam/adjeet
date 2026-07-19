@@ -78,8 +78,8 @@ export function StreetHero() {
             style={{ fontSize: 'var(--text-mega)', letterSpacing: '0.01em' }}
           >
             <ShutterText
-              text="AD-JEET"
-              charClassName={(char) => (char === '-' ? 'text-signal glow-signal' : undefined)}
+              text="AD JEET"
+              charClassName={(char) => (char === 'J' ? 'text-signal glow-signal' : undefined)}
             />
           </span>
           <span className="sr-only">— North Bengal signage and outdoor advertising since 1990</span>

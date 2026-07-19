@@ -33,7 +33,7 @@ export function Accordion({ items, className = '' }: AccordionProps) {
                 onClick={() => toggle(idx)}
                 aria-expanded={isOpen}
                 aria-controls={panelId}
-                className="flex w-full items-center justify-between py-4 text-left text-sm font-medium text-ink hover:text-blue transition-colors"
+                className="flex w-full items-center justify-between py-4 text-left text-sm font-medium text-ink hover:text-signal transition-colors"
               >
                 <span>{item.q}</span>
                 <span aria-hidden="true" className="ml-4 shrink-0 text-ink-subtle">

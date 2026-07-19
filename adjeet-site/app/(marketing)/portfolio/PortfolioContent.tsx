@@ -246,7 +246,7 @@ export function PortfolioContent() {
                     {photo.featured && (
                       <span
                         aria-hidden="true"
-                        className="absolute left-3 top-3 h-2.5 w-2.5 bg-signal shadow-[0_0_10px_2px_rgba(255,140,40,0.7)] transition-opacity group-hover:opacity-0"
+                        className="absolute left-3 top-3 h-2.5 w-2.5 bg-signal shadow-[0_0_10px_2px_rgba(70,175,230,0.7)] transition-opacity group-hover:opacity-0"
                       />
                     )}
                   </motion.button>

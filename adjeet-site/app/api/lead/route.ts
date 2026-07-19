@@ -212,7 +212,7 @@ export async function POST(req: NextRequest) {
       await client.messages.create({
         from: twilioFrom,
         to: rupamNumber,
-        body: `New AD-JEET lead:\nName: ${name}\nPhone: ${phone}\nCity: ${city}\nServices: ${serviceInterest.join(', ')}\nTimeline: ${timeline}${message ? `\nNote: ${message}` : ''}`,
+        body: `New AD JEET lead:\nName: ${name}\nPhone: ${phone}\nCity: ${city}\nServices: ${serviceInterest.join(', ')}\nTimeline: ${timeline}${message ? `\nNote: ${message}` : ''}`,
       })
     } catch (err) {
       console.error(`[lead:${reqId}] Twilio WhatsApp error:`, err)

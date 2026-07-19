@@ -6,7 +6,7 @@ import { CommissionCTA } from '@/components/street/CommissionCTA'
 export const metadata: Metadata = {
   title: 'Signage & Outdoor Advertising Services',
   description:
-    'From glow sign boards and ACP LED signage to flex printing, vehicle branding, and events — AD-JEET delivers quality signage across North Bengal.',
+    'From glow sign boards and ACP LED signage to flex printing, vehicle branding, and events — AD JEET delivers quality signage across North Bengal.',
   alternates: { canonical: 'https://adjeet.in/services' },
 }
 

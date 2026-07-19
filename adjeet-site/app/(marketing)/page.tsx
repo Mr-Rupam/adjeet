@@ -8,7 +8,7 @@ import { CoverageBoard } from '@/components/street/CoverageBoard'
 import { CommissionCTA } from '@/components/street/CommissionCTA'
 
 export const metadata: Metadata = {
-  title: 'AD-JEET — North Bengal Signage & Outdoor Advertising',
+  title: 'AD JEET — North Bengal Signage & Outdoor Advertising',
   description:
     "North Bengal's most trusted signage company. Glow signs, ACP/LED, flex printing, vehicle branding, F-pole installation across Siliguri, Jalpaiguri, Cooch Behar, Darjeeling, Malda.",
   alternates: { canonical: 'https://adjeet.in' },

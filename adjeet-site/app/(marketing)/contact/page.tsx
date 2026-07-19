@@ -5,9 +5,9 @@ import { buildBreadcrumbJsonLd, jsonLdString, siteConfig } from '@/lib/seo'
 import { PageMasthead } from '@/components/street/PageMasthead'
 
 export const metadata: Metadata = {
-  title: 'Contact AD-JEET — Get a Signage Quote',
+  title: 'Contact AD JEET — Get a Signage Quote',
   description:
-    'Contact AD-JEET for signage and outdoor advertising across North Bengal. Office in Siliguri, workshop at Patiram Jote. WhatsApp, call, or use the lead form.',
+    'Contact AD JEET for signage and outdoor advertising across North Bengal. Office in Siliguri, workshop at Patiram Jote. WhatsApp, call, or use the lead form.',
   alternates: { canonical: `${siteConfig.url}/contact` },
 }
 
@@ -156,7 +156,7 @@ export default function ContactPage() {
                 loading="lazy"
                 referrerPolicy="no-referrer-when-downgrade"
                 sandbox="allow-scripts allow-same-origin"
-                title="AD-JEET office location"
+                title="AD JEET office location"
               />
               <span className="spec absolute bottom-3 left-3 border-2 border-ink bg-paper px-2 py-1 text-ink-muted">
                 Platinum Square, Siliguri

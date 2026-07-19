@@ -29,8 +29,8 @@ export async function generateMetadata({ params }: { params: Promise<Params> }):
   if (!page) return {}
   const service = getServiceBySlug(page.service as ServiceSlug)
   return {
-    title: `${page.headline} | AD-JEET`,
-    description: `${service?.tagline ?? ''} Serving ${CITY_LABELS[page.city] ?? page.city}, North Bengal. Contact AD-JEET for a same-day quote.`,
+    title: `${page.headline} | AD JEET`,
+    description: `${service?.tagline ?? ''} Serving ${CITY_LABELS[page.city] ?? page.city}, North Bengal. Contact AD JEET for a same-day quote.`,
     alternates: { canonical: `${siteConfig.url}/${slug}` },
   }
 }

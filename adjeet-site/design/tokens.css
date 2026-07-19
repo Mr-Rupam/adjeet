@@ -1,6 +1,6 @@
 /* ═══════════════════════════════════════════════════════════════════════
-   AD-JEET tokens — "The sign company that lights the street."
-   Day = warm paper + ink + safety-orange signal.
+   AD JEET tokens — "The sign company that lights the street."
+   Day = warm paper + ink + signage blue.
    Night (dark theme) = the street after dark: signs glow.
    ═══════════════════════════════════════════════════════════════════════ */
 
@@ -13,10 +13,10 @@
   --ink-subtle:      #8A8272;
   --rule:            #DCD2BE;
 
-  /* ─── Signal — the accent. Safety orange / lit-sign amber ─────────────── */
-  --signal:          #E8590C;
-  --signal-hot:      #FF7A1A;
-  --glow:            #FFB25F;
+  /* ─── Signal — the accent. AD JEET signage blue ────────────────────────── */
+  --signal:          #1C7FB0;
+  --signal-hot:      #2C93C7;
+  --glow:            #7FC4E8;
 
   /* ─── Night surfaces (always-dark sections) ───────────────────────────── */
   --night:           #0A0D15;
@@ -79,8 +79,8 @@
   --ink-subtle:      #837C6D;
   --rule:            #242B3D;
 
-  --signal:          #FF7A1A;
-  --signal-hot:      #FFA04D;
+  --signal:          #3FA6DE;
+  --signal-hot:      #7ECBEF;
 
   --night:           #060911;
   --night-elevated:  #0E1320;
