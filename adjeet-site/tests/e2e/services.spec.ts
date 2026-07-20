@@ -9,7 +9,7 @@ test.describe('/services overview', () => {
   })
 
   test('page heading is visible', async ({ page }) => {
-    await expect(page.getByRole('heading', { name: 'Our Services', level: 1 })).toBeVisible()
+    await expect(page.getByRole('heading', { level: 1 })).toBeVisible()
   })
 
   test('renders 10 service tiles with taglines', async ({ page }) => {

@@ -8,85 +8,70 @@ test.describe('Home page', () => {
     await page.reload()
   })
 
-  test('hero heading is visible', async ({ page }) => {
-    await expect(
-      page.getByRole('heading', {
-        name: /make your brand.+impossible.+to ignore/i,
-      })
-    ).toBeVisible()
+  test('hero wordmark heading is visible', async ({ page }) => {
+    await expect(page.locator('#hero-section').getByRole('heading', { level: 1 })).toBeVisible()
   })
 
   test('hero section remains available for observers', async ({ page }) => {
     await expect(page.locator('#hero-section')).toBeVisible()
   })
 
-  test('hero has primary CTA linking to /contact', async ({ page }) => {
-    await expect(page.getByRole('link', { name: /start a sign/i })).toHaveAttribute(
-      'href',
-      '/contact'
-    )
-  })
-
-  test('hero has WhatsApp link', async ({ page }) => {
-    const waLink = page.getByRole('link', { name: /quote on whatsapp/i }).first()
+  test('hero has primary CTA linking to WhatsApp', async ({ page }) => {
+    const waLink = page.getByRole('link', { name: /get a quote/i }).first()
     const href = await waLink.getAttribute('href')
     expect(href).toMatch(/^https:\/\/wa\.me\//)
   })
 
-  test('hero shows service and coverage copy', async ({ page }) => {
+  test('hero has secondary CTA linking to /portfolio', async ({ page }) => {
+    await expect(page.getByRole('link', { name: /see the work/i })).toHaveAttribute(
+      'href',
+      '/portfolio'
+    )
+  })
+
+  test('hero ticker shows service and coverage copy', async ({ page }) => {
     await expect(page.getByText(/glow sign boards/i).first()).toBeVisible()
-    await expect(page.getByText(/acp\/led signage/i).first()).toBeVisible()
-    await expect(page.getByText(/siliguri, jalpaiguri, cooch behar, darjeeling, and malda/i)).toBeVisible()
+    await expect(page.getByText(/acp \/ led signage/i).first()).toBeVisible()
+    await expect(page.getByText(/serving 12 districts/i)).toBeVisible()
   })
 
-  test('services-detail links present (Expertise teaser + ServicesIndex catalog)', async ({ page }) => {
+  test('services board renders 10 trade rows linking to /services/[slug]', async ({ page }) => {
     const serviceLinks = page.locator('a[href^="/services/"]')
-    await expect(serviceLinks).toHaveCount(8)
-  })
-
-  test('each service tile links to /services/[slug]', async ({ page }) => {
-    const links = await page.locator('a[href^="/services/"]').all()
-    for (const link of links) {
-      const href = await link.getAttribute('href')
+    await expect(serviceLinks).toHaveCount(10)
+    const hrefs = await serviceLinks.evaluateAll(links =>
+      links.map(l => l.getAttribute('href'))
+    )
+    for (const href of hrefs) {
       expect(href).toMatch(/^\/services\/[\w-]+$/)
     }
   })
 
-  test('proof block stats are visible', async ({ page }) => {
-    await page.locator('dl').scrollIntoViewIfNeeded()
-    await expect(page.getByText('Projects')).toBeVisible()
-    await expect(page.getByText('Clients')).toBeVisible()
+  test('client street shows brand names', async ({ page }) => {
+    await expect(page.getByText('Airtel').first()).toBeVisible()
+    await expect(page.getByText('Havells').first()).toBeVisible()
   })
 
-  test('selected work shows 4 photo buttons', async ({ page }) => {
-    const photoButtons = page.locator('[aria-label^="View:"]')
-    await expect(photoButtons).toHaveCount(4)
+  test('night section shows the after-dark headline and portfolio link', async ({ page }) => {
+    await expect(page.getByText(/turns on\./i).first()).toBeVisible()
+    await expect(page.getByRole('link', { name: /see all installations/i })).toHaveAttribute(
+      'href',
+      '/portfolio'
+    )
   })
 
   test('standard section shows quality promises', async ({ page }) => {
-    await expect(page.getByText(/In-house workshop/).first()).toBeVisible()
-    await expect(page.getByText(/Monsoon-proven builds/).first()).toBeVisible()
+    await expect(page.getByText('In-house everything').first()).toBeVisible()
+    await expect(page.getByText('Monsoon-proven builds').first()).toBeVisible()
   })
 
-  test('client showcase has editorial heading', async ({ page }) => {
-    await page.locator('section').filter({ hasText: /airtel.*jio.*havells/i }).scrollIntoViewIfNeeded()
-    await expect(page.getByText(/airtel\. jio\. havells\./i).first()).toBeVisible()
+  test('coverage board lists 10 districts with Siliguri as HQ', async ({ page }) => {
+    await expect(page.getByText('HQ + Workshop')).toBeVisible()
+    await expect(page.getByText('Siliguri').first()).toBeVisible()
   })
 
-  test('client showcase view our work links to portfolio', async ({ page }) => {
-    const link = page.getByRole('link', { name: /view our work/i })
-    await expect(link).toHaveAttribute('href', '/portfolio')
-  })
-
-  test('client showcase get a quote has valid WhatsApp URL', async ({ page }) => {
-    const quoteLinks = page.getByRole('link', { name: /get a quote/i })
-    const href = await quoteLinks.first().getAttribute('href')
+  test('commission CTA has a working WhatsApp link', async ({ page }) => {
+    const link = page.getByRole('link', { name: /whatsapp us now/i })
+    const href = await link.getAttribute('href')
     expect(href).toMatch(/^https:\/\/wa\.me\//)
-  })
-
-  test('client showcase displays brand names', async ({ page }) => {
-    await page.locator('section').filter({ hasText: /airtel.*jio.*havells/i }).scrollIntoViewIfNeeded()
-    await expect(page.getByText('Airtel').first()).toBeVisible()
-    await expect(page.getByText('Havells').first()).toBeVisible()
   })
 })

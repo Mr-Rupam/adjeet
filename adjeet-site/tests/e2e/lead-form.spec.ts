@@ -1,4 +1,17 @@
-import { test, expect } from '@playwright/test';
+import { test, expect, type Page } from '@playwright/test';
+
+// Turnstile (dev test key) auto-passes with no user interaction, but the
+// iframe challenge round-trip is async — cfTurnstileResponse isn't populated
+// until onSuccess fires, which submit must wait for or the form's required
+// CAPTCHA validation blocks the request before it ever reaches /api/lead.
+async function waitForTurnstile(page: Page) {
+  await page
+    .frameLocator('iframe[src*="challenges.cloudflare.com"]')
+    .locator('body')
+    .waitFor({ timeout: 10000 })
+    .catch(() => {});
+  await page.waitForTimeout(2000);
+}
 
 test.describe('Lead Form', () => {
   test.beforeEach(async ({ page }) => {
@@ -22,6 +35,7 @@ test.describe('Lead Form', () => {
     await page.fill('#lead-phone', '9876543210');
     await page.selectOption('#lead-city', 'Siliguri');
     await page.locator('input[type="checkbox"]').first().check();
+    await waitForTurnstile(page);
 
     await page.click('button[type="submit"]');
 
@@ -40,6 +54,7 @@ test.describe('Lead Form', () => {
     await page.fill('#lead-phone', '9876543210');
     await page.selectOption('#lead-city', 'Siliguri');
     await page.locator('input[type="checkbox"]').first().check();
+    await waitForTurnstile(page);
 
     await page.click('button[type="submit"]');
 

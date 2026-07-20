@@ -3,7 +3,7 @@ import { test, expect } from '@playwright/test'
 test.describe('Foundation', () => {
   test('page has AD JEET in the nav', async ({ page }) => {
     await page.goto('/')
-    await expect(page.getByRole('link', { name: 'AD JEET' })).toBeVisible()
+    await expect(page.getByRole('banner').getByRole('link', { name: 'AD JEET home' })).toBeVisible()
   })
 
   test('skip link is focusable and present in DOM', async ({ page }) => {
@@ -35,8 +35,9 @@ test.describe('Foundation', () => {
 
   test('nav has Services, Work, About, Contact links', async ({ page }) => {
     await page.goto('/')
+    const nav = page.getByRole('banner')
     for (const name of ['Services', 'Work', 'About', 'Contact']) {
-      await expect(page.getByRole('link', { name })).toBeAttached()
+      await expect(nav.getByRole('link', { name, exact: true })).toBeAttached()
     }
   })
 
