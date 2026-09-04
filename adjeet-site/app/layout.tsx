@@ -9,6 +9,7 @@ import { Chatbot } from '@/components/Chatbot'
 import { ConsentBanner } from '@/components/ui/ConsentBanner'
 import { Analytics } from '@/components/Analytics'
 import { ReducedMotionWrapper } from '@/components/motion/ReducedMotionWrapper'
+import { jsonLdString } from '@/lib/seo'
 import './globals.css'
 
 export const metadata: Metadata = {
@@ -52,7 +53,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{
-            __html: JSON.stringify({
+            __html: jsonLdString({
               "@context": "https://schema.org",
               "@type": "LocalBusiness",
               "name": "AD JEET",

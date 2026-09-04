@@ -4,13 +4,16 @@ import { test, expect, type Page } from '@playwright/test';
 // iframe challenge round-trip is async — cfTurnstileResponse isn't populated
 // until onSuccess fires, which submit must wait for or the form's required
 // CAPTCHA validation blocks the request before it ever reaches /api/lead.
+// Poll the widget's own hidden response input rather than sleeping a fixed
+// duration — it flips non-empty the instant onSuccess actually resolves.
 async function waitForTurnstile(page: Page) {
   await page
     .frameLocator('iframe[src*="challenges.cloudflare.com"]')
     .locator('body')
-    .waitFor({ timeout: 10000 })
-    .catch(() => {});
-  await page.waitForTimeout(2000);
+    .waitFor({ timeout: 10000 });
+  await expect
+    .poll(() => page.locator('input[name="cf-turnstile-response"]').inputValue(), { timeout: 10000 })
+    .not.toBe('');
 }
 
 test.describe('Lead Form', () => {

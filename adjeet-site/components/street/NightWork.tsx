@@ -1,6 +1,7 @@
 'use client'
 
 import Link from 'next/link'
+import Image from 'next/image'
 import { motion, useReducedMotion } from 'framer-motion'
 import { useState } from 'react'
 import { getFeaturedPhotos } from '@/content/gallery'
@@ -24,13 +25,13 @@ function WorkCard({ photo, className = '' }: { photo: ReturnType<typeof getFeatu
   const caption = CAPTIONS[photo.id]
   return (
     <figure className={`light-pool relative m-0 overflow-hidden border border-night-rule bg-night-elevated ${className}`}>
-      {/* eslint-disable-next-line @next/next/no-img-element -- transformed cards; next/image trips on rotateY parent */}
-      <img
+      <Image
         src={photo.src}
         alt={photo.alt}
-        className="h-full w-full object-cover"
+        fill
+        sizes="(min-width: 1024px) 384px, 320px"
+        className="object-cover"
         loading="lazy"
-        decoding="async"
       />
       {caption && (
         <figcaption className="absolute inset-x-0 bottom-0 flex items-baseline justify-between gap-2 bg-gradient-to-t from-black/85 to-transparent px-4 pb-3 pt-8">
