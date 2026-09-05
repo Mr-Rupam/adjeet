@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import type { Service } from '@/content/services'
+import { COVERAGE_AREAS } from '@/lib/coverage'
 
 export const siteConfig = {
   name: 'AD JEET',
@@ -44,7 +45,7 @@ export function buildLocalBusinessJsonLd() {
       latitude: 26.7271,
       longitude: 88.3953,
     },
-    areaServed: ['Siliguri', 'Jalpaiguri', 'Cooch Behar', 'Darjeeling', 'Malda'],
+    areaServed: COVERAGE_AREAS.map(a => a.name),
   }
 }
 
@@ -55,7 +56,7 @@ export function buildServiceJsonLd(service: Service) {
     name: service.name,
     description: service.description,
     provider: { '@type': 'LocalBusiness', name: siteConfig.name },
-    areaServed: ['Siliguri', 'Jalpaiguri', 'Cooch Behar', 'Darjeeling', 'Malda'],
+    areaServed: COVERAGE_AREAS.map(a => a.name),
     serviceType: service.name,
   }
 }

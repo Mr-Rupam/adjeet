@@ -28,9 +28,17 @@ export async function generateMetadata({ params }: { params: Promise<Params> }):
   const page = getProgrammaticPage(slug)
   if (!page) return {}
   const service = getServiceBySlug(page.service as ServiceSlug)
+  const city = CITY_LABELS[page.city] ?? page.city
   return {
-    title: `${page.headline} | AD JEET`,
-    description: `${service?.tagline ?? ''} Serving ${CITY_LABELS[page.city] ?? page.city}, North Bengal. Contact AD JEET for a same-day quote.`,
+    // Deliberately NOT page.headline: those run 65-94 characters and are
+    // written to work as the on-page <h1>. As a <title> they truncate in the
+    // SERP, and the manual "| AD JEET" collided with the root layout's
+    // '%s | AD JEET' template, so every one of these 25 pages rendered the
+    // brand twice. Service + city keeps it keyword-first and inside ~60.
+    title: service ? `${service.name} in ${city}` : page.headline,
+    description: [service?.tagline?.replace(/[.\s]+$/, ''), `Serving ${city}, North Bengal`, 'Contact AD JEET for a same-day quote']
+      .filter(Boolean)
+      .join('. ') + '.',
     alternates: { canonical: `${siteConfig.url}/${slug}` },
   }
 }

@@ -3,6 +3,7 @@ import { LeadForm } from '@/components/sections/LeadForm'
 import { defaultWhatsAppUrl } from '@/lib/whatsapp'
 import { buildBreadcrumbJsonLd, jsonLdString, siteConfig } from '@/lib/seo'
 import { PageMasthead } from '@/components/street/PageMasthead'
+import { DISTRICTS_SERVED } from '@/lib/coverage'
 
 export const metadata: Metadata = {
   title: 'Contact AD JEET — Get a Signage Quote',
@@ -45,7 +46,7 @@ const QUICK_INFO = [
   { label: 'Response time', value: '< 2 hours' },
   { label: 'Site visit', value: 'Same-day in Siliguri' },
   { label: 'Quote validity', value: '15 days' },
-  { label: 'Coverage', value: '12+ districts' },
+  { label: 'Coverage', value: `${DISTRICTS_SERVED} districts` },
 ]
 
 export default function ContactPage() {

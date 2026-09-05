@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
+import { DISTRICTS_SERVED, FOUNDED_YEAR } from '@/lib/coverage'
 
 interface NavLink { href: string; label: string }
 
@@ -90,7 +91,7 @@ export function MobileNav({ links }: { links: NavLink[] }) {
                 )
               })}
               <p className="spec mt-8 text-ink-subtle">
-                Est. 1990 — Siliguri · 12 districts · 500+ signs
+                Est. {FOUNDED_YEAR} — Siliguri · {DISTRICTS_SERVED} districts · 500+ signs
               </p>
             </nav>
           </div>

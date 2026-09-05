@@ -9,8 +9,9 @@ import { Chatbot } from '@/components/Chatbot'
 import { ConsentBanner } from '@/components/ui/ConsentBanner'
 import { Analytics } from '@/components/Analytics'
 import { ReducedMotionWrapper } from '@/components/motion/ReducedMotionWrapper'
-import { jsonLdString } from '@/lib/seo'
+import { buildLocalBusinessJsonLd, jsonLdString } from '@/lib/seo'
 import './globals.css'
+import { DISTRICTS_SERVED, FOUNDED_YEAR } from '@/lib/coverage'
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://adjeet.in'),
@@ -18,14 +19,14 @@ export const metadata: Metadata = {
     default: 'AD JEET — North Bengal Signage & OOH',
     template: '%s | AD JEET',
   },
-  description: 'North Bengal\'s most trusted signage and outdoor advertising partner since 1990. Glow signs, ACP/LED, flex printing, vehicle branding across 15+ districts.',
+  description: `North Bengal's most trusted signage and outdoor advertising partner since ${FOUNDED_YEAR}. Glow signs, ACP/LED, flex printing, vehicle branding across ${DISTRICTS_SERVED} districts.`,
   icons: {
     icon: '/logo.png',
     shortcut: '/logo.png',
   },
   openGraph: {
     title: 'AD JEET — North Bengal Signage & OOH',
-    description: 'North Bengal\'s most trusted signage and outdoor advertising partner since 1990. Glow signs, ACP/LED, flex printing, vehicle branding across 15+ districts.',
+    description: `North Bengal's most trusted signage and outdoor advertising partner since ${FOUNDED_YEAR}. Glow signs, ACP/LED, flex printing, vehicle branding across ${DISTRICTS_SERVED} districts.`,
     url: 'https://adjeet.in',
     siteName: 'AD JEET',
     images: [{ url: '/og-image.jpg', width: 1200, height: 630, alt: 'AD JEET fabrication workshop, Siliguri — North Bengal signage since 1990' }],
@@ -49,29 +50,14 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     >
       <head>
         <ThemeScript />
-        {/* TODO: add "telephone" field once Rupam supplies the number */}
+        {/* One authoritative LocalBusiness for the whole site. It lives in the
+            ROOT layout, not the (marketing) one, so the programmatic city pages
+            are covered too — they previously received only a stale inline copy
+            with no telephone, while (marketing) pages got a second, conflicting
+            one. Two LocalBusiness entities on a page is a schema error. */}
         <script
           type="application/ld+json"
-          dangerouslySetInnerHTML={{
-            __html: jsonLdString({
-              "@context": "https://schema.org",
-              "@type": "LocalBusiness",
-              "name": "AD JEET",
-              "foundingDate": "1990",
-              "address": {
-                "@type": "PostalAddress",
-                "addressLocality": "Siliguri",
-                "addressRegion": "West Bengal",
-                "postalCode": "734001",
-                "addressCountry": "IN"
-              },
-              "areaServed": [
-                "Siliguri", "Darjeeling", "Jalpaiguri", "Cooch Behar",
-                "Alipurduar", "Kalimpong", "Malda", "Raiganj"
-              ],
-              "url": "https://adjeet.in"
-            })
-          }}
+          dangerouslySetInnerHTML={{ __html: jsonLdString(buildLocalBusinessJsonLd()) }}
         />
       </head>
       <body className="min-h-screen flex flex-col bg-paper text-ink">

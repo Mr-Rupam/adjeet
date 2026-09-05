@@ -1,3 +1,5 @@
+import { DISTRICTS_SERVED } from '@/lib/coverage'
+
 /**
  * AD JEET Chatbot System Prompt
  * ──────────────────────────────
@@ -176,7 +178,7 @@ KEY DIFFERENTIATORS
 - Trusted by national brands: Airtel, Jio, Vivo, Havells, Supreme Pipe, Astral Pipe, Star Cement, SRMB, Shyam Steel, Emami, OYO, Dalmia, Ambuja/ACC, Anchor by Panasonic
 - 1-year warranty
 - Hill-area expertise (Darjeeling, Kalimpong)
-- Municipal regulation knowledge across 15+ districts
+- Municipal regulation knowledge across ${DISTRICTS_SERVED} districts
 
 ═══════════════════════════════════════════════════
 RESPONSE STYLE

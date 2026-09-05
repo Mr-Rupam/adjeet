@@ -4,6 +4,7 @@ import { PortfolioContent } from './PortfolioContent'
 import { buildBreadcrumbJsonLd, jsonLdString, siteConfig } from '@/lib/seo'
 import { PageMasthead } from '@/components/street/PageMasthead'
 import { CommissionCTA } from '@/components/street/CommissionCTA'
+import { DISTRICTS_SERVED, YEARS_ACTIVE } from '@/lib/coverage'
 
 export const metadata: Metadata = {
   title: 'Portfolio — 500+ Installations Across North Bengal',
@@ -27,7 +28,6 @@ export default function PortfolioPage() {
 
       <PageMasthead
         eyebrow="Work — the street record"
-        meta={['500+ installs', '12 districts', '35 yrs craft']}
         title={
           <>
             Signs you have
@@ -35,13 +35,13 @@ export default function PortfolioPage() {
             already <span className="glow-signal text-signal">driven past.</span>
           </>
         }
-        lead="Three decades of installations across North Bengal. Every sign fabricated in-house at Patiram Jote, every one hung by our own crew."
+        lead={`${YEARS_ACTIVE} years of installations across North Bengal. Every sign fabricated in-house at Patiram Jote, every one hung by our own crew.`}
       >
         <dl className="m-0 flex flex-wrap gap-6 md:gap-10">
           {[
             { v: '500+', k: 'Installations' },
             { v: '10', k: 'Trades' },
-            { v: '12', k: 'Districts' },
+            { v: String(DISTRICTS_SERVED), k: 'Districts' },
           ].map(s => (
             <div key={s.k} className="flex flex-col border-l-2 border-ink pl-4">
               <dt className="spec order-2 text-ink-subtle">{s.k}</dt>

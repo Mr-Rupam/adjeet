@@ -4,6 +4,7 @@ import Link from 'next/link'
 import { motion, useReducedMotion } from 'framer-motion'
 import { ShutterText } from '@/components/street/ShutterText'
 import { QuoteCTA } from '@/components/ui/QuoteCTA'
+import { DISTRICTS_SERVED, YEARS_ACTIVE } from '@/lib/coverage'
 
 const TICKER_ITEMS = [
   'Glow sign boards',
@@ -61,7 +62,7 @@ export function StreetHero() {
           <span>Est. 1990 — Siliguri</span>
           <span className="hidden sm:inline">Signage &amp; outdoor advertising</span>
           <span className="hidden md:inline">N 26.72° / E 88.39°</span>
-          <span className="text-signal">Serving 12 districts</span>
+          <span className="text-signal">Serving {DISTRICTS_SERVED} districts</span>
         </div>
       </div>
 
@@ -93,7 +94,7 @@ export function StreetHero() {
           >
             <p className="max-w-[44ch] text-base leading-relaxed text-ink-muted md:text-lg">
               Every glowing shopfront you pass on Hill Cart Road — someone cut,
-              wired, and hung it. For 35 years, that someone has been us.{' '}
+              wired, and hung it. For {YEARS_ACTIVE} years, that someone has been us.{' '}
               <strong className="font-semibold text-ink">
                 500+ installations. One workshop. Zero outsourcing.
               </strong>
