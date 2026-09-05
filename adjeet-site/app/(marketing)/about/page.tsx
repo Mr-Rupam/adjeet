@@ -76,9 +76,9 @@ export default function AboutPage() {
       >
         <dl className="m-0 flex flex-wrap gap-6 md:gap-10">
           {[
-            { v: '1990', k: 'Founded' },
+            { v: String(FOUNDED_YEAR), k: 'Founded' },
             { v: '500+', k: 'Installations' },
-            { v: '12', k: 'Districts' },
+            { v: String(DISTRICTS_SERVED), k: 'Districts' },
             { v: '1 yr', k: 'Warranty' },
           ].map(s => (
             <div key={s.k} className="flex flex-col border-l-2 border-ink pl-4">
