@@ -1,4 +1,6 @@
 import Link from 'next/link'
+import { MarqueePause } from '@/components/ui/MarqueePause'
+import { WhatsAppLink } from '@/components/ui/WhatsAppLink'
 
 const OFFICE_ADDRESS = 'Platinum Square, Siliguri, West Bengal 734001'
 const WORKSHOP_ADDRESS = 'Patiram Jote, Siliguri, West Bengal'
@@ -42,12 +44,13 @@ export function Footer() {
                 height brings them to the 44px minimum without changing the
                 type size or the footer's rhythm. */}
             <li>
-              <a
+              <WhatsAppLink
                 href={WHATSAPP_HREF}
+                source="footer"
                 className="inline-flex min-h-11 items-center transition-colors hover:text-signal-hot"
               >
                 WhatsApp: {WHATSAPP_DISPLAY}
-              </a>
+              </WhatsAppLink>
             </li>
             <li>
               <a
@@ -74,6 +77,10 @@ export function Footer() {
               Privacy policy
             </Link>
             <p className="m-0">© {new Date().getFullYear()} AD JEET. All rights reserved.</p>
+            {/* WCAG 2.2.2: the mechanism to stop the site's five marquees. */}
+            <div className="pt-3">
+              <MarqueePause />
+            </div>
           </div>
         </div>
       </div>

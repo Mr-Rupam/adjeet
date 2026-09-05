@@ -36,7 +36,7 @@ function Ticker() {
   )
 
   return (
-    <div className="flex overflow-hidden border-y-2 border-ink bg-ink py-3">
+    <div className="marquee-track flex overflow-hidden border-y-2 border-ink bg-ink py-3">
       {row('a', false)}
       {row('b', true)}
       {row('c', true)}

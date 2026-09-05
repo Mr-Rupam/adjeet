@@ -6,7 +6,7 @@ type Size = 'sm' | 'md' | 'lg'
 
 const VARIANT_CLASSES: Record<Variant, string> = {
   primary:
-    'border-2 border-ink bg-signal text-ink font-bold shadow-[4px_4px_0_0_var(--ink)] hover:-translate-x-px hover:-translate-y-px hover:shadow-[6px_6px_0_0_var(--ink)] active:translate-x-0.5 active:translate-y-0.5 active:shadow-[2px_2px_0_0_var(--ink)]',
+    'border-2 border-ink bg-signal text-signal-ink font-bold shadow-[4px_4px_0_0_var(--ink)] hover:-translate-x-px hover:-translate-y-px hover:shadow-[6px_6px_0_0_var(--ink)] active:translate-x-0.5 active:translate-y-0.5 active:shadow-[2px_2px_0_0_var(--ink)]',
   secondary: 'border-2 border-ink text-ink hover:bg-ink hover:text-paper',
   ghost: 'text-ink-muted hover:text-ink',
 }

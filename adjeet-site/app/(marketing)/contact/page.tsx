@@ -4,6 +4,7 @@ import { defaultWhatsAppUrl } from '@/lib/whatsapp'
 import { buildBreadcrumbJsonLd, jsonLdString, siteConfig } from '@/lib/seo'
 import { PageMasthead } from '@/components/street/PageMasthead'
 import { DISTRICTS_SERVED } from '@/lib/coverage'
+import { WhatsAppLink } from '@/components/ui/WhatsAppLink'
 
 export const metadata: Metadata = {
   title: 'Contact AD JEET: Get a Signage Quote',
@@ -69,14 +70,13 @@ export default function ContactPage() {
         }
         lead="A quick quote or a full project brief. We reply within 2 hours on business days, and survey Siliguri sites the same day."
       >
-        <a
+        <WhatsAppLink
           href={waUrl}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="inline-flex items-center gap-2 border-2 border-ink bg-signal px-6 py-3.5 text-[13px] font-bold uppercase tracking-[0.08em] text-ink shadow-[4px_4px_0_0_var(--ink)] transition-all hover:-translate-x-px hover:-translate-y-px hover:shadow-[6px_6px_0_0_var(--ink)] active:translate-x-0.5 active:translate-y-0.5 active:shadow-[2px_2px_0_0_var(--ink)]"
+          source={'contact'}
+          className="inline-flex items-center gap-2 border-2 border-ink bg-signal px-6 py-3.5 text-[13px] font-bold uppercase tracking-[0.08em] text-signal-ink shadow-[4px_4px_0_0_var(--ink)] transition-all hover:-translate-x-px hover:-translate-y-px hover:shadow-[6px_6px_0_0_var(--ink)] active:translate-x-0.5 active:translate-y-0.5 active:shadow-[2px_2px_0_0_var(--ink)]"
         >
           WhatsApp us →
-        </a>
+        </WhatsAppLink>
       </PageMasthead>
 
       {/* Ways to reach us: board rows */}

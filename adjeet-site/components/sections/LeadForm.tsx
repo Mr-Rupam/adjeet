@@ -2,7 +2,7 @@
 
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { useState, useRef, type FormEvent } from 'react'
+import { useState, useRef, useEffect, type FormEvent } from 'react'
 import { leadSchema, type LeadInput, TIMELINE_OPTIONS, COVERAGE_CITIES } from '@/lib/lead-schema'
 import { Turnstile, type TurnstileInstance } from '@marsidev/react-turnstile'
 import { services } from '@/content/services'
@@ -23,6 +23,18 @@ export function LeadForm() {
   })
 
   const turnstileRef = useRef<TurnstileInstance>(null)
+
+  // The CAPTCHA was pinned to `theme: 'light'`, so it rendered as a white slab
+  // inside the night-mode form. Track the site's own theme and hand it over.
+  const [widgetTheme, setWidgetTheme] = useState<'light' | 'dark'>('light')
+  useEffect(() => {
+    const read = () =>
+      setWidgetTheme(document.documentElement.getAttribute('data-theme') === 'dark' ? 'dark' : 'light')
+    read()
+    const observer = new MutationObserver(read)
+    observer.observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] })
+    return () => observer.disconnect()
+  }, [])
 
   async function onSubmit(data: LeadInput) {
     setServerError(null)
@@ -56,7 +68,7 @@ export function LeadForm() {
     return (
       <div className="border-2 border-ink bg-paper p-10 text-center shadow-[6px_6px_0_0_var(--signal)]">
         <div className="mb-4 inline-flex h-14 w-14 items-center justify-center border-2 border-ink bg-signal">
-          <span className="text-2xl">✓</span>
+          <span className="text-2xl text-signal-ink">✓</span>
         </div>
         <h3 className="display mb-2 text-2xl text-ink">Message received.</h3>
         <p className="mx-auto max-w-sm text-sm text-ink-muted">
@@ -230,7 +242,7 @@ export function LeadForm() {
               onSuccess={(token) => setValue('cfTurnstileResponse', token, { shouldValidate: true })}
               onError={() => setServerError('CAPTCHA failed. Please try again.')}
               onExpire={() => setValue('cfTurnstileResponse', '', { shouldValidate: true })}
-              options={{ theme: 'light' }}
+              options={{ theme: widgetTheme }}
             />
           )
         })()}
@@ -253,7 +265,7 @@ export function LeadForm() {
       <button
         type="submit"
         disabled={isSubmitting}
-        className="w-full border-2 border-ink bg-signal py-4 text-sm font-bold uppercase tracking-[0.08em] text-ink shadow-[4px_4px_0_0_var(--ink)] transition-all hover:-translate-x-px hover:-translate-y-px hover:shadow-[6px_6px_0_0_var(--ink)] active:translate-x-0.5 active:translate-y-0.5 active:shadow-[2px_2px_0_0_var(--ink)] disabled:opacity-50"
+        className="w-full border-2 border-ink bg-signal py-4 text-sm font-bold uppercase tracking-[0.08em] text-signal-ink shadow-[4px_4px_0_0_var(--ink)] transition-all hover:-translate-x-px hover:-translate-y-px hover:shadow-[6px_6px_0_0_var(--ink)] active:translate-x-0.5 active:translate-y-0.5 active:shadow-[2px_2px_0_0_var(--ink)] disabled:opacity-50"
       >
         {isSubmitting ? (
           <span className="flex items-center justify-center gap-2">

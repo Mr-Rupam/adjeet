@@ -16,8 +16,8 @@ export const COVERAGE_CITIES = [
 export const leadSchema = z.object({
   name: z
     .string()
-    .min(2, 'Name is too short')
-    .max(50, 'Name is too long')
+    .min(2, 'Please enter your name, at least 2 characters')
+    .max(50, 'Please shorten your name to 50 characters or fewer')
     .regex(/^[A-Za-z\s\-']+$/, 'Name can only contain letters, spaces, hyphens, and apostrophes')
     .refine((val) => val.trim().length >= 2, 'Please enter your real name'),
 
@@ -42,17 +42,17 @@ export const leadSchema = z.object({
 
   message: z
     .string()
-    .max(1000, 'Message is too long (max 1000 characters)')
+    .max(1000, 'Please shorten your message to 1000 characters or fewer')
     .refine(
       (val) => !/(http|https):\/\/[^\s]+/.test(val ?? ''),
-      'Please do not include links in your message'
+      'Please remove any links from your message, then send again'
     )
     .optional()
     .or(z.literal('')), // Allows empty strings when optional fails
 
   _hp: z.string().max(0, 'Bot detected').optional(),
 
-  cfTurnstileResponse: z.string().min(1, 'Please complete the CAPTCHA'),
+  cfTurnstileResponse: z.string().min(1, 'Please complete the CAPTCHA above so we know you are human'),
 })
 
 export type LeadInput = z.infer<typeof leadSchema>

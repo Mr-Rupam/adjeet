@@ -54,7 +54,7 @@ function MarqueeRow({ clients, reverse }: { clients: Client[]; reverse?: boolean
   )
 
   return (
-    <div className="flex overflow-hidden py-3">
+    <div className="marquee-track flex overflow-hidden py-3">
       {strip(false, 'a')}
       {strip(true, 'b')}
       {strip(true, 'c')}

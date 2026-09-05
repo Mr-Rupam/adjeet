@@ -18,6 +18,7 @@ import { defaultWhatsAppUrl } from '@/lib/whatsapp'
 import { ServicePageTracker } from '@/components/PageViewTracker'
 import { Accordion } from '@/components/ui/Accordion'
 import { CommissionCTA } from '@/components/street/CommissionCTA'
+import { WhatsAppLink } from '@/components/ui/WhatsAppLink'
 
 type Params = { slug: string }
 
@@ -107,14 +108,13 @@ export default async function ServiceDetailPage({
           </p>
 
           <div className="mt-8 flex flex-wrap items-center gap-4">
-            <a
+            <WhatsAppLink
               href={waUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 border-2 border-ink bg-signal px-6 py-3.5 text-[13px] font-bold uppercase tracking-[0.08em] text-ink shadow-[4px_4px_0_0_var(--ink)] transition-all hover:-translate-x-px hover:-translate-y-px hover:shadow-[6px_6px_0_0_var(--ink)] active:translate-x-0.5 active:translate-y-0.5 active:shadow-[2px_2px_0_0_var(--ink)]"
+              source={`service:${service.slug}`}
+              className="inline-flex items-center gap-2 border-2 border-ink bg-signal px-6 py-3.5 text-[13px] font-bold uppercase tracking-[0.08em] text-signal-ink shadow-[4px_4px_0_0_var(--ink)] transition-all hover:-translate-x-px hover:-translate-y-px hover:shadow-[6px_6px_0_0_var(--ink)] active:translate-x-0.5 active:translate-y-0.5 active:shadow-[2px_2px_0_0_var(--ink)]"
             >
               Quote this job →
-            </a>
+            </WhatsAppLink>
             <Link
               href="/services"
               className="spec inline-flex items-center gap-2 border-2 border-ink px-5 py-3.5 text-ink transition-colors hover:bg-ink hover:text-paper"

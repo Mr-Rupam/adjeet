@@ -1,5 +1,6 @@
 import { defaultWhatsAppUrl } from '@/lib/whatsapp'
 import { COVERAGE_AREAS } from '@/lib/coverage'
+import { WhatsAppLink } from '@/components/ui/WhatsAppLink'
 
 
 
@@ -24,14 +25,13 @@ export function CoverageBoard() {
             scaffolding, generators, and every tool the job needs. If your town
             isn&apos;t listed, ask. We probably go there.
           </p>
-          <a
+          <WhatsAppLink
             href={waUrl}
-            target="_blank"
-            rel="noopener noreferrer"
+            source={'coverage-board'}
             className="spec mt-8 inline-flex items-center gap-2 border-2 border-ink px-5 py-3.5 text-ink transition-colors hover:bg-ink hover:text-paper"
           >
             Ask about your area →
-          </a>
+          </WhatsAppLink>
         </div>
 
         <ul className="m-0 list-none self-center border-t-2 border-ink p-0">

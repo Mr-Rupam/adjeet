@@ -8,6 +8,7 @@ import { defaultWhatsAppUrl } from '@/lib/whatsapp'
 import { buildBreadcrumbJsonLd, buildServiceJsonLd, buildFaqJsonLd, jsonLdString, siteConfig } from '@/lib/seo'
 import { GalleryStrip } from '@/components/sections/GalleryStrip'
 import { ProgrammaticPageTracker } from '@/components/PageViewTracker'
+import { WhatsAppLink } from '@/components/ui/WhatsAppLink'
 
 const CITY_LABELS: Record<string, string> = {
   siliguri: 'Siliguri',
@@ -156,21 +157,20 @@ export default async function ProgrammaticPage({ params }: { params: Promise<Par
       {/* CTA */}
       <section className="bg-signal">
         <div className="mx-auto max-w-content px-5 py-16 md:px-8 md:py-20">
-          <p className="spec text-ink/70">Commission a sign</p>
-          <h2 className="display mt-4 text-ink" style={{ fontSize: 'clamp(2.25rem, 6vw, 5rem)' }}>
+          <p className="spec text-signal-ink">Commission a sign</p>
+          <h2 className="display mt-4 text-signal-ink" style={{ fontSize: 'clamp(2.25rem, 6vw, 5rem)' }}>
             {service.name}
             <br />
             in {cityLabel}.
           </h2>
-          <a
+          <WhatsAppLink
             href={waUrl}
-            target="_blank"
-            rel="noopener noreferrer"
+            source={`programmatic:${slug}`}
             className="mt-8 inline-flex items-center gap-2 border-2 border-ink bg-ink px-7 py-4 text-sm font-bold uppercase tracking-[0.08em] text-paper shadow-[5px_5px_0_0_rgba(0,0,0,0.35)] transition-all hover:-translate-x-px hover:-translate-y-px hover:shadow-[7px_7px_0_0_rgba(0,0,0,0.35)] active:translate-x-0.5 active:translate-y-0.5 active:shadow-[2px_2px_0_0_rgba(0,0,0,0.35)]"
           >
             WhatsApp us now →
-          </a>
-          <p className="spec mt-8 text-ink/60">
+          </WhatsAppLink>
+          <p className="spec mt-8 text-signal-ink">
             Reply within 2 hours · Free quote, valid 15 days
           </p>
         </div>

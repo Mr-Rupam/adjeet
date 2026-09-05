@@ -210,3 +210,17 @@ p {
 .shutter-char::before {
   content: attr(data-char);
 }
+
+/* Marquee pause control (WCAG 2.2.2 "Pause, Stop, Hide").
+   Five marquees scroll automatically for well over five seconds alongside
+   other content, so a mechanism to stop them has to exist. MarqueePause sets
+   data-marquees="paused" on the root; this halts every one of them at once.
+   Hover and focus also pause, so a pointer or keyboard user can settle a line
+   of text long enough to read it without hunting for the control. */
+:root[data-marquees="paused"] .animate-marquee {
+  animation-play-state: paused;
+}
+.marquee-track:hover .animate-marquee,
+.marquee-track:focus-within .animate-marquee {
+  animation-play-state: paused;
+}

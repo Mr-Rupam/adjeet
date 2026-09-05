@@ -127,7 +127,7 @@ export function NightWork() {
 
       {/* Mobile: marquee */}
       <div className="relative mt-10 block overflow-hidden pb-12 md:hidden">
-        <div className="flex [--duration:32s] [--gap:1rem] [gap:var(--gap)]">
+        <div className="marquee-track flex [--duration:32s] [--gap:1rem] [gap:var(--gap)]">
           {[0, 1].map(strip => (
             <div
               key={strip}
