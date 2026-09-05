@@ -29,7 +29,6 @@ export function StandardPlates() {
     <section className="border-b-2 border-ink bg-paper-elevated">
       <div className="mx-auto max-w-content px-5 py-16 md:px-8 md:py-24">
         <div className="mb-10 md:mb-14">
-          <p className="spec text-signal">The standard</p>
           <h2 className="display mt-3 max-w-3xl text-ink" style={{ fontSize: 'var(--text-display-1)' }}>
             Why signs outlive
             <br />

@@ -27,7 +27,6 @@ export default function PortfolioPage() {
       />
 
       <PageMasthead
-        eyebrow="The street record"
         title={
           <>
             Signs you have

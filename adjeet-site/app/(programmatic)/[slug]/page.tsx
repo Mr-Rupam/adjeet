@@ -9,6 +9,7 @@ import { buildBreadcrumbJsonLd, buildServiceJsonLd, buildFaqJsonLd, jsonLdString
 import { GalleryStrip } from '@/components/sections/GalleryStrip'
 import { ProgrammaticPageTracker } from '@/components/PageViewTracker'
 import { WhatsAppLink } from '@/components/ui/WhatsAppLink'
+import { isAwaitingPhotos, AWAITING_PHOTOS_ROBOTS } from '@/lib/publication'
 
 const CITY_LABELS: Record<string, string> = {
   siliguri: 'Siliguri',
@@ -41,6 +42,9 @@ export async function generateMetadata({ params }: { params: Promise<Params> }):
       .filter(Boolean)
       .join('. ') + '.',
     alternates: { canonical: `${siteConfig.url}/${slug}` },
+    // Held out of search until this trade has a photograph. 25 near-identical
+    // city pages with no images read as doorway content. See lib/publication.
+    ...(isAwaitingPhotos(page.service) ? AWAITING_PHOTOS_ROBOTS : {}),
   }
 }
 
@@ -95,10 +99,6 @@ export default async function ProgrammaticPage({ params }: { params: Promise<Par
         </div>
 
         <div className="relative mx-auto w-full max-w-content px-5 pb-12 pt-10 md:px-8 md:pb-16 md:pt-14">
-          <p className="spec text-signal">
-            <span className="mr-2 inline-block h-2 w-2 bg-signal align-baseline" aria-hidden="true" />
-            {service.name} in {cityLabel}
-          </p>
           <h1 className="display m-0 mt-4 text-ink" style={{ fontSize: 'clamp(2.5rem, 6.5vw, 5.5rem)' }}>
             {page.headline}
           </h1>
@@ -157,7 +157,6 @@ export default async function ProgrammaticPage({ params }: { params: Promise<Par
       {/* CTA */}
       <section className="bg-signal">
         <div className="mx-auto max-w-content px-5 py-16 md:px-8 md:py-20">
-          <p className="spec text-signal-ink">Commission a sign</p>
           <h2 className="display mt-4 text-signal-ink" style={{ fontSize: 'clamp(2.25rem, 6vw, 5rem)' }}>
             {service.name}
             <br />

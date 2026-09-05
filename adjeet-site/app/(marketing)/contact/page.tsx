@@ -59,7 +59,6 @@ export default function ContactPage() {
       />
 
       <PageMasthead
-        eyebrow="Contact"
         meta={['+91 98320 11524', 'Siliguri, WB', 'Mon–Sat 9–7']}
         title={
           <>
@@ -118,7 +117,6 @@ export default function ContactPage() {
         <div className="mx-auto grid max-w-content gap-12 px-5 py-14 md:px-8 md:py-20 lg:grid-cols-5 lg:gap-16">
           {/* Form */}
           <div className="lg:col-span-3">
-            <p className="spec text-signal">Send the brief</p>
             <h2 className="display mt-3 text-ink" style={{ fontSize: 'var(--text-display-2)' }}>
               Get a quote.
             </h2>

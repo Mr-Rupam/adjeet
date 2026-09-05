@@ -11,7 +11,6 @@ export function ServicesBoard() {
       <div className="mx-auto max-w-content px-5 py-16 md:px-8 md:py-24">
         <div className="mb-10 flex flex-wrap items-end justify-between gap-6 md:mb-14">
           <div>
-            <p className="spec text-signal">What we build</p>
             <h2 className="display mt-3 text-ink" style={{ fontSize: 'var(--text-display-1)' }}>
               Ten trades.
               <br />

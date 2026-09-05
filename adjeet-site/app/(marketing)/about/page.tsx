@@ -64,7 +64,6 @@ export default function AboutPage() {
       />
 
       <PageMasthead
-        eyebrow="Company profile"
         meta={[`Est. ${FOUNDED_YEAR}`, 'Siliguri, WB', '2 generations']}
         title={
           <>
@@ -94,7 +93,6 @@ export default function AboutPage() {
       <section className="border-b-2 border-ink bg-paper">
         <div className="mx-auto grid max-w-content gap-12 px-5 py-16 md:px-8 md:py-24 lg:grid-cols-5 lg:gap-16">
           <div className="lg:col-span-2 lg:sticky lg:top-24 lg:self-start">
-            <p className="spec text-signal">The story</p>
             <h2 className="display mt-3 text-ink" style={{ fontSize: 'var(--text-display-2)' }}>
               A workshop.
               <br />
@@ -124,7 +122,6 @@ export default function AboutPage() {
       {/* Milestones: the route board */}
       <section className="border-b-2 border-ink bg-paper-elevated">
         <div className="mx-auto max-w-content px-5 py-16 md:px-8 md:py-24">
-          <p className="spec text-signal">Milestones</p>
           <h2 className="display mt-3 mb-10 text-ink md:mb-14" style={{ fontSize: 'var(--text-display-2)' }}>
             The years that built the name.
           </h2>
@@ -150,7 +147,6 @@ export default function AboutPage() {
       <section className="border-b-2 border-ink bg-paper">
         <div className="mx-auto grid max-w-content gap-12 px-5 py-16 md:px-8 md:py-24 lg:grid-cols-2 lg:gap-20">
           <div>
-            <p className="spec text-signal">Patiram Jote</p>
             <h2 className="display mt-3 text-ink" style={{ fontSize: 'var(--text-display-2)' }}>
               Where signs
               <br />

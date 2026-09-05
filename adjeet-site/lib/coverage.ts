@@ -43,12 +43,10 @@ export const COVERAGE_AREAS = [
 ] as const
 
 /**
- * The number used in copy ("Serving 12 districts").
+ * The number used in copy ("Serving 10 districts").
  *
- * NOTE FOR THE OWNER: this is set to 12 because that was the majority claim
- * across the site, but COVERAGE_AREAS only names 10. Either add the two
- * missing districts to COVERAGE_AREAS or change this to 10. Right now the
- * copy claims two districts the coverage board cannot show. Whichever way it
- * goes, change it here and it propagates everywhere.
+ * Confirmed by the owner on 2026-09-05: 10, matching COVERAGE_AREAS exactly,
+ * so every claim on the site is backed by a place the coverage board names.
+ * If the van routes grow, add the area to COVERAGE_AREAS and this follows.
  */
-export const DISTRICTS_SERVED = 12
+export const DISTRICTS_SERVED = COVERAGE_AREAS.length

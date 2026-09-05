@@ -66,7 +66,6 @@ export function ClientStreet() {
   return (
     <section className="relative overflow-hidden border-b-2 border-ink bg-paper py-14 md:py-20">
       <div className="mx-auto max-w-content px-5 md:px-8">
-        <p className="spec text-signal">The client street</p>
         <h2 className="display mt-3 max-w-3xl text-ink" style={{ fontSize: 'var(--text-display-2)' }}>
           Every brand below has a sign in North Bengal{' '}
           <span className="text-signal">that we built.</span>

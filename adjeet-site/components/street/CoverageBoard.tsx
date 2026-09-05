@@ -14,7 +14,6 @@ export function CoverageBoard() {
     <section className="border-b-2 border-ink bg-paper">
       <div className="mx-auto grid max-w-content gap-12 px-5 py-16 md:px-8 md:py-24 lg:grid-cols-2 lg:gap-16">
         <div>
-          <p className="spec text-signal">Coverage</p>
           <h2 className="display mt-3 text-ink" style={{ fontSize: 'var(--text-display-1)' }}>
             From the hills
             <br />

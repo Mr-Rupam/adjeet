@@ -19,6 +19,7 @@ import { ServicePageTracker } from '@/components/PageViewTracker'
 import { Accordion } from '@/components/ui/Accordion'
 import { CommissionCTA } from '@/components/street/CommissionCTA'
 import { WhatsAppLink } from '@/components/ui/WhatsAppLink'
+import { isAwaitingPhotos, AWAITING_PHOTOS_ROBOTS } from '@/lib/publication'
 
 type Params = { slug: string }
 
@@ -34,7 +35,11 @@ export async function generateMetadata({
   const { slug } = await params
   const service = getServiceBySlug(slug as ServiceSlug)
   if (!service) return {}
-  return generateServiceMetadata(service)
+  // Held out of search until this trade has a photograph. See lib/publication.
+  return {
+    ...generateServiceMetadata(service),
+    ...(isAwaitingPhotos(service.slug) ? AWAITING_PHOTOS_ROBOTS : {}),
+  }
 }
 
 export default async function ServiceDetailPage({
@@ -165,7 +170,6 @@ export default async function ServiceDetailPage({
           <div className="mx-auto max-w-content px-5 py-12 md:px-8 md:py-16">
             <div className="grid gap-10 lg:grid-cols-[1fr_2fr] lg:gap-16">
               <div>
-                <p className="spec text-signal">Straight answers</p>
                 <h2 className="display mt-3 text-ink" style={{ fontSize: 'var(--text-display-2)' }}>
                   Asked on every site visit.
                 </h2>

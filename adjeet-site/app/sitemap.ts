@@ -1,6 +1,7 @@
 import type { MetadataRoute } from 'next'
 import { SERVICE_SLUGS } from '@/content/services'
-import { getProgrammaticSlugs } from '@/content/programmatic'
+import { getProgrammaticSlugs, getProgrammaticPage } from '@/content/programmatic'
+import { hasPhotos } from '@/lib/publication'
 import { siteConfig } from '@/lib/seo'
 
 /**
@@ -31,7 +32,10 @@ export default function sitemap(): MetadataRoute.Sitemap {
     ] satisfies Omit<MetadataRoute.Sitemap[number], 'lastModified'>[]
   ).map(entry => ({ ...entry, lastModified }))
 
-  const servicePages: MetadataRoute.Sitemap = SERVICE_SLUGS.map(slug => ({
+  // Only pages that are actually ready to rank. A trade with no photograph is
+  // held back (lib/publication) and announcing it here would contradict its
+  // own noindex. It rejoins the sitemap automatically once it has an image.
+  const servicePages: MetadataRoute.Sitemap = SERVICE_SLUGS.filter(hasPhotos).map(slug => ({
     url: `${base}/services/${slug}`,
     lastModified,
     changeFrequency: 'monthly',
@@ -40,12 +44,17 @@ export default function sitemap(): MetadataRoute.Sitemap {
 
   // The city-service landing pages. These are the pages built to rank for
   // "glow sign board in <city>", so they carry real priority, not filler.
-  const programmaticPages: MetadataRoute.Sitemap = getProgrammaticSlugs().map(slug => ({
-    url: `${base}/${slug}`,
-    lastModified,
-    changeFrequency: 'monthly',
-    priority: 0.7,
-  }))
+  const programmaticPages: MetadataRoute.Sitemap = getProgrammaticSlugs()
+    .filter(slug => {
+      const page = getProgrammaticPage(slug)
+      return page ? hasPhotos(page.service) : false
+    })
+    .map(slug => ({
+      url: `${base}/${slug}`,
+      lastModified,
+      changeFrequency: 'monthly',
+      priority: 0.7,
+    }))
 
   return [...staticPages, ...servicePages, ...programmaticPages]
 }

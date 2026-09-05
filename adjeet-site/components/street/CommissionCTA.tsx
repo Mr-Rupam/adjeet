@@ -19,7 +19,6 @@ export function CommissionCTA() {
   return (
     <section className="bg-signal">
       <div className="mx-auto max-w-content px-5 py-20 md:px-8 md:py-28">
-        <p className="spec text-signal-ink">Commission a sign</p>
         <h2
           className="display mt-4 text-signal-ink"
           style={{ fontSize: 'clamp(3.25rem, 10vw, 9rem)' }}

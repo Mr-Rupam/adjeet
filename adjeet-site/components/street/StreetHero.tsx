@@ -68,10 +68,6 @@ export function StreetHero() {
 
       {/* Wordmark */}
       <div className="relative mx-auto flex w-full max-w-content flex-1 flex-col justify-center px-5 py-10 md:px-8">
-        <p className="spec mb-4 text-ink-subtle">
-          <span className="mr-2 inline-block h-2 w-2 bg-signal align-baseline" aria-hidden="true" />
-          North Bengal&apos;s sign makers
-        </p>
 
         <h1 className="m-0">
           <span
