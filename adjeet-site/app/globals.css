@@ -199,3 +199,14 @@ p {
   letter-spacing: 0.2em;
   text-transform: uppercase;
 }
+
+/* Shutter wordmark glyphs.
+   ShutterText draws every character up to four times (one blurred letter plus
+   three clipped slices). Rendering those as text nodes put "AAAADDDD JJJJ..."
+   into the <h1>'s textContent — which is what Google and any text-extraction
+   tool reads. The glyphs are painted from data-char instead, so the decorative
+   layers carry no text at all and the heading's only text is its .sr-only
+   label. Purely visual; the character still inherits font, size and colour. */
+.shutter-char::before {
+  content: attr(data-char);
+}

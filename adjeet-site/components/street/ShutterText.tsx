@@ -9,6 +9,14 @@ import { motion, useReducedMotion } from 'framer-motion'
  * (daiwiikharihar17147/hero-shutter-text) for AD-JEET's token system.
  *
  * Font size/family are inherited from the parent — wrap in a .display block.
+ *
+ * Accessibility: every character is drawn up to four times (one blurred
+ * letter plus three clipped slices), so the decorative construction is
+ * fenced off behind a single aria-hidden wrapper and the real string is
+ * exposed exactly once via .sr-only. Do not reach for role="text" here —
+ * it is not in the ARIA spec, effectively only Safari honours it, and in
+ * Chrome it made the name-from-content walk the raw duplicated glyphs, so
+ * the hero <h1> announced as "AAAADDDD JJJJEEEEEEEETTTT—…".
  */
 interface ShutterTextProps {
   text: string
@@ -27,6 +35,9 @@ const SLICES = [
   { clip: 'polygon(0 65%, 100% 65%, 100% 100%, 0 100%)', from: '-100%', to: '100%', lag: 0.2, tone: 'text-signal' },
 ] as const
 
+/** Spaces render as U+00A0 so the wordmark cannot break across a line. */
+const NBSP = '\u00A0'
+
 export function ShutterText({
   text,
   className = '',
@@ -40,46 +51,52 @@ export function ShutterText({
   if (reduceMotion) {
     return (
       <span className={className}>
-        {characters.map((char, i) => (
-          <span key={i} className={charClassName?.(char, i)}>
-            {char === ' ' ? ' ' : char}
-          </span>
-        ))}
+        <span className="sr-only">{text}</span>
+        <span aria-hidden="true">
+          {characters.map((char, i) => (
+            <span
+              key={i}
+              data-char={char === ' ' ? NBSP : char}
+              className={`shutter-char ${charClassName?.(char, i) ?? ''}`}
+            />
+          ))}
+        </span>
       </span>
     )
   }
 
   return (
-    <span className={`inline-flex flex-wrap ${className}`} aria-label={text} role="text">
-      {characters.map((char, i) => (
-        <span key={i} aria-hidden="true" className="relative inline-block overflow-hidden">
-          <motion.span
-            initial={{ opacity: 0, filter: 'blur(10px)' }}
-            animate={{ opacity: 1, filter: 'blur(0px)' }}
-            transition={{ delay: baseDelay + i * delayStep + 0.3, duration: 0.8 }}
-            className={`inline-block ${charClassName?.(char, i) ?? ''}`}
-          >
-            {char === ' ' ? ' ' : char}
-          </motion.span>
-
-          {SLICES.map((slice, s) => (
+    <span className={className}>
+      <span className="sr-only">{text}</span>
+      <span aria-hidden="true" className="inline-flex flex-wrap">
+        {characters.map((char, i) => (
+          <span key={i} className="relative inline-block overflow-hidden">
             <motion.span
-              key={s}
-              initial={{ x: slice.from, opacity: 0 }}
-              animate={{ x: slice.to, opacity: [0, 1, 0] }}
-              transition={{
-                duration: 0.7,
-                delay: baseDelay + i * delayStep + slice.lag,
-                ease: 'easeInOut',
-              }}
-              className={`absolute inset-0 z-10 pointer-events-none ${slice.tone}`}
-              style={{ clipPath: slice.clip }}
-            >
-              {char === ' ' ? ' ' : char}
-            </motion.span>
-          ))}
-        </span>
-      ))}
+              initial={{ opacity: 0, filter: 'blur(10px)' }}
+              animate={{ opacity: 1, filter: 'blur(0px)' }}
+              transition={{ delay: baseDelay + i * delayStep + 0.3, duration: 0.8 }}
+              data-char={char === ' ' ? NBSP : char}
+              className={`shutter-char inline-block ${charClassName?.(char, i) ?? ''}`}
+            />
+
+            {SLICES.map((slice, s) => (
+              <motion.span
+                key={s}
+                initial={{ x: slice.from, opacity: 0 }}
+                animate={{ x: slice.to, opacity: [0, 1, 0] }}
+                transition={{
+                  duration: 0.7,
+                  delay: baseDelay + i * delayStep + slice.lag,
+                  ease: 'easeInOut',
+                }}
+                data-char={char === ' ' ? NBSP : char}
+                className={`shutter-char absolute inset-0 z-10 pointer-events-none ${slice.tone}`}
+                style={{ clipPath: slice.clip }}
+              />
+            ))}
+          </span>
+        ))}
+      </span>
     </span>
   )
 }

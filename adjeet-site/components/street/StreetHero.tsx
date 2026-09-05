@@ -82,7 +82,7 @@ export function StreetHero() {
               charClassName={(char) => (char === 'J' ? 'text-signal glow-signal' : undefined)}
             />
           </span>
-          <span className="sr-only">— North Bengal signage and outdoor advertising since 1990</span>
+          <span className="sr-only"> — North Bengal signage and outdoor advertising since 1990</span>
         </h1>
 
         <div className="mt-8 grid gap-8 md:grid-cols-[1fr_auto] md:items-end">

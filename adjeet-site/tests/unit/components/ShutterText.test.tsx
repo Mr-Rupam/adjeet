@@ -1,5 +1,5 @@
 import { describe, it, expect, vi } from 'vitest'
-import { render, screen } from '@testing-library/react'
+import { render } from '@testing-library/react'
 import { ShutterText } from '@/components/street/ShutterText'
 
 // Framer Motion is mocked to avoid animation in tests
@@ -22,28 +22,59 @@ function mockReducedMotion(matches: boolean) {
   })
 }
 
+/** The glyphs actually painted, in order — they live in data-char, not text. */
+function paintedGlyphs(container: HTMLElement) {
+  return Array.from(container.querySelectorAll('.shutter-char')).map(n => n.getAttribute('data-char'))
+}
+
 describe('ShutterText', () => {
-  it('renders the literal text when motion is reduced', () => {
+  // The wordmark is drawn up to four times per character. If those copies are
+  // text nodes they land in the <h1>'s textContent, which is what Google and
+  // any text-extraction tool reads — it used to say "AAAADDDD JJJJEEEE...".
+  it.each([
+    ['reduced motion', true],
+    ['animated', false],
+  ])('contributes the string exactly once as text (%s)', (_label, reduced) => {
+    mockReducedMotion(reduced as boolean)
+    const { container } = render(<ShutterText text="AD JEET" />)
+    expect(container.textContent).toBe('AD JEET')
+  })
+
+  it('paints every character, with spaces as U+00A0 so the wordmark cannot break', () => {
     mockReducedMotion(true)
     const { container } = render(<ShutterText text="AD JEET" />)
-    // Spaces render as U+00A0 by design, so the wordmark never breaks across
-    // a line — assert that contract rather than normalising it away.
-    expect(container.textContent).toBe('AD\u00A0JEET')
-    expect(screen.getByText('J')).toBeTruthy()
-    // "AD JEET" has two E's, so getAllByText — getByText would throw on the duplicate
-    expect(screen.getAllByText('E')).toHaveLength(2)
+    expect(paintedGlyphs(container).join('')).toBe('AD JEET')
   })
 
-  it('applies charClassName only to the matching character (reduced motion)', () => {
-    mockReducedMotion(true)
-    render(<ShutterText text="AD JEET" charClassName={char => (char === 'J' ? 'text-signal' : undefined)} />)
-    expect(screen.getByText('J').className).toContain('text-signal')
-    expect(screen.getByText('A').className).not.toContain('text-signal')
-  })
-
-  it('exposes the full string as an accessible name via role=text when animated', () => {
+  it('draws each character four times when animated — one letter plus three slices', () => {
     mockReducedMotion(false)
-    render(<ShutterText text="AD JEET" />)
-    expect(screen.getByRole('text', { name: 'AD JEET' })).toBeTruthy()
+    const { container } = render(<ShutterText text="AD JEET" />)
+    // 7 characters x 4 layers
+    expect(paintedGlyphs(container)).toHaveLength(28)
+  })
+
+  it('applies charClassName only to the matching character', () => {
+    mockReducedMotion(true)
+    const { container } = render(<ShutterText text="AD JEET" charClassName={char => (char === 'J' ? 'text-signal' : undefined)} />)
+    const j = container.querySelector('[data-char="J"]')
+    const a = container.querySelector('[data-char="A"]')
+    expect(j?.className).toContain('text-signal')
+    expect(a?.className).not.toContain('text-signal')
+  })
+
+  it.each([
+    ['reduced motion', true],
+    ['animated', false],
+  ])('fences the decorative layers off from assistive tech (%s)', (_label, reduced) => {
+    mockReducedMotion(reduced as boolean)
+    const { container } = render(<ShutterText text="AD JEET" />)
+    const hidden = container.querySelector('[aria-hidden="true"]')
+    expect(hidden).toBeTruthy()
+    // every painted glyph sits inside the hidden subtree
+    expect(hidden!.querySelectorAll('.shutter-char').length).toBe(paintedGlyphs(container).length)
+    // the readable copy sits outside it
+    expect(container.querySelector('.sr-only')?.textContent).toBe('AD JEET')
+    // role="text" must not come back: it is not in the ARIA spec.
+    expect(container.querySelector('[role="text"]')).toBeNull()
   })
 })
