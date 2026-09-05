@@ -1,179 +1,159 @@
-# Design System — AD-JEET Site
+# Design System — AD JEET
 
-## Font Pairing
-
-| Font | Weights | Role | Where Used |
-|------|---------|------|------------|
-| **Khand** | 500 / 600 / 700 | Display / headings | Hero, HeroSandbox **only** |
-| **Anek Latin** | 400 / 500 / 600 / 700 | Body / labels | Hero, HeroSandbox **only** |
-| **Source Serif 4** | variable, normal + italic, optical size axis | Serif headings | All other sections |
-| **Inter** | variable | Body / UI | All other sections |
-
-**Rule:** Khand and Anek Latin are hero-zone fonts. Do not use them outside `Hero.tsx` or `Hero.sandbox.tsx`. If you're building a new section that is not a dark editorial hero, use Source Serif 4 + Inter.
-
-Source Serif 4 replaces Fraunces for the public site serif voice. It keeps the editorial weight and optical sizing, but reads more precise and procurement-facing. `--font-fraunces` remains only as a compatibility alias for older branches.
-
-Both hero fonts are loaded with `variable` CSS custom properties (`--font-hero-display`, `--font-hero-body`) and applied as className on the hero section root element so they cascade only within that section.
+**Rewritten 2026-09-04 from the shipped code.** The previous version described
+an earlier era of this site — Khand/Anek Latin/Source Serif 4 fonts that are no
+longer installed, an amber accent that is now blue, and five components
+(`ClientShowcase`, `SelectedWork`, `TheStandard`, `ByTheNumbers`,
+`ServicesIndex`) that no longer exist. Everything below was read out of the
+current source. **The code is the authority; when they disagree, fix this file.**
 
 ---
 
-## CSS Approach — Module vs. Tailwind
+## The world
 
-| Section type | CSS approach | Reason |
-|---|---|---|
-| Dark / editorial / full-bleed | **CSS Modules** | Needs OKLCH colors, layered backgrounds, complex `text-shadow`, isolated custom properties |
-| Light / content sections | **Tailwind utilities** | Design-token colors available via `@theme` (see `design/tokens.css`), standard layout |
-
-**Rule:** If a section has a dark or cinematic aesthetic, create a `.module.css` file. If it sits on the paper background with standard layout, use Tailwind utilities. Do not mix approaches in the same component — pick one per component.
-
-**Known examples:**
-- `Hero.module.css` — dark editorial, OKLCH
-- `Hero.sandbox.module.css` — dark editorial, OKLCH, three material themes
-- `ClientShowcase.module.css` — light section, but uses CSS Module for button styles + client plate styles + carousel keyframes (complex enough to warrant a module)
+Street signage, seen from the pavement. Sharp cut edges, hard plate shadows like
+layered acrylic, a cutting-mat grid, paper grain, and letterforms that belong on
+a North Bengal shopfront. Two states: **Day** (warm paper) and **Night** (the
+street after dark, where signs glow). The night is not a dark-mode afterthought
+— it is when the product is judged.
 
 ---
 
-## Token Color System
+## Type
 
-Defined in `design/tokens.css`. Available as Tailwind utilities via `@theme` (e.g. `bg-paper`, `text-ink`, `border-rule`).
+| Face | Role | CSS var | Where |
+|---|---|---|---|
+| **Anton** | Display | `--font-anton` | `.display` — headlines, wordmark, numerals |
+| **Inter** | Body / UI | `--font-inter` | Default on `body` |
+| **JetBrains Mono** | Spec labels | `--font-mono` | `.spec` — the workshop voice |
 
-| Token | Hex | Semantic meaning |
-|-------|-----|-----------------|
-| `paper` | `#F7F3EC` | Warm white — default page background |
-| `paper-elevated` | `#FBF8F3` | Slightly lighter — cards, hover states |
-| `ink` | `#1A1916` | Near-black — primary text |
-| `ink-muted` | `#4A4741` | Secondary text |
-| `ink-subtle` | `#8A857C` | Tertiary / placeholder text |
-| `rule` | `#E4DDD0` | Borders, dividers |
-| `blue` (adjeet-blue) | `#1E7FB8` | Brand blue — primary actions, links |
-| `blue-deep` | `#134C70` | Darker brand blue — hover states |
-| `ochre` | `#C9962E` | Warm accent — highlights, badges |
-| `clay` | `#A6503A` | Earth accent — tags, sector pills |
-| `sage` | `#6B7C5A` | Cool accent — success states, nature |
-| `slate` | `#455362` | Neutral dark — neutral sector tags |
-| `success` | `#3F7A4E` | Positive states |
-| `warning` | `#B8862A` | Warning states |
-| `error` | `#A63D3D` | Error states |
+Anton is a single weight (400), effectively all-caps by usage. It was chosen as
+"the letterform of Indian street hoardings, flex banners, and painted shop
+boards" — see `app/fonts.ts`.
 
-Dark mode equivalents are defined in `design/tokens.css` under `[data-theme="dark"]`.
+`.spec` is mono, uppercase, `letter-spacing: 0.2em`, 10px. It is the site's
+entire label system. **It is small, so its colour must clear 4.5:1** — see below.
+
+Scale lives in `design/tokens.css`: `--text-mega` (hero wordmark),
+`--text-display-1`, `--text-display-2`, then body sizes.
 
 ---
 
-## Corner Radius Policy
+## Colour
 
-**No rounded corners on UI elements.** The design language is industrial / editorial — sharp edges only on buttons, plates, and cards.
+Defined in `design/tokens.css`, exposed to Tailwind through `@theme`
+(`bg-paper`, `text-ink`, `border-rule`, …). Dark values live under
+`:root[data-theme="dark"]`.
 
-- **Buttons:** `border-radius: 0` — never use `rounded`, `rounded-sm`, or `rounded-full`
-- **Client plates:** sharp (`border-radius: 0`)
-- **Image containers only:** `border-radius: 2px` is acceptable for photo crops (SelectedWork grid)
-- **Never:** `rounded-full` (pill shapes), `rounded-lg`, `rounded-md`
+| Token | Day | Night | Notes |
+|---|---|---|---|
+| `--paper` | `#F4EFE5` | `#0A0D15` | Page ground |
+| `--ink` | `#16130C` | `#F2EDE0` | Primary text |
+| `--ink-muted` | `#524B3C` | `#BFB7A5` | Secondary — 7.54:1 on paper |
+| `--ink-subtle` | `#72695A` | `#837C6D` | Tertiary — 4.72:1 on paper |
+| `--signal` | `#176A96` | `#3FA6DE` | The accent. Signage blue |
+| `--signal-ink` | `#FFFFFF` | `#0A0D15` | **Foreground for anything ON `--signal`** |
+| `--rule` | `#DCD2BE` | `#242B3D` | Borders |
 
----
+### The one colour rule that is easy to get wrong
 
-## Animation Policy
+**Never put `text-ink` on `bg-signal`.** Both `--signal` and `--ink` flip
+*lighter* between day and night, so they move together and the pair collapses.
+It measured **2.33:1** in night mode on the primary WhatsApp CTA and across the
+whole `CommissionCTA` panel.
 
-| Animation driver | Where used | Notes |
-|---|---|---|
-| **framer-motion** | Hero, HeroSandbox | Per-character stagger, material switch, entry/exit. Use `<MotionConfig reducedMotion="user">` to respect OS motion preference. |
-| **CSS keyframes** | ClientShowcase | Infinite scroll carousels. Defined in `ClientShowcase.module.css`, not in a `<style>` tag. |
-| **CSS transitions** | All sections | Hover states, opacity changes. |
+Use `--signal-ink`, which is set per theme specifically for this: white on the
+day blue (5.93:1), near-black on the night blue (7.14:1).
 
-**Rule:** framer-motion is restricted to the hero/sandbox zone. Do not add framer-motion dependencies to light content sections. CSS transitions are preferred everywhere else.
+Related: don't reach for alpha (`text-ink/70`) on a saturated ground. Reduced
+alpha over `--signal` is what dragged the supporting copy under the floor. Use a
+solid token and get hierarchy from the type scale.
 
----
+### Contrast floor
 
-## Section Transitions
-
-**Editorial cut rule:** The Hero section terminates with a single `border-bottom: 1px solid var(--rule)` line. The ClientShowcase section opens on the paper background immediately below. The dark-to-light contrast is intentional editorial design — the cinematic hero gives way to evidence and copy. **Do not add a bridge section, gradient fade, or transition element between Hero and ClientShowcase.**
-
-This is a documented design decision (2026-05-02). The contrast IS the rhythm.
-
----
-
-## Hero CTA Hierarchy
-
-The Hero has three CTAs in `.actionRow`:
-1. **Primary: "Get Quote on WhatsApp"** — amber fill (`var(--hero-amber)`), dark ink text. Highest visual weight. B2B signage buyers convert via WhatsApp first.
-2. **Secondary: "Our Services →"** — outlined/ghost, `border: 1px solid var(--hero-rule)`, paper text.
-3. **Tertiary: "View Portfolio"** — text only, muted color, no border.
-
-**Fixed 2026-05-02.** `.whatsappAction` now carries the amber fill. `.servicesAction` is the outlined secondary.
+Body and label text ≥ 4.5:1; large display text ≥ 3:1. `.spec` is 10px, so it is
+**never** "large text" — it needs the full 4.5:1. Both `--ink-subtle` and
+`--signal` were deepened in Sept 2026 for exactly this reason; check any new
+value with the WCAG relative-luminance formula rather than by eye.
 
 ---
 
-## SectionLabel Component
+## Shape and elevation
 
-The section label bar (mono font, 11px, 0.14em tracking, `var(--ink-subtle)` color, border-bottom `var(--rule)`) is a signature pattern used in ServicesIndex, TheStandard, SelectedWork, and ByTheNumbers.
+**No rounded corners on UI.** Sharp edges only — buttons, plates, cards.
+`border-radius: 0`. The one exception is a 2px radius on photo crops.
 
-**Pattern:** Extract to `adjeet-site/components/ui/SectionLabel.tsx` with a matching `.module.css`. Props: `number` (e.g. "01"), `label` (e.g. "Services"), optional `href` + `linkText` for the right-side "View all →" link. The inline `style={{}}` objects in each section component should be replaced with this component.
-
----
-
-## Accessibility Policy
-
-### `prefers-reduced-motion`
-All animations must be disabled when the user's OS is set to prefer reduced motion.
-
-- **framer-motion**: wrap the component with `<MotionConfig reducedMotion="user">` — this disables all `motion.*` animations automatically.
-- **CSS keyframes**: add `@media (prefers-reduced-motion: reduce) { animation: none; }` in the relevant module file.
-- **CSS transitions**: add `transition: none` in the same media query.
-
-### Visually-hidden inputs
-Hidden interactive elements (e.g. a text input that is visually replaced by a styled element) must use the visually-hidden CSS pattern — never `display: none` or `visibility: hidden`, which remove the element from the accessibility tree.
-
-```css
-.hidden-input {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  padding: 0;
-  margin: -1px;
-  overflow: hidden;
-  clip: rect(0, 0, 0, 0);
-  white-space: nowrap;
-  border-width: 0;
-}
-```
-
-### Auto-scrolling content
-Auto-scrolling carousels must pause on hover and on keyboard focus (`focus-within`). Use `animation-play-state: paused` triggered by CSS `:hover` and `:focus-within` on the carousel wrapper. See `ClientShowcase.module.css` for the pattern.
+Depth is a hard offset plate shadow, not a soft glow:
+`--plate-shadow: 6px 6px 0 0 var(--ink)`. On a `--signal` ground use a black
+alpha shadow instead — `var(--ink)` inverts to near-white at night and vanishes.
 
 ---
 
-## Accent Color Policy (2026-05-02 redesign)
+## Motion
 
-**Amber/ochre (`oklch(0.72 0.13 74)` / `#C9962E`) is the sole accent.** It replaces blue as the primary action indicator in the hero zone and as the left-border accent on national brand plates.
+`framer-motion` for entrance and hover choreography; CSS keyframes for the
+marquees (`animate-marquee`). Every animation must respect
+`prefers-reduced-motion` — `useReducedMotion()` in JS, `motion-reduce:` variants
+in CSS — and the reduced path must preserve the state change, not just delete it.
 
-Amber appears as:
-1. **Hero `::before`** — 4px left bar, full height
-2. **Hero primary CTA** — amber fill (`var(--hero-amber)`)
-3. **ClientShowcase national brand plates** — 3px left border (`border-left-color: oklch(0.72 0.13 74)`)
-
-Blue (`--blue`) remains in the token system for links and focus rings (accessibility) but is no longer used for filled action buttons or section accents.
-
----
-
-## ClientShowcase — Plate Design (2026-05-02)
-
-Client plates are sharp rectangular containers. No color-per-sector.
-
-- **All plates:** `background: var(--paper-elevated)`, `border: 1px solid var(--rule)`, `border-left-width: 3px`
-- **National brands** (Airtel, Jio, Havells, Vivo, OYO, Emami, Adani Cement): amber left border
-- **Regional brands:** `var(--rule)` left border (same as other three sides — visually plain)
-- **Brand name:** Source Serif 4, 0.88rem, 700 weight, `var(--ink)`
-- **Sector tag:** JetBrains Mono, 9px, 600 weight, `letter-spacing: 0.14em`, uppercase, `var(--ink-subtle)`
-
-No `rounded`, no color-coded backgrounds, no sector-based color mapping.
+**Known outstanding issue:** five marquees run with no pause control
+(WCAG 2.2.2). Not yet fixed.
 
 ---
 
-## What We Don't Do
+## Accessibility invariants
 
-- No emoji in production UI
-- No gradient backgrounds on content sections (fade edges on carousel are acceptable)
-- No drop shadows on text
-- No per-sector color coding in client plates
-- No `rounded-full` pill shapes
-- No blue/green/clay/sage UI accents (reserved for future data viz only)
-- No competing decorative effects in the same section
-- No inline `style={{}}` objects for visual design (dynamic values only)
+These are load-bearing; a change that breaks one is a regression, and each has a
+test.
+
+- **`ShutterText` must contribute its string as text exactly once.** It draws
+  every character up to four times; the decorative copies are painted from
+  `data-char` via `.shutter-char::before` and fenced behind one `aria-hidden`
+  wrapper, with the readable string in an `.sr-only` span. Rendering those
+  copies as text nodes put `"AAAADDDD JJJJEEEEEEEETTTT"` into the `<h1>`.
+  **Do not reintroduce `role="text"`** — it is not in the ARIA spec.
+- **Touch targets ≥ 44×44** at 375px. The footer WhatsApp/Call links and the
+  header controls are the ones that regress; raise the hit area with
+  `inline-flex min-h-11` rather than changing type size.
+- **The mobile header must always carry a contact action.** It is the product's
+  entire purpose; it once sat 545px down the page.
+
+---
+
+## Content invariants
+
+Coverage and tenure numbers come from **`lib/coverage.ts`** — `FOUNDED_YEAR`,
+`YEARS_ACTIVE`, `COVERAGE_AREAS`, `DISTRICTS_SERVED`. Never type them inline.
+They previously drifted into four different district counts across nine files,
+and a hardcoded "35 years" that had already gone stale.
+
+`areaServed` in the LocalBusiness JSON-LD derives from `COVERAGE_AREAS`, so the
+structured data cannot under-claim what the page says.
+
+**One `LocalBusiness` per page**, emitted once from the root layout
+(`app/layout.tsx`) so programmatic city pages are covered too.
+
+---
+
+## Current structure
+
+- `components/street/` — the homepage acts, in order: `StreetHero`,
+  `ClientStreet`, `ServicesBoard`, `NightWork`, `StandardPlates`,
+  `CoverageBoard`, `CommissionCTA`. Plus `PageMasthead` and `ShutterText`.
+- `components/ui/` — `QuoteCTA` (the primary conversion action — reuse it,
+  don't hand-roll another), `Button`, `Accordion`, `Lightbox`, `ThemeToggle`,
+  `ConsentBanner`, form controls.
+- `components/sections/` — `LeadForm`, `GalleryStrip`.
+- `design/tokens.css` — all tokens. `app/globals.css` — element styles and
+  effects (`.display`, `.spec`, `.glow-tube`, `.grid-mat`, `.grain`,
+  `.shutter-char`).
+
+### Known drift, not yet resolved
+
+- `components/sections/Hero.sandbox.module.css` is dead: the component that
+  imported it is gone.
+- The eyebrow/kicker above a heading appears ~14 times site-wide. It is the one
+  item Impeccable's craft floor bans outright rather than merely defaults
+  against. Not yet addressed.
+- Decorative sequence numbering (`01–10`, `STD-01`, `R-01`) appears in five
+  different costumes and carries no information in any of them.
