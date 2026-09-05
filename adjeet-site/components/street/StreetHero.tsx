@@ -3,6 +3,7 @@
 import Link from 'next/link'
 import { motion, useReducedMotion } from 'framer-motion'
 import { ShutterText } from '@/components/street/ShutterText'
+import { StreetSky } from '@/components/street/StreetSky'
 import { QuoteCTA } from '@/components/ui/QuoteCTA'
 import { DISTRICTS_SERVED, YEARS_ACTIVE } from '@/lib/coverage'
 
@@ -52,6 +53,9 @@ export function StreetHero() {
       id="hero-section"
       className="relative flex min-h-[calc(100svh-4rem)] flex-col overflow-hidden bg-paper"
     >
+      {/* The street itself: scroll sets the sun, the theme switch commits it */}
+      <StreetSky />
+
       {/* Cutting-mat grid + paper grain */}
       <div aria-hidden="true" className="grid-mat pointer-events-none absolute inset-0" />
       <div aria-hidden="true" className="grain pointer-events-none absolute inset-0" />
@@ -88,7 +92,7 @@ export function StreetHero() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.7, duration: 0.5 }}
           >
-            <p className="max-w-[44ch] text-base leading-relaxed text-ink-muted md:text-lg">
+            <p className="hero-copy max-w-[44ch] text-base leading-relaxed text-ink-muted md:text-lg">
               Every glowing shopfront you pass on Hill Cart Road: someone cut,
               wired, and hung it. For {YEARS_ACTIVE} years, that someone has been us.{' '}
               <strong className="font-semibold text-ink">
