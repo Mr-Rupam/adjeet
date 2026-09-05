@@ -171,9 +171,25 @@ export async function POST(req: NextRequest) {
     const { Resend } = await import('resend')
     const resend = new Resend(apiKey)
 
+    // `onboarding@resend.dev` is Resend's SANDBOX sender: it only delivers to
+    // the Resend account owner's own address, so in production it silently
+    // drops notifications to anyone else. Both addresses are configurable so
+    // the verified adjeet.in domain can be switched on without a code change
+    // (HANDOFF task O-1). The lead itself is already safe in MongoDB by this
+    // point, which is why an email failure below does not fail the request.
+    const from = process.env.LEAD_EMAIL_FROM ?? 'onboarding@resend.dev'
+    const to = process.env.LEAD_EMAIL_TO ?? 'ranjitadjeet@gmail.com'
+    if (process.env.NODE_ENV === 'production' && from.endsWith('@resend.dev')) {
+      console.warn(
+        `[lead:${reqId}] Sending from Resend's sandbox address in production. ` +
+        'Verify adjeet.in in Resend and set LEAD_EMAIL_FROM, or lead emails ' +
+        'will only reach the Resend account owner.'
+      )
+    }
+
     const { error } = await resend.emails.send({
-      from: 'onboarding@resend.dev',
-      to: 'ranjitadjeet@gmail.com',
+      from,
+      to,
       subject: `New lead from ${name}, ${city}`,
       text: [
         `Name: ${name}`,
