@@ -65,6 +65,12 @@ whole `CommissionCTA` panel.
 Use `--signal-ink`, which is set per theme specifically for this: white on the
 day blue (5.93:1), near-black on the night blue (7.14:1).
 
+This one recurs. It was fixed in two components, then found in eight more
+(the submit button, `Button`, `Badge`, `SkipLink`, the Contact and service CTAs,
+the success tick, and the closing panel on every city page). Before shipping any
+surface that sits on the accent, grep for `bg-signal` and check what colour the
+text on it resolves to in **both** themes.
+
 Related: don't reach for alpha (`text-ink/70`) on a saturated ground. Reduced
 alpha over `--signal` is what dragged the supporting copy under the floor. Use a
 solid token and get hierarchy from the type scale.
@@ -96,8 +102,11 @@ marquees (`animate-marquee`). Every animation must respect
 `prefers-reduced-motion`, via `useReducedMotion()` in JS, `motion-reduce:` variants
 in CSS, and the reduced path must preserve the state change, not just delete it.
 
-**Known outstanding issue:** five marquees run with no pause control
-(WCAG 2.2.2). Not yet fixed.
+**WCAG 2.2.2 is satisfied by `MarqueePause`** (mounted in the footer). It sets
+`data-marquees="paused"` on the root and `app/globals.css` halts every
+`.animate-marquee` from there, so one control stops all five. Any new marquee
+must use the `animate-marquee` class to inherit this, and sit inside a
+`.marquee-track` wrapper to get hover and focus pausing.
 
 ---
 
@@ -150,10 +159,9 @@ structured data cannot under-claim what the page says.
 
 ### Known drift, not yet resolved
 
-- `components/sections/Hero.sandbox.module.css` is dead: the component that
-  imported it is gone.
 - The eyebrow/kicker above a heading appears ~14 times site-wide. It is the one
   item Impeccable's craft floor bans outright rather than merely defaults
-  against. Not yet addressed.
+  against. Not yet addressed, because removing it is a composition decision
+  per section, not a find-and-replace.
 - Decorative sequence numbering (`01–10`, `STD-01`, `R-01`) appears in five
   different costumes and carries no information in any of them.
