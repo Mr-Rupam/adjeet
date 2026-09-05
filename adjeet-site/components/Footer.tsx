@@ -46,7 +46,7 @@ export function Footer() {
                 href={WHATSAPP_HREF}
                 className="inline-flex min-h-11 items-center transition-colors hover:text-signal-hot"
               >
-                WhatsApp — {WHATSAPP_DISPLAY}
+                WhatsApp: {WHATSAPP_DISPLAY}
               </a>
             </li>
             <li>
@@ -54,7 +54,7 @@ export function Footer() {
                 href="tel:+919832011524"
                 className="inline-flex min-h-11 items-center transition-colors hover:text-signal-hot"
               >
-                Call — {WHATSAPP_DISPLAY}
+                Call: {WHATSAPP_DISPLAY}
               </a>
             </li>
             <li>
@@ -78,7 +78,7 @@ export function Footer() {
         </div>
       </div>
 
-      {/* The big sign — always lit */}
+      {/* The big sign, always lit */}
       <div aria-hidden="true" className="relative select-none px-2 pb-2">
         <div
           className="display night-glow-tube whitespace-nowrap text-center leading-none"

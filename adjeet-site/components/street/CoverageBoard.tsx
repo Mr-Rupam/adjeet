@@ -4,7 +4,7 @@ import { COVERAGE_AREAS } from '@/lib/coverage'
 
 
 /**
- * Coverage — the route board. Where the installation vans go.
+ * Coverage: the route board. Where the installation vans go.
  */
 export function CoverageBoard() {
   const waUrl = defaultWhatsAppUrl()
@@ -20,7 +20,7 @@ export function CoverageBoard() {
             to the plains.
           </h2>
           <p className="mt-5 max-w-[42ch] text-base leading-relaxed text-ink-muted">
-            Darjeeling switchbacks to Malda highways — our vans carry
+            Darjeeling switchbacks to Malda highways. Our vans carry
             scaffolding, generators, and every tool the job needs. If your town
             isn&apos;t listed, ask. We probably go there.
           </p>

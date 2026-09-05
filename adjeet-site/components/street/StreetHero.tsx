@@ -59,7 +59,7 @@ export function StreetHero() {
       {/* Spec strip */}
       <div className="relative mx-auto w-full max-w-content px-5 pt-6 md:px-8">
         <div className="spec flex items-baseline justify-between gap-4 border-b-2 border-ink pb-3 text-ink-muted">
-          <span>Est. 1990 — Siliguri</span>
+          <span>Est. 1990, Siliguri</span>
           <span className="hidden sm:inline">Signage &amp; outdoor advertising</span>
           <span className="hidden md:inline">N 26.72° / E 88.39°</span>
           <span className="text-signal">Serving {DISTRICTS_SERVED} districts</span>
@@ -83,7 +83,7 @@ export function StreetHero() {
               charClassName={(char) => (char === 'J' ? 'text-signal glow-signal' : undefined)}
             />
           </span>
-          <span className="sr-only"> — North Bengal signage and outdoor advertising since 1990</span>
+          <span className="sr-only">, North Bengal signage and outdoor advertising since 1990</span>
         </h1>
 
         <div className="mt-8 grid gap-8 md:grid-cols-[1fr_auto] md:items-end">
@@ -93,7 +93,7 @@ export function StreetHero() {
             transition={{ delay: 0.7, duration: 0.5 }}
           >
             <p className="max-w-[44ch] text-base leading-relaxed text-ink-muted md:text-lg">
-              Every glowing shopfront you pass on Hill Cart Road — someone cut,
+              Every glowing shopfront you pass on Hill Cart Road: someone cut,
               wired, and hung it. For {YEARS_ACTIVE} years, that someone has been us.{' '}
               <strong className="font-semibold text-ink">
                 500+ installations. One workshop. Zero outsourcing.

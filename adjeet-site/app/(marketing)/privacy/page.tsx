@@ -3,7 +3,7 @@ import Link from 'next/link'
 
 export const metadata: Metadata = {
   title: 'Privacy Policy',
-  description: 'Privacy policy for AD JEET — how we collect, use, and protect your information.',
+  description: 'Privacy policy for AD JEET: how we collect, use, and protect your information.',
   robots: { index: false },
 }
 

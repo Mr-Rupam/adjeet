@@ -1,7 +1,7 @@
 import { Anton, Inter, JetBrains_Mono } from 'next/font/google'
 
 /**
- * Display face — Anton. The letterform of Indian street hoardings, flex
+ * Display face: Anton. The letterform of Indian street hoardings, flex
  * banners, and painted shop boards. Single weight, all caps by usage.
  */
 export const anton = Anton({

@@ -29,7 +29,7 @@ export default function getClientPromise(): Promise<MongoClient> {
     if (process.env.NODE_ENV === 'production') {
       return Promise.reject(new Error('MONGODB_URI must be set in production'))
     }
-    console.warn('[mongodb] Missing MONGODB_URI — using localhost fallback')
+    console.warn('[mongodb] Missing MONGODB_URI, using localhost fallback')
     const fallback = new MongoClient('mongodb://localhost:27017/fallback', options)
     clientPromise = fallback.connect()
     return clientPromise

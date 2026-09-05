@@ -1,5 +1,5 @@
 /* ═══════════════════════════════════════════════════════════════════════
-   AD JEET tokens — "The sign company that lights the street."
+   AD JEET tokens: "The sign company that lights the street."
    Day = warm paper + ink + signage blue.
    Night (dark theme) = the street after dark: signs glow.
    ═══════════════════════════════════════════════════════════════════════ */
@@ -10,16 +10,16 @@
   --paper-elevated:  #FCF8EF;
   --ink:             #16130C;
   --ink-muted:       #524B3C;
-  /* Deepened from #8A8272, which read 3.32:1 on paper — a WCAG AA failure
+  /* Deepened from #8A8272, which read 3.32:1 on paper, a WCAG AA failure
      across the whole `.spec` label system, which is 10px and uses it. Now
      4.72:1, still clearly a step lighter than --ink-muted (7.54:1). */
   --ink-subtle:      #72695A;
   --rule:            #DCD2BE;
 
-  /* ─── Signal — the accent. AD JEET signage blue ────────────────────────── */
+  /* ─── Signal: the accent. AD JEET signage blue ────────────────────────── */
   /* Deepened from #1C7FB0 so the accent clears WCAG AA in both of its jobs:
      as a fill behind white CTA text (5.93:1, was 4.46) and as small `.spec`
-     text on paper (5.18:1, was 3.89 — a real failure). Same hue, 201°. */
+     text on paper (5.18:1, was 3.89, a real failure). Same hue, 201°. */
   --signal:          #176A96;
   --signal-hot:      #2C93C7;
   --glow:            #7FC4E8;
@@ -48,7 +48,7 @@
   --error:            #B03A2E;
   --surface-inverse:  var(--night);
 
-  /* ─── Elevation — hard plate shadows, like layered cut acrylic ────────── */
+  /* ─── Elevation: hard plate shadows, like layered cut acrylic ────────── */
   --elev-1: 0 1px 2px rgba(22, 19, 12, 0.05), 0 2px 8px rgba(22, 19, 12, 0.04);
   --elev-2: 0 4px 10px rgba(22, 19, 12, 0.07), 0 14px 28px rgba(22, 19, 12, 0.06);
   --plate-shadow: 6px 6px 0 0 var(--ink);
@@ -81,7 +81,7 @@
   --text-sm:        0.875rem;
 }
 
-/* ─── Night mode — the whole street after dark ─────────────────────────── */
+/* ─── Night mode: the whole street after dark ─────────────────────────── */
 :root[data-theme="dark"] {
   --paper:           #0A0D15;
   --paper-elevated:  #131826;
@@ -142,7 +142,7 @@
   --font-sans: var(--font-inter), system-ui, sans-serif;
   --font-mono: var(--font-mono), monospace;
 
-  /* Marquee — used by client strip + mobile work gallery */
+  /* Marquee: used by client strip + mobile work gallery */
   --animate-marquee: marquee var(--duration, 40s) linear infinite;
 
   @keyframes marquee {

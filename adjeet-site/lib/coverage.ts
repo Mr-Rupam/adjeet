@@ -26,7 +26,7 @@ export const YEARS_ACTIVE = 36
 
 /**
  * Districts and areas the installation vans cover, in the order the coverage
- * board lists them. This is the checkable claim — it is what renders on the
+ * board lists them. This is the checkable claim: it is what renders on the
  * page and what goes into `areaServed` in the LocalBusiness JSON-LD.
  */
 export const COVERAGE_AREAS = [
@@ -47,7 +47,7 @@ export const COVERAGE_AREAS = [
  *
  * NOTE FOR THE OWNER: this is set to 12 because that was the majority claim
  * across the site, but COVERAGE_AREAS only names 10. Either add the two
- * missing districts to COVERAGE_AREAS or change this to 10 — right now the
+ * missing districts to COVERAGE_AREAS or change this to 10. Right now the
  * copy claims two districts the coverage board cannot show. Whichever way it
  * goes, change it here and it propagates everywhere.
  */

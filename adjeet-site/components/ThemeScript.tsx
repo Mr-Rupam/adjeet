@@ -1,6 +1,6 @@
 import { STORAGE_KEY } from '@/lib/theme'
 
-// Inlined script runs synchronously before React hydration — prevents theme flash.
+// Inlined script runs synchronously before React hydration, which prevents theme flash.
 // Must remain a Server Component (no 'use client') so it emits raw <script>.
 export function ThemeScript() {
   const script = `

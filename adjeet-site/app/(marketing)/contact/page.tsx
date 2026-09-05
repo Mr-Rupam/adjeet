@@ -6,7 +6,7 @@ import { PageMasthead } from '@/components/street/PageMasthead'
 import { DISTRICTS_SERVED } from '@/lib/coverage'
 
 export const metadata: Metadata = {
-  title: 'Contact AD JEET — Get a Signage Quote',
+  title: 'Contact AD JEET: Get a Signage Quote',
   description:
     'Contact AD JEET for signage and outdoor advertising across North Bengal. Office in Siliguri, workshop at Patiram Jote. WhatsApp, call, or use the lead form.',
   alternates: { canonical: `${siteConfig.url}/contact` },
@@ -22,7 +22,7 @@ const METHODS = [
   {
     method: 'WhatsApp',
     value: '+91 98320 11524',
-    note: 'Fastest — reply within 2 hrs on business days',
+    note: 'Fastest: reply within 2 hrs on business days',
     href: waUrl,
     external: true,
   },
@@ -67,7 +67,7 @@ export default function ContactPage() {
             street should <span className="glow-signal text-signal">say.</span>
           </>
         }
-        lead="A quick quote or a full project brief — we reply within 2 hours on business days, and survey Siliguri sites the same day."
+        lead="A quick quote or a full project brief. We reply within 2 hours on business days, and survey Siliguri sites the same day."
       >
         <a
           href={waUrl}
@@ -79,7 +79,7 @@ export default function ContactPage() {
         </a>
       </PageMasthead>
 
-      {/* Ways to reach us — board rows */}
+      {/* Ways to reach us: board rows */}
       <section className="border-b-2 border-ink bg-paper">
         <div className="mx-auto max-w-content px-5 py-12 md:px-8 md:py-16">
           <p className="spec mb-6 text-signal">Ways to reach us</p>
@@ -123,7 +123,7 @@ export default function ContactPage() {
               Get a quote.
             </h2>
             <p className="mt-3 mb-8 text-sm leading-relaxed text-ink-muted">
-              Fill in the details — we&apos;ll come back within 2 business hours.
+              Fill in the details. We&apos;ll come back within 2 business hours.
             </p>
             <div className="plate p-6 md:p-10">
               <LeadForm />

@@ -1,5 +1,5 @@
 /**
- * Two counter-scrolling rows of client names — the street of brands whose
+ * Two counter-scrolling rows of client names: the street of brands whose
  * signs we've built. Pure CSS marquee (tokens.css --animate-marquee).
  */
 
@@ -83,7 +83,7 @@ export function ClientStreet() {
       </div>
 
       <p className="spec mx-auto mt-10 max-w-content px-5 text-ink-subtle md:px-8">
-        Partial list — national brands via their regional agencies, plus 400+ local businesses.
+        Partial list: national brands via their regional agencies, plus 400+ local businesses.
       </p>
     </section>
   )

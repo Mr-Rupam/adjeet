@@ -96,7 +96,7 @@ export default async function ProgrammaticPage({ params }: { params: Promise<Par
         <div className="relative mx-auto w-full max-w-content px-5 pb-12 pt-10 md:px-8 md:pb-16 md:pt-14">
           <p className="spec text-signal">
             <span className="mr-2 inline-block h-2 w-2 bg-signal align-baseline" aria-hidden="true" />
-            {service.name} — {cityLabel}
+            {service.name} in {cityLabel}
           </p>
           <h1 className="display m-0 mt-4 text-ink" style={{ fontSize: 'clamp(2.5rem, 6.5vw, 5.5rem)' }}>
             {page.headline}

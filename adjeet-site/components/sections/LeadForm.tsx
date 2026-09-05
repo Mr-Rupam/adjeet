@@ -205,13 +205,13 @@ export function LeadForm() {
         <textarea
           id="lead-message"
           rows={4}
-          placeholder="Tell us about your project — dimensions, location, deadline..."
+          placeholder="Tell us about your project: dimensions, location, deadline..."
           className={`${fieldNormal} resize-none`}
           {...register('message')}
         />
       </div>
 
-      {/* Turnstile — dev test key only outside production */}
+      {/* Turnstile: dev test key only outside production */}
       <div className="flex flex-col items-center">
         {(() => {
           const siteKey = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY

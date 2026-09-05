@@ -5,12 +5,12 @@ import { defaultWhatsAppUrl } from '@/lib/whatsapp'
 import { trackWhatsAppClick } from '@/lib/analytics'
 
 /**
- * The closer. One loud signal-blue panel — the only full-accent moment on
- * the page — pointing at the single thing this site exists to do.
+ * The closer. One loud signal-blue panel, the only full-accent moment on
+ * the page, pointing at the single thing this site exists to do.
  *
  * Everything here sits ON --signal, so foregrounds use --signal-ink, never
  * --ink: both --signal and --ink flip light in dark theme, so text-ink on
- * this panel collapsed to 2.33:1. Solid, not alpha — hierarchy comes from
+ * this panel collapsed to 2.33:1. Solid, not alpha. Hierarchy comes from
  * the type scale, which is already enormous.
  */
 export function CommissionCTA() {

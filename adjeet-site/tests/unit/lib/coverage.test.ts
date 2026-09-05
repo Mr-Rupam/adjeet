@@ -31,7 +31,7 @@ describe('coverage constants', () => {
   })
 
   // The copy must never claim more districts than the site is willing to name
-  // by more than a token amount — that gap is what made the old numbers read
+  // by more than a token amount. That gap is what made the old numbers read
   // as invented. If this fires, either name the missing areas or lower the claim.
   it('the districts claim stays within reach of the named coverage areas', () => {
     expect(DISTRICTS_SERVED).toBeGreaterThanOrEqual(COVERAGE_AREAS.length)

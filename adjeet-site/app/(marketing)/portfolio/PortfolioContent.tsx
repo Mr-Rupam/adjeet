@@ -31,7 +31,7 @@ const SERVICE_SHORT: Partial<Record<ServiceSlug, string>> = {
   'product-display': 'Display',
 }
 
-// Masonry layout sizes — alternate between tall/wide/square
+// Masonry layout sizes: alternate between tall/wide/square
 function getCardClass(index: number): string {
   const pattern = index % 6
   switch (pattern) {
@@ -107,10 +107,10 @@ export function PortfolioContent() {
 
   return (
     <>
-      {/* ═══════ FILTER BAR — the job docket ═══════ */}
+      {/* ═══════ FILTER BAR: the job docket ═══════ */}
       <section className="sticky top-16 z-30 border-b-2 border-ink bg-paper/95 py-4 backdrop-blur-xl">
         <div className="mx-auto max-w-content px-5 md:px-8">
-          {/* Top row — view toggles + count */}
+          {/* Top row: view toggles + count */}
           <div className="mb-4 flex items-center justify-between gap-4">
             <div className="flex items-center gap-2">
               <button onClick={() => setActiveView('all')} className={chip(activeView === 'all')}>

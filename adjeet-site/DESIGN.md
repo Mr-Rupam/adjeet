@@ -1,7 +1,7 @@
-# Design System — AD JEET
+# Design System: AD JEET
 
 **Rewritten 2026-09-04 from the shipped code.** The previous version described
-an earlier era of this site — Khand/Anek Latin/Source Serif 4 fonts that are no
+an earlier era of this site: Khand/Anek Latin/Source Serif 4 fonts that are no
 longer installed, an amber accent that is now blue, and five components
 (`ClientShowcase`, `SelectedWork`, `TheStandard`, `ByTheNumbers`,
 `ServicesIndex`) that no longer exist. Everything below was read out of the
@@ -14,8 +14,8 @@ current source. **The code is the authority; when they disagree, fix this file.*
 Street signage, seen from the pavement. Sharp cut edges, hard plate shadows like
 layered acrylic, a cutting-mat grid, paper grain, and letterforms that belong on
 a North Bengal shopfront. Two states: **Day** (warm paper) and **Night** (the
-street after dark, where signs glow). The night is not a dark-mode afterthought
-— it is when the product is judged.
+street after dark, where signs glow). The night is not a dark-mode
+afterthought. It is when the product is judged.
 
 ---
 
@@ -23,16 +23,16 @@ street after dark, where signs glow). The night is not a dark-mode afterthought
 
 | Face | Role | CSS var | Where |
 |---|---|---|---|
-| **Anton** | Display | `--font-anton` | `.display` — headlines, wordmark, numerals |
+| **Anton** | Display | `--font-anton` | `.display`, for headlines, wordmark, numerals |
 | **Inter** | Body / UI | `--font-inter` | Default on `body` |
-| **JetBrains Mono** | Spec labels | `--font-mono` | `.spec` — the workshop voice |
+| **JetBrains Mono** | Spec labels | `--font-mono` | `.spec`, the workshop voice |
 
 Anton is a single weight (400), effectively all-caps by usage. It was chosen as
 "the letterform of Indian street hoardings, flex banners, and painted shop
-boards" — see `app/fonts.ts`.
+boards". See `app/fonts.ts`.
 
 `.spec` is mono, uppercase, `letter-spacing: 0.2em`, 10px. It is the site's
-entire label system. **It is small, so its colour must clear 4.5:1** — see below.
+entire label system. **It is small, so its colour must clear 4.5:1**. See below.
 
 Scale lives in `design/tokens.css`: `--text-mega` (hero wordmark),
 `--text-display-1`, `--text-display-2`, then body sizes.
@@ -49,8 +49,8 @@ Defined in `design/tokens.css`, exposed to Tailwind through `@theme`
 |---|---|---|---|
 | `--paper` | `#F4EFE5` | `#0A0D15` | Page ground |
 | `--ink` | `#16130C` | `#F2EDE0` | Primary text |
-| `--ink-muted` | `#524B3C` | `#BFB7A5` | Secondary — 7.54:1 on paper |
-| `--ink-subtle` | `#72695A` | `#837C6D` | Tertiary — 4.72:1 on paper |
+| `--ink-muted` | `#524B3C` | `#BFB7A5` | Secondary, 7.54:1 on paper |
+| `--ink-subtle` | `#72695A` | `#837C6D` | Tertiary, 4.72:1 on paper |
 | `--signal` | `#176A96` | `#3FA6DE` | The accent. Signage blue |
 | `--signal-ink` | `#FFFFFF` | `#0A0D15` | **Foreground for anything ON `--signal`** |
 | `--rule` | `#DCD2BE` | `#242B3D` | Borders |
@@ -71,8 +71,8 @@ solid token and get hierarchy from the type scale.
 
 ### Contrast floor
 
-Body and label text ≥ 4.5:1; large display text ≥ 3:1. `.spec` is 10px, so it is
-**never** "large text" — it needs the full 4.5:1. Both `--ink-subtle` and
+Body and label text ≥ 4.5:1; large display text ≥ 3:1. `.spec` is 10px, so it never
+counts as "large text" and needs the full 4.5:1. Both `--ink-subtle` and
 `--signal` were deepened in Sept 2026 for exactly this reason; check any new
 value with the WCAG relative-luminance formula rather than by eye.
 
@@ -80,12 +80,12 @@ value with the WCAG relative-luminance formula rather than by eye.
 
 ## Shape and elevation
 
-**No rounded corners on UI.** Sharp edges only — buttons, plates, cards.
+**No rounded corners on UI.** Sharp edges only: buttons, plates, cards.
 `border-radius: 0`. The one exception is a 2px radius on photo crops.
 
 Depth is a hard offset plate shadow, not a soft glow:
 `--plate-shadow: 6px 6px 0 0 var(--ink)`. On a `--signal` ground use a black
-alpha shadow instead — `var(--ink)` inverts to near-white at night and vanishes.
+alpha shadow instead, because `var(--ink)` inverts to near-white at night and vanishes.
 
 ---
 
@@ -93,8 +93,8 @@ alpha shadow instead — `var(--ink)` inverts to near-white at night and vanishe
 
 `framer-motion` for entrance and hover choreography; CSS keyframes for the
 marquees (`animate-marquee`). Every animation must respect
-`prefers-reduced-motion` — `useReducedMotion()` in JS, `motion-reduce:` variants
-in CSS — and the reduced path must preserve the state change, not just delete it.
+`prefers-reduced-motion`, via `useReducedMotion()` in JS, `motion-reduce:` variants
+in CSS, and the reduced path must preserve the state change, not just delete it.
 
 **Known outstanding issue:** five marquees run with no pause control
 (WCAG 2.2.2). Not yet fixed.
@@ -111,7 +111,7 @@ test.
   `data-char` via `.shutter-char::before` and fenced behind one `aria-hidden`
   wrapper, with the readable string in an `.sr-only` span. Rendering those
   copies as text nodes put `"AAAADDDD JJJJEEEEEEEETTTT"` into the `<h1>`.
-  **Do not reintroduce `role="text"`** — it is not in the ARIA spec.
+  **Do not reintroduce `role="text"`**. It is not in the ARIA spec.
 - **Touch targets ≥ 44×44** at 375px. The footer WhatsApp/Call links and the
   header controls are the ones that regress; raise the hit area with
   `inline-flex min-h-11` rather than changing type size.
@@ -122,7 +122,7 @@ test.
 
 ## Content invariants
 
-Coverage and tenure numbers come from **`lib/coverage.ts`** — `FOUNDED_YEAR`,
+Coverage and tenure numbers come from **`lib/coverage.ts`**: `FOUNDED_YEAR`,
 `YEARS_ACTIVE`, `COVERAGE_AREAS`, `DISTRICTS_SERVED`. Never type them inline.
 They previously drifted into four different district counts across nine files,
 and a hardcoded "35 years" that had already gone stale.
@@ -137,14 +137,14 @@ structured data cannot under-claim what the page says.
 
 ## Current structure
 
-- `components/street/` — the homepage acts, in order: `StreetHero`,
+- `components/street/` holds the homepage acts, in order: `StreetHero`,
   `ClientStreet`, `ServicesBoard`, `NightWork`, `StandardPlates`,
   `CoverageBoard`, `CommissionCTA`. Plus `PageMasthead` and `ShutterText`.
-- `components/ui/` — `QuoteCTA` (the primary conversion action — reuse it,
-  don't hand-roll another), `Button`, `Accordion`, `Lightbox`, `ThemeToggle`,
+- `components/ui/` holds `QuoteCTA` (the primary conversion action; reuse it
+  rather than hand-rolling another), `Button`, `Accordion`, `Lightbox`, `ThemeToggle`,
   `ConsentBanner`, form controls.
-- `components/sections/` — `LeadForm`, `GalleryStrip`.
-- `design/tokens.css` — all tokens. `app/globals.css` — element styles and
+- `components/sections/` holds `LeadForm` and `GalleryStrip`.
+- `design/tokens.css` holds all tokens. `app/globals.css` holds element styles and
   effects (`.display`, `.spec`, `.glow-tube`, `.grid-mat`, `.grain`,
   `.shutter-char`).
 

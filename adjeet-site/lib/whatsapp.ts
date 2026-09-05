@@ -9,7 +9,7 @@ export function buildWhatsAppUrl(phone: string, message: string): string {
 
 /**
  * The prefilled message the buyer sends. This is the single most important
- * string on the site — it is the first thing the workshop reads about a new
+ * string on the site. It is the first thing the workshop reads about a new
  * lead, and the buyer sees it before they hit send.
  *
  * It used to be assembled by pushing '. Please get in touch.' onto a parts

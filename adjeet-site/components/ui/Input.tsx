@@ -2,7 +2,7 @@ import { type ComponentPropsWithoutRef } from 'react'
 
 interface InputProps extends ComponentPropsWithoutRef<'input'> {
   label: string
-  name: string  // required — used to derive fieldId for label association
+  name: string  // required: used to derive fieldId for label association
   error?: string
   hint?: string
 }

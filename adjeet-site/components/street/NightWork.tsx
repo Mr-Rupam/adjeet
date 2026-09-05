@@ -7,7 +7,7 @@ import { useState } from 'react'
 import { getFeaturedPhotos } from '@/content/gallery'
 
 /**
- * The night act. Always-dark section — because signs are judged after
+ * The night act. Always-dark section, because signs are judged after
  * sunset. Desktop: 3D overlapping card fan with hover elevation, adapted
  * from 21st.dev "Portfolio Gallery" (isaiahbjork/portfolio-gallery).
  * Mobile: CSS marquee of the same cards.
@@ -37,7 +37,7 @@ function WorkCard({ photo, className = '' }: { photo: ReturnType<typeof getFeatu
         <figcaption className="absolute inset-x-0 bottom-0 flex items-baseline justify-between gap-2 bg-gradient-to-t from-black/85 to-transparent px-4 pb-3 pt-8">
           <span className="display text-lg text-night-ink">{caption.client}</span>
           <span className="spec text-night-ink-muted">
-            {caption.job} — {caption.place}
+            {caption.job}, {caption.place}
           </span>
         </figcaption>
       )}
@@ -66,7 +66,7 @@ export function NightWork() {
       <div className="relative mx-auto max-w-content px-5 pt-16 md:px-8 md:pt-24">
         <p className="spec text-signal-hot">
           <span className="mr-2 inline-block h-2 w-2 rounded-full bg-signal-hot align-baseline shadow-[0_0_12px_2px_rgba(70,175,230,0.8)]" aria-hidden="true" />
-          After dark — 6 PM, North Bengal
+          After dark, 6 PM, North Bengal
         </p>
         <h2 className="display mt-4 max-w-4xl text-night-ink" style={{ fontSize: 'var(--text-display-1)' }}>
           When the sun goes down,
@@ -75,7 +75,7 @@ export function NightWork() {
         </h2>
         <p className="mt-5 max-w-[52ch] text-base leading-relaxed text-night-ink-muted">
           A sign earns its keep at night. Weather-sealed cabinets, branded LED
-          drivers, even light across every letter — photographed on the street,
+          drivers, even light across every letter. Photographed on the street,
           not in a studio.
         </p>
       </div>
@@ -116,7 +116,7 @@ export function NightWork() {
                 onHoverStart={() => setHoveredIndex(index)}
                 onHoverEnd={() => setHoveredIndex(null)}
               >
-                <Link href="/portfolio" aria-label={`${photo.alt} — view portfolio`}>
+                <Link href="/portfolio" aria-label={`${photo.alt}, view portfolio`}>
                   <WorkCard photo={photo} className="aspect-video w-80 transition-transform duration-300 hover:scale-105 lg:w-96" />
                 </Link>
               </motion.div>

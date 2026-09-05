@@ -7,7 +7,7 @@ import { CommissionCTA } from '@/components/street/CommissionCTA'
 import { DISTRICTS_SERVED, YEARS_ACTIVE } from '@/lib/coverage'
 
 export const metadata: Metadata = {
-  title: 'Portfolio — 500+ Installations Across North Bengal',
+  title: 'Portfolio: 500+ Installations Across North Bengal',
   description:
     'See our work: glow sign boards, ACP signage, flex printing, vehicle branding, and F-pole installations across Siliguri, Jalpaiguri, Cooch Behar, Darjeeling, and Malda.',
   alternates: { canonical: `${siteConfig.url}/portfolio` },
@@ -27,7 +27,7 @@ export default function PortfolioPage() {
       />
 
       <PageMasthead
-        eyebrow="Work — the street record"
+        eyebrow="The street record"
         title={
           <>
             Signs you have

@@ -61,7 +61,7 @@ export function Nav() {
           </span>
           {/* The header used to carry no contact action at all below md, so on
               a phone the first tappable way to reach the workshop was ~545px
-              down the page — on a site whose entire goal is a WhatsApp tap. */}
+              down the page, on a site whose entire goal is a WhatsApp tap. */}
           <span className="md:hidden">
             <QuoteCTA source="nav-mobile" iconOnly />
           </span>

@@ -1,4 +1,4 @@
-/* ─── Service Detail Page — Premium Redesign ────────────────────────────── */
+/* ─── Service Detail Page: Premium Redesign ────────────────────────────── */
 
 /* ─── Hero ──────────────────────────────────────────────────────────────── */
 
@@ -22,7 +22,7 @@
   z-index: 10;
 }
 
-/* Ghost number — decorative background numeral */
+/* Ghost number: decorative background numeral */
 .heroGhost {
   position: absolute;
   top: -0.1em;
@@ -222,7 +222,7 @@
 }
 
 .specList li::before {
-  content: '— ';
+  content: '▪  ';
   color: var(--adjeet-blue);
   font-size: 0.75rem;
 }

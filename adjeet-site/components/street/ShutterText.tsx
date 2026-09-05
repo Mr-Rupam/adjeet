@@ -3,25 +3,25 @@
 import { motion, useReducedMotion } from 'framer-motion'
 
 /**
- * Per-character "shutter" reveal — three clipped slices sweep across each
+ * Per-character "shutter" reveal: three clipped slices sweep across each
  * letter while the letter itself blurs in, like sign panels being slotted
  * into a frame. Adapted from 21st.dev "Hero Shutter Text"
  * (daiwiikharihar17147/hero-shutter-text) for AD-JEET's token system.
  *
- * Font size/family are inherited from the parent — wrap in a .display block.
+ * Font size/family are inherited from the parent, so wrap in a .display block.
  *
  * Accessibility: every character is drawn up to four times (one blurred
  * letter plus three clipped slices), so the decorative construction is
  * fenced off behind a single aria-hidden wrapper and the real string is
- * exposed exactly once via .sr-only. Do not reach for role="text" here —
+ * exposed exactly once via .sr-only. Do not reach for role="text" here:
  * it is not in the ARIA spec, effectively only Safari honours it, and in
  * Chrome it made the name-from-content walk the raw duplicated glyphs, so
- * the hero <h1> announced as "AAAADDDD JJJJEEEEEEEETTTT—…".
+ * the hero <h1> announced as "AAAADDDD JJJJEEEEEEEETTTT...".
  */
 interface ShutterTextProps {
   text: string
   className?: string
-  /** Per-character class — lets a run of letters take the signal colour. */
+  /** Per-character class: lets a run of letters take the signal colour. */
   charClassName?: (char: string, index: number) => string | undefined
   /** Seconds between each character's start. */
   delayStep?: number

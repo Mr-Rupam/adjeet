@@ -5,7 +5,7 @@
 /* ── Root section ─────────────────────────────────────────────────── */
 
 .sandboxHero {
-  /* Material theme tokens — overridden by .theme* classes below */
+  /* Material theme tokens: overridden by .theme* classes below */
   --sb-glow:      oklch(0.58 0.17 236);
   --sb-accent:    oklch(0.76 0.15 82);
   --sb-signFace:  oklch(0.1 0.035 252);
@@ -233,7 +233,7 @@
 .rivetBl { bottom: 0.6rem; left: 0.6rem;  }
 .rivetBr { bottom: 0.6rem; right: 0.6rem; }
 
-/* ── Hidden input (visually hidden — not display:none) ─────────────── */
+/* ── Hidden input (visually hidden, not display:none) ─────────────── */
 
 .hiddenInput {
   position: absolute;
@@ -640,7 +640,7 @@
 /* ── prefers-reduced-motion ───────────────────────────────────────── */
 
 @media (prefers-reduced-motion: reduce) {
-  /* Disable all animations — no motion at all */
+  /* Disable all animations: no motion at all */
   .pulseDot {
     animation: none;
   }

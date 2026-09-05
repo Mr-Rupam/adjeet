@@ -13,7 +13,7 @@ export function MobileNav({ links }: { links: NavLink[] }) {
   const pathname = usePathname()
   const closeRef = useRef<HTMLButtonElement>(null)
 
-  // Close on route change — intentional direct setState to sync with external router state
+  // Close on route change: intentional direct setState to sync with external router state
   // eslint-disable-next-line react-hooks/set-state-in-effect
   useEffect(() => { setOpen(false) }, [pathname])
 
@@ -95,7 +95,7 @@ export function MobileNav({ links }: { links: NavLink[] }) {
                   opening the menu removed every path to WhatsApp. */}
               <QuoteCTA source="mobile-drawer" className="mt-8 w-full justify-center" />
               <p className="spec mt-6 text-ink-subtle">
-                Est. {FOUNDED_YEAR} — Siliguri · {DISTRICTS_SERVED} districts · 500+ signs
+                Est. {FOUNDED_YEAR}, Siliguri · {DISTRICTS_SERVED} districts · 500+ signs
               </p>
             </nav>
           </div>

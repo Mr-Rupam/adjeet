@@ -160,7 +160,7 @@ export function Chatbot() {
         <div className="chatbot-header">
           <div className="chatbot-header__avatar">🏗️</div>
           <div className="chatbot-header__info">
-            <div className="chatbot-header__name">JEET — AD JEET Assistant</div>
+            <div className="chatbot-header__name">JEET, AD JEET Assistant</div>
             <div className="chatbot-header__status">Online</div>
           </div>
           <button

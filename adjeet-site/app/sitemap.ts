@@ -8,7 +8,7 @@ import { siteConfig } from '@/lib/seo'
  *
  * This file used to enumerate five URLs by hand while the build produced 48
  * pages, so the 10 service pages and all 25 programmatic city-service landing
- * pages — the entire long-tail play that content/programmatic.ts exists for —
+ * pages, the entire long-tail play that content/programmatic.ts exists for,
  * were never announced to Google. Anything added to content/ now appears here
  * automatically.
  */
@@ -17,7 +17,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
 
   // A fixed date, not new Date(). Stamping every URL with build time tells
   // crawlers the whole site changed on every deploy, which is both false and a
-  // weak freshness signal — it trains them to ignore lastModified here.
+  // weak freshness signal: it trains them to ignore lastModified here.
   const lastModified = new Date(CONTENT_LAST_REVIEWED)
 
   const staticPages: MetadataRoute.Sitemap = (

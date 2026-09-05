@@ -22,7 +22,7 @@ function mockReducedMotion(matches: boolean) {
   })
 }
 
-/** The glyphs actually painted, in order — they live in data-char, not text. */
+/** The glyphs actually painted, in order. They live in data-char, not text. */
 function paintedGlyphs(container: HTMLElement) {
   return Array.from(container.querySelectorAll('.shutter-char')).map(n => n.getAttribute('data-char'))
 }
@@ -30,7 +30,7 @@ function paintedGlyphs(container: HTMLElement) {
 describe('ShutterText', () => {
   // The wordmark is drawn up to four times per character. If those copies are
   // text nodes they land in the <h1>'s textContent, which is what Google and
-  // any text-extraction tool reads — it used to say "AAAADDDD JJJJEEEE...".
+  // any text-extraction tool reads. It used to say "AAAADDDD JJJJEEEE...".
   it.each([
     ['reduced motion', true],
     ['animated', false],
@@ -46,7 +46,7 @@ describe('ShutterText', () => {
     expect(paintedGlyphs(container).join('')).toBe('AD JEET')
   })
 
-  it('draws each character four times when animated — one letter plus three slices', () => {
+  it('draws each character four times when animated: one letter plus three slices', () => {
     mockReducedMotion(false)
     const { container } = render(<ShutterText text="AD JEET" />)
     // 7 characters x 4 layers

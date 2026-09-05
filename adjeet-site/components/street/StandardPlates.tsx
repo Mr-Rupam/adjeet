@@ -1,26 +1,26 @@
 /**
- * The standard — four commitments, mounted as fabricated plates.
+ * The standard: four commitments, mounted as fabricated plates.
  */
 const STANDARDS = [
   {
     n: '01',
     title: 'In-house everything',
-    body: 'We never outsource fabrication or installation. Every cut, weld, and wire is done by our own team at Patiram Jote — full accountability from brief to final fixing.',
+    body: 'We never outsource fabrication or installation. Every cut, weld, and wire is done by our own team at Patiram Jote. Full accountability from brief to final fixing.',
   },
   {
     n: '02',
     title: 'Monsoon-proven builds',
-    body: "North Bengal gets 3,000 mm of rain a year. Sealed enclosures, stainless fixings, IP65-rated LED drivers — built for humidity and Nor'westers.",
+    body: "North Bengal gets 3,000 mm of rain a year. Sealed enclosures, stainless fixings, IP65-rated LED drivers, built for humidity and Nor'westers.",
   },
   {
     n: '03',
     title: 'One-year warranty',
-    body: 'Every installation carries a full one-year warranty on LED components and workmanship — driver replacements, resealing, and electrical faults included.',
+    body: 'Every installation carries a full one-year warranty on LED components and workmanship: driver replacements, resealing, and electrical faults included.',
   },
   {
     n: '04',
     title: 'Same-day site visit',
-    body: 'In Siliguri we survey the same day. District projects are coordinated within 24 hours — and quoted accurately before any work begins.',
+    body: 'In Siliguri we survey the same day. District projects are coordinated within 24 hours, and quoted accurately before any work begins.',
   },
 ]
 

@@ -36,7 +36,7 @@ body {
   padding-bottom: env(safe-area-inset-bottom, 0px);
 }
 
-/* Body copy line length. Scoped to paragraphs and prose lists — layout lists
+/* Body copy line length. Scoped to paragraphs and prose lists. Layout lists
    (service board, coverage rows, contact methods) are full-bleed rows. */
 p {
   max-width: 65ch;
@@ -76,7 +76,7 @@ p {
 }
 
 /* ═══════════════════════════════════════════════════════════════════════
-   DISPLAY TYPE — hoarding letters
+   DISPLAY TYPE: hoarding letters
    ═══════════════════════════════════════════════════════════════════════ */
 
 .display {
@@ -88,7 +88,7 @@ p {
 }
 
 /* ═══════════════════════════════════════════════════════════════════════
-   PLATES — sections and cards cut like fabricated sign panels
+   PLATES: sections and cards cut like fabricated sign panels
    ═══════════════════════════════════════════════════════════════════════ */
 
 .plate {
@@ -118,7 +118,7 @@ p {
 }
 
 /* ═══════════════════════════════════════════════════════════════════════
-   GLOW — the reason this company exists. Night mode lights the letters.
+   GLOW: the reason this company exists. Night mode lights the letters.
    ═══════════════════════════════════════════════════════════════════════ */
 
 .glow-signal {
@@ -173,7 +173,7 @@ p {
    BACKDROPS
    ═══════════════════════════════════════════════════════════════════════ */
 
-/* Fabrication grid — faint cutting-mat lines */
+/* Fabrication grid: faint cutting-mat lines */
 .grid-mat {
   background-image:
     linear-gradient(to right, color-mix(in srgb, var(--ink) 7%, transparent) 1px, transparent 1px),
@@ -192,7 +192,7 @@ p {
   opacity: 0.04;
 }
 
-/* Spec label — mono, tracked out, uppercase. The workshop voice. */
+/* Spec label: mono, tracked out, uppercase. The workshop voice. */
 .spec {
   font-family: var(--font-mono), monospace;
   font-size: 10px;
@@ -203,7 +203,7 @@ p {
 /* Shutter wordmark glyphs.
    ShutterText draws every character up to four times (one blurred letter plus
    three clipped slices). Rendering those as text nodes put "AAAADDDD JJJJ..."
-   into the <h1>'s textContent — which is what Google and any text-extraction
+   into the <h1>'s textContent, which is what Google and any text-extraction
    tool reads. The glyphs are painted from data-char instead, so the decorative
    layers carry no text at all and the heading's only text is its .sr-only
    label. Purely visual; the character still inherits font, size and colour. */

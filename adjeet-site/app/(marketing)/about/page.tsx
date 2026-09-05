@@ -6,7 +6,7 @@ import { CommissionCTA } from '@/components/street/CommissionCTA'
 import { DISTRICTS_SERVED, FOUNDED_YEAR, YEARS_ACTIVE } from '@/lib/coverage'
 
 export const metadata: Metadata = {
-  title: 'About AD JEET — North Bengal Signage Since 1990',
+  title: 'About AD JEET: North Bengal Signage Since 1990',
   description:
     'AD JEET has been fabricating and installing signage across North Bengal since 1990. Learn our story, our team, and the districts we serve.',
   alternates: { canonical: `${siteConfig.url}/about` },
@@ -18,9 +18,9 @@ const breadcrumb = buildBreadcrumbJsonLd([
 ])
 
 const MILESTONES = [
-  { year: '1990', title: 'The beginning', desc: 'Jeet Kumar Sarkar opens a small fabrication workshop in Siliguri — hand-painted boards and basic neon.' },
+  { year: '1990', title: 'The beginning', desc: 'Jeet Kumar Sarkar opens a small fabrication workshop in Siliguri, starting with hand-painted boards and basic neon.' },
   { year: '1998', title: 'Expansion', desc: 'Flex printing and vehicle branding added. First jobs in Jalpaiguri and Cooch Behar.' },
-  { year: '2005', title: 'The workshop', desc: 'The dedicated Patiram Jote facility opens — full control over every stage of production.' },
+  { year: '2005', title: 'The workshop', desc: 'The dedicated Patiram Jote facility opens, giving full control over every stage of production.' },
   { year: '2012', title: 'LED revolution', desc: 'SMD LED adopted across the board. 60–70% less power, 50,000-hour lifespan.' },
   { year: '2018', title: `${DISTRICTS_SERVED} districts`, desc: 'Coverage stretches from the Darjeeling hills to the Malda plains.' },
   { year: '2024', title: 'New generation', desc: '500+ installations done. The second Sarkar generation carries the craft forward.' },
@@ -28,7 +28,7 @@ const MILESTONES = [
 
 const STORY: { text: string; highlight?: string; highlightLabel?: string }[] = [
   {
-    text: 'AD JEET was founded in 1990 by Jeet Kumar Sarkar in Siliguri, West Bengal. Starting with hand-painted boards and basic neon installations, the company grew alongside North Bengal\'s commercial expansion — from the early malls on Sevoke Road to the industrial zones near Bagdogra and the tea estates of Darjeeling.',
+    text: 'AD JEET was founded in 1990 by Jeet Kumar Sarkar in Siliguri, West Bengal. Starting with hand-painted boards and basic neon installations, the company grew alongside North Bengal\'s commercial expansion, from the early malls on Sevoke Road to the industrial zones near Bagdogra and the tea estates of Darjeeling.',
   },
   {
     highlight: '3,000+',
@@ -36,7 +36,7 @@ const STORY: { text: string; highlight?: string; highlightLabel?: string }[] = [
     text: 'Over three and a half decades we have installed signage for pharmacies, hospitals, showrooms, telecom outlets, restaurants, logistics companies, and government departments. Clients range from solo proprietors opening their first shop to regional chains expanding across five districts.',
   },
   {
-    text: 'In 2005 we opened our dedicated fabrication workshop at Patiram Jote, outside Siliguri, giving us full control over quality at every stage — from metal cutting and acrylic routing to LED wiring and final paint finish.',
+    text: 'In 2005 we opened our dedicated fabrication workshop at Patiram Jote, outside Siliguri, giving us full control over quality at every stage, from metal cutting and acrylic routing to LED wiring and final paint finish.',
   },
   {
     highlight: '60–70%',
@@ -64,7 +64,7 @@ export default function AboutPage() {
       />
 
       <PageMasthead
-        eyebrow="About — Company profile"
+        eyebrow="Company profile"
         meta={[`Est. ${FOUNDED_YEAR}`, 'Siliguri, WB', '2 generations']}
         title={
           <>
@@ -73,7 +73,7 @@ export default function AboutPage() {
             names <span className="glow-signal text-signal">in lights.</span>
           </>
         }
-        lead={`From a one-man workshop in ${FOUNDED_YEAR} to North Bengal's most trusted signage company — 500+ installations, ${DISTRICTS_SERVED} districts, two generations of the same family craft.`}
+        lead={`From a one-man workshop in ${FOUNDED_YEAR} to North Bengal's most trusted signage company, with 500+ installations, ${DISTRICTS_SERVED} districts, two generations of the same family craft.`}
       >
         <dl className="m-0 flex flex-wrap gap-6 md:gap-10">
           {[
@@ -121,7 +121,7 @@ export default function AboutPage() {
         </div>
       </section>
 
-      {/* Milestones — route board */}
+      {/* Milestones: the route board */}
       <section className="border-b-2 border-ink bg-paper-elevated">
         <div className="mx-auto max-w-content px-5 py-16 md:px-8 md:py-24">
           <p className="spec text-signal">Milestones</p>
@@ -160,7 +160,7 @@ export default function AboutPage() {
               <p>
                 Our 4,000 sq ft fabrication facility is where every AD JEET sign is
                 born. Metal cutting, CNC routing, acrylic bending, LED wiring,
-                painting — everything under one roof.
+                painting. Everything under one roof.
               </p>
               <p>
                 The workshop runs six days a week with a dedicated quality

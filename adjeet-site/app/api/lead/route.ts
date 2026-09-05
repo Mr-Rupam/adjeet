@@ -23,7 +23,7 @@ async function getRateLimiter() {
 
   if (!url || !token) {
     // Dev fallback: always allow
-    console.warn('[lead] Upstash env vars missing — rate limiting disabled')
+    console.warn('[lead] Upstash env vars missing, rate limiting disabled')
     return null
   }
 
@@ -52,7 +52,7 @@ export const maxDuration = 10 // seconds (Vercel function timeout)
 export async function POST(req: NextRequest) {
   const reqId = Math.random().toString(36).slice(2, 10)
 
-  // Origin / CSRF check — require Origin header (browsers always send it on
+  // Origin / CSRF check: require Origin header (browsers always send it on
   // cross-origin POST). Direct API hits from curl/scrapers are blocked.
   const origin = req.headers.get('origin')
   if (!origin || !ALLOWED_ORIGINS.includes(origin)) {
@@ -97,12 +97,12 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ ok: true }) // silently discard
   }
 
-  // Turnstile Verification — fail closed in production if secret is missing.
+  // Turnstile Verification: fail closed in production if secret is missing.
   // Dev test key only used outside production to keep local dev frictionless.
   const turnstileSecret = process.env.TURNSTILE_SECRET_KEY
     ?? (process.env.NODE_ENV !== 'production' ? '1x0000000000000000000000000000000AA' : null);
   if (!turnstileSecret) {
-    console.error(`[lead:${reqId}] TURNSTILE_SECRET_KEY missing in production — blocking submission`)
+    console.error(`[lead:${reqId}] TURNSTILE_SECRET_KEY missing in production, blocking submission`)
     return NextResponse.json({ error: 'Server configuration error. Please reach us on WhatsApp at +91 98320 11524.' }, { status: 503 })
   }
   try {
@@ -174,7 +174,7 @@ export async function POST(req: NextRequest) {
     const { error } = await resend.emails.send({
       from: 'onboarding@resend.dev',
       to: 'ranjitadjeet@gmail.com',
-      subject: `New lead from ${name} — ${city}`,
+      subject: `New lead from ${name}, ${city}`,
       text: [
         `Name: ${name}`,
         `Phone: ${phone}`,
@@ -216,7 +216,7 @@ export async function POST(req: NextRequest) {
       })
     } catch (err) {
       console.error(`[lead:${reqId}] Twilio WhatsApp error:`, err)
-      // Non-fatal — lead is already saved
+      // Non-fatal: lead is already saved
     }
   }
 

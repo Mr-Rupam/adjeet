@@ -32,7 +32,7 @@ describe('defaultWhatsAppUrl', () => {
 
   // Regression guard: the message was assembled by joining parts on a space
   // with '. Please get in touch.' as one of them, so it read
-  // "…on your website . Please get in touch." — a broken sentence, on the
+  // "…on your website . Please get in touch." A broken sentence, on the
   // most important string on the site.
   it.each([
     [undefined],

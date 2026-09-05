@@ -1,11 +1,11 @@
 import { test, expect, type Page } from '@playwright/test';
 
 // Turnstile (dev test key) auto-passes with no user interaction, but the
-// iframe challenge round-trip is async — cfTurnstileResponse isn't populated
+// iframe challenge round-trip is async, so cfTurnstileResponse isn't populated
 // until onSuccess fires, which submit must wait for or the form's required
 // CAPTCHA validation blocks the request before it ever reaches /api/lead.
 // Poll the widget's own hidden response input rather than sleeping a fixed
-// duration — it flips non-empty the instant onSuccess actually resolves.
+// duration. It flips non-empty the instant onSuccess actually resolves.
 async function waitForTurnstile(page: Page) {
   await page
     .frameLocator('iframe[src*="challenges.cloudflare.com"]')

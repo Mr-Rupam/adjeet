@@ -5,7 +5,7 @@ import { photos, getFeaturedPhotos, getPhotosByService, getPhotosByCity } from '
 import { SERVICE_SLUGS } from '@/content/services'
 
 // Thresholds below track the real photo set (5 shipped jobs as of the v3
-// content cut, commit 8e5dc1e — gallery.ts was trimmed from 12 placeholder
+// content cut, commit 8e5dc1e. gallery.ts was trimmed from 12 placeholder
 // entries down to only the photographs that actually exist in public/).
 // Raise these numbers as real photos are added; don't lower them to match
 // a shrinking set.

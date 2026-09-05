@@ -6,7 +6,7 @@ import type { ReactNode } from 'react'
  */
 interface PageMastheadProps {
   eyebrow: string
-  /** Right side of the spec strip — short mono facts. */
+  /** Right side of the spec strip: short mono facts. */
   meta?: string[]
   title: ReactNode
   lead?: ReactNode

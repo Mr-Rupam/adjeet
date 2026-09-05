@@ -10,5 +10,5 @@ export function middleware() {
 }
 
 export const config = {
-  matcher: [] // match nothing — effectively disabled
+  matcher: [] // match nothing, effectively disabled
 }

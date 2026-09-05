@@ -128,7 +128,7 @@ export default async function ServiceDetailPage({
       {/* Spec sheet */}
       <section className="border-b-2 border-ink bg-paper-elevated" aria-label="Service specifications">
         <div className="mx-auto max-w-content px-5 py-12 md:px-8 md:py-16">
-          <p className="spec mb-8 text-signal">Spec sheet — {service.name}</p>
+          <p className="spec mb-8 text-signal">Spec sheet: {service.name}</p>
           <div className="grid gap-6 md:grid-cols-3 lg:gap-8">
             <div className="plate p-6">
               <h2 className="spec m-0 text-ink-subtle">Materials</h2>

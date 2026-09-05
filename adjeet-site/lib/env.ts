@@ -32,7 +32,7 @@ export const env = createEnv({
     TWILIO_WHATSAPP_FROM: process.env.TWILIO_WHATSAPP_FROM,
     RUPAM_WHATSAPP_NUMBER: process.env.RUPAM_WHATSAPP_NUMBER,
   },
-  // All vars are optional — builds succeed without credentials.
+  // All vars are optional: builds succeed without credentials.
   // Dev fallbacks in API routes handle missing vars with console.warn.
   skipValidation: !!process.env.SKIP_ENV_VALIDATION,
 })

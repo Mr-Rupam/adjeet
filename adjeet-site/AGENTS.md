@@ -1,7 +1,7 @@
 <!-- BEGIN:nextjs-agent-rules -->
 # This is NOT the Next.js you know
 
-This version has breaking changes — APIs, conventions, and file structure may all differ from your training data. Read the relevant guide in `node_modules/next/dist/docs/` before writing any code. Heed deprecation notices.
+This version has breaking changes: APIs, conventions, and file structure may all differ from your training data. Read the relevant guide in `node_modules/next/dist/docs/` before writing any code. Heed deprecation notices.
 <!-- END:nextjs-agent-rules -->
 
 ## Project Overview
@@ -22,12 +22,12 @@ AD-JEET is a marketing website for a North Bengal signage company. The entire pr
 
 ## Key Files
 
-- `app/api/lead/route.ts` — lead form submission pipeline
-- `app/api/chatbot/route.ts` — chatbot response handler
-- `components/sections/LeadForm.tsx` — the contact form UI
-- `design/tokens.css` — all design tokens (colours, spacing, type scale)
-- `lib/lead-schema.ts` — Zod schema for lead form validation (add cities/services here)
-- `lib/env.ts` — validated env var access via `@t3-oss/env-nextjs`
+- `app/api/lead/route.ts` is the lead form submission pipeline
+- `app/api/chatbot/route.ts` is the chatbot response handler
+- `components/sections/LeadForm.tsx` is the contact form UI
+- `design/tokens.css` holds all design tokens (colours, spacing, type scale)
+- `lib/lead-schema.ts` is the Zod schema for lead form validation (add cities/services here)
+- `lib/env.ts` gives validated env var access via `@t3-oss/env-nextjs`
 
 ## Common Tasks
 
@@ -40,4 +40,4 @@ AD-JEET is a marketing website for a North Bengal signage company. The entire pr
 
 Run `vercel env pull .env.local` (fastest) or `cp .env.example .env.local` and fill in values.
 
-Missing credentials are safe — the dev server starts without them and logs warnings instead of crashing.
+Missing credentials are safe. The dev server starts without them and logs warnings instead of crashing.

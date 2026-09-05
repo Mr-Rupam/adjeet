@@ -2,7 +2,7 @@ import Link from 'next/link'
 import { services } from '@/content/services'
 
 /**
- * The service board — every trade we run, numbered like a workshop
+ * The service board: every trade we run, numbered like a workshop
  * rate card. Whole row is a link; hover inverts it like a lit switchboard.
  */
 export function ServicesBoard() {
@@ -19,7 +19,7 @@ export function ServicesBoard() {
             </h2>
           </div>
           <p className="max-w-[36ch] text-sm leading-relaxed text-ink-muted">
-            Fabrication, printing, wiring, painting, and installation — all
+            Fabrication, printing, wiring, painting, and installation, all
             in-house at Patiram Jote. Pick a trade to see materials, sizes, and
             turnaround.
           </p>

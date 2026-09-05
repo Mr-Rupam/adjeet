@@ -6,7 +6,7 @@ import { CommissionCTA } from '@/components/street/CommissionCTA'
 export const metadata: Metadata = {
   title: 'Signage & Outdoor Advertising Services',
   description:
-    'From glow sign boards and ACP LED signage to flex printing, vehicle branding, and events — AD JEET delivers quality signage across North Bengal.',
+    'From glow sign boards and ACP LED signage to flex printing, vehicle branding, and events. AD JEET delivers quality signage across North Bengal.',
   alternates: { canonical: 'https://adjeet.in/services' },
 }
 
@@ -24,7 +24,7 @@ const PROCESS = [
   {
     n: '03',
     title: 'Fabricate',
-    body: 'Metal cutting, acrylic routing, LED wiring, and paint — every step at our Patiram Jote workshop. No subcontracting.',
+    body: 'Metal cutting, acrylic routing, LED wiring, and paint: every step at our Patiram Jote workshop. No subcontracting.',
   },
   {
     n: '04',
@@ -46,12 +46,12 @@ export default function ServicesPage() {
             needs to <span className="glow-signal text-signal">say your name.</span>
           </>
         }
-        lead="Ten trades under one roof — surveyed, fabricated, wired, painted, and installed by the same team that answers your WhatsApp."
+        lead="Ten trades under one roof, surveyed, fabricated, wired, painted, and installed by the same team that answers your WhatsApp."
       />
 
       <ServicesBoard />
 
-      {/* Process — brief to street */}
+      {/* Process: brief to street */}
       <section className="border-b-2 border-ink bg-paper-elevated">
         <div className="mx-auto max-w-content px-5 py-16 md:px-8 md:py-24">
           <div className="mb-10 md:mb-14">
