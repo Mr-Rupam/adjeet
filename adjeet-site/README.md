@@ -1,6 +1,6 @@
 # AD-JEET Website
 
-North Bengal's signage authority — Next.js 16 / App Router / Tailwind CSS 4.
+North Bengal's signage authority. Next.js 16 / App Router / Tailwind CSS 4.
 
 ## Getting started
 
@@ -30,9 +30,9 @@ npm install && npm run dev
 
 **Manual:**
 ```bash
-cp .env.example .env.local   # fill in values — .env.example has source links for each
+cp .env.example .env.local   # fill in values; .env.example has source links for each
 npm install && npm run dev
 ```
 
-Missing credentials are safe — the dev server starts without them and logs warnings instead of crashing.
+Missing credentials are safe. The dev server starts without them and logs warnings instead of crashing.
 

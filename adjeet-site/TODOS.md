@@ -1,4 +1,4 @@
-# AD-JEET Site — Design TODOs
+# AD-JEET Site: Design TODOs
 
 Tracked from /plan-design-review session (2026-05-01). See DESIGN.md for the design system rules.
 
@@ -30,10 +30,10 @@ Tracked from /plan-design-review session (2026-05-01). See DESIGN.md for the des
 **Done 2026-05-02.** Full rewrite of Hero.tsx + Hero.module.css. Single decorative element: 4px amber left bar (::before). Photo as texture at brightness(0.18). Large Khand heading "North / Bengal's / sign maker." Districts paragraph. Amber-fill WhatsApp primary CTA, outlined secondary, text tertiary. metaBar / copyStack / processBar three-row grid. No blueprint grid, signal field, specimen box, or competing effects.
 
 ### [x] SelectedWork: empty state (0 photos)
-**Done 2026-05-02.** Added `if (featured.length === 0)` early return with warm copy "Photographing recent projects — see our work in person." and a WhatsApp link.
+**Done 2026-05-02.** Added `if (featured.length === 0)` early return with warm copy "Photographing recent projects, see our work in person." and a WhatsApp link.
 
 ### [ ] SelectedWork: partial state (1–3 photos)
-**Low priority.** The current layout already shows PlaceholderBox for empty supporting cells, so the grid does not have "empty" cells — it has placeholder boxes. This is acceptable. Address if visually insufficient after real photos are added.
+**Low priority.** The current layout already shows PlaceholderBox for empty supporting cells, so the grid does not have "empty" cells, it has placeholder boxes. This is acceptable. Address if visually insufficient after real photos are added.
 
 ### [x] Extract SectionLabel component
 **Done 2026-05-02.** Created `adjeet-site/components/ui/SectionLabel.tsx` + `SectionLabel.module.css`. Replaced inline style objects in ServicesIndex, TheStandard, SelectedWork, and ByTheNumbers.
@@ -58,7 +58,7 @@ Tracked from /plan-design-review session (2026-05-01). See DESIGN.md for the des
 **Done 2026-05-02.** `@media (max-width: 640px)` block added to Hero.sandbox.module.css: single-column stage, full-width sign, horizontal-scroll material picker row, full-width CTA buttons.
 
 ### [x] Audit hidden-input accessibility in HeroSandbox
-**Done 2026-05-02.** `.hiddenInput` uses the visually-hidden pattern (position: absolute; width: 1px; height: 1px; clip; etc.) — not display:none.
+**Done 2026-05-02.** `.hiddenInput` uses the visually-hidden pattern (position: absolute; width: 1px; height: 1px; clip; etc.), not display:none.
 
 ---
 
@@ -66,7 +66,7 @@ Tracked from /plan-design-review session (2026-05-01). See DESIGN.md for the des
 
 HeroSandbox is built but not on the homepage (removed 2026-05-02 per /plan-eng-review). These issues must be resolved before it ships anywhere.
 
-### [x] Fix AnimatePresence key scheme — mid-string edit re-animation bug
+### [x] Fix AnimatePresence key scheme: mid-string edit re-animation bug
 **Done 2026-05-02.** Replaced `key={`${i}-${char}`}` (position-based) with `key={entry.id}` (stable UUID per character). State changed from `string` to `CharEntry[] = { id: string; char: string }[]`. Added `getUpdatedChars()` using longest-common-prefix/suffix diffing to preserve IDs for unchanged characters on edit.
 
 ### [x] Fix mobile spec card height on HeroSandbox at 375px

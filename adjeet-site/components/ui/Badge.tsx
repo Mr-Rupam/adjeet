@@ -2,7 +2,7 @@ type BadgeVariant = 'default' | 'blue' | 'ochre' | 'success'
 
 const BADGE_CLASSES: Record<BadgeVariant, string> = {
   default: 'bg-paper-elevated text-ink-muted',
-  blue: 'bg-blue text-white',
+  blue: 'bg-signal text-signal-ink',
   ochre: 'bg-ochre text-white',
   success: 'bg-success text-white',
 }
@@ -17,7 +17,7 @@ interface BadgeProps {
 
 export function Badge({ children, variant = 'default', className = '' }: BadgeProps) {
   return (
-    <span className={`inline-flex items-center rounded px-2 py-0.5 text-xs font-semibold ${BADGE_CLASSES[variant]} ${className}`}>
+    <span className={`inline-flex items-center border-2 border-ink px-2 py-0.5 text-[10px] font-bold uppercase tracking-[0.08em] ${BADGE_CLASSES[variant]} ${className}`}>
       {children}
     </span>
   )

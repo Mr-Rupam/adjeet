@@ -23,7 +23,7 @@ async function getRateLimiter() {
   const token = process.env.UPSTASH_REDIS_REST_TOKEN;
 
   if (!url || !token) {
-    console.warn('[chatbot] Upstash env vars missing — rate limiting disabled');
+    console.warn('[chatbot] Upstash env vars missing, rate limiting disabled');
     return null;
   }
 
@@ -52,7 +52,7 @@ interface ChatMessage {
 export async function POST(req: NextRequest) {
   const reqId = Math.random().toString(36).slice(2, 10)
 
-  // CORS / origin check — require Origin header (browsers always send on POST).
+  // CORS / origin check: require Origin header (browsers always send on POST).
   const origin = req.headers.get('origin');
   if (!origin || !ALLOWED_ORIGINS.includes(origin)) {
     return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
@@ -106,7 +106,7 @@ export async function POST(req: NextRequest) {
   }
 
   if (!process.env.OPENAI_API_KEY) {
-    console.error(`[chatbot:${reqId}] OPENAI_API_KEY missing — chatbot disabled`)
+    console.error(`[chatbot:${reqId}] OPENAI_API_KEY missing, chatbot disabled`)
     return NextResponse.json(
       { error: 'Chat is temporarily unavailable. Please reach us on WhatsApp at +91 98320 11524.' },
       { status: 503 }

@@ -1,25 +1,58 @@
-/* ─── Colours ─────────────────────────────────────────────────────────── */
-:root {
-  --paper:           #F7F3EC;
-  --paper-elevated:  #FBF8F3;
-  --ink:             #1A1916;
-  --ink-muted:       #4A4741;
-  --ink-subtle:      #8A857C;
-  --rule:            #E4DDD0;
-  --adjeet-blue:     #0A1628;
-  --adjeet-blue-deep: #060D17;
-  --ochre:           #C9962E;
-  --clay:            #A6503A;
-  --sage:            #6B7C5A;
-  --slate:           #455362;
-  --success:         #3F7A4E;
-  --warning:         #B8862A;
-  --error:           #A63D3D;
-  --surface-inverse: #1A1916;
+/* ═══════════════════════════════════════════════════════════════════════
+   AD JEET tokens: "The sign company that lights the street."
+   Day = warm paper + ink + signage blue.
+   Night (dark theme) = the street after dark: signs glow.
+   ═══════════════════════════════════════════════════════════════════════ */
 
-  /* ─── Elevation ──────────────────────────────────────────────────────── */
-  --elev-1: 0 1px 2px rgba(26,25,22,0.04), 0 2px 6px rgba(26,25,22,0.03);
-  --elev-2: 0 4px 8px rgba(26,25,22,0.06), 0 12px 24px rgba(26,25,22,0.05);
+:root {
+  /* ─── Day surfaces ────────────────────────────────────────────────────── */
+  --paper:           #F4EFE5;
+  --paper-elevated:  #FCF8EF;
+  --ink:             #16130C;
+  --ink-muted:       #524B3C;
+  /* Deepened from #8A8272, which read 3.32:1 on paper, a WCAG AA failure
+     across the whole `.spec` label system, which is 10px and uses it. Now
+     4.72:1, still clearly a step lighter than --ink-muted (7.54:1). */
+  --ink-subtle:      #72695A;
+  --rule:            #DCD2BE;
+
+  /* ─── Signal: the accent. AD JEET signage blue ────────────────────────── */
+  /* Deepened from #1C7FB0 so the accent clears WCAG AA in both of its jobs:
+     as a fill behind white CTA text (5.93:1, was 4.46) and as small `.spec`
+     text on paper (5.18:1, was 3.89, a real failure). Same hue, 201°. */
+  --signal:          #176A96;
+  --signal-hot:      #2C93C7;
+  --glow:            #7FC4E8;
+
+  /* Foreground for anything sitting ON --signal. Must be set per theme:
+     --signal and --ink both flip light in dark mode, so `bg-signal text-ink`
+     inverts the wrong way and collapsed to 2.33:1. Never use --ink on signal. */
+  --signal-ink:      #FFFFFF;
+
+  /* ─── Night surfaces (always-dark sections) ───────────────────────────── */
+  --night:           #0A0D15;
+  --night-elevated:  #131826;
+  --night-rule:      rgba(244, 239, 229, 0.1);
+  --night-ink:       #F2EDE0;
+  --night-ink-muted: rgba(242, 237, 224, 0.55);
+
+  /* ─── Legacy-named tokens (values refreshed, names kept for compat) ───── */
+  --adjeet-blue:      #101B2E;
+  --adjeet-blue-deep: #080E19;
+  --ochre:            #D98E04;
+  --clay:             #A6503A;
+  --sage:             #6B7C5A;
+  --slate:            #455362;
+  --success:          #3F7A4E;
+  --warning:          #B8862A;
+  --error:            #B03A2E;
+  --surface-inverse:  var(--night);
+
+  /* ─── Elevation: hard plate shadows, like layered cut acrylic ────────── */
+  --elev-1: 0 1px 2px rgba(22, 19, 12, 0.05), 0 2px 8px rgba(22, 19, 12, 0.04);
+  --elev-2: 0 4px 10px rgba(22, 19, 12, 0.07), 0 14px 28px rgba(22, 19, 12, 0.06);
+  --plate-shadow: 6px 6px 0 0 var(--ink);
+  --plate-shadow-signal: 6px 6px 0 0 var(--signal);
 
   /* ─── Spacing ─────────────────────────────────────────────────────────── */
   --space-1:  4px;
@@ -34,31 +67,45 @@
   --space-32: 128px;
 
   /* ─── Section rhythm ──────────────────────────────────────────────────── */
-  --section-py: clamp(4rem, 10vh, 8rem);
+  --section-py: clamp(4.5rem, 11vh, 9rem);
 
   /* ─── Max width ───────────────────────────────────────────────────────── */
-  --content-max: 1280px;
+  --content-max: 1320px;
 
-  /* ─── Typography scale ───────────────────────────────────────────────── */
-  --text-display-1: clamp(3.5rem, 8vw, 7.5rem);
-  --text-display-2: clamp(1.75rem, 3.5vw, 2.5rem);
-  --text-body-lg: 1.125rem;
-  --text-body:    1rem;
-  --text-sm:      0.875rem;
+  /* ─── Typography scale ────────────────────────────────────────────────── */
+  --text-mega:      clamp(4.25rem, 16.5vw, 15rem);   /* hero wordmark */
+  --text-display-1: clamp(3rem, 8vw, 7rem);          /* section headliners */
+  --text-display-2: clamp(1.9rem, 4vw, 3.25rem);     /* sub headliners */
+  --text-body-lg:   1.125rem;
+  --text-body:      1rem;
+  --text-sm:        0.875rem;
 }
 
+/* ─── Night mode: the whole street after dark ─────────────────────────── */
 :root[data-theme="dark"] {
-  --paper:           #13120F;
-  --paper-elevated:  #1E1C18;
-  --ink:             #F0EBDE;
-  --ink-muted:       #BAB3A2;
-  --ink-subtle:      #A8A29A;
-  --rule:            #2B2823;
-  --adjeet-blue:     #1E3A5A;
-  --surface-inverse: #0D0C0A;
+  --paper:           #0A0D15;
+  --paper-elevated:  #131826;
+  --ink:             #F2EDE0;
+  --ink-muted:       #BFB7A5;
+  --ink-subtle:      #837C6D;
+  --rule:            #242B3D;
+
+  --signal:          #3FA6DE;
+  --signal-hot:      #7ECBEF;
+  /* Dark theme lightens --signal, so its foreground must go dark: 7.14:1. */
+  --signal-ink:      #0A0D15;
+
+  --night:           #060911;
+  --night-elevated:  #0E1320;
+
+  --adjeet-blue:     #4A6FA5;
+  --surface-inverse: #060911;
+
+  --plate-shadow: 6px 6px 0 0 rgba(0, 0, 0, 0.55);
+  --plate-shadow-signal: 6px 6px 0 0 var(--signal);
 }
 
-/* ─── Tailwind v4 theme registration ─────────────────────────────────── */
+/* ─── Tailwind v4 theme registration ───────────────────────────────────── */
 @theme {
   /* Colours */
   --color-paper:          var(--paper);
@@ -67,22 +114,39 @@
   --color-ink-muted:      var(--ink-muted);
   --color-ink-subtle:     var(--ink-subtle);
   --color-rule:           var(--rule);
+  --color-signal:         var(--signal);
+  --color-signal-hot:     var(--signal-hot);
+  --color-signal-ink:     var(--signal-ink);
+  --color-glow:           var(--glow);
+  --color-night:          var(--night);
+  --color-night-elevated: var(--night-elevated);
+  --color-night-rule:     var(--night-rule);
+  --color-night-ink:      var(--night-ink);
+  --color-night-ink-muted: var(--night-ink-muted);
   --color-blue:           var(--adjeet-blue);
   --color-blue-deep:      var(--adjeet-blue-deep);
   --color-ochre:          var(--ochre);
   --color-clay:           var(--clay);
   --color-sage:           var(--sage);
   --color-slate:          var(--slate);
-  --color-success:         var(--success);
-  --color-warning:         var(--warning);
-  --color-error:           var(--error);
+  --color-success:        var(--success);
+  --color-warning:        var(--warning);
+  --color-error:          var(--error);
   --color-surface-inverse: var(--surface-inverse);
 
   /* Max width */
   --width-content: var(--content-max);
 
   /* Fonts */
+  --font-display: var(--font-anton), 'Arial Narrow', sans-serif;
   --font-sans: var(--font-inter), system-ui, sans-serif;
-  --font-serif: var(--font-fraunces), serif;
   --font-mono: var(--font-mono), monospace;
+
+  /* Marquee: used by client strip + mobile work gallery */
+  --animate-marquee: marquee var(--duration, 40s) linear infinite;
+
+  @keyframes marquee {
+    from { transform: translateX(0); }
+    to   { transform: translateX(calc(-100% - var(--gap, 1rem))); }
+  }
 }

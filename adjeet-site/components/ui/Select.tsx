@@ -19,7 +19,7 @@ export function Select({ label, options, placeholder, error, id, name, className
 
   return (
     <div className={`flex flex-col gap-1 ${className}`}>
-      <label htmlFor={fieldId} className="text-sm font-medium text-ink">
+      <label htmlFor={fieldId} className="spec text-ink-muted">
         {label}
       </label>
       <select
@@ -27,7 +27,7 @@ export function Select({ label, options, placeholder, error, id, name, className
         name={name}
         aria-invalid={error ? 'true' : undefined}
         aria-describedby={errorId}
-        className="rounded border border-rule bg-paper px-3 py-2 text-sm text-ink focus:outline-none focus:ring-2 focus:ring-blue focus:border-transparent aria-[invalid=true]:border-error"
+        className="border-2 border-ink/40 bg-paper px-3 py-2.5 text-sm text-ink focus:border-ink focus:shadow-[3px_3px_0_0_var(--signal)] focus:outline-none aria-[invalid=true]:border-error"
         {...props}
       >
         {placeholder && (

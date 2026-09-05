@@ -8,6 +8,8 @@ import { defaultWhatsAppUrl } from '@/lib/whatsapp'
 import { buildBreadcrumbJsonLd, buildServiceJsonLd, buildFaqJsonLd, jsonLdString, siteConfig } from '@/lib/seo'
 import { GalleryStrip } from '@/components/sections/GalleryStrip'
 import { ProgrammaticPageTracker } from '@/components/PageViewTracker'
+import { WhatsAppLink } from '@/components/ui/WhatsAppLink'
+import { isAwaitingPhotos, AWAITING_PHOTOS_ROBOTS } from '@/lib/publication'
 
 const CITY_LABELS: Record<string, string> = {
   siliguri: 'Siliguri',
@@ -28,10 +30,21 @@ export async function generateMetadata({ params }: { params: Promise<Params> }):
   const page = getProgrammaticPage(slug)
   if (!page) return {}
   const service = getServiceBySlug(page.service as ServiceSlug)
+  const city = CITY_LABELS[page.city] ?? page.city
   return {
-    title: `${page.headline} | AD-JEET`,
-    description: `${service?.tagline ?? ''} Serving ${CITY_LABELS[page.city] ?? page.city}, North Bengal. Contact AD-JEET for a same-day quote.`,
+    // Deliberately NOT page.headline: those run 65-94 characters and are
+    // written to work as the on-page <h1>. As a <title> they truncate in the
+    // SERP, and the manual "| AD JEET" collided with the root layout's
+    // '%s | AD JEET' template, so every one of these 25 pages rendered the
+    // brand twice. Service + city keeps it keyword-first and inside ~60.
+    title: service ? `${service.name} in ${city}` : page.headline,
+    description: [service?.tagline?.replace(/[.\s]+$/, ''), `Serving ${city}, North Bengal`, 'Contact AD JEET for a same-day quote']
+      .filter(Boolean)
+      .join('. ') + '.',
     alternates: { canonical: `${siteConfig.url}/${slug}` },
+    // Held out of search until this trade has a photograph. 25 near-identical
+    // city pages with no images read as doorway content. See lib/publication.
+    ...(isAwaitingPhotos(page.service) ? AWAITING_PHOTOS_ROBOTS : {}),
   }
 }
 
@@ -64,32 +77,37 @@ export default async function ProgrammaticPage({ params }: { params: Promise<Par
       {faqSchema && <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLdString(faqSchema) }} />}
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLdString(breadcrumb) }} />
 
-      {/* Hero */}
-      <section className="flex items-end min-h-[40vh] section-inverse py-16">
-        <div className="mx-auto max-w-content px-6">
-          <nav aria-label="Breadcrumb" className="mb-6">
-            <ol className="flex gap-2 text-xs text-white/50 list-none p-0 m-0">
-              <li><Link href="/" className="hover:text-white/80 transition-colors">Home</Link></li>
-              <li aria-hidden="true">›</li>
-              <li><Link href={`/services/${service.slug}`} className="hover:text-white/80 transition-colors">{service.name}</Link></li>
-              <li aria-hidden="true">›</li>
-              <li className="text-white/80">{cityLabel}</li>
+      {/* Masthead */}
+      <section className="relative overflow-hidden border-b-2 border-ink bg-paper">
+        <div aria-hidden="true" className="grid-mat pointer-events-none absolute inset-0" />
+        <div aria-hidden="true" className="grain pointer-events-none absolute inset-0" />
+
+        <div className="relative mx-auto w-full max-w-content px-5 pt-6 md:px-8">
+          <nav aria-label="Breadcrumb" className="spec border-b-2 border-ink pb-3 text-ink-muted">
+            <ol className="m-0 flex list-none gap-2 p-0">
+              <li><Link href="/" className="transition-colors hover:text-ink">Home</Link></li>
+              <li aria-hidden="true">/</li>
+              <li>
+                <Link href={`/services/${service.slug}`} className="transition-colors hover:text-ink">
+                  {service.name}
+                </Link>
+              </li>
+              <li aria-hidden="true">/</li>
+              <li className="text-ink">{cityLabel}</li>
             </ol>
           </nav>
-          <h1 className="text-4xl md:text-5xl font-serif font-bold text-white mb-4 leading-tight">
+        </div>
+
+        <div className="relative mx-auto w-full max-w-content px-5 pb-12 pt-10 md:px-8 md:pb-16 md:pt-14">
+          <h1 className="display m-0 mt-4 text-ink" style={{ fontSize: 'clamp(2.5rem, 6.5vw, 5.5rem)' }}>
             {page.headline}
           </h1>
-        </div>
-      </section>
 
-      {/* Stats band */}
-      <section className="bg-paper-elevated border-y border-rule py-10">
-        <div className="mx-auto max-w-content px-6">
-          <dl className="flex flex-wrap gap-12">
+          <dl className="m-0 mt-8 flex flex-wrap gap-6 md:gap-10">
             {page.stats.map(s => (
-              <div key={s.label}>
-                <dd className="text-3xl font-bold font-serif text-ink">{s.value}</dd>
-                <dt className="text-xs text-ink-subtle mt-1">{s.label}</dt>
+              <div key={s.label} className="flex flex-col border-l-2 border-ink pl-4">
+                <dt className="spec order-2 text-ink-subtle">{s.label}</dt>
+                <dd className="display order-1 m-0 text-4xl text-ink">{s.value}</dd>
               </div>
             ))}
           </dl>
@@ -97,11 +115,11 @@ export default async function ProgrammaticPage({ params }: { params: Promise<Par
       </section>
 
       {/* Body */}
-      <section className="py-16 md:py-32 border-b border-rule">
-        <div className="mx-auto max-w-content px-6">
+      <section className="border-b-2 border-ink bg-paper">
+        <div className="mx-auto max-w-content px-5 py-14 md:px-8 md:py-20">
           <div className="max-w-2xl space-y-5">
             {paragraphs.map((p, i) => (
-              <p key={i} className="text-ink-muted leading-relaxed">{p}</p>
+              <p key={i} className="text-[15px] leading-relaxed text-ink-muted">{p}</p>
             ))}
           </div>
         </div>
@@ -110,47 +128,24 @@ export default async function ProgrammaticPage({ params }: { params: Promise<Par
       {/* Gallery */}
       {photos.length > 0 && <GalleryStrip photos={photos} />}
 
-      {/* WhatsApp CTA */}
-      <section className="bg-blue py-16">
-        <div className="mx-auto max-w-content px-6 text-center">
-          <h2 className="text-white text-2xl font-bold mb-3">
-            Get a quote for {service.name} in {cityLabel}
-          </h2>
-          <p className="text-white/80 mb-8">WhatsApp us and our team will get back to you as soon as possible.</p>
-          <a
-            href={waUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex items-center justify-center rounded bg-white text-blue font-semibold px-8 py-3.5 hover:bg-white/90 transition-colors"
-          >
-            Chat on WhatsApp
-          </a>
-        </div>
-      </section>
-
       {/* Related cities */}
       {page.relatedCities.length > 0 && (
-        <section className="py-12 border-t border-rule">
-          <div className="mx-auto max-w-content px-6">
-            <p className="text-xs font-semibold uppercase tracking-widest text-ink-subtle mb-4">
-              Also available in
-            </p>
+        <section className="border-b-2 border-ink bg-paper-elevated">
+          <div className="mx-auto max-w-content px-5 py-12 md:px-8 md:py-16">
+            <p className="spec mb-5 text-signal">Also available in</p>
             <div className="flex flex-wrap gap-3">
-              {page.relatedCities.map(city => {
-                const relSlug = `${page.service}-in-${city}`
-                return (
-                  <Link
-                    key={city}
-                    href={`/${relSlug}`}
-                    className="px-4 py-2 rounded border border-rule text-sm text-ink-muted hover:border-blue hover:text-blue transition-colors"
-                  >
-                    {service.name} in {CITY_LABELS[city] ?? city}
-                  </Link>
-                )
-              })}
+              {page.relatedCities.map(city => (
+                <Link
+                  key={city}
+                  href={`/${page.service}-in-${city}`}
+                  className="spec border-2 border-ink px-4 py-2.5 text-ink transition-colors hover:bg-ink hover:text-paper"
+                >
+                  {service.name} in {CITY_LABELS[city] ?? city}
+                </Link>
+              ))}
               <Link
                 href={`/services/${service.slug}`}
-                className="px-4 py-2 rounded border border-rule text-sm text-ink-muted hover:border-blue hover:text-blue transition-colors"
+                className="spec border-2 border-ink/25 px-4 py-2.5 text-ink-muted transition-colors hover:border-ink hover:text-ink"
               >
                 ← All {service.name}
               </Link>
@@ -158,6 +153,27 @@ export default async function ProgrammaticPage({ params }: { params: Promise<Par
           </div>
         </section>
       )}
+
+      {/* CTA */}
+      <section className="bg-signal">
+        <div className="mx-auto max-w-content px-5 py-16 md:px-8 md:py-20">
+          <h2 className="display mt-4 text-signal-ink" style={{ fontSize: 'clamp(2.25rem, 6vw, 5rem)' }}>
+            {service.name}
+            <br />
+            in {cityLabel}.
+          </h2>
+          <WhatsAppLink
+            href={waUrl}
+            source={`programmatic:${slug}`}
+            className="mt-8 inline-flex items-center gap-2 border-2 border-ink bg-ink px-7 py-4 text-sm font-bold uppercase tracking-[0.08em] text-paper shadow-[5px_5px_0_0_rgba(0,0,0,0.35)] transition-all hover:-translate-x-px hover:-translate-y-px hover:shadow-[7px_7px_0_0_rgba(0,0,0,0.35)] active:translate-x-0.5 active:translate-y-0.5 active:shadow-[2px_2px_0_0_rgba(0,0,0,0.35)]"
+          >
+            WhatsApp us now →
+          </WhatsAppLink>
+          <p className="spec mt-8 text-signal-ink">
+            Reply within 2 hours · Free quote, valid 15 days
+          </p>
+        </div>
+      </section>
     </>
   )
 }

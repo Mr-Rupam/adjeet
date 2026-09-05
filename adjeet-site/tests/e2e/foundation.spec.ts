@@ -1,9 +1,9 @@
 import { test, expect } from '@playwright/test'
 
 test.describe('Foundation', () => {
-  test('page has AD-JEET in the nav', async ({ page }) => {
+  test('page has AD JEET in the nav', async ({ page }) => {
     await page.goto('/')
-    await expect(page.getByRole('link', { name: 'AD-JEET' })).toBeVisible()
+    await expect(page.getByRole('banner').getByRole('link', { name: 'AD JEET home' })).toBeVisible()
   })
 
   test('skip link is focusable and present in DOM', async ({ page }) => {
@@ -33,10 +33,11 @@ test.describe('Foundation', () => {
     await expect(page.getByRole('dialog', { name: /consent/i })).not.toBeVisible()
   })
 
-  test('nav has Services, Portfolio, About, Contact links', async ({ page }) => {
+  test('nav has Services, Work, About, Contact links', async ({ page }) => {
     await page.goto('/')
-    for (const name of ['Services', 'Portfolio', 'About', 'Contact']) {
-      await expect(page.getByRole('link', { name })).toBeAttached()
+    const nav = page.getByRole('banner')
+    for (const name of ['Services', 'Work', 'About', 'Contact']) {
+      await expect(nav.getByRole('link', { name, exact: true })).toBeAttached()
     }
   })
 

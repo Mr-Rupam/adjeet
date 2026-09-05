@@ -1,10 +1,14 @@
-import { Fraunces, Inter, JetBrains_Mono } from 'next/font/google'
+import { Anton, Inter, JetBrains_Mono } from 'next/font/google'
 
-export const fraunces = Fraunces({
+/**
+ * Display face: Anton. The letterform of Indian street hoardings, flex
+ * banners, and painted shop boards. Single weight, all caps by usage.
+ */
+export const anton = Anton({
   subsets: ['latin'],
-  variable: '--font-fraunces',
+  variable: '--font-anton',
   display: 'swap',
-  axes: ['opsz', 'SOFT', 'WONK'],
+  weight: '400',
   preload: true,
 })
 
@@ -19,6 +23,6 @@ export const jetbrainsMono = JetBrains_Mono({
   subsets: ['latin'],
   variable: '--font-mono',
   display: 'swap',
-  weight: '400',
+  weight: ['400', '600'],
   preload: false,
 })

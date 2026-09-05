@@ -32,7 +32,7 @@ const securityHeaders = [
     value: [
       "default-src 'self'",
       // React 19 requires eval() in development for debugging callstacks.
-      // 'unsafe-eval' is ONLY added in dev — production stays strict.
+      // 'unsafe-eval' is ONLY added in dev. Production stays strict.
       `script-src 'self' 'unsafe-inline'${isDev ? " 'unsafe-eval'" : ''} https://www.googletagmanager.com https://www.google-analytics.com https://challenges.cloudflare.com`,
       "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
       "font-src 'self' https://fonts.gstatic.com",

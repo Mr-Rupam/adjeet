@@ -31,9 +31,13 @@ export function WhatsAppFAB() {
           animate={{ y: 0, opacity: 1 }}
           exit={{ y: 80, opacity: 0 }}
           transition={{ type: 'spring', stiffness: 300, damping: 30 }}
-          className="fixed bottom-6 right-6 z-50"
+          // Clears the consent banner, which pins itself to the bottom of the
+          // viewport and publishes its height as --consent-h. Without this the
+          // banner covered the site's primary conversion action on first visit.
+          style={{ bottom: 'calc(1.5rem + var(--consent-h, 0px))' }}
+          className="fixed right-6 z-50"
         >
-          <QuoteCTA source="fab" className="shadow-lg shadow-blue/25" />
+          <QuoteCTA source="fab" />
         </motion.div>
       )}
     </AnimatePresence>

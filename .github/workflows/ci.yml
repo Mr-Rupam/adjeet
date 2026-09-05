@@ -10,9 +10,30 @@ jobs:
           node-version: '20'
           cache: 'npm'
           cache-dependency-path: adjeet-site/package-lock.json
-      - run: npm ci
+
+      # `npm install`, not `npm ci`, on purpose.
+      #
+      # This project is developed on Windows and built on Linux. Several
+      # dependencies pull in optional, platform-gated native and wasm packages
+      # (@rolldown/binding-wasm32-wasi, @tailwindcss/oxide-wasm32-wasi,
+      # @img/sharp-*), and npm only resolves an optional package's own
+      # dependencies on a platform where that package installs. A lockfile
+      # generated on Windows therefore never records the transitive deps that
+      # Linux needs, and `npm ci`, which validates the whole tree including
+      # optional entries, refuses to install. That is what broke CI here from
+      # May 2026 onward: every run failed at the install step, so lint, build
+      # and tests had not actually run on any commit since.
+      #
+      # `npm install` resolves per-platform and succeeds. The tradeoff is that
+      # CI no longer enforces the lockfile byte-for-byte. The proper fix is to
+      # generate package-lock.json on Linux (in Docker or CI) and commit that,
+      # at which point this can go back to `npm ci`.
+      - run: npm install --no-audit --no-fund
         working-directory: adjeet-site
+
       - run: npm run lint
+        working-directory: adjeet-site
+      - run: npx tsc --noEmit
         working-directory: adjeet-site
       - run: npm run build
         working-directory: adjeet-site

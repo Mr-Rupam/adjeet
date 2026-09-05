@@ -1,7 +1,6 @@
 'use client'
 
 import Link from 'next/link'
-import Image from 'next/image'
 import { usePathname } from 'next/navigation'
 import { ThemeToggle } from '@/components/ui/ThemeToggle'
 import { MobileNav } from '@/components/MobileNav'
@@ -9,7 +8,7 @@ import { QuoteCTA } from '@/components/ui/QuoteCTA'
 
 const NAV_LINKS = [
   { href: '/services', label: 'Services' },
-  { href: '/portfolio', label: 'Portfolio' },
+  { href: '/portfolio', label: 'Work' },
   { href: '/about', label: 'About' },
   { href: '/contact', label: 'Contact' },
 ]
@@ -18,35 +17,34 @@ export function Nav() {
   const pathname = usePathname()
 
   return (
-    <header className="fixed top-0 inset-x-0 z-40 bg-paper/90 backdrop-blur-sm border-b border-rule">
+    <header className="fixed inset-x-0 top-0 z-40 border-b-2 border-ink bg-paper">
       <nav
-        className="mx-auto flex max-w-content items-center justify-between px-6 h-16"
+        className="mx-auto flex h-16 max-w-content items-stretch justify-between px-5 md:px-8"
         aria-label="Main navigation"
       >
-        <Link href="/" aria-label="AD-JEET home" className="flex items-center">
-          <Image
-            src="/logo.png"
-            alt="AD-JEET — North Bengal Signage"
-            height={36}
-            width={148}
-            className="object-contain"
-            style={{ width: 'auto' }}
-            priority
-          />
+        <Link
+          href="/"
+          aria-label="AD JEET home"
+          className="flex shrink-0 items-center gap-2.5 self-center"
+        >
+          <span aria-hidden="true" className="block h-3.5 w-3.5 shrink-0 bg-signal" />
+          <span className="display glow-tube whitespace-nowrap text-2xl leading-none text-ink">
+            AD JEET
+          </span>
         </Link>
 
         {/* Desktop links */}
-        <ul className="hidden md:flex items-center gap-8 list-none m-0 p-0">
+        <ul className="m-0 hidden list-none items-stretch p-0 md:flex">
           {NAV_LINKS.map(({ href, label }) => {
             const isActive = pathname === href || pathname.startsWith(href + '/')
             return (
-              <li key={href}>
+              <li key={href} className="flex">
                 <Link
                   href={href}
                   aria-current={isActive ? 'page' : undefined}
-                  className={`inline-flex items-center py-3.5 text-sm font-medium transition-colors ${
+                  className={`spec relative inline-flex items-center px-4 transition-colors lg:px-5 ${
                     isActive
-                      ? 'text-ink border-b-2 border-blue'
+                      ? 'text-ink after:absolute after:inset-x-3 after:bottom-0 after:h-[3px] after:bg-signal'
                       : 'text-ink-muted hover:text-ink'
                   }`}
                 >
@@ -57,8 +55,16 @@ export function Nav() {
           })}
         </ul>
 
-        <div className="flex items-center gap-2">
-          <QuoteCTA source="nav" size="sm" className="hidden md:inline-flex" />
+        <div className="flex shrink-0 items-center gap-2.5 self-center">
+          <span className="hidden md:block">
+            <QuoteCTA source="nav" size="sm" />
+          </span>
+          {/* The header used to carry no contact action at all below md, so on
+              a phone the first tappable way to reach the workshop was ~545px
+              down the page, on a site whose entire goal is a WhatsApp tap. */}
+          <span className="md:hidden">
+            <QuoteCTA source="nav-mobile" iconOnly />
+          </span>
           <ThemeToggle />
           <MobileNav links={NAV_LINKS} />
         </div>

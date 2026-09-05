@@ -153,14 +153,14 @@ export function Chatbot() {
         className="chatbot-window"
         data-visible={isOpen}
         role="dialog"
-        aria-label="AD-JEET Chat Assistant"
+        aria-label="AD JEET Chat Assistant"
         aria-hidden={!isOpen}
       >
         {/* Header */}
         <div className="chatbot-header">
           <div className="chatbot-header__avatar">🏗️</div>
           <div className="chatbot-header__info">
-            <div className="chatbot-header__name">JEET — AD-JEET Assistant</div>
+            <div className="chatbot-header__name">JEET, AD JEET Assistant</div>
             <div className="chatbot-header__status">Online</div>
           </div>
           <button
@@ -250,7 +250,7 @@ export function Chatbot() {
 
         {/* Footer */}
         <div className="chatbot-footer">
-          Powered by AD-JEET • For urgent queries, call +91 98320 11524
+          Powered by AD JEET • For urgent queries, call +91 98320 11524
         </div>
       </div>
 
@@ -259,7 +259,7 @@ export function Chatbot() {
         className="chatbot-bubble"
         onClick={toggleChat}
         data-open={isOpen}
-        aria-label={isOpen ? 'Close chat' : 'Open AD-JEET chat assistant'}
+        aria-label={isOpen ? 'Close chat' : 'Open AD JEET chat assistant'}
         aria-expanded={isOpen}
       >
         {showBadge && !isOpen && <span className="chatbot-badge" />}

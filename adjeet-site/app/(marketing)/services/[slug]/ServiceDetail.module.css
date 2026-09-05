@@ -1,4 +1,4 @@
-/* ─── Service Detail Page — Premium Redesign ────────────────────────────── */
+/* ─── Service Detail Page: Premium Redesign ────────────────────────────── */
 
 /* ─── Hero ──────────────────────────────────────────────────────────────── */
 
@@ -22,12 +22,12 @@
   z-index: 10;
 }
 
-/* Ghost number — decorative background numeral */
+/* Ghost number: decorative background numeral */
 .heroGhost {
   position: absolute;
   top: -0.1em;
   right: -0.04em;
-  font-family: var(--font-fraunces), serif;
+  font-family: var(--font-serif), serif;
   font-size: 40vw;
   font-weight: 900;
   color: rgba(201, 150, 46, 0.05);
@@ -100,7 +100,7 @@
 
 /* Headline */
 .heroTitle {
-  font-family: var(--font-fraunces), serif;
+  font-family: var(--font-serif), serif;
   font-size: clamp(2.75rem, 7vw, 6rem);
   font-weight: 700;
   line-height: 1.0;
@@ -112,7 +112,7 @@
 
 /* Tagline */
 .heroTagline {
-  font-family: var(--font-fraunces), serif;
+  font-family: var(--font-serif), serif;
   font-style: italic;
   font-weight: 400;
   font-size: clamp(1rem, 2vw, 1.375rem);
@@ -222,13 +222,13 @@
 }
 
 .specList li::before {
-  content: '— ';
+  content: '▪  ';
   color: var(--adjeet-blue);
   font-size: 0.75rem;
 }
 
 .specValue {
-  font-family: var(--font-fraunces), serif;
+  font-family: var(--font-serif), serif;
   font-size: 1.5rem;
   font-weight: 700;
   color: var(--ink);
@@ -317,7 +317,7 @@
 }
 
 .calloutVal {
-  font-family: var(--font-fraunces), serif;
+  font-family: var(--font-serif), serif;
   font-size: 1.25rem;
   font-weight: 700;
   color: var(--ink);
@@ -361,7 +361,7 @@
 }
 
 .faqsHeading {
-  font-family: var(--font-fraunces), serif;
+  font-family: var(--font-serif), serif;
   font-size: clamp(1.5rem, 2.5vw, 2rem);
   font-weight: 700;
   color: var(--ink);
@@ -403,7 +403,7 @@
 }
 
 .ctaStripTitle {
-  font-family: var(--font-fraunces), serif;
+  font-family: var(--font-serif), serif;
   font-size: clamp(1.5rem, 3vw, 2.25rem);
   font-weight: 700;
   color: #F5F0E8;
@@ -452,7 +452,7 @@
 }
 
 .leadCopy h2 {
-  font-family: var(--font-fraunces), serif;
+  font-family: var(--font-serif), serif;
   font-size: clamp(1.5rem, 2.5vw, 2rem);
   font-weight: 700;
   color: var(--ink);
@@ -531,7 +531,7 @@
 }
 
 .relatedName {
-  font-family: var(--font-fraunces), serif;
+  font-family: var(--font-serif), serif;
   font-size: 1.125rem;
   font-weight: 700;
   color: #F5F0E8;
@@ -540,7 +540,7 @@
 }
 
 .relatedTagline {
-  font-family: var(--font-fraunces), serif;
+  font-family: var(--font-serif), serif;
   font-style: italic;
   font-size: 0.8125rem;
   color: rgba(245, 240, 232, 0.4);

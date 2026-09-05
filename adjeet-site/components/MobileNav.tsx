@@ -3,6 +3,8 @@
 import { useState, useEffect, useRef } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
+import { DISTRICTS_SERVED, FOUNDED_YEAR } from '@/lib/coverage'
+import { QuoteCTA } from '@/components/ui/QuoteCTA'
 
 interface NavLink { href: string; label: string }
 
@@ -11,7 +13,7 @@ export function MobileNav({ links }: { links: NavLink[] }) {
   const pathname = usePathname()
   const closeRef = useRef<HTMLButtonElement>(null)
 
-  // Close on route change — intentional direct setState to sync with external router state
+  // Close on route change: intentional direct setState to sync with external router state
   // eslint-disable-next-line react-hooks/set-state-in-effect
   useEffect(() => { setOpen(false) }, [pathname])
 
@@ -33,7 +35,7 @@ export function MobileNav({ links }: { links: NavLink[] }) {
   return (
     <>
       <button
-        className="md:hidden p-3 text-ink-muted hover:text-ink"
+        className="md:hidden inline-flex h-11 w-11 items-center justify-center border-2 border-ink text-ink transition-colors hover:bg-ink hover:text-paper"
         aria-label={open ? 'Close navigation menu' : 'Open navigation menu'}
         aria-expanded={open}
         aria-controls="mobile-nav-drawer"
@@ -65,27 +67,36 @@ export function MobileNav({ links }: { links: NavLink[] }) {
                 ref={closeRef}
                 onClick={() => setOpen(false)}
                 aria-label="Close navigation menu"
-                className="p-3 text-ink-muted hover:text-ink text-xl"
+                className="inline-flex h-11 w-11 items-center justify-center text-xl text-ink-muted hover:text-ink"
               >
                 ✕
               </button>
             </div>
-            <nav className="flex flex-col gap-8 px-10 pt-8">
-              {links.map(({ href, label }) => {
+            <nav className="flex flex-col px-8 pt-4">
+              {links.map(({ href, label }, i) => {
                 const isActive = pathname === href || pathname.startsWith(href + '/')
                 return (
                   <Link
                     key={href}
                     href={href}
                     aria-current={isActive ? 'page' : undefined}
-                    className={`text-4xl font-serif font-bold transition-colors ${
-                      isActive ? 'text-ink' : 'text-ink-muted hover:text-ink'
+                    className={`display flex items-baseline gap-4 border-b-2 border-rule py-5 text-5xl uppercase transition-colors ${
+                      isActive ? 'text-signal' : 'text-ink hover:text-signal'
                     }`}
                   >
+                    <span aria-hidden="true" className="spec text-ink-subtle">
+                      {String(i + 1).padStart(2, '0')}
+                    </span>
                     {label}
                   </Link>
                 )
               })}
+              {/* The drawer offered navigation and no way to convert, so
+                  opening the menu removed every path to WhatsApp. */}
+              <QuoteCTA source="mobile-drawer" className="mt-8 w-full justify-center" />
+              <p className="spec mt-6 text-ink-subtle">
+                Est. {FOUNDED_YEAR}, Siliguri · {DISTRICTS_SERVED} districts · 500+ signs
+              </p>
             </nav>
           </div>
         </>
