@@ -38,7 +38,7 @@ export function ThemeToggle() {
       onClick={toggle}
       aria-label={`Switch to ${theme === 'light' ? 'dark' : 'light'} mode`}
       title={theme === 'light' ? 'See the signs at night' : 'Back to daylight'}
-      className="spec border-2 border-ink px-2.5 py-1.5 text-ink-muted transition-colors hover:bg-ink hover:text-paper"
+      className="spec inline-flex h-11 items-center border-2 border-ink px-3 text-ink-muted transition-colors hover:bg-ink hover:text-paper"
     >
       <span aria-hidden="true" className="flex items-center gap-1.5">
         <span

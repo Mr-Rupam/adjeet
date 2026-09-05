@@ -36,25 +36,41 @@ export function Footer() {
         {/* Contact + legal */}
         <div>
           <p className="spec mb-4 text-night-ink">Contact</p>
-          <ul className="m-0 list-none space-y-2 p-0 text-sm">
+          <ul className="m-0 list-none p-0 text-sm">
+            {/* WhatsApp and Call are the site's literal conversion channels.
+                They rendered as 17px-tall tap targets; the inline-flex min
+                height brings them to the 44px minimum without changing the
+                type size or the footer's rhythm. */}
             <li>
-              <a href={WHATSAPP_HREF} className="transition-colors hover:text-signal-hot">
+              <a
+                href={WHATSAPP_HREF}
+                className="inline-flex min-h-11 items-center transition-colors hover:text-signal-hot"
+              >
                 WhatsApp — {WHATSAPP_DISPLAY}
               </a>
             </li>
             <li>
-              <a href="tel:+919832011524" className="transition-colors hover:text-signal-hot">
+              <a
+                href="tel:+919832011524"
+                className="inline-flex min-h-11 items-center transition-colors hover:text-signal-hot"
+              >
                 Call — {WHATSAPP_DISPLAY}
               </a>
             </li>
             <li>
-              <a href="mailto:ranjitadjeet@gmail.com" className="transition-colors hover:text-signal-hot">
+              <a
+                href="mailto:ranjitadjeet@gmail.com"
+                className="inline-flex min-h-11 items-center transition-colors hover:text-signal-hot"
+              >
                 ranjitadjeet@gmail.com
               </a>
             </li>
           </ul>
           <div className="spec mt-8 space-y-1.5 border-t border-night-rule pt-5 text-[9.5px]">
-            <Link href="/privacy" className="block transition-colors hover:text-signal-hot">
+            <Link
+              href="/privacy"
+              className="inline-flex min-h-11 items-center transition-colors hover:text-signal-hot"
+            >
               Privacy policy
             </Link>
             <p className="m-0">© {new Date().getFullYear()} AD JEET. All rights reserved.</p>
