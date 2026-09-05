@@ -114,9 +114,9 @@ export function StreetHero() {
             className="m-0 hidden gap-6 md:flex"
           >
             {[
-              { v: '35', k: 'Years' },
+              { v: String(YEARS_ACTIVE), k: 'Years' },
               { v: '500+', k: 'Signs' },
-              { v: '12', k: 'Districts' },
+              { v: String(DISTRICTS_SERVED), k: 'Districts' },
             ].map(s => (
               <div key={s.k} className="flex flex-col border-l-2 border-ink pl-4">
                 <dt className="spec order-2 text-ink-subtle">{s.k}</dt>
