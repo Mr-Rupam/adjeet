@@ -1,5 +1,6 @@
 import { notFound } from 'next/navigation'
 import type { Metadata } from 'next'
+import Image from 'next/image'
 import Link from 'next/link'
 import {
   SERVICE_SLUGS,
@@ -20,6 +21,7 @@ import { Accordion } from '@/components/ui/Accordion'
 import { CommissionCTA } from '@/components/street/CommissionCTA'
 import { WhatsAppLink } from '@/components/ui/WhatsAppLink'
 import { isAwaitingPhotos, AWAITING_PHOTOS_ROBOTS } from '@/lib/publication'
+import { photos } from '@/content/gallery'
 
 type Params = { slug: string }
 
@@ -58,6 +60,7 @@ export default async function ServiceDetailPage({
   const related = service.relatedServices
     .map(s => services.find(x => x.slug === s))
     .filter((s): s is NonNullable<typeof s> => Boolean(s))
+  const workPhoto = photos.find(photo => photo.service === service.slug)
 
   const serviceSchema = buildServiceJsonLd(service)
   const faqSchema = buildFaqJsonLd(service.faqs)
@@ -84,12 +87,12 @@ export default async function ServiceDetailPage({
       />
 
       {/* Masthead */}
-      <section className="relative overflow-hidden border-b-2 border-ink bg-paper">
+      <section className="relative overflow-hidden border-b border-rule bg-paper">
         <div aria-hidden="true" className="grid-mat pointer-events-none absolute inset-0" />
         <div aria-hidden="true" className="grain pointer-events-none absolute inset-0" />
 
         <div className="relative mx-auto w-full max-w-content px-5 pt-6 md:px-8">
-          <div className="spec flex flex-wrap items-baseline justify-between gap-x-6 gap-y-1 border-b-2 border-ink pb-3 text-ink-muted">
+          <div className="spec flex flex-wrap items-baseline justify-between gap-x-6 gap-y-1 border-b border-rule pb-3 text-ink-muted">
             <nav aria-label="Breadcrumb" className="flex items-baseline gap-2">
               <Link href="/" className="transition-colors hover:text-ink">Home</Link>
               <span aria-hidden="true">/</span>
@@ -116,13 +119,13 @@ export default async function ServiceDetailPage({
             <WhatsAppLink
               href={waUrl}
               source={`service:${service.slug}`}
-              className="inline-flex items-center gap-2 border-2 border-ink bg-signal px-6 py-3.5 text-[13px] font-bold uppercase tracking-[0.08em] text-signal-ink shadow-[4px_4px_0_0_var(--ink)] transition-all hover:-translate-x-px hover:-translate-y-px hover:shadow-[6px_6px_0_0_var(--ink)] active:translate-x-0.5 active:translate-y-0.5 active:shadow-[2px_2px_0_0_var(--ink)]"
+              className="cta cta--yellow cta--md"
             >
               Quote this job →
             </WhatsAppLink>
             <Link
               href="/services"
-              className="spec inline-flex items-center gap-2 border-2 border-ink px-5 py-3.5 text-ink transition-colors hover:bg-ink hover:text-paper"
+              className="inline-flex min-h-11 items-center gap-2 text-sm font-medium text-ink underline underline-offset-4"
             >
               ← All trades
             </Link>
@@ -130,8 +133,36 @@ export default async function ServiceDetailPage({
         </div>
       </section>
 
+      <section className="border-b border-rule bg-paper">
+        <div className="mx-auto grid max-w-content gap-8 px-5 py-12 md:grid-cols-[1.05fr_0.95fr] md:items-center md:gap-14 md:px-8 md:py-16">
+          <figure className="m-0">
+            <div className="relative aspect-[4/3] overflow-hidden rounded-[1rem] bg-night">
+              <Image
+                src={workPhoto ? workPhoto.src : '/images/home/materials.webp'}
+                alt={workPhoto ? workPhoto.alt : `Material visualization for ${service.name}`}
+                fill
+                sizes="(max-width: 767px) calc(100vw - 40px), 52vw"
+                className="object-cover"
+              />
+            </div>
+            <figcaption className="mt-3 text-xs text-ink-subtle">
+              {workPhoto ? 'Documented project photograph' : 'Material visualization, not a project photograph'}
+            </figcaption>
+          </figure>
+          <div>
+            <p className="spec text-signal">What you are planning</p>
+            <h2 className="display mt-3 text-ink" style={{ fontSize: 'var(--text-display-2)' }}>
+              The material and the place need to agree.
+            </h2>
+            <p className="mt-5 max-w-[42ch] text-base leading-relaxed text-ink-muted">
+              Use the specifications below to prepare a useful brief. A site photo and rough dimensions are usually enough to begin.
+            </p>
+          </div>
+        </div>
+      </section>
+
       {/* Spec sheet */}
-      <section className="border-b-2 border-ink bg-paper-elevated" aria-label="Service specifications">
+      <section className="border-b border-rule bg-paper-elevated" aria-label="Service specifications">
         <div className="mx-auto max-w-content px-5 py-12 md:px-8 md:py-16">
           <p className="spec mb-8 text-signal">Spec sheet: {service.name}</p>
           <div className="grid gap-6 md:grid-cols-3 lg:gap-8">
@@ -166,7 +197,7 @@ export default async function ServiceDetailPage({
 
       {/* FAQs */}
       {service.faqs.length > 0 && (
-        <section className="border-b-2 border-ink bg-paper">
+      <section className="border-b border-rule bg-paper">
           <div className="mx-auto max-w-content px-5 py-12 md:px-8 md:py-16">
             <div className="grid gap-10 lg:grid-cols-[1fr_2fr] lg:gap-16">
               <div>
@@ -182,7 +213,7 @@ export default async function ServiceDetailPage({
 
       {/* Related trades */}
       {related.length > 0 && (
-        <section className="border-b-2 border-ink bg-paper">
+        <section className="border-b border-rule bg-paper">
           <div className="mx-auto max-w-content px-5 py-12 md:px-8 md:py-16">
             <p className="spec mb-6 text-signal">Often ordered together</p>
             <ol className="m-0 list-none border-t-2 border-ink p-0">

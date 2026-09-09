@@ -1,0 +1,11 @@
+# About revision, 9 September 2026
+
+Owner-supplied story: Ranjit Das founded AD JEET in 1990, aged 20, in one room in his own flat. The business moved through three rented office spaces, purchased its first office, then built its own workshop. Dates for these later milestones remain unspecified and are deliberately omitted. The owner describes quality, consistency, continuing client relationships, and work for Fortune 500 companies as its strengths. This client claim is owner-supplied; no unverified client logos or named endorsements were added.
+
+Page sequence: origin with existing real workshop frame; four-stage journey; quality and continuing trust; geographic coverage; enquiry. No substitute founder portrait or invented historical photographs.
+
+Coverage names remain sourced from `lib/coverage.ts`. Map is a locally generated SVG with soft radial highlights, not a fixed mileage boundary. Geography is the public-domain Natural Earth 1:10m states/provinces dataset: https://raw.githubusercontent.com/nvkelso/natural-earth-vector/master/geojson/ne_10m_admin_1_states_provinces.geojson . `coverage-geography.json` preserves the selected state geometry; `generate-coverage-map.py` reproduces the asset. City points are approximate centres. North/South Dinajpur use Raiganj/Balurghat as representative locations; the Dooars is a region label, not a city point. The linear local projection compensates longitude scale at ~27 degrees latitude. The scale bar is approximate. Labels are accessible in the adjacent HTML list and the map opens at full size.
+
+Navbar redesign remains deferred at the owner's request. Footer navigation/contact groups share a mobile row; WhatsApp and Call share a row. Shared button shape includes CTAs, legacy Button, filters, consent, lead submission, lightbox controls, and chatbot suggestions.
+
+Navigation regression: global `scroll-behavior: smooth` caused forward navigation to retain a bottom offset. The Next.js data attribute corrected forward navigation but reset Back to zero in a browser reproduction. Removing global smooth scrolling corrected both paths and retains native fragment navigation. Regression coverage checks footer-to-page navigation at phone/desktop sizes, cross-page fragments and Back restoration.

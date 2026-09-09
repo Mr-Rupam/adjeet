@@ -77,13 +77,13 @@ export function ConsentBanner() {
       <div className="flex shrink-0 gap-3">
         <button
           onClick={() => respond('declined')}
-          className="spec inline-flex min-h-11 items-center border-2 border-ink px-4 text-ink transition-colors hover:bg-ink hover:text-paper"
+          className="button-shape spec inline-flex min-h-11 items-center border-2 border-ink px-4 text-ink transition-colors hover:bg-ink hover:text-paper"
         >
           Decline
         </button>
         <button
           onClick={() => respond('accepted')}
-          className="spec inline-flex min-h-11 items-center border-2 border-ink px-4 font-semibold text-ink transition-colors hover:bg-ink hover:text-paper"
+          className="button-shape spec inline-flex min-h-11 items-center border-2 border-ink px-4 font-semibold text-ink transition-colors hover:bg-ink hover:text-paper"
         >
           Accept
         </button>

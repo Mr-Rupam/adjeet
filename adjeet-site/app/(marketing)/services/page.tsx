@@ -13,23 +13,23 @@ export const metadata: Metadata = {
 const PROCESS = [
   {
     n: '01',
-    title: 'Survey',
-    body: 'We visit your site, measure the substrate, and check power, visibility, and municipal requirements. Same-day in Siliguri.',
+    title: 'Start with the site',
+    body: 'A photo, a location, a rough size or a brand brief gives the project a place to begin.',
   },
   {
     n: '02',
-    title: 'Design',
-    body: 'A compliant mockup matched to your brand guidelines and the location. Revisions until you approve.',
+    title: 'Plan the face',
+    body: 'We work through materials, scale and visibility before the workshop starts making.',
   },
   {
     n: '03',
-    title: 'Fabricate',
-    body: 'Metal cutting, acrylic routing, LED wiring, and paint: every step at our Patiram Jote workshop. No subcontracting.',
+    title: 'Make it',
+    body: 'Fabrication, print, finish and illumination meet in the same working process.',
   },
   {
     n: '04',
-    title: 'Install',
-    body: 'Our own crew, proper scaffolding, sealed wiring. One-year warranty on LED components and workmanship.',
+    title: 'Put it up',
+    body: 'The project comes out to the site and gets fitted where people will see it.',
   },
 ]
 
@@ -37,15 +37,15 @@ export default function ServicesPage() {
   return (
     <>
       <PageMasthead
-        meta={['10 trades', 'One workshop', 'Est. 1990']}
+        meta={['10 services', 'Siliguri', 'Since 1990']}
         title={
           <>
-            Everything a street
+            Make the street
             <br />
-            needs to <span className="glow-signal text-signal">say your name.</span>
+            remember <span className="glow-signal text-signal">your name.</span>
           </>
         }
-        lead="Ten trades under one roof, surveyed, fabricated, wired, painted, and installed by the same team that answers your WhatsApp."
+        lead="Start with the place, then choose the surface. The service list below helps you find the right conversation."
       />
 
       <ServicesBoard />
@@ -55,7 +55,7 @@ export default function ServicesPage() {
         <div className="mx-auto max-w-content px-5 py-16 md:px-8 md:py-24">
           <div className="mb-10 md:mb-14">
             <h2 className="display mt-3 text-ink" style={{ fontSize: 'var(--text-display-2)' }}>
-              Brief to street in four moves.
+              From place to presence.
             </h2>
           </div>
 

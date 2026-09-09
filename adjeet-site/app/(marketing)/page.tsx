@@ -1,29 +1,15 @@
 import type { Metadata } from 'next'
-import { StreetHero } from '@/components/street/StreetHero'
-import { ClientStreet } from '@/components/street/ClientStreet'
-import { ServicesBoard } from '@/components/street/ServicesBoard'
-import { NightWork } from '@/components/street/NightWork'
-import { StandardPlates } from '@/components/street/StandardPlates'
-import { CoverageBoard } from '@/components/street/CoverageBoard'
-import { CommissionCTA } from '@/components/street/CommissionCTA'
+import { HomePageView } from '@/components/home/HomePageView'
 
 export const metadata: Metadata = {
   title: 'AD JEET: North Bengal Signage & Outdoor Advertising',
   description:
-    "North Bengal's most trusted signage company. Glow signs, ACP/LED, flex printing, vehicle branding, F-pole installation across Siliguri, Jalpaiguri, Cooch Behar, Darjeeling, Malda.",
+    'Signage, print and outdoor branding from Siliguri for businesses across North Bengal since 1990.',
   alternates: { canonical: 'https://adjeet.in' },
 }
 
 export default function HomePage() {
   return (
-    <>
-      <StreetHero />
-      <ClientStreet />
-      <ServicesBoard />
-      <NightWork />
-      <StandardPlates />
-      <CoverageBoard />
-      <CommissionCTA />
-    </>
+    <HomePageView />
   )
 }

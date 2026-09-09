@@ -1,12 +1,9 @@
 /**
  * Single source of truth for the coverage and tenure claims.
  *
- * These numbers used to be typed by hand in nine places and had drifted into
- * four different answers: "12 districts" in the hero, About, Portfolio and the
- * mobile nav; "12+ districts" on Contact; "15+ districts" in the root metadata,
- * the og:description and the chatbot's system prompt; and an areaServed in the
- * JSON-LD naming only five. A buyer comparing fabricators reads that as
- * carelessness, and Google reads the smallest number.
+ * Areas are named individually rather than summarized as a district count.
+ * The list deliberately includes cities, districts and a region, so a single
+ * administrative label would be misleading.
  */
 
 /** The year the workshop opened. Everything about tenure derives from this. */
@@ -25,7 +22,7 @@ export const FOUNDED_YEAR = 1990
 export const YEARS_ACTIVE = 36
 
 /**
- * Districts and areas the installation vans cover, in the order the coverage
+ * Places and areas the installation vans cover, in the order the coverage
  * board lists them. This is the checkable claim: it is what renders on the
  * page and what goes into `areaServed` in the LocalBusiness JSON-LD.
  */
@@ -43,10 +40,7 @@ export const COVERAGE_AREAS = [
 ] as const
 
 /**
- * The number used in copy ("Serving 10 districts").
- *
- * Confirmed by the owner on 2026-09-05: 10, matching COVERAGE_AREAS exactly,
- * so every claim on the site is backed by a place the coverage board names.
- * If the van routes grow, add the area to COVERAGE_AREAS and this follows.
+ * Compatibility export for legacy modules. New user-facing copy should use
+ * the named coverage list, because it mixes cities, districts and a region.
  */
 export const DISTRICTS_SERVED = COVERAGE_AREAS.length

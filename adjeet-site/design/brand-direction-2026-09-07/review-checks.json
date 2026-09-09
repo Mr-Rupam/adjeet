@@ -1,0 +1,253 @@
+[
+  {
+    "page": "home",
+    "theme": "light",
+    "width": 390,
+    "errors": [],
+    "overflow": false,
+    "brokenImages": [],
+    "h1": "Made to\nbe seen.",
+    "logoFiles": [
+      {
+        "src": "assets/adjeet-original.png",
+        "ratio": 3.3485714285714288
+      },
+      {
+        "src": "assets/adjeet-original.png",
+        "ratio": 3.3485714285714288
+      },
+      {
+        "src": "assets/adjeet-original.png",
+        "ratio": 3.3485714285714288
+      }
+    ]
+  },
+  {
+    "page": "home",
+    "theme": "light",
+    "width": 1440,
+    "overflow": false,
+    "brokenImages": [],
+    "h1": "Made to\nbe seen.",
+    "logoFiles": [
+      {
+        "src": "assets/adjeet-original.png",
+        "ratio": 3.3485714285714288
+      },
+      {
+        "src": "assets/adjeet-original.png",
+        "ratio": 3.3485714285714288
+      },
+      {
+        "src": "assets/adjeet-original.png",
+        "ratio": 3.3485714285714288
+      }
+    ]
+  },
+  {
+    "page": "home",
+    "theme": "dark",
+    "width": 390,
+    "errors": [],
+    "overflow": false,
+    "brokenImages": [],
+    "h1": "Made to\nbe seen.",
+    "logoFiles": [
+      {
+        "src": "assets/adjeet-original.png",
+        "ratio": 3.3485714285714288
+      },
+      {
+        "src": "assets/adjeet-original.png",
+        "ratio": 3.3485714285714288
+      },
+      {
+        "src": "assets/adjeet-original.png",
+        "ratio": 3.3485714285714288
+      }
+    ]
+  },
+  {
+    "page": "home",
+    "theme": "dark",
+    "width": 1440,
+    "overflow": false,
+    "brokenImages": [],
+    "h1": "Made to\nbe seen.",
+    "logoFiles": [
+      {
+        "src": "assets/adjeet-original.png",
+        "ratio": 3.3485714285714288
+      },
+      {
+        "src": "assets/adjeet-original.png",
+        "ratio": 3.3485714285714288
+      },
+      {
+        "src": "assets/adjeet-original.png",
+        "ratio": 3.3485714285714288
+      }
+    ]
+  },
+  {
+    "page": "services",
+    "width": 390,
+    "overflow": false,
+    "brokenImages": [],
+    "h1": "Every surface\nhas potential.",
+    "logoFiles": [
+      {
+        "src": "assets/adjeet-original.png",
+        "ratio": 3.3485714285714288
+      },
+      {
+        "src": "assets/adjeet-original.png",
+        "ratio": 3.3485714285714288
+      }
+    ]
+  },
+  {
+    "page": "service",
+    "width": 390,
+    "overflow": false,
+    "brokenImages": [],
+    "h1": "ACP & LED\nsignage.",
+    "logoFiles": [
+      {
+        "src": "assets/adjeet-original.png",
+        "ratio": 3.3485714285714288
+      },
+      {
+        "src": "assets/adjeet-original.png",
+        "ratio": 3.3485714285714288
+      }
+    ]
+  },
+  {
+    "page": "work",
+    "width": 390,
+    "overflow": false,
+    "brokenImages": [],
+    "h1": "Out there.\nDoing its job.",
+    "logoFiles": [
+      {
+        "src": "assets/adjeet-original.png",
+        "ratio": 3.3485714285714288
+      },
+      {
+        "src": "assets/adjeet-original.png",
+        "ratio": 3.3485714285714288
+      }
+    ]
+  },
+  {
+    "page": "about",
+    "width": 390,
+    "overflow": false,
+    "brokenImages": [],
+    "h1": "From the workshop.\nInto the world.",
+    "logoFiles": [
+      {
+        "src": "assets/adjeet-original.png",
+        "ratio": 3.3485714285714288
+      },
+      {
+        "src": "assets/adjeet-original.png",
+        "ratio": 3.3485714285714288
+      },
+      {
+        "src": "assets/adjeet-original.png",
+        "ratio": 3.3485714285714288
+      }
+    ]
+  },
+  {
+    "page": "contact",
+    "width": 390,
+    "overflow": false,
+    "brokenImages": [],
+    "h1": "Let’s put your\nname out there.",
+    "logoFiles": [
+      {
+        "src": "assets/adjeet-original.png",
+        "ratio": 3.3485714285714288
+      },
+      {
+        "src": "assets/adjeet-original.png",
+        "ratio": 3.3485714285714288
+      }
+    ]
+  },
+  {
+    "page": "coverage",
+    "width": 390,
+    "overflow": false,
+    "brokenImages": [],
+    "h1": "Your storefront.\nOur home ground.",
+    "logoFiles": [
+      {
+        "src": "assets/adjeet-original.png",
+        "ratio": 3.3485714285714288
+      },
+      {
+        "src": "assets/adjeet-original.png",
+        "ratio": 3.3485714285714288
+      }
+    ]
+  },
+  {
+    "page": "privacy",
+    "width": 390,
+    "overflow": false,
+    "brokenImages": [],
+    "h1": "Your details,\nhandled with care.",
+    "logoFiles": [
+      {
+        "src": "assets/adjeet-original.png",
+        "ratio": 3.3485714285714288
+      },
+      {
+        "src": "assets/adjeet-original.png",
+        "ratio": 3.3485714285714288
+      }
+    ]
+  },
+  {
+    "page": "material",
+    "width": 390,
+    "overflow": false,
+    "brokenImages": [],
+    "h1": "Good signs.\nGreat details.",
+    "logoFiles": [
+      {
+        "src": "assets/adjeet-original.png",
+        "ratio": 3.3485714285714288
+      },
+      {
+        "src": "assets/adjeet-original.png",
+        "ratio": 3.3485714285714288
+      }
+    ]
+  },
+  {
+    "page": "miniature",
+    "width": 390,
+    "overflow": false,
+    "brokenImages": [],
+    "h1": "A street\ncomes alive.",
+    "logoFiles": [
+      {
+        "src": "assets/adjeet-original.png",
+        "ratio": 3.3485714285714288
+      },
+      {
+        "src": "assets/adjeet-original.png",
+        "ratio": 3.3485714285714288
+      }
+    ]
+  },
+  {
+    "existingPreview": 3002,
+    "status": "captured"
+  }
+]

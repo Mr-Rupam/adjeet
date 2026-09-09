@@ -1,45 +1,55 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { motion, AnimatePresence } from 'framer-motion'
+import { usePathname } from 'next/navigation'
 import { QuoteCTA } from '@/components/ui/QuoteCTA'
 
+/**
+ * A single mobile enquiry dock. It appears only after the home hero leaves
+ * view and stays off the contact page, where the form and direct methods are
+ * already in reach. This avoids competing mobile floating actions.
+ */
 export function WhatsAppFAB() {
-  const [visible, setVisible] = useState(false)
+  const pathname = usePathname()
+  const [heroState, setHeroState] = useState({ path: '/', isVisible: true })
+  const [enquiryState, setEnquiryState] = useState({ path: '/', isVisible: false })
+  const isHome = pathname === '/'
+  const heroIsVisible = heroState.path === pathname ? heroState.isVisible : true
 
   useEffect(() => {
+    if (!isHome) return
+
     const hero = document.getElementById('hero-section')
-    if (!hero) {
-      // eslint-disable-next-line react-hooks/set-state-in-effect
-      setVisible(true)
-      return
-    }
+    if (!hero) return
+
     const observer = new IntersectionObserver(
-      ([entry]) => setVisible(!entry.isIntersecting),
-      { threshold: 0 }
+      ([entry]) => setHeroState({ path: pathname, isVisible: entry.isIntersecting }),
+      { threshold: 0 },
     )
     observer.observe(hero)
     return () => observer.disconnect()
-  }, [])
+  }, [isHome, pathname])
+
+  useEffect(() => {
+    const visibleTargets = new Set<Element>()
+    const observer = new IntersectionObserver(entries => {
+      for (const entry of entries) {
+        if (entry.isIntersecting) visibleTargets.add(entry.target)
+        else visibleTargets.delete(entry.target)
+      }
+      setEnquiryState({ path: pathname, isVisible: visibleTargets.size > 0 })
+    })
+    document.querySelectorAll('main .cta, .site-footer').forEach(target => observer.observe(target))
+    return () => observer.disconnect()
+  }, [pathname])
+
+  const enquiryIsVisible = enquiryState.path === pathname && enquiryState.isVisible
+  const visible = pathname !== '/contact' && (!isHome || !heroIsVisible) && !enquiryIsVisible
+  if (!visible) return null
 
   return (
-    <AnimatePresence>
-      {visible && (
-        <motion.div
-          key="quote-fab"
-          initial={{ y: 80, opacity: 0 }}
-          animate={{ y: 0, opacity: 1 }}
-          exit={{ y: 80, opacity: 0 }}
-          transition={{ type: 'spring', stiffness: 300, damping: 30 }}
-          // Clears the consent banner, which pins itself to the bottom of the
-          // viewport and publishes its height as --consent-h. Without this the
-          // banner covered the site's primary conversion action on first visit.
-          style={{ bottom: 'calc(1.5rem + var(--consent-h, 0px))' }}
-          className="fixed right-6 z-50"
-        >
-          <QuoteCTA source="fab" />
-        </motion.div>
-      )}
-    </AnimatePresence>
+    <div className="quote-dock" style={{ bottom: 'calc(0.85rem + var(--consent-h, 0px))' }}>
+      <QuoteCTA source="mobile-dock" tone="yellow" label="WhatsApp your project" className="quote-dock__cta" />
+    </div>
   )
 }

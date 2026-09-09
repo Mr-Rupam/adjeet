@@ -77,14 +77,14 @@ export function Lightbox({ photos, initialIndex, onClose }: LightboxProps) {
       aria-modal="true"
       aria-label="Photo viewer"
       aria-describedby={captionId}
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/95 backdrop-blur-md"
+      className="fixed inset-0 z-[100] flex items-center justify-center bg-night/95 px-4 py-6 backdrop-blur-md"
     >
       {/* Close */}
       <button
         ref={closeRef}
         onClick={onClose}
         aria-label="Close photo viewer"
-        className="absolute top-4 right-4 p-2 text-white hover:text-ink-muted"
+        className="absolute right-3 top-3 z-10 inline-flex h-11 w-11 items-center justify-center button-shape border border-night-rule bg-night/60 text-night-ink backdrop-blur-sm transition-colors hover:border-signal hover:text-signal focus-visible:outline-night-ink"
       >
         ✕
       </button>
@@ -94,23 +94,26 @@ export function Lightbox({ photos, initialIndex, onClose }: LightboxProps) {
         <button
           onClick={prev}
           aria-label="Previous photo"
-          className="absolute left-4 top-1/2 -translate-y-1/2 p-3 text-white hover:text-ink-muted text-2xl"
+          className="absolute left-2 top-1/2 z-10 inline-flex h-11 w-11 -translate-y-1/2 items-center justify-center button-shape border border-night-rule bg-night/60 text-lg text-night-ink backdrop-blur-sm transition-colors hover:border-signal hover:text-signal focus-visible:outline-night-ink"
         >
           ←
         </button>
       )}
 
       {/* Image */}
-      <div className="relative max-w-4xl max-h-[80vh] w-full mx-16">
-        <Image
-          src={photo.src}
-          alt={photo.alt}
-          width={1200}
-          height={800}
-          className="object-contain max-h-[80vh] w-full"
-          priority
-        />
-        <p id={captionId} className="mt-2 text-center text-sm text-ink-muted">{photo.alt}</p>
+      <div className="relative flex w-[calc(100vw-2rem)] max-w-5xl flex-col items-center sm:w-[calc(100vw-8rem)]">
+        <div className="flex max-h-[72dvh] w-full items-center justify-center overflow-hidden border border-night-rule bg-black/20 shadow-[0_24px_80px_rgb(0_0_0_/_35%)]">
+          <Image
+            src={photo.src}
+            alt={photo.alt}
+            width={1200}
+            height={800}
+            sizes="(max-width: 640px) calc(100vw - 2rem), (max-width: 1024px) calc(100vw - 8rem), 1024px"
+            className="max-h-[72dvh] w-full object-contain"
+            priority
+          />
+        </div>
+        <p id={captionId} className="mt-3 max-w-[52ch] text-center text-sm text-night-ink-muted">{photo.alt}</p>
       </div>
 
       {/* Next */}
@@ -118,14 +121,14 @@ export function Lightbox({ photos, initialIndex, onClose }: LightboxProps) {
         <button
           onClick={next}
           aria-label="Next photo"
-          className="absolute right-4 top-1/2 -translate-y-1/2 p-3 text-white hover:text-ink-muted text-2xl"
+          className="absolute right-2 top-1/2 z-10 inline-flex h-11 w-11 -translate-y-1/2 items-center justify-center button-shape border border-night-rule bg-night/60 text-lg text-night-ink backdrop-blur-sm transition-colors hover:border-signal hover:text-signal focus-visible:outline-night-ink"
         >
           →
         </button>
       )}
 
       {/* Counter */}
-      <p className="absolute bottom-4 text-xs text-white/60">
+      <p className="absolute bottom-4 text-xs text-night-ink-muted">
         {idx + 1} / {total}
       </p>
     </div>

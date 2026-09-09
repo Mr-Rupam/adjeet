@@ -38,7 +38,7 @@ export async function generateMetadata({ params }: { params: Promise<Params> }):
     // '%s | AD JEET' template, so every one of these 25 pages rendered the
     // brand twice. Service + city keeps it keyword-first and inside ~60.
     title: service ? `${service.name} in ${city}` : page.headline,
-    description: [service?.tagline?.replace(/[.\s]+$/, ''), `Serving ${city}, North Bengal`, 'Contact AD JEET for a same-day quote']
+    description: [service?.tagline?.replace(/[.\s]+$/, ''), `For projects in ${city} and North Bengal`, 'Contact AD JEET to discuss your brief']
       .filter(Boolean)
       .join('. ') + '.',
     alternates: { canonical: `${siteConfig.url}/${slug}` },
@@ -169,9 +169,7 @@ export default async function ProgrammaticPage({ params }: { params: Promise<Par
           >
             WhatsApp us now →
           </WhatsAppLink>
-          <p className="spec mt-8 text-signal-ink">
-            Reply within 2 hours · Free quote, valid 15 days
-          </p>
+          <p className="spec mt-8 text-signal-ink">Share a photo, size and location for a project-specific quote.</p>
         </div>
       </section>
     </>

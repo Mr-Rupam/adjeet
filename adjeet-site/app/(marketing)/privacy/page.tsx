@@ -9,7 +9,8 @@ export const metadata: Metadata = {
 
 export default function PrivacyPage() {
   return (
-    <main className="mx-auto max-w-content px-5 py-20 md:px-8">
+    <section className="mx-auto max-w-3xl px-5 py-16 md:px-8 md:py-24">
+      <p className="spec text-signal">AD JEET</p>
       <h1 className="display mt-3 text-ink" style={{ fontSize: 'var(--text-display-2)' }}>
         Privacy Policy
       </h1>
@@ -83,9 +84,9 @@ export default function PrivacyPage() {
         </section>
       </div>
 
-      <div className="mt-12 border-t-2 border-ink pt-8">
-        <Link href="/" className="spec border-2 border-ink px-5 py-3 text-ink transition-colors hover:bg-ink hover:text-paper inline-block">← Back to home</Link>
+      <div className="mt-12 border-t border-rule pt-8">
+        <Link href="/" className="inline-flex min-h-11 items-center text-sm font-medium text-ink underline underline-offset-4">← Back to home</Link>
       </div>
-    </main>
+    </section>
   )
 }
