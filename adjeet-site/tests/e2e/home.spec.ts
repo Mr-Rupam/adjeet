@@ -10,9 +10,10 @@ test.describe('Home page', () => {
 
   test('uses one clear hero proposition over the workshop scene', async ({ page }) => {
     const hero = page.locator('#hero-section')
-    await expect(hero.getByRole('heading', { level: 1, name: /made to be seen/i })).toBeVisible()
+    await expect(hero.getByRole('heading', { level: 1, name: /signage, print & outdoor branding/i })).toBeVisible()
     await expect(page.getByRole('heading', { level: 1 })).toHaveCount(1)
     await expect(hero.getByText(/signage, print & outdoor branding/i)).toBeVisible()
+    await expect(hero.getByText(/designed, fabricated and installed from our siliguri workshop/i)).toBeVisible()
     await expect(hero.getByText(/ad jeet workshop, siliguri/i)).toBeVisible()
   })
 

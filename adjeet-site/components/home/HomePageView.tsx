@@ -60,8 +60,8 @@ export function HomePageView() {
         <div className={styles.heroScrim} aria-hidden="true" />
         <div className={styles.heroContent}>
           <p className={styles.heroMeta} data-hero-meta><span /> Siliguri · Since {FOUNDED_YEAR}</p>
-          <h1 id="home-heading" data-hero-title>Made to<br /><span>be seen.</span></h1>
-          <p className={styles.heroLead} data-hero-lead>Signage, print &amp; outdoor branding. Designed. Fabricated. Installed.</p>
+          <h1 id="home-heading" data-hero-title>Signage, print &amp;<br /><span>outdoor branding.</span></h1>
+          <p className={styles.heroLead} data-hero-lead>Designed, fabricated and installed from our Siliguri workshop for businesses across North Bengal.</p>
           <div className={styles.heroActions} data-hero-actions>
             <QuoteCTA source="hero" tone="yellow" label="WhatsApp your project" />
             <a href="#selected-work" className={styles.heroTextLink}><ArrowDown size={17} aria-hidden="true" /> See what&apos;s out there</a>
