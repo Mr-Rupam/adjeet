@@ -1,5 +1,5 @@
 import type { Metadata } from 'next'
-import { anton, inter, jetbrainsMono } from '@/app/fonts'
+import { barlowCondensed, hindSiliguri } from '@/app/fonts'
 import { ThemeScript } from '@/components/ThemeScript'
 import { SkipLink } from '@/components/SkipLink'
 import { Nav } from '@/components/Nav'
@@ -9,9 +9,12 @@ import { Chatbot } from '@/components/Chatbot'
 import { ConsentBanner } from '@/components/ui/ConsentBanner'
 import { Analytics } from '@/components/Analytics'
 import { ReducedMotionWrapper } from '@/components/motion/ReducedMotionWrapper'
+import { SiteMotion } from '@/components/motion/SiteMotion'
 import { buildLocalBusinessJsonLd, jsonLdString } from '@/lib/seo'
 import './globals.css'
-import { DISTRICTS_SERVED, FOUNDED_YEAR } from '@/lib/coverage'
+import { FOUNDED_YEAR } from '@/lib/coverage'
+
+const siteDescription = `Signage, print and outdoor branding from Siliguri for businesses across North Bengal since ${FOUNDED_YEAR}.`
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://adjeet.in'),
@@ -19,14 +22,14 @@ export const metadata: Metadata = {
     default: 'AD JEET: North Bengal Signage & OOH',
     template: '%s | AD JEET',
   },
-  description: `North Bengal's most trusted signage and outdoor advertising partner since ${FOUNDED_YEAR}. Glow signs, ACP/LED, flex printing, vehicle branding across ${DISTRICTS_SERVED} districts.`,
+  description: siteDescription,
   icons: {
-    icon: '/logo.png',
-    shortcut: '/logo.png',
+    icon: '/brand/adjeet-original.png',
+    shortcut: '/brand/adjeet-original.png',
   },
   openGraph: {
     title: 'AD JEET: North Bengal Signage & OOH',
-    description: `North Bengal's most trusted signage and outdoor advertising partner since ${FOUNDED_YEAR}. Glow signs, ACP/LED, flex printing, vehicle branding across ${DISTRICTS_SERVED} districts.`,
+    description: siteDescription,
     url: 'https://adjeet.in',
     siteName: 'AD JEET',
     images: [{ url: '/og-image.jpg', width: 1200, height: 630, alt: 'AD JEET fabrication workshop, Siliguri, North Bengal signage since 1990' }],
@@ -36,7 +39,7 @@ export const metadata: Metadata = {
   twitter: {
     card: 'summary_large_image',
     title: 'AD JEET: North Bengal Signage & OOH',
-    description: 'North Bengal\'s most trusted signage and outdoor advertising partner since 1990.',
+    description: siteDescription,
     images: ['/og-image.jpg'],
   },
 }
@@ -46,7 +49,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html
       lang="en"
       suppressHydrationWarning
-      className={`${anton.variable} ${inter.variable} ${jetbrainsMono.variable}`}
+      className={`${barlowCondensed.variable} ${hindSiliguri.variable}`}
     >
       <head>
         <ThemeScript />
@@ -64,9 +67,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <ReducedMotionWrapper>
           <SkipLink />
           <Nav />
-          <main id="main-content" className="flex-1 pt-16">
+          <main id="main-content" className="flex-1 pt-20 md:pt-[88px]">
             {children}
           </main>
+          <SiteMotion />
           <Footer />
           <Chatbot />
           <WhatsAppFAB />

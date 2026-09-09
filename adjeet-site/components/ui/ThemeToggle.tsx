@@ -1,7 +1,8 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { STORAGE_KEY, type ResolvedTheme } from '@/lib/theme'
+import { Moon, Sun } from 'lucide-react'
+import { STORAGE_KEY, THEME_TOGGLE_EVENT, type ResolvedTheme } from '@/lib/theme'
 import { trackThemeToggle } from '@/lib/analytics'
 
 function readTheme(): ResolvedTheme {
@@ -30,6 +31,7 @@ export function ThemeToggle() {
     const next: ResolvedTheme = theme === 'light' ? 'dark' : 'light'
     setTheme(next)
     applyTheme(next)
+    window.dispatchEvent(new CustomEvent(THEME_TOGGLE_EVENT, { detail: next }))
     trackThemeToggle(next)
   }
 
@@ -37,18 +39,12 @@ export function ThemeToggle() {
     <button
       onClick={toggle}
       aria-label={`Switch to ${theme === 'light' ? 'dark' : 'light'} mode`}
+      aria-pressed={theme === 'dark'}
       title={theme === 'light' ? 'See the signs at night' : 'Back to daylight'}
-      className="spec inline-flex h-11 items-center border-2 border-ink px-3 text-ink-muted transition-colors hover:bg-ink hover:text-paper"
+      className="theme-toggle"
+      data-theme={theme}
     >
-      <span aria-hidden="true" className="flex items-center gap-1.5">
-        <span
-          className={`inline-block h-1.5 w-1.5 rounded-full ${
-            theme === 'light' ? 'bg-ink-subtle' : 'bg-signal shadow-[0_0_8px_1px_rgba(70,175,230,0.9)]'
-          }`}
-        />
-        {theme === 'light' ? 'Night' : 'Day'}
-      </span>
+      {theme === 'light' ? <Moon size={18} strokeWidth={1.7} aria-hidden="true" /> : <Sun size={19} strokeWidth={1.7} aria-hidden="true" />}
     </button>
   )
 }
-

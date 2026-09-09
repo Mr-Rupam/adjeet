@@ -4,10 +4,9 @@ import { PortfolioContent } from './PortfolioContent'
 import { buildBreadcrumbJsonLd, jsonLdString, siteConfig } from '@/lib/seo'
 import { PageMasthead } from '@/components/street/PageMasthead'
 import { CommissionCTA } from '@/components/street/CommissionCTA'
-import { DISTRICTS_SERVED, YEARS_ACTIVE } from '@/lib/coverage'
 
 export const metadata: Metadata = {
-  title: 'Portfolio: 500+ Installations Across North Bengal',
+  title: 'Portfolio: Signage Work Across North Bengal',
   description:
     'See our work: glow sign boards, ACP signage, flex printing, vehicle branding, and F-pole installations across Siliguri, Jalpaiguri, Cooch Behar, Darjeeling, and Malda.',
   alternates: { canonical: `${siteConfig.url}/portfolio` },
@@ -27,32 +26,20 @@ export default function PortfolioPage() {
       />
 
       <PageMasthead
+        meta={['Selected work', 'North Bengal', 'Five documented projects']}
         title={
           <>
-            Signs you have
+            Work made for
             <br />
-            already <span className="glow-signal text-signal">driven past.</span>
+            the <span className="glow-signal text-signal">real world.</span>
           </>
         }
-        lead={`${YEARS_ACTIVE} years of installations across North Bengal. Every sign fabricated in-house at Patiram Jote, every one hung by our own crew.`}
-      >
-        <dl className="m-0 flex flex-wrap gap-6 md:gap-10">
-          {[
-            { v: '500+', k: 'Installations' },
-            { v: '10', k: 'Trades' },
-            { v: String(DISTRICTS_SERVED), k: 'Districts' },
-          ].map(s => (
-            <div key={s.k} className="flex flex-col border-l-2 border-ink pl-4">
-              <dt className="spec order-2 text-ink-subtle">{s.k}</dt>
-              <dd className="display order-1 m-0 text-4xl text-ink">{s.v}</dd>
-            </div>
-          ))}
-        </dl>
-      </PageMasthead>
+        lead="A focused selection of project photographs. Filter by what was made or where the work was recorded."
+      />
 
       <Suspense
         fallback={
-          <div className="border-b-2 border-ink py-32 text-center">
+          <div className="border-b border-rule py-32 text-center">
             <span
               className="inline-block h-6 w-6 animate-spin rounded-full border-2 border-rule"
               style={{ borderTopColor: 'var(--signal)' }}

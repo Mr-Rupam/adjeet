@@ -78,4 +78,17 @@ describe('ThemeToggle', () => {
     fireEvent.click(screen.getByRole('button'))
     expect(trackThemeToggle).toHaveBeenCalledWith('light')
   })
+
+  it('announces a visitor-initiated theme change so the hero can play its matching film', () => {
+    storage[STORAGE_KEY] = 'light'
+    const listener = vi.fn()
+    window.addEventListener('adjeet:theme-toggle', listener)
+
+    render(<ThemeToggle />)
+    fireEvent.click(screen.getByRole('button'))
+
+    expect(listener).toHaveBeenCalledTimes(1)
+    expect((listener.mock.calls[0][0] as CustomEvent).detail).toBe('dark')
+    window.removeEventListener('adjeet:theme-toggle', listener)
+  })
 })

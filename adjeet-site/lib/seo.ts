@@ -6,7 +6,7 @@ export const siteConfig = {
   name: 'AD JEET',
   url: 'https://adjeet.in',
   ogImage: '/og-image.jpg',
-  description: "North Bengal's most trusted signage and outdoor advertising partner since 1990.",
+  description: 'Signage, print and outdoor branding from Siliguri for businesses across North Bengal since 1990.',
 }
 
 // Defense in depth: escape `<` so a stray `</script>` inside JSON-LD can never

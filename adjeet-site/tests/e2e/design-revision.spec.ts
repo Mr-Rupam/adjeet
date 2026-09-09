@@ -1,0 +1,30 @@
+import { test, expect } from '@playwright/test'
+
+test('navigation switches at one breakpoint and an open drawer releases desktop scrolling', async ({ page }) => {
+  await page.setViewportSize({ width: 820, height: 1000 })
+  await page.goto('/')
+  const header = page.getByRole('banner')
+  const trigger = header.getByRole('button', { name: 'Open navigation menu' })
+  await expect(trigger).toBeVisible()
+  await trigger.click()
+  await expect(page.getByRole('dialog', { name: 'Navigation menu' })).toBeVisible()
+  await page.setViewportSize({ width: 1280, height: 900 })
+  await expect(page.getByRole('dialog', { name: 'Navigation menu' })).toHaveCount(0)
+  await expect(header.getByRole('button', { name: 'Open navigation menu' })).toBeHidden()
+  await expect(header.getByRole('link', { name: 'Services', exact: true })).toBeVisible()
+  await expect.poll(() => page.evaluate(() => document.body.style.overflow)).not.toBe('hidden')
+})
+
+test('the mobile enquiry dock yields to visible enquiry actions and the footer', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 })
+  await page.emulateMedia({ reducedMotion: 'reduce' })
+  await page.goto('/')
+  const dock = page.locator('.quote-dock')
+  await expect(dock).toHaveCount(0)
+  await page.locator('#services').scrollIntoViewIfNeeded()
+  await expect(dock).toBeVisible()
+  await page.locator('#enquiry-heading').scrollIntoViewIfNeeded()
+  await expect(dock).toHaveCount(0)
+  await page.getByRole('contentinfo').scrollIntoViewIfNeeded()
+  await expect(dock).toHaveCount(0)
+})

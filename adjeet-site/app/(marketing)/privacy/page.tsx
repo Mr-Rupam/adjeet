@@ -9,15 +9,16 @@ export const metadata: Metadata = {
 
 export default function PrivacyPage() {
   return (
-    <main className="mx-auto max-w-content px-5 py-20 md:px-8">
-      <h1 className="display mt-3 text-ink" style={{ fontSize: 'var(--text-display-2)' }}>
+    <section className="mx-auto max-w-3xl px-5 py-16 md:px-8 md:py-24">
+      <p className="spec text-signal">AD JEET</p>
+      <h1 className="display mt-3 text-ink" data-reveal-text style={{ fontSize: 'var(--text-display-2)' }}>
         Privacy Policy
       </h1>
       <p className="spec mb-12 mt-3 text-ink-subtle">Last updated: April 2026</p>
 
-      <div className="prose prose-sm max-w-2xl space-y-8 text-ink-muted">
+      <div className="prose max-w-2xl space-y-10 text-base leading-relaxed text-ink-muted">
         <section>
-          <h2 className="display text-xl text-ink mb-3">1. Information We Collect</h2>
+          <h2 className="display mb-3 text-xl text-ink" data-reveal-text>1. Information We Collect</h2>
           <p>
             When you submit a contact form on this website, we collect your name, phone number, city, and
             service interest. We use this information solely to respond to your enquiry. We do not sell or
@@ -31,7 +32,7 @@ export default function PrivacyPage() {
         </section>
 
         <section>
-          <h2 className="display text-xl text-ink mb-3">2. Analytics</h2>
+          <h2 className="display mb-3 text-xl text-ink" data-reveal-text>2. Analytics</h2>
           <p>
             With your consent, we use Google Analytics 4 to understand how visitors use this site. Analytics
             cookies are only set after you accept via the consent banner. You can withdraw consent at any time
@@ -40,7 +41,7 @@ export default function PrivacyPage() {
         </section>
 
         <section>
-          <h2 className="display text-xl text-ink mb-3">3. WhatsApp</h2>
+          <h2 className="display mb-3 text-xl text-ink" data-reveal-text>3. WhatsApp</h2>
           <p>
             Clicking a WhatsApp button opens WhatsApp (web or app) with a pre-filled message. Any subsequent
             conversation is governed by WhatsApp&apos;s own privacy policy. We do not receive any data from WhatsApp
@@ -49,7 +50,7 @@ export default function PrivacyPage() {
         </section>
 
         <section>
-          <h2 className="display text-xl text-ink mb-3">4. Data Retention</h2>
+          <h2 className="display mb-3 text-xl text-ink" data-reveal-text>4. Data Retention</h2>
           <p>
             Contact form submissions are stored in our secure database and retained for up to 12 months
             for business correspondence. Copies may exist in our email inbox and internal spreadsheet.
@@ -58,7 +59,7 @@ export default function PrivacyPage() {
         </section>
 
         <section>
-          <h2 className="display text-xl text-ink mb-3">5. Security</h2>
+          <h2 className="display mb-3 text-xl text-ink" data-reveal-text>5. Security</h2>
           <p>
             We take reasonable measures to protect your data in transit and at rest. Our website uses HTTPS.
             Contact form data is encrypted in transit and stored in a password-protected, access-controlled
@@ -67,7 +68,7 @@ export default function PrivacyPage() {
         </section>
 
         <section>
-          <h2 className="display text-xl text-ink mb-3">6. Your Rights</h2>
+          <h2 className="display mb-3 text-xl text-ink" data-reveal-text>6. Your Rights</h2>
           <p>
             You have the right to access, correct, or delete personal data we hold about you. To exercise these
             rights, contact us via WhatsApp at +91 98320 11524 or visit our office at Platinum Square, Siliguri.
@@ -75,7 +76,7 @@ export default function PrivacyPage() {
         </section>
 
         <section>
-          <h2 className="display text-xl text-ink mb-3">7. Changes</h2>
+          <h2 className="display mb-3 text-xl text-ink" data-reveal-text>7. Changes</h2>
           <p>
             We may update this policy from time to time. The &quot;Last updated&quot; date above reflects the most recent
             revision. Continued use of the site after changes constitutes acceptance of the updated policy.
@@ -83,9 +84,9 @@ export default function PrivacyPage() {
         </section>
       </div>
 
-      <div className="mt-12 border-t-2 border-ink pt-8">
-        <Link href="/" className="spec border-2 border-ink px-5 py-3 text-ink transition-colors hover:bg-ink hover:text-paper inline-block">← Back to home</Link>
+      <div className="mt-12 border-t border-rule pt-8">
+        <Link href="/" className="inline-flex min-h-11 items-center text-sm font-medium text-ink underline underline-offset-4">← Back to home</Link>
       </div>
-    </main>
+    </section>
   )
 }

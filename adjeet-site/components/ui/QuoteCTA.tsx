@@ -13,6 +13,7 @@ interface QuoteCTAProps {
   source?: string
   className?: string
   size?: 'sm' | 'md'
+  tone?: 'cyan' | 'yellow'
   label?: string
   /**
    * Icon-only, for the mobile header where there is no room for the label.
@@ -26,15 +27,12 @@ export function QuoteCTA({
   source = 'cta',
   className = '',
   size = 'md',
+  tone = 'cyan',
   label = 'Quote on WhatsApp',
   iconOnly = false,
 }: QuoteCTAProps) {
   const waUrl = defaultWhatsAppUrl()
-  const padding = iconOnly
-    ? 'h-11 w-11 justify-center'
-    : size === 'sm'
-      ? 'px-4 py-2 text-[11px]'
-      : 'px-6 py-3.5 text-[13px]'
+  const sizeClass = iconOnly ? 'cta--icon' : size === 'sm' ? 'cta--sm' : 'cta--md'
 
   return (
     <a
@@ -42,7 +40,7 @@ export function QuoteCTA({
       target="_blank"
       rel="noopener noreferrer"
       onClick={() => trackWhatsAppClick({ source_page: source })}
-      className={`inline-flex items-center gap-2 border-2 border-ink bg-signal text-signal-ink font-bold uppercase tracking-[0.08em] whitespace-nowrap shadow-[4px_4px_0_0_var(--ink)] transition-all hover:-translate-x-px hover:-translate-y-px hover:shadow-[6px_6px_0_0_var(--ink)] active:translate-x-0.5 active:translate-y-0.5 active:shadow-[2px_2px_0_0_var(--ink)] ${padding} ${className}`}
+      className={`cta ${sizeClass} ${tone === 'yellow' ? 'cta--yellow' : ''} whitespace-nowrap ${className}`}
     >
       {WHATSAPP_SVG}
       {iconOnly ? <span className="sr-only">{label}</span> : label}

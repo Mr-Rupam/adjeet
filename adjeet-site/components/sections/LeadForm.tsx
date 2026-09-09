@@ -66,8 +66,8 @@ export function LeadForm() {
 
   if (submitted) {
     return (
-      <div className="border-2 border-ink bg-paper p-10 text-center shadow-[6px_6px_0_0_var(--signal)]">
-        <div className="mb-4 inline-flex h-14 w-14 items-center justify-center border-2 border-ink bg-signal">
+      <div className="rounded-2xl border border-rule bg-paper p-10 text-center shadow-[var(--elev-1)]">
+        <div className="mb-4 inline-flex h-14 w-14 items-center justify-center rounded-full bg-signal">
           <span className="text-2xl text-signal-ink">✓</span>
         </div>
         <h3 className="display mb-2 text-2xl text-ink">Message received.</h3>
@@ -79,9 +79,9 @@ export function LeadForm() {
   }
 
   const fieldBase =
-    'block w-full border-2 bg-paper px-4 py-3 text-sm text-ink placeholder:text-ink-subtle/60 focus:outline-none transition-all duration-200'
-  const fieldNormal = `${fieldBase} border-ink/40 focus:border-ink focus:shadow-[3px_3px_0_0_var(--signal)]`
-  const fieldError = `${fieldBase} border-error focus:border-error`
+    'block min-h-[52px] w-full rounded-xl border bg-paper px-4 py-3 text-base text-ink placeholder:text-ink-subtle/60 focus:outline-none transition-all duration-200'
+  const fieldNormal = `${fieldBase} border-rule focus:border-signal focus:ring-2 focus:ring-signal/15`
+  const fieldError = `${fieldBase} border-error focus:border-error focus:ring-2 focus:ring-error/15`
   const label = 'spec block text-ink-muted mb-2'
   const errMsg = 'mt-1.5 text-xs text-error flex items-center gap-1'
 
@@ -177,7 +177,7 @@ export function LeadForm() {
             {services.map(s => (
               <label
                 key={s.slug}
-                className="flex cursor-pointer items-center gap-2.5 border-2 border-ink/30 px-3 py-2.5 text-sm text-ink transition-all hover:border-ink has-[:checked]:border-ink has-[:checked]:bg-signal/15 has-[:checked]:shadow-[2px_2px_0_0_var(--ink)]"
+                className="flex min-h-11 cursor-pointer items-center gap-2.5 rounded-xl border border-rule px-3 py-2.5 text-sm text-ink transition-all hover:border-signal has-[:checked]:border-signal has-[:checked]:bg-signal/10"
               >
                 <input
                   type="checkbox"
@@ -265,7 +265,7 @@ export function LeadForm() {
       <button
         type="submit"
         disabled={isSubmitting}
-        className="w-full border-2 border-ink bg-signal py-4 text-sm font-bold uppercase tracking-[0.08em] text-signal-ink shadow-[4px_4px_0_0_var(--ink)] transition-all hover:-translate-x-px hover:-translate-y-px hover:shadow-[6px_6px_0_0_var(--ink)] active:translate-x-0.5 active:translate-y-0.5 active:shadow-[2px_2px_0_0_var(--ink)] disabled:opacity-50"
+        className="min-h-[54px] w-full rounded-full border border-signal-hot bg-signal-hot px-6 py-3 text-sm font-medium text-signal-ink transition-transform hover:-translate-y-px active:translate-y-0 disabled:opacity-50"
       >
         {isSubmitting ? (
           <span className="flex items-center justify-center gap-2">

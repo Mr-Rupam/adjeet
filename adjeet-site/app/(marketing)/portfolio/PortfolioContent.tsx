@@ -8,6 +8,7 @@ import { photos } from '@/content/gallery'
 import { services, type ServiceSlug } from '@/content/services'
 import { CITY_SLUGS, type CitySlug } from '@/content/cities'
 import { Lightbox, type LightboxPhoto } from '@/components/ui/Lightbox'
+import { useReducedMotion } from '@/components/motion/ReducedMotionWrapper'
 import { trackPortfolioFilter } from '@/lib/analytics'
 
 const CITY_LABELS: Record<CitySlug, string> = {
@@ -63,6 +64,7 @@ const cardVariants = {
 export function PortfolioContent() {
   const router = useRouter()
   const searchParams = useSearchParams()
+  const prefersReducedMotion = useReducedMotion()
   const serviceFilter = (searchParams.get('service') ?? 'all') as ServiceSlug | 'all'
   const cityFilter = (searchParams.get('city') ?? 'all') as CitySlug | 'all'
 
@@ -99,7 +101,7 @@ export function PortfolioContent() {
   }
 
   const chip = (active: boolean) =>
-    `spec flex-shrink-0 border-2 px-3 py-2 transition-all ${
+    `spec flex-shrink-0 snap-start border-2 px-3 py-2 transition-all ${
       active
         ? 'border-ink bg-ink text-paper'
         : 'border-ink/25 text-ink-muted hover:border-ink hover:text-ink'
@@ -108,17 +110,18 @@ export function PortfolioContent() {
   return (
     <>
       {/* ═══════ FILTER BAR: the job docket ═══════ */}
-      <section className="sticky top-16 z-30 border-b-2 border-ink bg-paper/95 py-4 backdrop-blur-xl">
+      <section className="sticky top-[var(--header-height)] z-30 border-b border-rule bg-paper/95 py-4 backdrop-blur-xl">
         <div className="mx-auto max-w-content px-5 md:px-8">
           {/* Top row: view toggles + count */}
           <div className="mb-4 flex items-center justify-between gap-4">
             <div className="flex items-center gap-2">
-              <button onClick={() => setActiveView('all')} className={chip(activeView === 'all')}>
+              <button onClick={() => setActiveView('all')} className={chip(activeView === 'all')} aria-pressed={activeView === 'all'}>
                 All work
               </button>
               <button
                 onClick={() => setActiveView('featured')}
                 className={chip(activeView === 'featured')}
+                aria-pressed={activeView === 'featured'}
               >
                 Featured
               </button>
@@ -140,8 +143,12 @@ export function PortfolioContent() {
           </div>
 
           {/* Service filters */}
-          <div className="no-scrollbar flex gap-2 overflow-x-auto pb-2">
-            <button onClick={() => setFilter('service', 'all')} className={chip(serviceFilter === 'all')}>
+          <div className="mb-2 flex items-center justify-between">
+            <p className="spec text-ink-subtle">Trade</p>
+            <span className="spec text-ink-subtle sm:hidden" aria-hidden="true">Swipe →</span>
+          </div>
+          <div role="group" aria-label="Filter work by trade" className="no-scrollbar -mx-5 flex snap-x gap-2 overflow-x-auto px-5 pb-2 md:mx-0 md:px-0">
+            <button onClick={() => setFilter('service', 'all')} className={chip(serviceFilter === 'all')} aria-pressed={serviceFilter === 'all'}>
               All trades
             </button>
             {services.map(s => (
@@ -149,6 +156,7 @@ export function PortfolioContent() {
                 key={s.slug}
                 onClick={() => setFilter('service', s.slug)}
                 className={chip(serviceFilter === s.slug)}
+                aria-pressed={serviceFilter === s.slug}
               >
                 {s.name}
               </button>
@@ -156,8 +164,12 @@ export function PortfolioContent() {
           </div>
 
           {/* City filters */}
-          <div className="no-scrollbar mt-2 flex gap-2 overflow-x-auto">
-            <button onClick={() => setFilter('city', 'all')} className={chip(cityFilter === 'all')}>
+          <div className="mt-3 mb-2 flex items-center justify-between">
+            <p className="spec text-ink-subtle">City</p>
+            <span className="spec text-ink-subtle sm:hidden" aria-hidden="true">Swipe →</span>
+          </div>
+          <div role="group" aria-label="Filter work by city" className="no-scrollbar -mx-5 flex snap-x gap-2 overflow-x-auto px-5 md:mx-0 md:px-0">
+            <button onClick={() => setFilter('city', 'all')} className={chip(cityFilter === 'all')} aria-pressed={cityFilter === 'all'}>
               All cities
             </button>
             {CITY_SLUGS.map(city => (
@@ -165,6 +177,7 @@ export function PortfolioContent() {
                 key={city}
                 onClick={() => setFilter('city', city)}
                 className={chip(cityFilter === city)}
+                aria-pressed={cityFilter === city}
               >
                 {CITY_LABELS[city]}
               </button>
@@ -174,7 +187,7 @@ export function PortfolioContent() {
       </section>
 
       {/* ═══════ GALLERY GRID ═══════ */}
-      <section className="border-b-2 border-ink bg-paper py-12 sm:py-16">
+      <section className="border-b border-rule bg-paper py-12 sm:py-16">
         <div className="mx-auto max-w-content px-5 md:px-8">
           {filtered.length === 0 ? (
             <div className="py-32 text-center">
@@ -190,20 +203,20 @@ export function PortfolioContent() {
           ) : (
             <motion.div
               className="grid auto-rows-[200px] grid-cols-1 gap-4 sm:auto-rows-[240px] sm:grid-cols-3"
-              layout
+              layout={!prefersReducedMotion}
             >
               <AnimatePresence mode="popLayout">
                 {filtered.map((photo, idx) => (
                   <motion.button
                     key={photo.id}
                     custom={idx}
-                    variants={cardVariants}
-                    initial="hidden"
-                    animate="visible"
-                    exit="exit"
-                    layout
+                    variants={prefersReducedMotion ? undefined : cardVariants}
+                    initial={prefersReducedMotion ? false : 'hidden'}
+                    animate={prefersReducedMotion ? { opacity: 1, y: 0, scale: 1 } : 'visible'}
+                    exit={prefersReducedMotion ? undefined : 'exit'}
+                    layout={!prefersReducedMotion}
                     onClick={() => openAt(idx)}
-                    className={`group relative overflow-hidden border-2 border-ink bg-rule transition-shadow hover:shadow-[6px_6px_0_0_var(--signal)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-signal ${getCardClass(idx)}`}
+                    className={`group relative overflow-hidden border border-rule bg-rule transition-shadow hover:shadow-[var(--elev-2)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-signal ${getCardClass(idx)}`}
                     aria-label={`View: ${photo.alt}`}
                   >
                     <Image
@@ -220,24 +233,24 @@ export function PortfolioContent() {
 
                     {/* Job number */}
                     <div className="absolute left-3 top-3 translate-y-2 opacity-0 transition-all duration-300 group-hover:translate-y-0 group-hover:opacity-100">
-                      <span className="spec text-white/60">
+                      <span className="spec text-night-ink-muted">
                         Job {String(idx + 1).padStart(2, '0')}
                       </span>
                     </div>
 
                     {/* Service tag */}
                     <div className="absolute right-3 top-3 translate-y-2 opacity-0 transition-all duration-300 group-hover:translate-y-0 group-hover:opacity-100">
-                      <span className="spec border border-white/25 bg-black/40 px-2 py-1 text-white/80 backdrop-blur-sm">
+                      <span className="spec border border-night-rule bg-night/60 px-2 py-1 text-night-ink backdrop-blur-sm">
                         {SERVICE_SHORT[photo.service] ?? photo.service}
                       </span>
                     </div>
 
                     {/* Bottom info */}
                     <div className="absolute inset-x-0 bottom-0 translate-y-2 p-4 text-left opacity-0 transition-all duration-300 group-hover:translate-y-0 group-hover:opacity-100">
-                      <p className="line-clamp-2 text-sm font-medium leading-snug text-white">
+                      <p className="line-clamp-2 text-sm font-medium leading-snug text-night-ink">
                         {photo.alt}
                       </p>
-                      <p className="spec mt-1.5 text-white/50">
+                      <p className="spec mt-1.5 text-night-ink-muted">
                         {CITY_LABELS[photo.city]} · {photo.year}
                       </p>
                     </div>

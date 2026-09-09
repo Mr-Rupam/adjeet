@@ -1,14 +1,13 @@
+import Image from 'next/image'
 import type { Metadata } from 'next'
 import { buildBreadcrumbJsonLd, jsonLdString, siteConfig } from '@/lib/seo'
 import { PageMasthead } from '@/components/street/PageMasthead'
-import { StandardPlates } from '@/components/street/StandardPlates'
 import { CommissionCTA } from '@/components/street/CommissionCTA'
-import { DISTRICTS_SERVED, FOUNDED_YEAR, YEARS_ACTIVE } from '@/lib/coverage'
+import { COVERAGE_AREAS, FOUNDED_YEAR } from '@/lib/coverage'
 
 export const metadata: Metadata = {
   title: 'About AD JEET: North Bengal Signage Since 1990',
-  description:
-    'AD JEET has been fabricating and installing signage across North Bengal since 1990. Learn our story, our team, and the districts we serve.',
+  description: 'AD JEET has made signage, print and outdoor branding from Siliguri since 1990.',
   alternates: { canonical: `${siteConfig.url}/about` },
 }
 
@@ -17,191 +16,76 @@ const breadcrumb = buildBreadcrumbJsonLd([
   { name: 'About', url: '/about' },
 ])
 
-const MILESTONES = [
-  { year: '1990', title: 'The beginning', desc: 'Jeet Kumar Sarkar opens a small fabrication workshop in Siliguri, starting with hand-painted boards and basic neon.' },
-  { year: '1998', title: 'Expansion', desc: 'Flex printing and vehicle branding added. First jobs in Jalpaiguri and Cooch Behar.' },
-  { year: '2005', title: 'The workshop', desc: 'The dedicated Patiram Jote facility opens, giving full control over every stage of production.' },
-  { year: '2012', title: 'LED revolution', desc: 'SMD LED adopted across the board. 60–70% less power, 50,000-hour lifespan.' },
-  { year: '2018', title: `${DISTRICTS_SERVED} districts`, desc: 'Coverage stretches from the Darjeeling hills to the Malda plains.' },
-  { year: '2024', title: 'New generation', desc: '500+ installations done. The second Sarkar generation carries the craft forward.' },
-]
-
-const STORY: { text: string; highlight?: string; highlightLabel?: string }[] = [
-  {
-    text: 'AD JEET was founded in 1990 by Jeet Kumar Sarkar in Siliguri, West Bengal. Starting with hand-painted boards and basic neon installations, the company grew alongside North Bengal\'s commercial expansion, from the early malls on Sevoke Road to the industrial zones near Bagdogra and the tea estates of Darjeeling.',
-  },
-  {
-    highlight: '3,000+',
-    highlightLabel: 'individual signs fabricated since 1990',
-    text: 'Over three and a half decades we have installed signage for pharmacies, hospitals, showrooms, telecom outlets, restaurants, logistics companies, and government departments. Clients range from solo proprietors opening their first shop to regional chains expanding across five districts.',
-  },
-  {
-    text: 'In 2005 we opened our dedicated fabrication workshop at Patiram Jote, outside Siliguri, giving us full control over quality at every stage, from metal cutting and acrylic routing to LED wiring and final paint finish.',
-  },
-  {
-    highlight: '60–70%',
-    highlightLabel: 'less power consumption with LED',
-    text: 'We adopted LED illumination in 2012. Modern SMD LEDs consume dramatically less power, last 30,000–50,000 hours, and light evenly. Combined with weatherproofed enclosures, our signs routinely outlast their five-year maintenance agreements.',
-  },
-  {
-    text: 'Today AD JEET is run by the second generation of the Sarkar family, with the same rule that built the reputation: we do not outsource fabrication or installation. Every project is handled by our own team.',
-  },
-]
-
-const WORKSHOP_SPECS = [
-  { val: '4,000 sq ft', label: 'Workshop area' },
-  { val: '6 days/week', label: 'Operating schedule' },
-  { val: '3 vehicles', label: 'Installation fleet' },
-  { val: '15+ skilled workers', label: 'Our team' },
+const WORK_IMAGES = [
+  { src: '/Ambuja_cement_ACP-LED.png', alt: 'ACP and LED signage for Ambuja Cement fabricated by AD JEET' },
+  { src: '/SRMB_vechile.png', alt: 'SRMB vehicle branding wrap by AD JEET' },
+  { src: '/airtel.png', alt: 'Airtel glow sign board installation by AD JEET' },
 ]
 
 export default function AboutPage() {
   return (
     <>
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: jsonLdString(breadcrumb) }}
-      />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLdString(breadcrumb) }} />
 
       <PageMasthead
-        meta={[`Est. ${FOUNDED_YEAR}`, 'Siliguri, WB', '2 generations']}
-        title={
-          <>
-            {YEARS_ACTIVE} years of putting
-            <br />
-            names <span className="glow-signal text-signal">in lights.</span>
-          </>
-        }
-        lead={`From a one-man workshop in ${FOUNDED_YEAR} to North Bengal's most trusted signage company, with 500+ installations, ${DISTRICTS_SERVED} districts, two generations of the same family craft.`}
-      >
-        <dl className="m-0 flex flex-wrap gap-6 md:gap-10">
-          {[
-            { v: String(FOUNDED_YEAR), k: 'Founded' },
-            { v: '500+', k: 'Installations' },
-            { v: String(DISTRICTS_SERVED), k: 'Districts' },
-            { v: '1 yr', k: 'Warranty' },
-          ].map(s => (
-            <div key={s.k} className="flex flex-col border-l-2 border-ink pl-4">
-              <dt className="spec order-2 text-ink-subtle">{s.k}</dt>
-              <dd className="display order-1 m-0 text-4xl text-ink">{s.v}</dd>
-            </div>
-          ))}
-        </dl>
-      </PageMasthead>
+        meta={[`Since ${FOUNDED_YEAR}`, 'Siliguri', 'North Bengal']}
+        title={<>A name earns its<br /><span className="text-signal">place in the street.</span></>}
+        lead="AD JEET has worked from Siliguri since 1990. The work is simple to describe: make the business visible where people actually move."
+      />
 
-      {/* The story */}
-      <section className="border-b-2 border-ink bg-paper">
-        <div className="mx-auto grid max-w-content gap-12 px-5 py-16 md:px-8 md:py-24 lg:grid-cols-5 lg:gap-16">
-          <div className="lg:col-span-2 lg:sticky lg:top-24 lg:self-start">
-            <h2 className="display mt-3 text-ink" style={{ fontSize: 'var(--text-display-2)' }}>
-              A workshop.
-              <br />
-              A craft.
-              <br />
-              A family.
+      <section className="border-b border-rule bg-paper">
+        <div className="mx-auto grid max-w-content gap-10 px-5 py-16 md:grid-cols-[0.9fr_1.1fr] md:gap-16 md:px-8 md:py-24">
+          <div>
+            <p className="spec text-signal">The point of the work</p>
+            <h2 className="display mt-3 text-ink" data-reveal-text style={{ fontSize: 'var(--text-display-2)' }}>
+              A sign should make the next look easier.
             </h2>
           </div>
+          <div className="space-y-5 text-[1.05rem] leading-relaxed text-ink-muted" data-site-reveal="body">
+            <p>A shopfront, a vehicle, an event entrance or a roadside surface all ask the same question: will the right person notice this when they pass?</p>
+            <p>That question shapes the size, material, light and placement. It is why the first useful thing to share is usually a photo of the site.</p>
+            <p>From there, AD JEET helps turn an idea into a physical piece of work that belongs to the street around it.</p>
+          </div>
+        </div>
+      </section>
 
-          <div className="lg:col-span-3">
-            {STORY.map((block, i) => (
-              <div key={i}>
-                {block.highlight && (
-                  <div className="mb-3 flex items-end gap-3">
-                    <span className="display text-5xl text-signal">{block.highlight}</span>
-                    <span className="spec pb-1 text-ink-subtle">{block.highlightLabel}</span>
-                  </div>
-                )}
-                <p className="text-[15px] leading-relaxed text-ink-muted">{block.text}</p>
-                {i < STORY.length - 1 && <div className="my-8 h-0.5 w-10 bg-ink" aria-hidden="true" />}
-              </div>
+      <section className="border-b border-rule bg-paper-elevated">
+        <div className="mx-auto max-w-content px-5 py-16 md:px-8 md:py-24">
+          <div className="flex flex-wrap items-end justify-between gap-6">
+            <div>
+              <p className="spec text-signal">Seen in the wild</p>
+              <h2 className="display mt-3 text-ink" data-reveal-text style={{ fontSize: 'var(--text-display-2)' }}>Work is the clearest introduction.</h2>
+            </div>
+          </div>
+          <div className="mt-10 grid gap-4 sm:grid-cols-3 md:gap-6">
+            {WORK_IMAGES.map((image, index) => (
+              <figure key={image.src} className={index === 1 ? 'sm:mt-10' : ''} data-site-reveal="media">
+                <div className="relative aspect-[4/5] overflow-hidden bg-night">
+                  <Image src={image.src} alt={image.alt} fill sizes="(max-width: 640px) calc(100vw - 40px), 30vw" className="object-cover" />
+                </div>
+                <figcaption className="spec mt-3 text-ink-subtle">Documented project photograph</figcaption>
+              </figure>
             ))}
           </div>
         </div>
       </section>
 
-      {/* Milestones: the route board */}
-      <section className="border-b-2 border-ink bg-paper-elevated">
-        <div className="mx-auto max-w-content px-5 py-16 md:px-8 md:py-24">
-          <h2 className="display mt-3 mb-10 text-ink md:mb-14" style={{ fontSize: 'var(--text-display-2)' }}>
-            The years that built the name.
-          </h2>
-
-          <ol className="m-0 list-none border-t-2 border-ink p-0">
-            {MILESTONES.map(m => (
-              <li
-                key={m.year}
-                className="grid grid-cols-[auto_1fr] items-baseline gap-x-6 border-b-2 border-ink py-5 md:grid-cols-[10rem_16rem_1fr] md:gap-x-10"
-              >
-                <span className="display text-4xl text-signal md:text-5xl">{m.year}</span>
-                <h3 className="display m-0 text-xl text-ink md:text-2xl">{m.title}</h3>
-                <p className="col-span-2 mt-2 max-w-[60ch] text-sm leading-relaxed text-ink-muted md:col-span-1 md:mt-0">
-                  {m.desc}
-                </p>
+      <section className="border-b border-rule bg-paper">
+        <div className="mx-auto grid max-w-content gap-10 px-5 py-16 md:grid-cols-[0.9fr_1.1fr] md:gap-16 md:px-8 md:py-24">
+          <div>
+            <p className="spec text-signal">The route out</p>
+            <h2 className="display mt-3 text-ink" data-reveal-text style={{ fontSize: 'var(--text-display-2)' }}>Siliguri is the base.<br />North Bengal is the route.</h2>
+          </div>
+          <ul className="m-0 grid list-none grid-cols-2 border-t border-rule p-0 sm:grid-cols-3">
+            {COVERAGE_AREAS.map(area => (
+              <li key={area.name} className="min-h-14 border-b border-rule px-3 py-4 text-sm text-ink-muted">
+                {area.name}
               </li>
             ))}
-          </ol>
+          </ul>
         </div>
       </section>
 
-      {/* The workshop */}
-      <section className="border-b-2 border-ink bg-paper">
-        <div className="mx-auto grid max-w-content gap-12 px-5 py-16 md:px-8 md:py-24 lg:grid-cols-2 lg:gap-20">
-          <div>
-            <h2 className="display mt-3 text-ink" style={{ fontSize: 'var(--text-display-2)' }}>
-              Where signs
-              <br />
-              come to life.
-            </h2>
-            <div className="mt-6 space-y-4 text-[15px] leading-relaxed text-ink-muted">
-              <p>
-                Our 4,000 sq ft fabrication facility is where every AD JEET sign is
-                born. Metal cutting, CNC routing, acrylic bending, LED wiring,
-                painting. Everything under one roof.
-              </p>
-              <p>
-                The workshop runs six days a week with a dedicated quality
-                inspection station, and a fleet of installation vehicles equipped
-                with scaffolding, generators, and wiring tools.
-              </p>
-            </div>
-
-            <dl className="m-0 mt-8 border-t-2 border-ink">
-              {WORKSHOP_SPECS.map(spec => (
-                <div key={spec.label} className="flex items-baseline justify-between gap-4 border-b-2 border-ink py-3">
-                  <dt className="spec text-ink-subtle">{spec.label}</dt>
-                  <dd className="display m-0 text-xl text-ink">{spec.val}</dd>
-                </div>
-              ))}
-            </dl>
-          </div>
-
-          {/* Process panels */}
-          <div className="grid grid-cols-2 gap-4 self-center md:gap-6">
-            {[
-              { label: 'ST-01 Metal', sub: 'Cutting & welding', night: true },
-              { label: 'ST-02 LED', sub: 'Wiring & testing', night: false },
-              { label: 'ST-03 Acrylic', sub: 'Routing & bending', night: false },
-              { label: 'ST-04 Paint', sub: 'Finish & QC', night: true },
-            ].map((panel, i) => (
-              <div
-                key={panel.label}
-                className={`flex aspect-square flex-col justify-between border-2 border-ink p-5 ${
-                  panel.night ? 'bg-night' : 'bg-paper-elevated'
-                } ${i === 1 ? 'mt-8' : i === 2 ? '-mt-4' : ''}`}
-              >
-                <span className={`spec ${panel.night ? 'text-signal-hot' : 'text-signal'}`}>
-                  {panel.label}
-                </span>
-                <span className={`display text-xl ${panel.night ? 'text-night-ink' : 'text-ink'}`}>
-                  {panel.sub}
-                </span>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      <StandardPlates />
       <CommissionCTA />
     </>
   )

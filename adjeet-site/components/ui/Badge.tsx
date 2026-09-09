@@ -3,8 +3,8 @@ type BadgeVariant = 'default' | 'blue' | 'ochre' | 'success'
 const BADGE_CLASSES: Record<BadgeVariant, string> = {
   default: 'bg-paper-elevated text-ink-muted',
   blue: 'bg-signal text-signal-ink',
-  ochre: 'bg-ochre text-white',
-  success: 'bg-success text-white',
+  ochre: 'bg-ochre text-signal-ink',
+  success: 'bg-success text-night-ink',
 }
 
 import type { ReactNode } from 'react'

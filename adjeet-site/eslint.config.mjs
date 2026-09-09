@@ -12,6 +12,10 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    // Standalone CJS helpers that validate the design handoff are not shipped
+    // application code and use Node's CJS runtime intentionally.
+    "design/**/tools/**",
+    "design/**/server*.log",
   ]),
 ]);
 
