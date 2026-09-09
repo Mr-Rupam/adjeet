@@ -23,6 +23,9 @@ export const metadata: Metadata = {
     template: '%s | AD JEET',
   },
   description: siteDescription,
+  verification: {
+    google: '_uBPSx4pM-PlgTFlrNQ2C6hzGj90A9JUeW4XH7nJc5g',
+  },
   icons: {
     icon: [{ url: '/brand/favicon.png?v=aj-1990', type: 'image/png', sizes: '256x256' }],
     shortcut: '/brand/favicon.png?v=aj-1990',
