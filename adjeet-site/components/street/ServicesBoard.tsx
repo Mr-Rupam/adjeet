@@ -31,7 +31,7 @@ export function ServicesBoard() {
       <div className="mx-auto max-w-content px-5 py-16 md:px-8 md:py-24">
         <div className="max-w-2xl">
           <p className="spec text-signal">All ten services</p>
-          <h2 className="display mt-3 text-ink" data-reveal-text style={{ fontSize: 'var(--text-display-1)' }}>
+          <h2 className="display mt-3 text-ink" style={{ fontSize: 'var(--text-display-1)' }}>
             Choose the surface.<br />We&apos;ll make it work.
           </h2>
           <p className="mt-5 max-w-[42ch] text-base leading-relaxed text-ink-muted">
@@ -45,10 +45,10 @@ export function ServicesBoard() {
             return (
               <section id={group.id} key={group.id} className="scroll-mt-28">
                 <div className="mb-5 flex flex-wrap items-baseline justify-between gap-3">
-                  <h3 className="display flex items-baseline gap-3 text-3xl text-ink md:text-4xl" data-reveal-text>
+                  <h3 className="display flex items-baseline gap-3 text-3xl text-ink md:text-4xl">
                     <span className="spec text-signal">{group.index}</span>{group.title}
                   </h3>
-                  <p className="text-sm text-ink-muted" data-site-reveal="body">{group.note}</p>
+                  <p className="text-sm text-ink-muted">{group.note}</p>
                 </div>
                 <ol className="m-0 list-none border-t border-rule p-0">
                   {groupServices.map((service, index) => service && (

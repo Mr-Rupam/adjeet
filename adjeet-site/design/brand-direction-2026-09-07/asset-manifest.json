@@ -1,0 +1,81 @@
+{
+  "created": "2026-09-07",
+  "status": "Proposed design assets; not installed in the website",
+  "generation": "Native image generation tool. Unbranded scene plates; original logo overlaid as an unchanged image in the reference.",
+  "assets": [
+    {
+      "id": "hero-day",
+      "source": "hero-day-source.png",
+      "webp": "hero-day.webp",
+      "width": 1024,
+      "height": 1536,
+      "bytes": 144060,
+      "sourceSha256": "bbccaa3d094c08b437c3c5ae1a8c53aa7c67beccae429aa5f2f4e5486f26646f",
+      "role": "Hero background plate",
+      "claim": "Generated concept, not completed client work"
+    },
+    {
+      "id": "hero-night",
+      "source": "hero-night-source.png",
+      "webp": "hero-night.webp",
+      "width": 1024,
+      "height": 1536,
+      "bytes": 78966,
+      "sourceSha256": "4799bd4b2b595a631fb2841b68a37d922a51492885771f417ee1a999839e6688",
+      "role": "Hero background plate",
+      "claim": "Generated concept, not completed client work"
+    },
+    {
+      "id": "hero-desktop-day",
+      "source": "hero-desktop-day-source.png",
+      "webp": "hero-desktop-day.webp",
+      "width": 1536,
+      "height": 1024,
+      "bytes": 116876,
+      "sourceSha256": "5a6fbe2e59f80693b8314d6c124f707db58e5f57ab1135cef232dbb14b0e3428",
+      "role": "Hero background plate",
+      "claim": "Generated concept, not completed client work"
+    },
+    {
+      "id": "hero-desktop-night",
+      "source": "hero-desktop-night-source.png",
+      "webp": "hero-desktop-night.webp",
+      "width": 1536,
+      "height": 1024,
+      "bytes": 48298,
+      "sourceSha256": "e8e355e2f65a67dfe93c79581d442ba7823a7168c41db56a144f02f95f9771da",
+      "role": "Hero background plate",
+      "claim": "Generated concept, not completed client work"
+    },
+    {
+      "id": "materials",
+      "source": "materials-source.png",
+      "webp": "materials.webp",
+      "width": 1536,
+      "height": 1024,
+      "bytes": 126588,
+      "sourceSha256": "7c05e60f8238ad3d4494a46d41a4801c0afc3878a0a5fa4fd56ea11f64d7cb10",
+      "role": "Illustrative material render",
+      "claim": "Generated concept, not completed client work"
+    },
+    {
+      "id": "miniature",
+      "source": "miniature-source.png",
+      "webp": "miniature.webp",
+      "width": 1024,
+      "height": 1536,
+      "bytes": 127292,
+      "sourceSha256": "a1caeb7642c56fd36c00f3aab4bfdfccd8b2ee49c79652cce17367bb9bb53184",
+      "role": "Alternative C only",
+      "claim": "Generated concept, not completed client work"
+    }
+  ],
+  "logo": {
+    "file": "adjeet-original.png",
+    "original": "C:/Users/KIIT0001/Downloads/ADJEET/adjeet/logo.png.png",
+    "sha256": "593171413b014c8d79501f1bf408c91354cfb31c70215b22b9c70cc45cc8bcea",
+    "matchesOriginal": true,
+    "width": 586,
+    "height": 175
+  }
+}

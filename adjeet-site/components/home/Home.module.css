@@ -52,7 +52,7 @@
   line-height: 1;
   letter-spacing: -0.025em;
 }
-.hero h1 [data-reveal-script] {
+.hero h1 span {
   display: inline-block;
   color: var(--signal-hot);
   font-family: var(--font-script);
@@ -94,12 +94,10 @@
 .sectionIntro > p { max-width: 36ch; color: var(--ink-muted); font-size: 1.0625rem; line-height: 1.55; }
 .work { background: var(--paper); }
 .workGrid { display: grid; gap: 2rem; margin-top: 2.5rem; }
-.workCard { display: block; width: 100%; padding: 0; border: 0; background: transparent; color: inherit; font: inherit; text-align: left; text-decoration: none; cursor: pointer; }
-.workCard figure { display: grid; gap: 0.875rem; grid-template-rows: minmax(0, 1fr) auto; }
+.workCard { display: block; color: inherit; text-decoration: none; }
+.workCard figure { display: grid; gap: 0.875rem; height: 100%; grid-template-rows: minmax(0, 1fr) auto; }
 .workImage { position: relative; aspect-ratio: 4 / 3; overflow: hidden; background: var(--night); }
-.workMedia, .coverageMedia, .processMediaInner { position: absolute; inset: 0; }
-.coverImage { object-fit: cover; transition: transform 220ms cubic-bezier(0.22, 1, 0.36, 1); }
-.workCard .coverImage { object-fit: contain; }
+.coverImage { object-fit: cover; transition: transform 420ms cubic-bezier(0.22, 1, 0.36, 1); }
 .workCard:is(:hover, :focus-visible) .coverImage { transform: scale(1.025); }
 .workCard figcaption { display: flex; align-items: center; justify-content: space-between; gap: 1rem; color: var(--ink-muted); font-size: 1rem; }
 .workCard figcaption svg { color: var(--signal-text); }
@@ -109,7 +107,7 @@
 .serviceGroups { display: grid; margin-top: 2.5rem; border-top: 1px solid var(--rule); }
 .serviceGroup {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) auto;
+  grid-template-columns: 1.75rem minmax(0, 1fr) auto;
   gap: 0.75rem;
   align-items: start;
   padding-block: 1.5rem;
@@ -123,6 +121,7 @@
 .serviceGroup:is(:hover, :focus-visible) > svg { transform: translate(3px, -3px); }
 .serviceMark { display: none; color: var(--signal-text); }
 .serviceMark svg { display: block; width: 100%; height: auto; fill: none; stroke: currentColor; stroke-linecap: round; stroke-linejoin: round; stroke-width: 1.5; }
+.groupIndex { padding-top: 0.3rem; color: var(--ink-subtle); font-size: 0.8125rem; font-variant-numeric: tabular-nums; }
 .serviceGroup h3 { font-family: var(--font-heading); font-size: clamp(1.75rem, 4vw, 2.6rem); font-weight: 600; line-height: 1.15; }
 .serviceGroup p { max-width: 52ch; margin-top: 0.5rem; color: var(--ink-muted); font-size: 1rem; line-height: 1.5; }
 
@@ -131,7 +130,6 @@
 .process .sectionIntro > p { color: var(--night-ink-muted); }
 .processLayout { display: grid; gap: 2rem; margin-top: 2.5rem; }
 .processMedia { position: relative; aspect-ratio: 6 / 5; overflow: hidden; background: var(--night-elevated); }
-.processMediaFrame { position: absolute; inset: 0; overflow: hidden; }
 .processMedia::after { position: absolute; inset: 70% 0 0; background: linear-gradient(transparent, rgb(3 19 24 / 75%)); content: ''; pointer-events: none; }
 .processMedia figcaption { position: absolute; bottom: 1rem; left: 1.25rem; z-index: 1; color: var(--night-ink); font-size: 0.75rem; }
 .processCopy { align-self: center; }
@@ -170,27 +168,23 @@
   }
   .sectionIntro { grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr); gap: 3rem; }
   .sectionIntro > p { justify-self: end; }
-  .workGrid { grid-template-columns: repeat(12, minmax(0, 1fr)); gap: clamp(1.25rem, 2.5vw, 2rem); align-items: start; }
-  .workCardLead { grid-column: span 7; grid-row: span 2; align-self: start; }
-  .workCardLead .workImage { aspect-ratio: 1 / 1 !important; }
-  .workCard:nth-child(2) { grid-column: 9 / -1; margin-top: clamp(2rem, 8vw, 6.5rem); }
-  .workCard:nth-child(3) { grid-column: 8 / span 4; margin-top: clamp(1rem, 3vw, 2.5rem); }
-  .serviceGroup { grid-template-columns: 3rem minmax(0, 1fr) auto; gap: 1.5rem; align-items: center; padding-block: 1.75rem; }
+  .workGrid { grid-template-columns: minmax(0, 1.35fr) minmax(0, 0.85fr); gap: 1.75rem; }
+  .workCardLead { grid-row: span 2; }
+  .workCardLead .workImage { aspect-ratio: auto; }
+  .serviceGroup { grid-template-columns: 3rem 2rem minmax(0, 1fr) auto; gap: 1.5rem; align-items: center; padding-block: 1.75rem; }
   .serviceMark { display: block; width: 3rem; }
-  .serviceGroup > svg { padding: 0; margin: 0; }
+  .serviceGroup > svg, .groupIndex { padding: 0; margin: 0; }
   .enquiry { grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr); gap: 3rem; align-items: end; }
 }
 @media (min-width: 1024px) {
-  .processLayout { grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr); gap: clamp(2.5rem, 5vw, 5rem); align-items: start; }
+  .processLayout { grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr); gap: clamp(2.5rem, 5vw, 5rem); }
   .processMedia { min-height: 460px; }
   .coverage { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: clamp(3rem, 6vw, 6rem); align-items: center; }
   .coverageImage { aspect-ratio: 4 / 5; }
 }
-@media (min-width: 1024px) and (prefers-reduced-motion: no-preference) {
-  .processMedia { position: sticky; top: 7.5rem; }
-}
 @media (max-width: 359px) {
   .hero h1 { font-size: 3.85rem; }
+  .serviceGroup { grid-template-columns: 1.25rem minmax(0, 1fr) auto; gap: 0.5rem; }
 }
 @media (prefers-reduced-motion: reduce) {
   .coverImage, .heroTextLink svg, .textLink svg, .enquiryLink svg, .serviceGroup, .serviceGroup > svg { transition: none; }

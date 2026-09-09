@@ -1,6 +1,6 @@
 'use client'
 
-import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react'
+import { useCallback, useLayoutEffect, useRef, useState } from 'react'
 import { THEME_TOGGLE_EVENT, type ResolvedTheme } from '@/lib/theme'
 import { useTheme } from '@/lib/use-theme'
 
@@ -22,26 +22,6 @@ export function HeroScene() {
   const dayToNightRef = useRef<HTMLVideoElement>(null)
   const nightToDayRef = useRef<HTMLVideoElement>(null)
   const activeDirectionRef = useRef<ThemeTransition | null>(null)
-  const runTokenRef = useRef(0)
-  const startupTimerRef = useRef<number | null>(null)
-
-  const clearStartupTimer = useCallback(() => {
-    if (startupTimerRef.current === null) return
-    window.clearTimeout(startupTimerRef.current)
-    startupTimerRef.current = null
-  }, [])
-
-  const resetFilms = useCallback(() => {
-    for (const film of [dayToNightRef.current, nightToDayRef.current]) {
-      if (!film) continue
-      film.pause()
-      try {
-        film.currentTime = 0
-      } catch {
-        // Metadata can still be unavailable while a visitor changes theme.
-      }
-    }
-  }, [])
 
   // During the few milliseconds before the film can paint a frame, retain the
   // matching source frame below it. This keeps the media surface full-bleed and
@@ -54,35 +34,15 @@ export function HeroScene() {
 
   const revealFilm = useCallback((direction: ThemeTransition) => {
     if (activeDirectionRef.current !== direction) return
-    clearStartupTimer()
     setFilmVisible(true)
-  }, [clearStartupTimer])
+  }, [])
 
-  const finishFilm = useCallback((direction: ThemeTransition, runToken?: number) => {
-    if (runToken !== undefined && runToken !== runTokenRef.current) return
+  const finishFilm = useCallback((direction: ThemeTransition) => {
     if (activeDirectionRef.current !== direction) return
-    clearStartupTimer()
     activeDirectionRef.current = null
     setFilmVisible(false)
     setTransition(null)
-  }, [clearStartupTimer])
-
-  const failFilm = useCallback((direction: ThemeTransition, runToken?: number) => {
-    if (runToken !== undefined && runToken !== runTokenRef.current) return
-    if (activeDirectionRef.current !== direction) return
-    const film = direction === 'day-to-night' ? dayToNightRef.current : nightToDayRef.current
-    film?.pause()
-    finishFilm(direction, runToken)
-  }, [finishFilm])
-
-  const cancelFilm = useCallback(() => {
-    runTokenRef.current += 1
-    clearStartupTimer()
-    activeDirectionRef.current = null
-    resetFilms()
-    setFilmVisible(false)
-    setTransition(null)
-  }, [clearStartupTimer, resetFilms])
+  }, [])
 
   useLayoutEffect(() => {
     const playThemeTransition = (event: Event) => {
@@ -91,10 +51,12 @@ export function HeroScene() {
       if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
 
       const direction: ThemeTransition = nextTheme === 'dark' ? 'day-to-night' : 'night-to-day'
-      clearStartupTimer()
-      const runToken = runTokenRef.current + 1
-      runTokenRef.current = runToken
-      resetFilms()
+      const videos = [dayToNightRef.current, nightToDayRef.current]
+      for (const candidate of videos) {
+        if (!candidate) continue
+        if (!candidate.paused) candidate.pause()
+        candidate.currentTime = 0
+      }
 
       const film = direction === 'day-to-night' ? dayToNightRef.current : nightToDayRef.current
       if (!film) return
@@ -102,34 +64,17 @@ export function HeroScene() {
       activeDirectionRef.current = direction
       setFilmVisible(false)
       setTransition(direction)
-      startupTimerRef.current = window.setTimeout(() => failFilm(direction, runToken), 4000)
-      void film.play().catch(() => failFilm(direction, runToken))
+      void film.play().catch(() => finishFilm(direction))
     }
 
     window.addEventListener(THEME_TOGGLE_EVENT, playThemeTransition)
     return () => window.removeEventListener(THEME_TOGGLE_EVENT, playThemeTransition)
-  }, [clearStartupTimer, failFilm, resetFilms])
-
-  useEffect(() => {
-    const mediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)')
-    const handlePreferenceChange = (event: MediaQueryListEvent) => {
-      if (event.matches) cancelFilm()
-    }
-    mediaQuery.addEventListener('change', handlePreferenceChange)
-    return () => {
-      mediaQuery.removeEventListener('change', handlePreferenceChange)
-      runTokenRef.current += 1
-      clearStartupTimer()
-      activeDirectionRef.current = null
-      resetFilms()
-    }
-  }, [cancelFilm, clearStartupTimer, resetFilms])
+  }, [finishFilm])
 
   return (
     <div
       className="heroScene"
       data-hero-scene
-      data-hero-media
       data-testid="hero-scene"
       data-time={theme}
       data-transition={transition ?? 'idle'}
@@ -148,14 +93,11 @@ export function HeroScene() {
         data-testid="hero-day-to-night-video"
         data-visible={filmVisible && transition === 'day-to-night'}
         src="/hero/workshop/day-to-night.mp4"
-        poster="/hero/workshop/day.webp"
         muted
         playsInline
-        preload="none"
+        preload="auto"
         onPlaying={() => revealFilm('day-to-night')}
         onEnded={() => finishFilm('day-to-night')}
-        onError={() => failFilm('day-to-night')}
-        onStalled={() => failFilm('day-to-night')}
       />
       <video
         ref={nightToDayRef}
@@ -163,14 +105,11 @@ export function HeroScene() {
         data-testid="hero-night-to-day-video"
         data-visible={filmVisible && transition === 'night-to-day'}
         src="/hero/workshop/night-to-day.mp4"
-        poster="/hero/workshop/night.webp"
         muted
         playsInline
-        preload="none"
+        preload="auto"
         onPlaying={() => revealFilm('night-to-day')}
         onEnded={() => finishFilm('night-to-day')}
-        onError={() => failFilm('night-to-day')}
-        onStalled={() => failFilm('night-to-day')}
       />
     </div>
   )

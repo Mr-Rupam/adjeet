@@ -17,7 +17,7 @@ const SIZE_CLASSES: Record<Size, string> = {
   lg: 'px-8 py-4 text-sm uppercase tracking-[0.08em]',
 }
 
-const BASE = 'inline-flex items-center justify-center gap-2 transition-all duration-150 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-signal disabled:opacity-50 disabled:pointer-events-none'
+const BASE = 'button-shape min-h-11 inline-flex items-center justify-center gap-2 transition-all duration-150 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-signal disabled:opacity-50 disabled:pointer-events-none'
 
 interface ButtonBaseProps {
   variant?: Variant

@@ -40,7 +40,7 @@ Semantic values change in dark mode in `design/tokens.css`. Use tokens rather th
 - The mobile enquiry dock appears after the home hero, and is hidden on Contact where direct methods and the form already lead.
 - Chat remains a desktop option only so it does not compete with the enquiry dock on phones.
 - The homepage sequence is workshop hero, selected work, service groups, project process, coverage, enquiry. The process section explains what to share, how details are resolved, and fabrication/installation. Its generated bench image is labelled "Workshop illustration" and never used as portfolio evidence.
-- Use one strong primary action per section. Buttons may be rounded, photos can have quiet rounded crops, and sections should not become equal-sized cards.
+- Use one strong primary action per section. All action buttons and filter chips use the shared pill radius (`--radius-button`); icon buttons remain circular. Photos can have quiet rounded crops, and sections should not become equal-sized cards.
 - Respect `prefers-reduced-motion`. Hero frames switch immediately in reduced-motion mode; do not play the film.
 
 ## Content rules

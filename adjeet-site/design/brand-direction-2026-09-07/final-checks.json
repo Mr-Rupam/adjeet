@@ -1,0 +1,12 @@
+{
+  "scope": "Design reference, not production",
+  "normalMotion": {
+    "duration": "0.8s",
+    "midpoint": 0.954428,
+    "end": 1,
+    "reverse": 0,
+    "geometryStable": true
+  },
+  "reviewLinkCount": 17,
+  "badLinks": []
+}

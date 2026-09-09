@@ -2,8 +2,13 @@
 
 import { useLayoutEffect } from 'react'
 import { usePathname } from 'next/navigation'
+import { gsap } from 'gsap'
+import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { useReducedMotion } from './ReducedMotionWrapper'
-import { createBodyReveal, createMaskedLineReveal, gsap, MOTION, refreshScrollTriggersAfterLayout } from './motion-system'
+
+if (typeof window !== 'undefined') {
+  gsap.registerPlugin(ScrollTrigger)
+}
 
 /** Keeps the interior routes quietly responsive without turning navigation into a showreel. */
 export function SiteMotion() {
@@ -11,32 +16,30 @@ export function SiteMotion() {
   const prefersReducedMotion = useReducedMotion()
 
   useLayoutEffect(() => {
+    if (prefersReducedMotion || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
+
     const root = document.getElementById('main-content')
-    // HomeMotion owns the homepage hooks; this global component owns only
-    // interior routes so SplitText never wraps the same heading twice.
-    if (!root || pathname === '/' || root.querySelector('[data-home-page]')) return
+    if (!root) return
 
     const context = gsap.context(() => {
-      const media = gsap.matchMedia(root)
-      media.add({ all: '(min-width: 0px)', reduce: MOTION.reduceQuery }, match => {
-        if (prefersReducedMotion || match.conditions?.reduce) return
-        const cleanups = gsap.utils.toArray<HTMLElement>('[data-reveal-text]', root)
-          .map(heading => createMaskedLineReveal(heading, { trigger: heading, start: 'top 88%' }))
-
-        // This intentionally targets only route-owned hooks. Portfolio cards
-        // retain their Framer Motion transforms and filtering lifecycle. Text
-        // hooks have their own line masks, so their ancestors are never moved.
-        gsap.utils.toArray<HTMLElement>('[data-site-reveal]', root).forEach(target => {
-          createBodyReveal(target, 'top 88%')
+      gsap.utils.toArray<HTMLElement>('[data-site-reveal]', root).forEach(target => {
+        gsap.from(target, {
+          opacity: 0,
+          y: target.dataset.siteReveal === 'title' ? 16 : 12,
+          duration: target.dataset.siteReveal === 'title' ? 0.58 : 0.46,
+          ease: 'power3.out',
+          scrollTrigger: {
+            trigger: target,
+            start: 'top 88%',
+            once: true,
+          },
         })
-        return () => cleanups.forEach(cleanup => cleanup())
       })
-      return () => media.revert()
     }, root)
 
-    const cancelRefresh = refreshScrollTriggersAfterLayout()
+    const refreshId = window.requestAnimationFrame(() => ScrollTrigger.refresh())
     return () => {
-      cancelRefresh()
+      window.cancelAnimationFrame(refreshId)
       context.revert()
     }
   }, [pathname, prefersReducedMotion])

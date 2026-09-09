@@ -110,7 +110,7 @@ export function PortfolioContent() {
   return (
     <>
       {/* ═══════ FILTER BAR: the job docket ═══════ */}
-      <section className="sticky top-[var(--header-height)] z-30 border-b border-rule bg-paper/95 py-4 backdrop-blur-xl">
+      <section className="sticky top-16 z-30 border-b-2 border-ink bg-paper/95 py-4 backdrop-blur-xl">
         <div className="mx-auto max-w-content px-5 md:px-8">
           {/* Top row: view toggles + count */}
           <div className="mb-4 flex items-center justify-between gap-4">
@@ -187,7 +187,7 @@ export function PortfolioContent() {
       </section>
 
       {/* ═══════ GALLERY GRID ═══════ */}
-      <section className="border-b border-rule bg-paper py-12 sm:py-16">
+      <section className="border-b-2 border-ink bg-paper py-12 sm:py-16">
         <div className="mx-auto max-w-content px-5 md:px-8">
           {filtered.length === 0 ? (
             <div className="py-32 text-center">
@@ -216,7 +216,7 @@ export function PortfolioContent() {
                     exit={prefersReducedMotion ? undefined : 'exit'}
                     layout={!prefersReducedMotion}
                     onClick={() => openAt(idx)}
-                    className={`group relative overflow-hidden border border-rule bg-rule transition-shadow hover:shadow-[var(--elev-2)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-signal ${getCardClass(idx)}`}
+                    className={`group relative overflow-hidden border-2 border-ink bg-rule transition-shadow hover:shadow-[6px_6px_0_0_var(--signal)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-signal ${getCardClass(idx)}`}
                     aria-label={`View: ${photo.alt}`}
                   >
                     <Image

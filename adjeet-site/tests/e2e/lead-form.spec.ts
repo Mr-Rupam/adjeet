@@ -1,10 +1,19 @@
 import { test, expect, type Page } from '@playwright/test';
 
-// Turnstile owns its iframe/shadow DOM. Wait for the response used by the form,
-// which is populated when the test-key challenge completes and onSuccess fires.
+// Turnstile (dev test key) auto-passes with no user interaction, but the
+// iframe challenge round-trip is async, so cfTurnstileResponse isn't populated
+// until onSuccess fires, which submit must wait for or the form's required
+// CAPTCHA validation blocks the request before it ever reaches /api/lead.
+// Poll the widget's own hidden response input rather than sleeping a fixed
+// duration. It flips non-empty the instant onSuccess actually resolves.
 async function waitForTurnstile(page: Page) {
-  await page.locator('button[type="submit"]').first().scrollIntoViewIfNeeded();
-  await expect(page.locator('input[name="cf-turnstile-response"]')).toHaveValue(/\S+/, { timeout: 10000 });
+  await page
+    .frameLocator('iframe[src*="challenges.cloudflare.com"]')
+    .locator('body')
+    .waitFor({ timeout: 10000 });
+  await expect
+    .poll(() => page.locator('input[name="cf-turnstile-response"]').inputValue(), { timeout: 10000 })
+    .not.toBe('');
 }
 
 test.describe('Lead Form', () => {

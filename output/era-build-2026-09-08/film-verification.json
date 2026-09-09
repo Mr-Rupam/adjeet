@@ -1,0 +1,212 @@
+{
+  "toggles": [
+    {
+      "before": "dark",
+      "label": "Switch to light mode",
+      "direction": "night-to-day",
+      "after": "light"
+    },
+    {
+      "before": "light",
+      "label": "Switch to dark mode",
+      "direction": "day-to-night",
+      "after": "dark"
+    }
+  ],
+  "status": "pass",
+  "state": {
+    "htmlTheme": "light",
+    "theme": "light",
+    "transition": "idle",
+    "films": [
+      {
+        "id": "hero-day-to-night-video",
+        "visible": "false",
+        "time": 0,
+        "paused": true,
+        "ready": 4,
+        "network": 1,
+        "duration": 6
+      },
+      {
+        "id": "hero-night-to-day-video",
+        "visible": "false",
+        "time": 6,
+        "paused": true,
+        "ready": 4,
+        "network": 1,
+        "duration": 6
+      }
+    ]
+  },
+  "events": [
+    {
+      "event": "loadedmetadata",
+      "video": "hero-night-to-day-video",
+      "time": 0,
+      "ready": 1,
+      "clock": 388.7000000178814
+    },
+    {
+      "event": "canplay",
+      "video": "hero-night-to-day-video",
+      "time": 0.004069,
+      "ready": 4,
+      "clock": 413.59999999403954
+    },
+    {
+      "event": "playing",
+      "video": "hero-night-to-day-video",
+      "time": 0.00445,
+      "ready": 4,
+      "clock": 413.90000000596046
+    },
+    {
+      "event": "pause",
+      "video": "hero-night-to-day-video",
+      "time": 6,
+      "ready": 4,
+      "clock": 6395.9000000059605
+    },
+    {
+      "event": "ended",
+      "video": "hero-night-to-day-video",
+      "time": 6,
+      "ready": 4,
+      "clock": 6396
+    },
+    {
+      "event": "loadedmetadata",
+      "video": "hero-day-to-night-video",
+      "time": 0,
+      "ready": 1,
+      "clock": 6472.5
+    },
+    {
+      "event": "canplay",
+      "video": "hero-night-to-day-video",
+      "time": 0,
+      "ready": 4,
+      "clock": 6472.5999999940395
+    },
+    {
+      "event": "canplay",
+      "video": "hero-day-to-night-video",
+      "time": 0.001829,
+      "ready": 4,
+      "clock": 6498.200000017881
+    },
+    {
+      "event": "playing",
+      "video": "hero-day-to-night-video",
+      "time": 0.002161,
+      "ready": 4,
+      "clock": 6498.5999999940395
+    },
+    {
+      "event": "pause",
+      "video": "hero-day-to-night-video",
+      "time": 6,
+      "ready": 4,
+      "clock": 12480.59999999404
+    },
+    {
+      "event": "ended",
+      "video": "hero-day-to-night-video",
+      "time": 6,
+      "ready": 4,
+      "clock": 12480.700000017881
+    },
+    {
+      "event": "canplay",
+      "video": "hero-night-to-day-video",
+      "time": 0,
+      "ready": 4,
+      "clock": 12548.09999999404
+    },
+    {
+      "event": "playing",
+      "video": "hero-night-to-day-video",
+      "time": 0,
+      "ready": 4,
+      "clock": 12548.200000017881
+    },
+    {
+      "event": "canplay",
+      "video": "hero-day-to-night-video",
+      "time": 0,
+      "ready": 4,
+      "clock": 12553.40000000596
+    },
+    {
+      "event": "pause",
+      "video": "hero-night-to-day-video",
+      "time": 0,
+      "ready": 1,
+      "clock": 12604.700000017881
+    },
+    {
+      "event": "canplay",
+      "video": "hero-day-to-night-video",
+      "time": 0.013551,
+      "ready": 4,
+      "clock": 12605.09999999404
+    },
+    {
+      "event": "playing",
+      "video": "hero-day-to-night-video",
+      "time": 0.013707,
+      "ready": 4,
+      "clock": 12605.300000011921
+    },
+    {
+      "event": "canplay",
+      "video": "hero-night-to-day-video",
+      "time": 0,
+      "ready": 4,
+      "clock": 12611.5
+    },
+    {
+      "event": "pause",
+      "video": "hero-day-to-night-video",
+      "time": 0,
+      "ready": 1,
+      "clock": 12662
+    },
+    {
+      "event": "canplay",
+      "video": "hero-night-to-day-video",
+      "time": 0.01054,
+      "ready": 4,
+      "clock": 12662.5
+    },
+    {
+      "event": "playing",
+      "video": "hero-night-to-day-video",
+      "time": 0.010645,
+      "ready": 4,
+      "clock": 12662.700000017881
+    },
+    {
+      "event": "canplay",
+      "video": "hero-day-to-night-video",
+      "time": 0,
+      "ready": 4,
+      "clock": 12674.90000000596
+    },
+    {
+      "event": "pause",
+      "video": "hero-night-to-day-video",
+      "time": 6,
+      "ready": 4,
+      "clock": 18646.09999999404
+    },
+    {
+      "event": "ended",
+      "video": "hero-night-to-day-video",
+      "time": 6,
+      "ready": 4,
+      "clock": 18646.20000001788
+    }
+  ]
+}

@@ -354,7 +354,7 @@
 .chatbot-suggestion-btn {
   font-size: 11.5px;
   padding: 6px 12px;
-  border-radius: 999px;
+  border-radius: var(--radius-button);
   border: 1px solid var(--rule);
   background: var(--paper-elevated);
   color: var(--ink-muted);

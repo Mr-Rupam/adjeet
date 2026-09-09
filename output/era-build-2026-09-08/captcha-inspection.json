@@ -1,0 +1,37 @@
+{
+  "failures": [],
+  "console": [],
+  "responses": [
+    {
+      "url": "https://challenges.cloudflare.com/turnstile/v0/api.js?onload=onloadTurnstileCallback&render=explicit",
+      "status": 302
+    },
+    {
+      "url": "https://challenges.cloudflare.com/turnstile/v0/g/330e41bb475c/api.js",
+      "status": 200
+    },
+    {
+      "url": "https://challenges.cloudflare.com/cdn-cgi/challenge-platform/h/g/turnstile/f/av0/rch/tlyt1/1x00000000000000000000AA/light/fbE/new/normal?lang=auto",
+      "status": 200
+    }
+  ],
+  "dom": {
+    "widgetAPI": "object",
+    "scripts": [
+      "https://challenges.cloudflare.com/turnstile/v0/api.js?onload=onloadTurnstileCallback&render=explicit"
+    ],
+    "frames": [
+      {
+        "src": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d891.0683159711388!2d88.42128342377295!3d26.703715758176227!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x39e44152d31a91b7%3A0x57ba4767fe74c984!2sAD%20SQUARE!5e0!3m2!1sen!2sin!4v1788639136120!5m2!1sen!2sin",
+        "title": "AD JEET office location"
+      }
+    ],
+    "tokenInputs": [
+      {
+        "hasValue": true,
+        "length": 21
+      }
+    ],
+    "fallback": false
+  }
+}

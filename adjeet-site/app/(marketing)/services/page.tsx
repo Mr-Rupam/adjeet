@@ -51,21 +51,22 @@ export default function ServicesPage() {
       <ServicesBoard />
 
       {/* Process: brief to street */}
-      <section className="border-b border-rule bg-paper-elevated">
+      <section className="border-b-2 border-ink bg-paper-elevated">
         <div className="mx-auto max-w-content px-5 py-16 md:px-8 md:py-24">
           <div className="mb-10 md:mb-14">
-            <p className="spec text-signal">A working sequence</p>
-            <h2 className="display mt-3 text-ink" data-reveal-text style={{ fontSize: 'var(--text-display-2)' }}>
+            <h2 className="display mt-3 text-ink" style={{ fontSize: 'var(--text-display-2)' }}>
               From place to presence.
             </h2>
           </div>
 
-          <ol className="m-0 list-none border-t border-rule p-0">
+          <ol className="m-0 grid list-none gap-6 p-0 sm:grid-cols-2 lg:grid-cols-4 lg:gap-8">
             {PROCESS.map(step => (
-              <li key={step.n} className="grid gap-3 border-b border-rule py-6 sm:grid-cols-[5rem_minmax(0,0.8fr)_minmax(0,1.2fr)] sm:items-baseline sm:gap-6 md:py-8">
-                <span aria-hidden="true" className="spec text-signal">{step.n}</span>
-                <h3 className="display text-2xl text-ink md:text-3xl" data-reveal-text>{step.title}</h3>
-                <p className="max-w-[42ch] text-base leading-relaxed text-ink-muted" data-site-reveal="body">{step.body}</p>
+              <li key={step.n} className="plate p-6">
+                <span aria-hidden="true" className="display block text-5xl text-signal">
+                  {step.n}
+                </span>
+                <h3 className="display mt-4 text-2xl text-ink">{step.title}</h3>
+                <p className="mt-3 text-sm leading-relaxed text-ink-muted">{step.body}</p>
               </li>
             ))}
           </ol>

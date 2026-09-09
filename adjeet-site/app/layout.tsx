@@ -24,8 +24,8 @@ export const metadata: Metadata = {
   },
   description: siteDescription,
   icons: {
-    icon: '/brand/adjeet-original.png',
-    shortcut: '/brand/adjeet-original.png',
+    icon: [{ url: '/brand/favicon.png?v=aj-1990', type: 'image/png', sizes: '256x256' }],
+    shortcut: '/brand/favicon.png?v=aj-1990',
   },
   openGraph: {
     title: 'AD JEET: North Bengal Signage & OOH',

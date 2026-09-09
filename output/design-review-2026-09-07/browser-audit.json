@@ -1,0 +1,349 @@
+{
+  "records": [
+    {
+      "route": "/",
+      "status": 200,
+      "viewport": 390,
+      "headerBackground": "color(srgb 0.94902 0.945098 0.913725 / 0.96) none repeat scroll 0% 0% / auto padding-box border-box",
+      "menuVisible": true,
+      "headerWidth": 390,
+      "width": 390,
+      "pageWidth": 390,
+      "brokenImages": [],
+      "overflow": []
+    },
+    {
+      "viewport": 390,
+      "selector": "#home-heading",
+      "platformFonts": {
+        "fonts": [
+          {
+            "familyName": "Barlow Condensed",
+            "postScriptName": "BarlowCondensed-SemiBold",
+            "isCustomFont": true,
+            "glyphCount": 7
+          },
+          {
+            "familyName": "Pristina",
+            "postScriptName": "Pristina-Regular",
+            "isCustomFont": false,
+            "glyphCount": 8
+          }
+        ]
+      }
+    },
+    {
+      "viewport": 390,
+      "selector": "#home-heading span",
+      "platformFonts": {
+        "fonts": [
+          {
+            "familyName": "Pristina",
+            "postScriptName": "Pristina-Regular",
+            "isCustomFont": false,
+            "glyphCount": 8
+          }
+        ]
+      }
+    },
+    {
+      "route": "/services",
+      "status": 200,
+      "viewport": 390,
+      "headerBackground": "color(srgb 0.94902 0.945098 0.913725 / 0.92) none repeat scroll 0% 0% / auto padding-box border-box",
+      "menuVisible": true,
+      "headerWidth": 390,
+      "width": 390,
+      "pageWidth": 390,
+      "brokenImages": [],
+      "overflow": []
+    },
+    {
+      "route": "/portfolio",
+      "status": 200,
+      "viewport": 390,
+      "headerBackground": "color(srgb 0.94902 0.945098 0.913725 / 0.92) none repeat scroll 0% 0% / auto padding-box border-box",
+      "menuVisible": true,
+      "headerWidth": 390,
+      "width": 390,
+      "pageWidth": 390,
+      "brokenImages": [],
+      "overflow": []
+    },
+    {
+      "route": "/about",
+      "status": 200,
+      "viewport": 390,
+      "headerBackground": "color(srgb 0.94902 0.945098 0.913725 / 0.92) none repeat scroll 0% 0% / auto padding-box border-box",
+      "menuVisible": true,
+      "headerWidth": 390,
+      "width": 390,
+      "pageWidth": 390,
+      "brokenImages": [],
+      "overflow": []
+    },
+    {
+      "route": "/contact",
+      "status": 200,
+      "viewport": 390,
+      "headerBackground": "color(srgb 0.94902 0.945098 0.913725 / 0.92) none repeat scroll 0% 0% / auto padding-box border-box",
+      "menuVisible": true,
+      "headerWidth": 390,
+      "width": 390,
+      "pageWidth": 390,
+      "brokenImages": [],
+      "overflow": []
+    },
+    {
+      "route": "/services/glow-sign-boards",
+      "status": 200,
+      "viewport": 390,
+      "headerBackground": "color(srgb 0.94902 0.945098 0.913725 / 0.92) none repeat scroll 0% 0% / auto padding-box border-box",
+      "menuVisible": true,
+      "headerWidth": 390,
+      "width": 390,
+      "pageWidth": 390,
+      "brokenImages": [],
+      "overflow": []
+    },
+    {
+      "route": "/privacy",
+      "status": 200,
+      "viewport": 390,
+      "headerBackground": "color(srgb 0.94902 0.945098 0.913725 / 0.92) none repeat scroll 0% 0% / auto padding-box border-box",
+      "menuVisible": true,
+      "headerWidth": 390,
+      "width": 390,
+      "pageWidth": 390,
+      "brokenImages": [],
+      "overflow": []
+    },
+    {
+      "route": "/",
+      "status": 200,
+      "viewport": 1440,
+      "headerBackground": "color(srgb 0.94902 0.945098 0.913725 / 0.96) none repeat scroll 0% 0% / auto padding-box border-box",
+      "menuVisible": false,
+      "headerWidth": 1240,
+      "width": 1440,
+      "pageWidth": 1440,
+      "brokenImages": [],
+      "overflow": []
+    },
+    {
+      "viewport": 1440,
+      "selector": "#home-heading",
+      "platformFonts": {
+        "fonts": [
+          {
+            "familyName": "Barlow Condensed",
+            "postScriptName": "BarlowCondensed-SemiBold",
+            "isCustomFont": true,
+            "glyphCount": 7
+          },
+          {
+            "familyName": "Pristina",
+            "postScriptName": "Pristina-Regular",
+            "isCustomFont": false,
+            "glyphCount": 8
+          }
+        ]
+      }
+    },
+    {
+      "viewport": 1440,
+      "selector": "#home-heading span",
+      "platformFonts": {
+        "fonts": [
+          {
+            "familyName": "Pristina",
+            "postScriptName": "Pristina-Regular",
+            "isCustomFont": false,
+            "glyphCount": 8
+          }
+        ]
+      }
+    },
+    {
+      "route": "/services",
+      "status": 200,
+      "viewport": 1440,
+      "headerBackground": "color(srgb 0.94902 0.945098 0.913725 / 0.92) none repeat scroll 0% 0% / auto padding-box border-box",
+      "menuVisible": false,
+      "headerWidth": 1240,
+      "width": 1440,
+      "pageWidth": 1440,
+      "brokenImages": [],
+      "overflow": []
+    },
+    {
+      "route": "/portfolio",
+      "status": 200,
+      "viewport": 1440,
+      "headerBackground": "color(srgb 0.94902 0.945098 0.913725 / 0.92) none repeat scroll 0% 0% / auto padding-box border-box",
+      "menuVisible": false,
+      "headerWidth": 1240,
+      "width": 1440,
+      "pageWidth": 1440,
+      "brokenImages": [],
+      "overflow": []
+    },
+    {
+      "route": "/about",
+      "status": 200,
+      "viewport": 1440,
+      "headerBackground": "color(srgb 0.94902 0.945098 0.913725 / 0.92) none repeat scroll 0% 0% / auto padding-box border-box",
+      "menuVisible": false,
+      "headerWidth": 1240,
+      "width": 1440,
+      "pageWidth": 1440,
+      "brokenImages": [],
+      "overflow": []
+    },
+    {
+      "route": "/contact",
+      "status": 200,
+      "viewport": 1440,
+      "headerBackground": "color(srgb 0.94902 0.945098 0.913725 / 0.92) none repeat scroll 0% 0% / auto padding-box border-box",
+      "menuVisible": false,
+      "headerWidth": 1240,
+      "width": 1440,
+      "pageWidth": 1440,
+      "brokenImages": [],
+      "overflow": []
+    },
+    {
+      "route": "/services/glow-sign-boards",
+      "status": 200,
+      "viewport": 1440,
+      "headerBackground": "color(srgb 0.94902 0.945098 0.913725 / 0.92) none repeat scroll 0% 0% / auto padding-box border-box",
+      "menuVisible": false,
+      "headerWidth": 1240,
+      "width": 1440,
+      "pageWidth": 1440,
+      "brokenImages": [],
+      "overflow": []
+    },
+    {
+      "route": "/privacy",
+      "status": 200,
+      "viewport": 1440,
+      "headerBackground": "color(srgb 0.94902 0.945098 0.913725 / 0.92) none repeat scroll 0% 0% / auto padding-box border-box",
+      "menuVisible": false,
+      "headerWidth": 1240,
+      "width": 1440,
+      "pageWidth": 1440,
+      "brokenImages": [],
+      "overflow": []
+    },
+    {
+      "route": "/",
+      "status": 200,
+      "viewport": 320,
+      "headerBackground": "color(srgb 0.94902 0.945098 0.913725 / 0.96) none repeat scroll 0% 0% / auto padding-box border-box",
+      "menuVisible": true,
+      "headerWidth": 320,
+      "width": 320,
+      "pageWidth": 320,
+      "brokenImages": [],
+      "overflow": []
+    },
+    {
+      "route": "/services",
+      "status": 200,
+      "viewport": 320,
+      "headerBackground": "color(srgb 0.94902 0.945098 0.913725 / 0.92) none repeat scroll 0% 0% / auto padding-box border-box",
+      "menuVisible": true,
+      "headerWidth": 320,
+      "width": 320,
+      "pageWidth": 320,
+      "brokenImages": [],
+      "overflow": []
+    },
+    {
+      "route": "/portfolio",
+      "status": 200,
+      "viewport": 320,
+      "headerBackground": "color(srgb 0.94902 0.945098 0.913725 / 0.92) none repeat scroll 0% 0% / auto padding-box border-box",
+      "menuVisible": true,
+      "headerWidth": 320,
+      "width": 320,
+      "pageWidth": 320,
+      "brokenImages": [],
+      "overflow": []
+    },
+    {
+      "route": "/about",
+      "status": 200,
+      "viewport": 320,
+      "headerBackground": "color(srgb 0.94902 0.945098 0.913725 / 0.92) none repeat scroll 0% 0% / auto padding-box border-box",
+      "menuVisible": true,
+      "headerWidth": 320,
+      "width": 320,
+      "pageWidth": 320,
+      "brokenImages": [],
+      "overflow": []
+    },
+    {
+      "route": "/contact",
+      "status": 200,
+      "viewport": 320,
+      "headerBackground": "color(srgb 0.94902 0.945098 0.913725 / 0.92) none repeat scroll 0% 0% / auto padding-box border-box",
+      "menuVisible": true,
+      "headerWidth": 320,
+      "width": 320,
+      "pageWidth": 320,
+      "brokenImages": [],
+      "overflow": []
+    },
+    {
+      "route": "/services/glow-sign-boards",
+      "status": 200,
+      "viewport": 320,
+      "headerBackground": "color(srgb 0.94902 0.945098 0.913725 / 0.92) none repeat scroll 0% 0% / auto padding-box border-box",
+      "menuVisible": true,
+      "headerWidth": 320,
+      "width": 320,
+      "pageWidth": 320,
+      "brokenImages": [],
+      "overflow": []
+    },
+    {
+      "route": "/privacy",
+      "status": 200,
+      "viewport": 320,
+      "headerBackground": "color(srgb 0.94902 0.945098 0.913725 / 0.92) none repeat scroll 0% 0% / auto padding-box border-box",
+      "menuVisible": true,
+      "headerWidth": 320,
+      "width": 320,
+      "pageWidth": 320,
+      "brokenImages": [],
+      "overflow": []
+    },
+    {
+      "route": "/",
+      "status": 200,
+      "viewport": 768,
+      "headerBackground": "color(srgb 0.94902 0.945098 0.913725 / 0.96) none repeat scroll 0% 0% / auto padding-box border-box",
+      "menuVisible": true,
+      "headerWidth": 768,
+      "width": 768,
+      "pageWidth": 768,
+      "brokenImages": [],
+      "overflow": []
+    },
+    {
+      "route": "/",
+      "status": 200,
+      "viewport": 1024,
+      "headerBackground": "color(srgb 0.94902 0.945098 0.913725 / 0.96) none repeat scroll 0% 0% / auto padding-box border-box",
+      "menuVisible": false,
+      "headerWidth": 1024,
+      "width": 1024,
+      "pageWidth": 1024,
+      "brokenImages": [],
+      "overflow": []
+    }
+  ],
+  "errors": []
+}

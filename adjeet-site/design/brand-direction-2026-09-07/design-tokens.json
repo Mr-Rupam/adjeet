@@ -1,0 +1,181 @@
+{
+  "status": "Proposed brand direction; not imported by production",
+  "palette": {
+    "cyan": {
+      "hex": "#109FCC",
+      "oklch": "oklch(65.612% 0.12461 227.423)"
+    },
+    "yellow": {
+      "hex": "#F1F36D",
+      "oklch": "oklch(93.705% 0.15562 109.848)"
+    },
+    "chalk": {
+      "hex": "#F2F1E9",
+      "oklch": "oklch(95.671% 0.01066 100.824)"
+    },
+    "petrol": {
+      "hex": "#0A222A",
+      "oklch": "oklch(23.710% 0.03328 222.856)"
+    },
+    "ink": {
+      "hex": "#12333B",
+      "oklch": "oklch(30.050% 0.04068 216.177)"
+    },
+    "onCyan": {
+      "hex": "#08262D",
+      "oklch": "oklch(25.016% 0.03704 216.170)"
+    },
+    "muted": {
+      "hex": "#496269",
+      "oklch": "oklch(47.874% 0.03182 216.833)"
+    },
+    "lightSurface": {
+      "hex": "#E7E8DF",
+      "oklch": "oklch(92.774% 0.01205 111.768)"
+    },
+    "lightRule": {
+      "hex": "#C3CECA",
+      "oklch": "oklch(84.179% 0.01318 172.295)"
+    },
+    "lightLink": {
+      "hex": "#087594",
+      "oklch": "oklch(52.366% 0.09737 225.010)"
+    },
+    "nightText": {
+      "hex": "#E5EFF0",
+      "oklch": "oklch(94.490% 0.01074 204.122)"
+    },
+    "nightMuted": {
+      "hex": "#A5BCC0",
+      "oklch": "oklch(77.906% 0.02582 209.254)"
+    },
+    "nightSurface": {
+      "hex": "#112F38",
+      "oklch": "oklch(28.681% 0.03901 220.369)"
+    },
+    "nightRule": {
+      "hex": "#375158",
+      "oklch": "oklch(41.683% 0.03346 216.345)"
+    },
+    "nightLink": {
+      "hex": "#5AC9EA",
+      "oklch": "oklch(78.424% 0.11058 220.472)"
+    }
+  },
+  "themes": {
+    "light": {
+      "background": "chalk",
+      "surface": "lightSurface",
+      "text": "ink",
+      "muted": "muted",
+      "rule": "lightRule",
+      "link": "lightLink"
+    },
+    "dark": {
+      "background": "petrol",
+      "surface": "nightSurface",
+      "text": "nightText",
+      "muted": "nightMuted",
+      "rule": "nightRule",
+      "link": "nightLink"
+    }
+  },
+  "typography": {
+    "display": {
+      "family": "Barlow Condensed",
+      "weights": [
+        500,
+        600
+      ],
+      "mobileHero": 68,
+      "mobileHeading": 45,
+      "desktopHero": 108
+    },
+    "body": {
+      "family": "Hind Siliguri",
+      "weights": [
+        400,
+        500
+      ],
+      "size": 17,
+      "lineHeight": 1.5
+    },
+    "caption": {
+      "size": 14,
+      "lineHeight": 1.5
+    }
+  },
+  "spacing": [
+    4,
+    8,
+    12,
+    16,
+    22,
+    28,
+    36,
+    48,
+    68,
+    88
+  ],
+  "radius": {
+    "control": 6,
+    "input": 4,
+    "photo": 0
+  },
+  "motion": {
+    "themeMs": 800,
+    "controlsMs": 180,
+    "easing": "cubic-bezier(.22,1,.36,1)",
+    "reducedMotionMs": 0
+  },
+  "contrast": [
+    {
+      "foreground": "ink",
+      "background": "chalk",
+      "ratio": 11.86,
+      "target": 4.5
+    },
+    {
+      "foreground": "muted",
+      "background": "chalk",
+      "ratio": 5.73,
+      "target": 4.5
+    },
+    {
+      "foreground": "lightLink",
+      "background": "chalk",
+      "ratio": 4.65,
+      "target": 4.5
+    },
+    {
+      "foreground": "nightText",
+      "background": "petrol",
+      "ratio": 14.07,
+      "target": 4.5
+    },
+    {
+      "foreground": "nightMuted",
+      "background": "petrol",
+      "ratio": 8.28,
+      "target": 4.5
+    },
+    {
+      "foreground": "nightLink",
+      "background": "petrol",
+      "ratio": 8.61,
+      "target": 4.5
+    },
+    {
+      "foreground": "ink",
+      "background": "yellow",
+      "ratio": 11.38,
+      "target": 4.5
+    },
+    {
+      "foreground": "onCyan",
+      "background": "cyan",
+      "ratio": 5.17,
+      "target": 4.5
+    }
+  ]
+}

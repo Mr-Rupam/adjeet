@@ -1,0 +1,235 @@
+{
+  "inspected": "2026-09-07",
+  "completed": "2026-09-08",
+  "sources": [
+    {
+      "url": "https://www.era-residence.com/",
+      "bytes": 223581,
+      "sha256": "9393487290c4094963b18bab06890e5cec63b2ee9b2e5fbf4e802414708592f8"
+    },
+    {
+      "url": "https://cdn.prod.website-files.com/6a068da7ad91b057365bf967/css/era-residence.webflow.shared.c9555a234.min.css",
+      "bytes": 127610,
+      "sha256": "3c536f00777ced2b9037dc8e947814867c8a3f12184ae9024f3e356a2ead52b8"
+    },
+    {
+      "url": "https://assets.slater.app/slater/20164.js?v=1.0",
+      "bytes": 113,
+      "sha256": "4156aab826843f8418a8135ca0e1c2cc54e89435b5e7e96f299dded9a3b3e83a"
+    },
+    {
+      "url": "https://assets.slater.app/slater/20164/60900.js?v=567206",
+      "bytes": 59234,
+      "sha256": "24675d409e0eb91248c55edebf29913a16de9c5287a10fa6b4118e256f03336a"
+    }
+  ],
+  "screenshots": [
+    {
+      "file": "screenshots/era-01-hero-day.png",
+      "size": [
+        1534,
+        775
+      ],
+      "format": "JPEG",
+      "bytes": 127131
+    },
+    {
+      "file": "screenshots/era-02-hero-night.png",
+      "size": [
+        1534,
+        775
+      ],
+      "format": "JPEG",
+      "bytes": 110472
+    },
+    {
+      "file": "screenshots/era-03-hero-scroll.png",
+      "size": [
+        1534,
+        775
+      ],
+      "format": "JPEG",
+      "bytes": 165468
+    },
+    {
+      "file": "screenshots/era-04-hero-dive.png",
+      "size": [
+        1534,
+        720
+      ],
+      "format": "JPEG",
+      "bytes": 152023
+    },
+    {
+      "file": "screenshots/era-05-arch-reasons.png",
+      "size": [
+        1534,
+        720
+      ],
+      "format": "JPEG",
+      "bytes": 51683
+    },
+    {
+      "file": "screenshots/era-06-concept.png",
+      "size": [
+        1534,
+        720
+      ],
+      "format": "JPEG",
+      "bytes": 114384
+    },
+    {
+      "file": "screenshots/era-07-editorial-concept.png",
+      "size": [
+        1534,
+        720
+      ],
+      "format": "JPEG",
+      "bytes": 103382
+    },
+    {
+      "file": "screenshots/era-08-horizontal-location.png",
+      "size": [
+        1534,
+        720
+      ],
+      "format": "JPEG",
+      "bytes": 109993
+    },
+    {
+      "file": "screenshots/era-09-horizontal-detail.png",
+      "size": [
+        1534,
+        720
+      ],
+      "format": "JPEG",
+      "bytes": 91942
+    },
+    {
+      "file": "screenshots/era-10-cloud-map.png",
+      "size": [
+        1534,
+        720
+      ],
+      "format": "JPEG",
+      "bytes": 65298
+    },
+    {
+      "file": "screenshots/era-11-residences.png",
+      "size": [
+        1534,
+        720
+      ],
+      "format": "JPEG",
+      "bytes": 81608
+    },
+    {
+      "file": "screenshots/era-12-amenities.png",
+      "size": [
+        1534,
+        720
+      ],
+      "format": "JPEG",
+      "bytes": 165006
+    },
+    {
+      "file": "screenshots/era-13-lifestyle.png",
+      "size": [
+        1534,
+        720
+      ],
+      "format": "JPEG",
+      "bytes": 48732
+    },
+    {
+      "file": "screenshots/era-14-architecture-transition.png",
+      "size": [
+        1534,
+        720
+      ],
+      "format": "JPEG",
+      "bytes": 155572
+    },
+    {
+      "file": "screenshots/era-15-architecture.png",
+      "size": [
+        1534,
+        720
+      ],
+      "format": "JPEG",
+      "bytes": 214141
+    },
+    {
+      "file": "screenshots/era-16-final-cta.png",
+      "size": [
+        1534,
+        720
+      ],
+      "format": "JPEG",
+      "bytes": 156491
+    },
+    {
+      "file": "screenshots/era-17-footer.png",
+      "size": [
+        1534,
+        720
+      ],
+      "format": "JPEG",
+      "bytes": 79049
+    },
+    {
+      "file": "screenshots/era-18-enquiry-modal.png",
+      "size": [
+        1550,
+        728
+      ],
+      "format": "JPEG",
+      "bytes": 47766
+    },
+    {
+      "file": "screenshots/era-19-mobile-hero.png",
+      "size": [
+        375,
+        844
+      ],
+      "format": "JPEG",
+      "bytes": 42385
+    },
+    {
+      "file": "screenshots/era-20-mobile-menu.png",
+      "size": [
+        390,
+        844
+      ],
+      "format": "JPEG",
+      "bytes": 17452
+    },
+    {
+      "file": "screenshots/era-21-mobile-story.png",
+      "size": [
+        375,
+        844
+      ],
+      "format": "JPEG",
+      "bytes": 44783
+    },
+    {
+      "file": "screenshots/era-22-apartments.png",
+      "size": [
+        1534,
+        720
+      ],
+      "format": "JPEG",
+      "bytes": 87895
+    },
+    {
+      "file": "screenshots/era-23-apartment-detail.png",
+      "size": [
+        1534,
+        720
+      ],
+      "format": "JPEG",
+      "bytes": 53078
+    }
+  ]
+}
