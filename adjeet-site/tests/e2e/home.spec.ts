@@ -17,6 +17,13 @@ test.describe('Home page', () => {
     await expect(hero.getByText(/ad jeet workshop, siliguri/i)).toBeVisible()
   })
 
+  test('keeps the client history proof section on the landing page', async ({ page }) => {
+    const clientHistory = page.getByRole('heading', { name: /every brand below has a sign in north bengal/i })
+    await expect(clientHistory).toBeVisible()
+    await expect(page.getByText(/partial list: national brands via their regional agencies/i)).toBeVisible()
+    await expect(page.getByText('Airtel', { exact: true }).first()).toBeVisible()
+  })
+
   test('changes the matched hero scene with the global theme on one stable media surface', async ({ page }) => {
     const scene = page.getByTestId('hero-scene')
     await expect(scene).toHaveAttribute('data-time', 'light')

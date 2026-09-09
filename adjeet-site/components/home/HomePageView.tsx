@@ -6,6 +6,7 @@ import { QuoteCTA } from '@/components/ui/QuoteCTA'
 import { HomeMotion } from '@/components/motion/HomeMotion'
 import { HeroScene } from './HeroScene'
 import { ProjectGallery } from './ProjectGallery'
+import { ClientStreet } from '@/components/street/ClientStreet'
 import styles from './Home.module.css'
 
 const SERVICE_GROUPS = [
@@ -71,6 +72,8 @@ export function HomePageView() {
       </section>
 
       <ProjectGallery />
+
+      <ClientStreet />
 
       <section id="services" className={styles.services} aria-labelledby="services-heading">
         <div className={styles.sectionIntro} data-home-reveal>
