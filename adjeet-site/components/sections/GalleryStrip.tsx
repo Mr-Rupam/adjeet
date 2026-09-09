@@ -20,17 +20,15 @@ export function GalleryStrip({ photos }: GalleryStripProps) {
   }
 
   return (
-    <section className="py-12 border-t border-rule">
-      <div className="mx-auto max-w-content px-6">
-        <h2 className="text-sm font-semibold uppercase tracking-widest text-ink-subtle mb-6">
-          Project Gallery
-        </h2>
-        <div className="flex gap-4 overflow-x-auto pb-4 snap-x snap-mandatory">
+    <section className="border-b-2 border-ink bg-paper py-12 md:py-16">
+      <div className="mx-auto max-w-content px-5 md:px-8">
+        <p className="spec mb-6 text-signal">Project gallery</p>
+        <div className="flex snap-x snap-mandatory gap-4 overflow-x-auto pb-4">
           {photos.map((photo, idx) => (
             <button
               key={photo.id}
               onClick={() => openAt(idx)}
-              className="relative shrink-0 w-64 aspect-[4/3] rounded-lg overflow-hidden bg-rule snap-start focus-visible:outline-2 focus-visible:outline-blue focus-visible:outline-offset-2 group"
+              className="group relative aspect-[4/3] w-64 shrink-0 snap-start overflow-hidden border-2 border-ink bg-rule transition-shadow hover:shadow-[6px_6px_0_0_var(--signal)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-signal"
               aria-label={`View photo: ${photo.alt}`}
             >
               <Image

@@ -1,79 +1,150 @@
-/* ─── Colours ─────────────────────────────────────────────────────────── */
+/* AD-JEET is read from its physical mark: cyan enamel, yellow sweep, chalk
+   ground, and the petrol-blue shadow behind an illuminated sign. */
 :root {
-  --paper:           #F7F3EC;
-  --paper-elevated:  #FBF8F3;
-  --ink:             #1A1916;
-  --ink-muted:       #4A4741;
-  --ink-subtle:      #8A857C;
-  --rule:            #E4DDD0;
-  --adjeet-blue:     #1E7FB8;
-  --adjeet-blue-deep: #134C70;
-  --ochre:           #C9962E;
-  --clay:            #A6503A;
-  --sage:            #6B7C5A;
-  --slate:           #455362;
-  --success:         #3F7A4E;
-  --warning:         #B8862A;
-  --error:           #A63D3D;
+  --paper: #F2F1E9;
+  --paper-elevated: #FCFCF7;
+  --ink: #12333B;
+  --ink-muted: #496269;
+  --ink-subtle: #607980;
+  --rule: #C9D7D4;
 
-  /* ─── Elevation ──────────────────────────────────────────────────────── */
-  --elev-1: 0 1px 2px rgba(26,25,22,0.04), 0 2px 6px rgba(26,25,22,0.03);
-  --elev-2: 0 4px 8px rgba(26,25,22,0.06), 0 12px 24px rgba(26,25,22,0.05);
+  --signal: #109FCC;
+  --signal-hot: #F1F36D;
+  --signal-ink: #08262D;
+  --glow: #66CEE7;
 
-  /* ─── Spacing ─────────────────────────────────────────────────────────── */
-  --space-1:  4px;
-  --space-2:  8px;
-  --space-3:  12px;
-  --space-4:  16px;
-  --space-6:  24px;
-  --space-8:  32px;
+  --night: #0A222A;
+  --night-elevated: #11343D;
+  --night-rule: rgb(242 241 233 / 18%);
+  --night-ink: #F2F1E9;
+  --night-ink-muted: #BDD1CE;
+  --surface-inverse: var(--night);
+
+  /* Kept as aliases while the established route components use their old
+     names. They resolve to the same brand system, never to a second palette. */
+  --adjeet-blue: var(--ink);
+  --adjeet-blue-deep: #08262D;
+  --ochre: var(--signal-hot);
+  --clay: #B9684E;
+  --sage: #678A7B;
+  --slate: var(--ink-muted);
+  --success: #28725A;
+  --warning: #9A700C;
+  --error: #A34438;
+
+  --elev-1: 0 1px 2px rgb(8 38 45 / 7%), 0 10px 26px rgb(8 38 45 / 8%);
+  --elev-2: 0 18px 52px rgb(8 38 45 / 14%);
+  --plate-shadow: 0 18px 42px rgb(8 38 45 / 12%);
+  --plate-shadow-signal: 0 18px 42px rgb(16 159 204 / 20%);
+
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-6: 24px;
+  --space-8: 32px;
   --space-12: 48px;
   --space-16: 64px;
   --space-24: 96px;
   --space-32: 128px;
 
-  /* ─── Section rhythm ──────────────────────────────────────────────────── */
-  --section-py: clamp(4rem, 10vh, 8rem);
-
-  /* ─── Max width ───────────────────────────────────────────────────────── */
-  --content-max: 1280px;
-
-  /* ─── Typography scale ───────────────────────────────────────────────── */
-  --text-display-1: clamp(3.5rem, 8vw, 7.5rem);
-  --text-display-2: clamp(1.75rem, 3.5vw, 2.5rem);
+  --section-py: clamp(4.75rem, 10vw, 8.5rem);
+  --content-max: 1240px;
+  --page-gutter: clamp(1.25rem, 3vw, 2.5rem);
+  --header-height: 80px;
+  --font-heading: 'Cesura', 'Caesura', 'Cæsura', var(--font-barlow-condensed), serif;
+  --font-script: 'Pristina', 'Segoe Script', cursive;
+  --signal-text: #08779A;
+  --focus-ring: #08779A;
+  --text-mega: clamp(4.2rem, 14vw, 12rem);
+  --text-display-1: clamp(3.1rem, 7vw, 7.4rem);
+  --text-display-2: clamp(2.15rem, 4.5vw, 4rem);
   --text-body-lg: 1.125rem;
-  --text-body:    1rem;
-  --text-sm:      0.875rem;
+  --text-body: 1rem;
+  --text-sm: 0.875rem;
+
+  /* Compatibility aliases for work that predates the rebuild. */
+  --studio-paper: var(--paper);
+  --studio-surface: var(--paper-elevated);
+  --studio-ink: var(--ink);
+  --studio-muted: var(--ink-muted);
+  --studio-accent: var(--signal);
+  --studio-tint: #E5F6FA;
+  --studio-line: var(--rule);
+  --studio-on-accent: var(--signal-ink);
+  --studio-dark: var(--night);
+  --studio-dark-muted: var(--night-ink-muted);
+  --studio-section: var(--section-py);
+  --studio-gutter: clamp(1.25rem, 4vw, 4rem);
+}
+
+@media (min-width: 768px) {
+  :root {
+    --header-height: 88px;
+  }
 }
 
 :root[data-theme="dark"] {
-  --paper:          #13120F;
-  --paper-elevated: #1E1C18;
-  --ink:            #F0EBDE;
-  --ink-muted:      #BAB3A2;
-  --rule:           #2B2823;
-  --adjeet-blue:    #4FA8E0;
+  --paper: #0A222A;
+  --paper-elevated: #11343D;
+  --ink: #F2F1E9;
+  --ink-muted: #BDD1CE;
+  --ink-subtle: #91ACA8;
+  --rule: #28515A;
+  --signal: #66CEE7;
+  --signal-text: #66CEE7;
+  --focus-ring: #F1F36D;
+  --signal-hot: #F1F36D;
+  --signal-ink: #08262D;
+  --glow: #A0E8F5;
+  --night: #07191F;
+  --night-elevated: #0D2A33;
+  --night-rule: rgb(242 241 233 / 17%);
+  --night-ink: #F2F1E9;
+  --night-ink-muted: #BDD1CE;
+  --surface-inverse: var(--night);
+  --adjeet-blue: var(--signal);
+  --adjeet-blue-deep: #07191F;
+  --plate-shadow: 0 18px 44px rgb(0 0 0 / 20%);
+  --plate-shadow-signal: 0 18px 44px rgb(102 206 231 / 16%);
 }
 
-/* ─── Tailwind v4 theme registration ─────────────────────────────────── */
 @theme {
-  /* Colours */
-  --color-paper:          var(--paper);
+  --color-paper: var(--paper);
   --color-paper-elevated: var(--paper-elevated);
-  --color-ink:            var(--ink);
-  --color-ink-muted:      var(--ink-muted);
-  --color-ink-subtle:     var(--ink-subtle);
-  --color-rule:           var(--rule);
-  --color-blue:           var(--adjeet-blue);
-  --color-blue-deep:      var(--adjeet-blue-deep);
-  --color-ochre:          var(--ochre);
-  --color-clay:           var(--clay);
-  --color-sage:           var(--sage);
-  --color-slate:          var(--slate);
-  --color-success:        var(--success);
-  --color-warning:        var(--warning);
-  --color-error:          var(--error);
-
-  /* Max width */
+  --color-ink: var(--ink);
+  --color-ink-muted: var(--ink-muted);
+  --color-ink-subtle: var(--ink-subtle);
+  --color-rule: var(--rule);
+  --color-signal: var(--signal);
+  --color-signal-text: var(--signal-text);
+  --color-signal-hot: var(--signal-hot);
+  --color-signal-ink: var(--signal-ink);
+  --color-glow: var(--glow);
+  --color-night: var(--night);
+  --color-night-elevated: var(--night-elevated);
+  --color-night-rule: var(--night-rule);
+  --color-night-ink: var(--night-ink);
+  --color-night-ink-muted: var(--night-ink-muted);
+  --color-blue: var(--adjeet-blue);
+  --color-blue-deep: var(--adjeet-blue-deep);
+  --color-ochre: var(--ochre);
+  --color-clay: var(--clay);
+  --color-sage: var(--sage);
+  --color-slate: var(--slate);
+  --color-success: var(--success);
+  --color-warning: var(--warning);
+  --color-error: var(--error);
+  --color-surface-inverse: var(--surface-inverse);
   --width-content: var(--content-max);
+  --container-content: var(--content-max);
+  --font-display: var(--font-heading);
+  --font-sans: var(--font-hind-siliguri), system-ui, sans-serif;
+  --font-mono: ui-monospace, 'Cascadia Code', monospace;
+  --animate-marquee: marquee var(--duration, 40s) linear infinite;
+
+  @keyframes marquee {
+    from { transform: translateX(0); }
+    to { transform: translateX(calc(-100% - var(--gap, 1rem))); }
+  }
 }

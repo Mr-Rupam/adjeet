@@ -1,4 +1,5 @@
 import { describe, it, expect, vi } from 'vitest'
+import { useState } from 'react'
 import { render, screen, fireEvent } from '@testing-library/react'
 import { Lightbox } from '@/components/ui/Lightbox'
 
@@ -8,9 +9,21 @@ const photos = [
   { src: '/c.jpg', alt: 'Photo C' },
 ]
 
+function LightboxHarness() {
+  const [open, setOpen] = useState(false)
+
+  return (
+    <>
+      <button type="button" onClick={() => setOpen(true)}>Open selected work</button>
+      {open && <Lightbox photos={photos} initialIndex={0} onClose={() => setOpen(false)} />}
+    </>
+  )
+}
+
 // Mock next/image to a plain img
 vi.mock('next/image', () => ({
-  default: ({ src, alt, ...rest }: { src: string; alt: string; [key: string]: unknown }) => (
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  default: ({ src, alt, ..._rest }: { src: string; alt: string; [key: string]: unknown }) => (
     // eslint-disable-next-line @next/next/no-img-element
     <img src={src} alt={alt} />
   ),
@@ -63,6 +76,18 @@ describe('Lightbox', () => {
     render(<Lightbox photos={photos} initialIndex={0} onClose={vi.fn()} />)
     const closeBtn = screen.getByRole('button', { name: /close/i })
     expect(document.activeElement).toBe(closeBtn)
+  })
+
+  it('returns focus to the gallery trigger after close', () => {
+    render(<LightboxHarness />)
+    const opener = screen.getByRole('button', { name: 'Open selected work' })
+
+    opener.focus()
+    fireEvent.click(opener)
+    expect(document.activeElement).toBe(screen.getByRole('button', { name: /close/i }))
+
+    fireEvent.click(screen.getByRole('button', { name: /close/i }))
+    expect(document.activeElement).toBe(opener)
   })
 
   it('locks body scroll on open and restores on unmount', () => {

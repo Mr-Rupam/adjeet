@@ -45,7 +45,7 @@ describe('services data', () => {
   })
 
   it('getServiceBySlug returns undefined for a slug not in the list', () => {
-    // Verify via a known slug that the function works — no unknown slug test needed since ServiceSlug type prevents it
+    // Verify via a known slug that the function works. No unknown slug test needed since ServiceSlug type prevents it
     const result = getServiceBySlug('product-display')
     expect(result?.slug).toBe('product-display')
   })

@@ -1,4 +1,4 @@
-// GA4 measurement ID — set NEXT_PUBLIC_GA_ID in .env.local / Vercel env vars
+// GA4 measurement ID: set NEXT_PUBLIC_GA_ID in .env.local / Vercel env vars
 export const GA_ID = process.env.NEXT_PUBLIC_GA_ID ?? ''
 
 type GtagFn = (...args: unknown[]) => void

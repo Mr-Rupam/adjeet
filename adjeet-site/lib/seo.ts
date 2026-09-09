@@ -1,11 +1,19 @@
 import type { Metadata } from 'next'
 import type { Service } from '@/content/services'
+import { COVERAGE_AREAS } from '@/lib/coverage'
 
 export const siteConfig = {
-  name: 'AD-JEET',
+  name: 'AD JEET',
   url: 'https://adjeet.in',
-  ogImage: '/images/og-default.jpg',
-  description: "North Bengal's most trusted signage and outdoor advertising partner since 1990.",
+  ogImage: '/og-image.jpg',
+  description: 'Signage, print and outdoor branding from Siliguri for businesses across North Bengal since 1990.',
+}
+
+// Defense in depth: escape `<` so a stray `</script>` inside JSON-LD can never
+// break out of the inline script tag, even if user-controllable strings ever
+// flow into a schema object. Use this on every dangerouslySetInnerHTML JSON-LD.
+export function jsonLdString(schema: unknown): string {
+  return JSON.stringify(schema).replace(/</g, '\\u003c')
 }
 
 export function generateServiceMetadata(service: Service): Metadata {
@@ -37,7 +45,7 @@ export function buildLocalBusinessJsonLd() {
       latitude: 26.7271,
       longitude: 88.3953,
     },
-    areaServed: ['Siliguri', 'Jalpaiguri', 'Cooch Behar', 'Darjeeling', 'Malda'],
+    areaServed: COVERAGE_AREAS.map(a => a.name),
   }
 }
 
@@ -48,7 +56,7 @@ export function buildServiceJsonLd(service: Service) {
     name: service.name,
     description: service.description,
     provider: { '@type': 'LocalBusiness', name: siteConfig.name },
-    areaServed: ['Siliguri', 'Jalpaiguri', 'Cooch Behar', 'Darjeeling', 'Malda'],
+    areaServed: COVERAGE_AREAS.map(a => a.name),
     serviceType: service.name,
   }
 }

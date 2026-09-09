@@ -1,24 +1,27 @@
-import { Fraunces, Inter, JetBrains_Mono } from 'next/font/google'
+import localFont from 'next/font/local'
 
-export const fraunces = Fraunces({
-  subsets: ['latin'],
-  variable: '--font-fraunces',
+/**
+ * Local font files keep the workshop's first paint independent of a third
+ * party request. Barlow Condensed has the tall, painted proportion of a
+ * street sign; Hind Siliguri keeps project details calm and legible on a
+ * phone.
+ */
+export const barlowCondensed = localFont({
+  src: [
+    { path: './fonts/BarlowCondensed-Medium.ttf', weight: '500', style: 'normal' },
+    { path: './fonts/BarlowCondensed-SemiBold.ttf', weight: '600', style: 'normal' },
+  ],
+  variable: '--font-barlow-condensed',
   display: 'swap',
-  axes: ['opsz', 'SOFT', 'WONK'],
   preload: true,
 })
 
-export const inter = Inter({
-  subsets: ['latin'],
-  variable: '--font-inter',
+export const hindSiliguri = localFont({
+  src: [
+    { path: './fonts/HindSiliguri-Regular.ttf', weight: '400', style: 'normal' },
+    { path: './fonts/HindSiliguri-Medium.ttf', weight: '500', style: 'normal' },
+  ],
+  variable: '--font-hind-siliguri',
   display: 'swap',
   preload: true,
-})
-
-export const jetbrainsMono = JetBrains_Mono({
-  subsets: ['latin'],
-  variable: '--font-mono',
-  display: 'swap',
-  weight: '400',
-  preload: false,
 })

@@ -1,15 +1,11 @@
 import type React from 'react'
-import { buildLocalBusinessJsonLd } from '@/lib/seo'
 
+/**
+ * The LocalBusiness JSON-LD used to be emitted here as well as inline in the
+ * root layout, so every marketing page shipped two conflicting LocalBusiness
+ * entities while the programmatic city pages shipped only the stale one. It is
+ * now emitted once, in the root layout, which covers every route.
+ */
 export default function MarketingLayout({ children }: { children: React.ReactNode }) {
-  const schema = buildLocalBusinessJsonLd()
-  return (
-    <>
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }}
-      />
-      {children}
-    </>
-  )
+  return <>{children}</>
 }

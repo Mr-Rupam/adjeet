@@ -1,0 +1,197 @@
+.home { overflow: clip; background: var(--paper); color: var(--ink); }
+.home :is(h1, h2, h3, p, figure, ol, ul) { margin: 0; }
+.home a { -webkit-tap-highlight-color: transparent; }
+.home section { position: relative; }
+
+.hero {
+  display: flex;
+  min-height: max(720px, 100svh);
+  margin-top: -5rem;
+  isolation: isolate;
+  color: var(--night-ink);
+  --focus-ring: var(--signal-hot);
+}
+
+/* Continuous shadow across the photograph, with no bounded panel or blur.
+   It stays painted from the first frame so the copy always has contrast. */
+.heroScrim {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  background: linear-gradient(0deg, rgb(3 19 24 / 96%) 0%, rgb(3 19 24 / 86%) 30%, rgb(3 19 24 / 75%) 49%, rgb(3 19 24 / 28%) 67%, transparent 85%);
+}
+
+.heroContent {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  width: 100%;
+  max-width: var(--content-max);
+  flex-direction: column;
+  justify-content: flex-end;
+  margin-inline: auto;
+  padding: 10rem var(--page-gutter) 4rem;
+}
+.heroMeta, .kicker, .enquiryKicker {
+  font-family: var(--font-hind-siliguri), sans-serif;
+  font-size: 0.75rem;
+  font-weight: 500;
+  line-height: 1.4;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+.heroMeta { display: inline-flex; align-items: center; gap: 0.6rem; color: var(--night-ink); }
+.heroMeta span { width: 0.4rem; height: 0.4rem; border-radius: 50%; background: var(--signal-hot); }
+.hero h1 {
+  max-width: 12ch;
+  margin-top: 1.25rem;
+  font-family: var(--font-heading);
+  font-size: clamp(4.3rem, 18vw, 6rem);
+  font-weight: 600;
+  line-height: 1;
+  letter-spacing: -0.025em;
+}
+.hero h1 [data-reveal-script] {
+  display: inline-block;
+  color: var(--signal-hot);
+  font-family: var(--font-script);
+  font-size: 1.12em;
+  font-weight: 400;
+  line-height: 1;
+  letter-spacing: 0;
+  white-space: nowrap;
+}
+.heroLead { max-width: 32ch; margin-top: 1.25rem !important; font-size: 1.0625rem; line-height: 1.5; }
+.heroActions { display: flex; flex-wrap: wrap; align-items: center; gap: 0.75rem 1.5rem; margin-top: 1.75rem; }
+.heroTextLink, .textLink, .enquiryLink {
+  display: inline-flex;
+  min-height: 44px;
+  align-items: center;
+  gap: 0.6rem;
+  font-size: 1rem;
+  font-weight: 500;
+  text-underline-offset: 0.3em;
+}
+.heroTextLink { color: var(--night-ink); }
+.heroTextLink:hover, .textLink:hover { text-decoration: underline; }
+.heroTextLink svg, .textLink svg, .enquiryLink svg { flex-shrink: 0; transition: transform 180ms ease; }
+.heroTextLink:is(:hover, :focus-visible) svg { transform: translateY(3px); }
+.textLink:is(:hover, :focus-visible) svg, .enquiryLink:is(:hover, :focus-visible) svg { transform: translate(3px, -3px); }
+.heroCaption { position: absolute; right: var(--page-gutter); bottom: 1rem; z-index: 2; color: var(--night-ink); font-size: 0.75rem; line-height: 1.4; }
+
+.work, .services, .process, .coverage, .enquiry { padding: var(--section-py) max(var(--page-gutter), calc((100% - 1160px) / 2)); }
+.sectionIntro { display: grid; gap: 1.5rem; align-items: end; }
+.kicker { color: var(--signal-text); }
+.sectionIntro h2, .coverageCopy h2, .enquiry h2 {
+  margin-top: 0.875rem;
+  font-family: var(--font-heading);
+  font-size: clamp(2.75rem, 10vw, 4.8rem);
+  font-weight: 600;
+  line-height: 1.05;
+  letter-spacing: -0.025em;
+}
+.sectionIntro > p { max-width: 36ch; color: var(--ink-muted); font-size: 1.0625rem; line-height: 1.55; }
+.work { background: var(--paper); }
+.workGrid { display: grid; gap: 2rem; margin-top: 2.5rem; }
+.workCard { display: block; width: 100%; padding: 0; border: 0; background: transparent; color: inherit; font: inherit; text-align: left; text-decoration: none; cursor: pointer; }
+.workCard figure { display: grid; gap: 0.875rem; grid-template-rows: minmax(0, 1fr) auto; }
+.workImage { position: relative; aspect-ratio: 4 / 3; overflow: hidden; background: var(--night); }
+.workMedia, .coverageMedia, .processMediaInner { position: absolute; inset: 0; }
+.coverImage { object-fit: cover; transition: transform 220ms cubic-bezier(0.22, 1, 0.36, 1); }
+.workCard .coverImage { object-fit: contain; }
+.workCard:is(:hover, :focus-visible) .coverImage { transform: scale(1.025); }
+.workCard figcaption { display: flex; align-items: center; justify-content: space-between; gap: 1rem; color: var(--ink-muted); font-size: 1rem; }
+.workCard figcaption svg { color: var(--signal-text); }
+.textLink { width: fit-content; margin-top: 1.75rem; color: var(--ink); }
+
+.services { border-block: 1px solid var(--rule); background: var(--paper-elevated); }
+.serviceGroups { display: grid; margin-top: 2.5rem; border-top: 1px solid var(--rule); }
+.serviceGroup {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 0.75rem;
+  align-items: start;
+  padding-block: 1.5rem;
+  border-bottom: 1px solid var(--rule);
+  color: inherit;
+  text-decoration: none;
+  transition: color 180ms ease;
+}
+.serviceGroup:hover { color: var(--signal-text); }
+.serviceGroup > svg { margin-top: 0.3rem; color: var(--signal-text); transition: transform 180ms ease; }
+.serviceGroup:is(:hover, :focus-visible) > svg { transform: translate(3px, -3px); }
+.serviceMark { display: none; color: var(--signal-text); }
+.serviceMark svg { display: block; width: 100%; height: auto; fill: none; stroke: currentColor; stroke-linecap: round; stroke-linejoin: round; stroke-width: 1.5; }
+.serviceGroup h3 { font-family: var(--font-heading); font-size: clamp(1.75rem, 4vw, 2.6rem); font-weight: 600; line-height: 1.15; }
+.serviceGroup p { max-width: 52ch; margin-top: 0.5rem; color: var(--ink-muted); font-size: 1rem; line-height: 1.5; }
+
+.process { background: var(--night); color: var(--night-ink); --focus-ring: var(--signal-hot); }
+.process .kicker { color: var(--signal-hot); }
+.process .sectionIntro > p { color: var(--night-ink-muted); }
+.processLayout { display: grid; gap: 2rem; margin-top: 2.5rem; }
+.processMedia { position: relative; aspect-ratio: 6 / 5; overflow: hidden; background: var(--night-elevated); }
+.processMediaFrame { position: absolute; inset: 0; overflow: hidden; }
+.processMedia::after { position: absolute; inset: 70% 0 0; background: linear-gradient(transparent, rgb(3 19 24 / 75%)); content: ''; pointer-events: none; }
+.processMedia figcaption { position: absolute; bottom: 1rem; left: 1.25rem; z-index: 1; color: var(--night-ink); font-size: 0.75rem; }
+.processCopy { align-self: center; }
+.processCopy ol { padding: 0; list-style: none; }
+.processCopy li { display: grid; grid-template-columns: 1.75rem minmax(0, 1fr); gap: 1rem; padding-block: 1.5rem; border-top: 1px solid var(--night-rule); }
+.processCopy li:last-child { border-bottom: 1px solid var(--night-rule); }
+.processCopy li > span { padding-top: 0.2rem; color: var(--signal-hot); font-size: 0.8125rem; font-variant-numeric: tabular-nums; }
+.processCopy h3 { font-family: var(--font-heading); font-size: clamp(1.6rem, 3vw, 2rem); font-weight: 500; line-height: 1.15; }
+.processCopy li p { max-width: 36ch; margin-top: 0.5rem; color: var(--night-ink-muted); font-size: 1rem; line-height: 1.5; }
+.processCopy .textLink { color: var(--night-ink); }
+
+.coverage { display: grid; gap: 2.5rem; background: var(--paper); }
+.coverageImage { position: relative; min-height: 0; aspect-ratio: 4 / 3; overflow: hidden; background: var(--night); }
+.coverageCopy { order: -1; align-self: center; }
+.coverageCopy > p:not(.kicker) { max-width: 40ch; margin-top: 1.25rem !important; color: var(--ink-muted); font-size: 1.0625rem; line-height: 1.55; }
+.coverageCopy ul { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0 1.25rem; margin-top: 1.75rem; padding: 0; list-style: none; }
+.coverageCopy li { display: flex; min-height: 48px; align-items: center; border-bottom: 1px solid var(--rule); color: var(--ink-muted); font-size: 1rem; line-height: 1.35; }
+.coverageCopy li span { display: none; }
+
+.enquiry { display: grid; gap: 2rem; background: var(--signal); color: var(--signal-ink); --focus-ring: var(--signal-ink); }
+.enquiryKicker { color: var(--signal-ink); }
+.enquiry h2 { max-width: 17ch; }
+.enquiryBody { display: flex; flex-direction: column; align-items: flex-start; gap: 1.25rem; }
+.enquiryBody > p { max-width: 29ch; font-size: 1.125rem; line-height: 1.5; }
+.enquiryLink { color: var(--signal-ink); text-decoration: underline; }
+
+@media (min-width: 768px) {
+  .hero { min-height: max(700px, min(900px, 100svh)); margin-top: -5.5rem; }
+  .heroContent { padding: 11rem var(--page-gutter) 4rem; }
+  .hero h1 { font-size: clamp(5.5rem, 8.3vw, 8rem); }
+  .heroLead { font-size: 1.125rem; }
+  .heroScrim {
+    background:
+      radial-gradient(ellipse 86% 105% at 0% 95%, rgb(3 19 24 / 96%) 0%, rgb(3 19 24 / 83%) 30%, rgb(3 19 24 / 45%) 56%, rgb(3 19 24 / 10%) 78%, transparent 100%),
+      linear-gradient(0deg, rgb(3 19 24 / 38%), transparent 40%);
+  }
+  .sectionIntro { grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr); gap: 3rem; }
+  .sectionIntro > p { justify-self: end; }
+  .workGrid { grid-template-columns: repeat(12, minmax(0, 1fr)); gap: clamp(1.25rem, 2.5vw, 2rem); align-items: start; }
+  .workCardLead { grid-column: span 7; grid-row: span 2; align-self: start; }
+  .workCardLead .workImage { aspect-ratio: 1 / 1 !important; }
+  .workCard:nth-child(2) { grid-column: 9 / -1; margin-top: clamp(2rem, 8vw, 6.5rem); }
+  .workCard:nth-child(3) { grid-column: 8 / span 4; margin-top: clamp(1rem, 3vw, 2.5rem); }
+  .serviceGroup { grid-template-columns: 3rem minmax(0, 1fr) auto; gap: 1.5rem; align-items: center; padding-block: 1.75rem; }
+  .serviceMark { display: block; width: 3rem; }
+  .serviceGroup > svg { padding: 0; margin: 0; }
+  .enquiry { grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr); gap: 3rem; align-items: end; }
+}
+@media (min-width: 1024px) {
+  .processLayout { grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr); gap: clamp(2.5rem, 5vw, 5rem); align-items: start; }
+  .processMedia { min-height: 460px; }
+  .coverage { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: clamp(3rem, 6vw, 6rem); align-items: center; }
+  .coverageImage { aspect-ratio: 4 / 5; }
+}
+@media (min-width: 1024px) and (prefers-reduced-motion: no-preference) {
+  .processMedia { position: sticky; top: 7.5rem; }
+}
+@media (max-width: 359px) {
+  .hero h1 { font-size: 3.85rem; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .coverImage, .heroTextLink svg, .textLink svg, .enquiryLink svg, .serviceGroup, .serviceGroup > svg { transition: none; }
+}

@@ -61,7 +61,7 @@ describe('buildLocalBusinessJsonLd', () => {
   it('returns LocalBusiness schema with correct type and name', () => {
     const result = buildLocalBusinessJsonLd()
     expect(result['@type']).toBe('LocalBusiness')
-    expect(result.name).toBe('AD-JEET')
+    expect(result.name).toBe('AD JEET')
   })
 
   it('has a telephone field', () => {

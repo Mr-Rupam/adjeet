@@ -1,4 +1,5 @@
 import { z } from 'zod'
+import { SERVICE_SLUGS } from '@/content/services'
 
 export const TIMELINE_OPTIONS = [
   { value: 'immediate', label: 'Immediately' },
@@ -13,13 +14,45 @@ export const COVERAGE_CITIES = [
 ] as const
 
 export const leadSchema = z.object({
-  name: z.string().min(2, 'Name must be at least 2 characters'),
-  phone: z.string().regex(/^\+?[0-9]{10,13}$/, 'Enter a valid phone number'),
-  city: z.string().min(1, 'Please select a city'),
-  serviceInterest: z.array(z.string()).min(1, 'Select at least one service'),
+  name: z
+    .string()
+    .min(2, 'Please enter your name, at least 2 characters')
+    .max(50, 'Please shorten your name to 50 characters or fewer')
+    .regex(/^[A-Za-z\s\-']+$/, 'Name can only contain letters, spaces, hyphens, and apostrophes')
+    .refine((val) => val.trim().length >= 2, 'Please enter your real name'),
+
+  phone: z
+    .string()
+    // Strips out all spaces, dashes, and brackets before checking the regex
+    .transform(val => val.replace(/[\s\-\(\)]/g, ''))
+    .refine(
+      (val) => /^(?:\+91|91)?[6-9]\d{9}$/.test(val),
+      'Please enter a valid 10-digit Indian phone number (e.g. 9876543210 or +919876543210)'
+    ),
+
+  city: z.enum(COVERAGE_CITIES, { 
+    message: 'Please select a valid city from the list'
+  }),
+
+  serviceInterest: z
+    .array(z.enum(SERVICE_SLUGS))
+    .min(1, 'Please select at least one service so we can route your request'),
+
   timeline: z.enum(['immediate', 'one_month', 'three_months', 'exploring']),
-  message: z.string().max(1000).optional(),
+
+  message: z
+    .string()
+    .max(1000, 'Please shorten your message to 1000 characters or fewer')
+    .refine(
+      (val) => !/(http|https):\/\/[^\s]+/.test(val ?? ''),
+      'Please remove any links from your message, then send again'
+    )
+    .optional()
+    .or(z.literal('')), // Allows empty strings when optional fails
+
   _hp: z.string().max(0, 'Bot detected').optional(),
+
+  cfTurnstileResponse: z.string().min(1, 'Please complete the CAPTCHA above so we know you are human'),
 })
 
 export type LeadInput = z.infer<typeof leadSchema>

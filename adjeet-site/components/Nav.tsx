@@ -1,40 +1,49 @@
+'use client'
+
 import Link from 'next/link'
+import { usePathname } from 'next/navigation'
+import { BrandLogo } from '@/components/BrandLogo'
 import { ThemeToggle } from '@/components/ui/ThemeToggle'
 import { MobileNav } from '@/components/MobileNav'
+import { QuoteCTA } from '@/components/ui/QuoteCTA'
 
 const NAV_LINKS = [
   { href: '/services', label: 'Services' },
-  { href: '/portfolio', label: 'Portfolio' },
+  { href: '/portfolio', label: 'Work' },
   { href: '/about', label: 'About' },
   { href: '/contact', label: 'Contact' },
 ]
 
 export function Nav() {
-  return (
-    <header className="fixed top-0 inset-x-0 z-40 bg-paper/90 backdrop-blur-sm border-b border-rule">
-      <nav
-        className="mx-auto flex max-w-content items-center justify-between px-6 h-16"
-        aria-label="Main navigation"
-      >
-        <Link href="/" className="font-bold text-ink text-lg tracking-tight">
-          AD-JEET
-        </Link>
+  const pathname = usePathname()
+  const isHome = pathname === '/'
 
-        {/* Desktop links */}
-        <ul className="hidden md:flex items-center gap-8 list-none m-0 p-0">
-          {NAV_LINKS.map(({ href, label }) => (
-            <li key={href}>
-              <Link
-                href={href}
-                className="text-ink-muted hover:text-ink text-sm font-medium transition-colors"
-              >
-                {label}
-              </Link>
-            </li>
-          ))}
+  return (
+    <header className={`site-header fixed inset-x-0 top-0 z-40 ${isHome ? 'site-header--home' : ''}`}>
+      <nav className="mx-auto flex h-20 max-w-content items-center justify-between gap-3 px-4 sm:px-5 md:h-[88px] md:px-8" aria-label="Main navigation">
+        <BrandLogo priority />
+
+        <ul className="m-0 hidden list-none items-center gap-7 p-0 lg:flex">
+          {NAV_LINKS.map(({ href, label }) => {
+            const isActive = pathname === href || pathname.startsWith(`${href}/`)
+            return (
+              <li key={href}>
+                <Link
+                  href={href}
+                  aria-current={isActive ? 'page' : undefined}
+                  className={`nav-link ${isActive ? 'nav-link--active' : ''}`}
+                >
+                  {label}
+                </Link>
+              </li>
+            )
+          })}
         </ul>
 
-        <div className="flex items-center gap-2">
+        <div className="flex shrink-0 items-center gap-2">
+          <span className="hidden md:block">
+            <QuoteCTA source="nav" size="sm" label="Start a project" />
+          </span>
           <ThemeToggle />
           <MobileNav links={NAV_LINKS} />
         </div>
