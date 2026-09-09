@@ -1,7 +1,4 @@
-/**
- * Two counter-scrolling rows of client names: the street of brands whose
- * signs we've built. Pure CSS marquee (tokens.css --animate-marquee).
- */
+import styles from './ClientStreet.module.css'
 
 interface Client {
   name: string
@@ -33,57 +30,21 @@ const ROW_2: Client[] = [
   { name: 'Anchor', sector: 'Electricals' },
 ]
 
-function MarqueeRow({ clients, reverse }: { clients: Client[]; reverse?: boolean }) {
-  const strip = (ariaHidden: boolean, key: string) => (
-    <div
-      key={key}
-      aria-hidden={ariaHidden || undefined}
-      className={`flex shrink-0 items-baseline animate-marquee [--duration:45s] [--gap:0px] motion-reduce:animate-none ${
-        reverse ? '[animation-direction:reverse]' : ''
-      }`}
-    >
-      {clients.map(c => (
-        <span key={c.name} className="flex items-baseline gap-3 whitespace-nowrap px-6">
-          <span className="display text-4xl text-ink transition-colors md:text-5xl">
-            {c.name}
-          </span>
-          <span className="spec text-ink-subtle">{c.sector}</span>
-        </span>
-      ))}
-    </div>
-  )
-
-  return (
-    <div className="marquee-track flex overflow-hidden py-3">
-      {strip(false, 'a')}
-      {strip(true, 'b')}
-      {strip(true, 'c')}
-    </div>
-  )
-}
-
 export function ClientStreet() {
   return (
-    <section className="relative overflow-hidden border-b-2 border-ink bg-paper py-14 md:py-20">
-      <div className="mx-auto max-w-content px-5 md:px-8">
-        <h2 className="display mt-3 max-w-3xl text-ink" style={{ fontSize: 'var(--text-display-2)' }}>
-          Every brand below has a sign in North Bengal{' '}
-          <span className="text-signal">that we built.</span>
-        </h2>
-      </div>
-
-      <div className="mt-10 -rotate-1 md:mt-14">
-        <div className="border-y-2 border-ink bg-paper-elevated">
-          <MarqueeRow clients={ROW_1} />
+    <section id="client-history" className={styles.clients} aria-labelledby="client-history-heading">
+      <div className={styles.inner}>
+        <div className={styles.intro}>
+          <h2 id="client-history-heading">Brands we’ve worked with.</h2>
+          <p>National names. Local craftsmanship.</p>
         </div>
-        <div className="border-b-2 border-ink bg-paper">
-          <MarqueeRow clients={ROW_2} reverse />
-        </div>
+        <ul className={styles.names} aria-label="Past clients">
+          {[...ROW_1, ...ROW_2].map(client => (
+            <li key={client.name}><span>{client.name}</span></li>
+          ))}
+        </ul>
+        <p className={styles.note}>Partial list: national brands via their regional agencies, plus 400+ local businesses.</p>
       </div>
-
-      <p className="spec mx-auto mt-10 max-w-content px-5 text-ink-subtle md:px-8">
-        Partial list: national brands via their regional agencies, plus 400+ local businesses.
-      </p>
     </section>
   )
 }

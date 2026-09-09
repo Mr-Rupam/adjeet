@@ -12,13 +12,12 @@ test.describe('Home page', () => {
     const hero = page.locator('#hero-section')
     await expect(hero.getByRole('heading', { level: 1, name: /signage, print & outdoor branding/i })).toBeVisible()
     await expect(page.getByRole('heading', { level: 1 })).toHaveCount(1)
-    await expect(hero.getByText(/signage, print & outdoor branding/i)).toBeVisible()
     await expect(hero.getByText(/designed, fabricated and installed from our siliguri workshop/i)).toBeVisible()
     await expect(hero.getByText(/ad jeet workshop, siliguri/i)).toBeVisible()
   })
 
   test('keeps the client history proof section on the landing page', async ({ page }) => {
-    const clientHistory = page.getByRole('heading', { name: /every brand below has a sign in north bengal/i })
+    const clientHistory = page.getByRole('heading', { name: /brands we’ve worked with/i })
     await expect(clientHistory).toBeVisible()
     await expect(page.getByText(/partial list: national brands via their regional agencies/i)).toBeVisible()
     await expect(page.getByText('Airtel', { exact: true }).first()).toBeVisible()

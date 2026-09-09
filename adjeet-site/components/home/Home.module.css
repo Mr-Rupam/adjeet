@@ -44,10 +44,10 @@
 .heroMeta { display: inline-flex; align-items: center; gap: 0.6rem; color: var(--night-ink); }
 .heroMeta span { width: 0.4rem; height: 0.4rem; border-radius: 50%; background: var(--signal-hot); }
 .hero h1 {
-  max-width: 12ch;
+  max-width: 100%;
   margin-top: 1.25rem;
   font-family: var(--font-heading);
-  font-size: clamp(4.3rem, 18vw, 6rem);
+  font-size: clamp(2.75rem, 11vw, 5rem);
   font-weight: 600;
   line-height: 1;
   letter-spacing: -0.025em;
@@ -60,7 +60,10 @@
   font-weight: 400;
   line-height: 1;
   letter-spacing: 0;
-  white-space: nowrap;
+  max-width: 100%;
+  white-space: normal;
+  overflow-wrap: break-word;
+  text-wrap: balance;
 }
 .heroLead { max-width: 32ch; margin-top: 1.25rem !important; font-size: 1.0625rem; line-height: 1.5; }
 .heroActions { display: flex; flex-wrap: wrap; align-items: center; gap: 0.75rem 1.5rem; margin-top: 1.75rem; }
@@ -159,7 +162,7 @@
 @media (min-width: 768px) {
   .hero { min-height: max(700px, min(900px, 100svh)); margin-top: -5.5rem; }
   .heroContent { padding: 11rem var(--page-gutter) 4rem; }
-  .hero h1 { font-size: clamp(5.5rem, 8.3vw, 8rem); }
+  .hero h1 { font-size: clamp(4rem, 7vw, 7rem); }
   .heroLead { font-size: 1.125rem; }
   .heroScrim {
     background:
@@ -183,7 +186,7 @@
   .coverageImage { aspect-ratio: 4 / 5; }
 }
 @media (max-width: 359px) {
-  .hero h1 { font-size: 3.85rem; }
+  .hero h1 { font-size: 2.75rem; }
   .serviceGroup { grid-template-columns: 1.25rem minmax(0, 1fr) auto; gap: 0.5rem; }
 }
 @media (prefers-reduced-motion: reduce) {

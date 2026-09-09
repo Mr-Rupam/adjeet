@@ -71,9 +71,9 @@ export function HomePageView() {
         <p className={styles.heroCaption} data-hero-caption>AD JEET workshop, Siliguri.</p>
       </section>
 
-      <ProjectGallery />
-
       <ClientStreet />
+
+      <ProjectGallery />
 
       <section id="services" className={styles.services} aria-labelledby="services-heading">
         <div className={styles.sectionIntro} data-home-reveal>
