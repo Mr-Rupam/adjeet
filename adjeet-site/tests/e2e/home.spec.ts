@@ -1,4 +1,5 @@
 import { test, expect } from '@playwright/test'
+import { DISTRICTS_SERVED } from '../../lib/coverage'
 
 test.describe('Home page', () => {
   test.beforeEach(async ({ page }) => {
@@ -32,7 +33,12 @@ test.describe('Home page', () => {
   test('hero ticker shows service and coverage copy', async ({ page }) => {
     await expect(page.getByText(/glow sign boards/i).first()).toBeVisible()
     await expect(page.getByText(/acp \/ led signage/i).first()).toBeVisible()
-    await expect(page.getByText(/serving 12 districts/i)).toBeVisible()
+    // Bound to the constant, not a literal: this assertion was left saying 12
+    // when the count moved to 10, which is exactly the drift lib/coverage.ts
+    // exists to stop.
+    await expect(
+      page.getByText(new RegExp(`serving ${DISTRICTS_SERVED} districts`, 'i'))
+    ).toBeVisible()
   })
 
   test('services board renders 10 trade rows linking to /services/[slug]', async ({ page }) => {

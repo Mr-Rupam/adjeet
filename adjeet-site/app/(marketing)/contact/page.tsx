@@ -147,7 +147,7 @@ export default function ContactPage() {
             {/* Map */}
             <div className="relative mt-6 aspect-[4/3] overflow-hidden border-2 border-ink">
               <iframe
-                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3562.4!2d88.395!3d26.727!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zMjbCsDQzJzM3LjIiTiA4OMKwMjMnNDIuMCJF!5e0!3m2!1sen!2sin!4v1"
+                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d891.0683159711388!2d88.42128342377295!3d26.703715758176227!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x39e44152d31a91b7%3A0x57ba4767fe74c984!2sAD%20SQUARE!5e0!3m2!1sen!2sin!4v1788639136120!5m2!1sen!2sin"
                 width="100%"
                 height="100%"
                 style={{ border: 0, display: 'block' }}

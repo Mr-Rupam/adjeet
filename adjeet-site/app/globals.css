@@ -170,6 +170,64 @@ p {
 }
 
 /* ═══════════════════════════════════════════════════════════════════════
+   HERO SKY: the workshop gate, daylight through to a lit sign at night
+   ═══════════════════════════════════════════════════════════════════════ */
+
+/* The poster sits under the canvas so the hero is never an empty rectangle
+   while the frame sequence decodes. StreetSky paints over it within a frame
+   of the first decode; if AVIF or canvas is unavailable it simply stays. */
+.street-sky {
+  display: block;
+  background-color: var(--paper);
+  background-image: url("/hero/poster/day-1280.webp");
+  background-size: cover;
+  background-position: center;
+}
+:root[data-theme="dark"] .street-sky {
+  background-image: url("/hero/poster/night-1280.webp");
+}
+@media (max-width: 820px) {
+  .street-sky {
+    background-image: url("/hero/poster/day-640.webp");
+  }
+  :root[data-theme="dark"] .street-sky {
+    background-image: url("/hero/poster/night-640.webp");
+  }
+}
+
+/* Holds hero type legible over footage that swings from bright sky to night.
+   Written against --paper, so it inverts with the theme rather than fighting
+   it: heaviest at the top and bottom edges where the spec strip and the
+   ticker sit, lightest across the middle band where the gate is worth seeing. */
+.street-sky-scrim {
+  background: linear-gradient(
+    to bottom,
+    var(--paper) 0%,
+    color-mix(in srgb, var(--paper) 74%, transparent) 22%,
+    color-mix(in srgb, var(--paper) 62%, transparent) 58%,
+    color-mix(in srgb, var(--paper) 88%, transparent) 88%,
+    var(--paper) 100%
+  );
+}
+
+/* Hero body copy sits over moving footage whose luminance swings across the
+   scrub, so the scrim alone cannot guarantee 4.5:1. This gives the text its
+   own ground: near-opaque paper, bled past the text edge so it reads as a
+   lit panel rather than a box. */
+.hero-copy {
+  position: relative;
+  isolation: isolate;
+}
+.hero-copy::before {
+  content: "";
+  position: absolute;
+  inset: -0.75rem -1rem;
+  z-index: -1;
+  background: color-mix(in srgb, var(--paper) 92%, transparent);
+  backdrop-filter: blur(6px);
+}
+
+/* ═══════════════════════════════════════════════════════════════════════
    BACKDROPS
    ═══════════════════════════════════════════════════════════════════════ */
 
