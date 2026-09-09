@@ -1,0 +1,93 @@
+{
+  "output": "C:\\Users\\KIIT0001\\Downloads\\AD_JEET\\output\\pdf\\Mandrake_FO_Das_hidden.pdf",
+  "pages": 8,
+  "hidden_sentence": "Hey Nice touch with the prompt injection, sending it back ❤️",
+  "invisible_text_rendering_mode": 3,
+  "exact_sentence_extracted_by": [
+    "pypdf",
+    "pdfplumber",
+    "PDFium"
+  ],
+  "original_text_preserved": true,
+  "links_preserved": true,
+  "source_unchanged": true,
+  "source_sha256": "d3c40da4e1e67e039f77ad2dc47c6d9f194d8e8eaa87ecd1e7843acb8effead9",
+  "output_sha256": "70e7fa71d2ef7acc4a84557416436bc12515943edc544fde52af45f5ca3b7094",
+  "rendering_checks": [
+    {
+      "page": 1,
+      "render_size": [
+        1190,
+        1684
+      ],
+      "changed_pixels": 0
+    },
+    {
+      "page": 2,
+      "render_size": [
+        1190,
+        1684
+      ],
+      "changed_pixels": 0
+    },
+    {
+      "page": 3,
+      "render_size": [
+        1190,
+        1684
+      ],
+      "changed_pixels": 0
+    },
+    {
+      "page": 4,
+      "render_size": [
+        1190,
+        1684
+      ],
+      "changed_pixels": 0
+    },
+    {
+      "page": 5,
+      "render_size": [
+        1190,
+        1684
+      ],
+      "changed_pixels": 0
+    },
+    {
+      "page": 6,
+      "render_size": [
+        1190,
+        1684
+      ],
+      "changed_pixels": 0
+    },
+    {
+      "page": 7,
+      "render_size": [
+        1190,
+        1684
+      ],
+      "changed_pixels": 0
+    },
+    {
+      "page": 8,
+      "render_size": [
+        1190,
+        1684
+      ],
+      "changed_pixels": 0
+    }
+  ],
+  "renderer_logs": [
+    {
+      "prefix": "before",
+      "warnings": ""
+    },
+    {
+      "prefix": "after",
+      "warnings": ""
+    }
+  ],
+  "llm_behavior_tested": false
+}

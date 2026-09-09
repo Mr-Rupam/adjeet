@@ -1,0 +1,120 @@
+[
+  {
+    "width": 390,
+    "theme": "light",
+    "scrim": "linear-gradient(rgba(0, 0, 0, 0) 15%, rgba(3, 19, 24, 0.28) 33%, rgba(3, 19, 24, 0.75) 51%, rgba(3, 19, 24, 0.86) 70%, rgba(3, 19, 24, 0.96) 100%)"
+  },
+  {
+    "route": "/services",
+    "width": 390,
+    "pageWidth": 390,
+    "theme": "dark",
+    "headingColor": "rgb(242, 241, 233)",
+    "background": "rgb(10, 34, 42)",
+    "overflow": []
+  },
+  {
+    "route": "/portfolio",
+    "width": 390,
+    "pageWidth": 390,
+    "theme": "dark",
+    "headingColor": "rgb(242, 241, 233)",
+    "background": "rgb(10, 34, 42)",
+    "overflow": []
+  },
+  {
+    "route": "/about",
+    "width": 390,
+    "pageWidth": 390,
+    "theme": "dark",
+    "headingColor": "rgb(242, 241, 233)",
+    "background": "rgb(10, 34, 42)",
+    "overflow": []
+  },
+  {
+    "route": "/contact",
+    "width": 390,
+    "pageWidth": 390,
+    "theme": "dark",
+    "headingColor": "rgb(242, 241, 233)",
+    "background": "rgb(10, 34, 42)",
+    "overflow": []
+  },
+  {
+    "route": "/services/glow-sign-boards",
+    "width": 390,
+    "pageWidth": 390,
+    "theme": "dark",
+    "headingColor": "rgb(242, 241, 233)",
+    "background": "rgb(10, 34, 42)",
+    "overflow": []
+  },
+  {
+    "route": "/privacy",
+    "width": 390,
+    "pageWidth": 390,
+    "theme": "dark",
+    "headingColor": "rgb(242, 241, 233)",
+    "background": "rgb(10, 34, 42)",
+    "overflow": []
+  },
+  {
+    "width": 1440,
+    "theme": "light",
+    "scrim": "radial-gradient(86% 105% at 0px 95%, rgba(3, 19, 24, 0.96) 0%, rgba(3, 19, 24, 0.83) 30%, rgba(3, 19, 24, 0.45) 56%, rgba(3, 19, 24, 0.1) 78%, rgba(0, 0, 0, 0) 100%), linear-gradient(rgba(0, 0, 0, 0) 60%, rgba(3, 19, 24, 0.38))"
+  },
+  {
+    "route": "/services",
+    "width": 1440,
+    "pageWidth": 1440,
+    "theme": "dark",
+    "headingColor": "rgb(242, 241, 233)",
+    "background": "rgb(10, 34, 42)",
+    "overflow": []
+  },
+  {
+    "route": "/portfolio",
+    "width": 1440,
+    "pageWidth": 1440,
+    "theme": "dark",
+    "headingColor": "rgb(242, 241, 233)",
+    "background": "rgb(10, 34, 42)",
+    "overflow": []
+  },
+  {
+    "route": "/about",
+    "width": 1440,
+    "pageWidth": 1440,
+    "theme": "dark",
+    "headingColor": "rgb(242, 241, 233)",
+    "background": "rgb(10, 34, 42)",
+    "overflow": []
+  },
+  {
+    "route": "/contact",
+    "width": 1440,
+    "pageWidth": 1440,
+    "theme": "dark",
+    "headingColor": "rgb(242, 241, 233)",
+    "background": "rgb(10, 34, 42)",
+    "overflow": []
+  },
+  {
+    "route": "/services/glow-sign-boards",
+    "width": 1440,
+    "pageWidth": 1440,
+    "theme": "dark",
+    "headingColor": "rgb(242, 241, 233)",
+    "background": "rgb(10, 34, 42)",
+    "overflow": []
+  },
+  {
+    "route": "/privacy",
+    "width": 1440,
+    "pageWidth": 1440,
+    "theme": "dark",
+    "headingColor": "rgb(242, 241, 233)",
+    "background": "rgb(10, 34, 42)",
+    "overflow": []
+  }
+]

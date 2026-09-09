@@ -1,0 +1,56 @@
+{
+  "url": "https://adjeet.vercel.app",
+  "routes": [
+    {
+      "route": "/",
+      "status": 200,
+      "h1": [
+        "Made tobe seen."
+      ],
+      "ms": 5235
+    },
+    {
+      "route": "/services",
+      "status": 200,
+      "h1": [
+        "Make the streetremember your name."
+      ],
+      "ms": 4482
+    },
+    {
+      "route": "/portfolio",
+      "status": 200,
+      "h1": [
+        "Work made forthe real world."
+      ],
+      "ms": 2191
+    },
+    {
+      "route": "/about",
+      "status": 200,
+      "h1": [
+        "A name earns itsplace in the street."
+      ],
+      "ms": 2138
+    },
+    {
+      "route": "/contact",
+      "status": 200,
+      "h1": [
+        "Tell us what thestreet should say."
+      ],
+      "ms": 5688
+    },
+    {
+      "route": "/privacy",
+      "status": 200,
+      "h1": [
+        "Privacy Policy"
+      ],
+      "ms": 2105
+    }
+  ],
+  "errors": [],
+  "overflow": false,
+  "pass": true
+}

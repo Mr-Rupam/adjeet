@@ -1,0 +1,521 @@
+{
+  "base": "http://127.0.0.1:4180",
+  "date": "2026-09-09T03:30:23.473Z",
+  "results": [
+    {
+      "name": "Initial homepage does not fetch optional theme films",
+      "status": "pass",
+      "evidence": {
+        "mediaRequests": [],
+        "policy": [
+          "none",
+          "none"
+        ],
+        "measurement": "Cold local Chromium, 390px, reduced motion, no network throttle; 2 seconds after fonts ready",
+        "metrics": {
+          "lcp": 188,
+          "cls": 0,
+          "transferBytes": 1012885,
+          "encodedBytes": 1004485,
+          "resources": [
+            {
+              "url": "http://127.0.0.1:4180/",
+              "transferBytes": 13525,
+              "encodedBytes": 13225
+            },
+            {
+              "url": "http://127.0.0.1:4180/_next/static/media/BarlowCondensed_Medium-s.p.15r3of5td9cmm.ttf",
+              "transferBytes": 50862,
+              "encodedBytes": 50562
+            },
+            {
+              "url": "http://127.0.0.1:4180/_next/static/media/BarlowCondensed_SemiBold-s.p.0vmtsjx3adt8-.ttf",
+              "transferBytes": 52569,
+              "encodedBytes": 52269
+            },
+            {
+              "url": "http://127.0.0.1:4180/_next/static/media/HindSiliguri_Medium-s.p.16iu9leyei~tx.ttf",
+              "transferBytes": 123259,
+              "encodedBytes": 122959
+            },
+            {
+              "url": "http://127.0.0.1:4180/_next/static/media/HindSiliguri_Regular-s.p.00u3kckomcsmt.ttf",
+              "transferBytes": 119735,
+              "encodedBytes": 119435
+            },
+            {
+              "url": "http://127.0.0.1:4180/_next/image?url=%2Fbrand%2Fadjeet-original.png&w=256&q=75",
+              "transferBytes": 7434,
+              "encodedBytes": 7134
+            },
+            {
+              "url": "http://127.0.0.1:4180/_next/static/chunks/174tb.0rr_fn~.css",
+              "transferBytes": 13905,
+              "encodedBytes": 13605
+            },
+            {
+              "url": "http://127.0.0.1:4180/_next/static/chunks/0y~6ayujr3lkf.css",
+              "transferBytes": 2892,
+              "encodedBytes": 2592
+            },
+            {
+              "url": "http://127.0.0.1:4180/_next/static/chunks/0x97kofw70~ra.js",
+              "transferBytes": 8125,
+              "encodedBytes": 7825
+            },
+            {
+              "url": "http://127.0.0.1:4180/_next/static/chunks/0rdo240whgq_5.js",
+              "transferBytes": 9541,
+              "encodedBytes": 9241
+            },
+            {
+              "url": "http://127.0.0.1:4180/_next/static/chunks/turbopack-07_kdhu5~hdz..js",
+              "transferBytes": 4449,
+              "encodedBytes": 4149
+            },
+            {
+              "url": "http://127.0.0.1:4180/_next/static/chunks/0ksy2jb~h221_.js",
+              "transferBytes": 40719,
+              "encodedBytes": 40419
+            },
+            {
+              "url": "http://127.0.0.1:4180/_next/static/chunks/06k.hg2jq2h92.js",
+              "transferBytes": 71018,
+              "encodedBytes": 70718
+            },
+            {
+              "url": "http://127.0.0.1:4180/_next/static/chunks/16q3xisykft-v.js",
+              "transferBytes": 8019,
+              "encodedBytes": 7719
+            },
+            {
+              "url": "http://127.0.0.1:4180/_next/static/chunks/07.14vj7bmv.c.js",
+              "transferBytes": 10623,
+              "encodedBytes": 10323
+            },
+            {
+              "url": "http://127.0.0.1:4180/_next/static/chunks/09sk23z-m038a.js",
+              "transferBytes": 13179,
+              "encodedBytes": 12879
+            },
+            {
+              "url": "http://127.0.0.1:4180/hero/workshop/day.webp",
+              "transferBytes": 185834,
+              "encodedBytes": 185534
+            },
+            {
+              "url": "http://127.0.0.1:4180/_next/static/chunks/0s1nq_kzr-~of.js",
+              "transferBytes": 4903,
+              "encodedBytes": 4603
+            },
+            {
+              "url": "http://127.0.0.1:4180/_next/static/chunks/0y.9f.di3ebrh.js",
+              "transferBytes": 48320,
+              "encodedBytes": 48020
+            },
+            {
+              "url": "http://127.0.0.1:4180/hero/workshop/night.webp",
+              "transferBytes": 104226,
+              "encodedBytes": 103926
+            },
+            {
+              "url": "http://127.0.0.1:4180/_next/image?url=%2FAmbuja_cement_ACP-LED.png&w=640&q=75",
+              "transferBytes": 64448,
+              "encodedBytes": 64148
+            },
+            {
+              "url": "http://127.0.0.1:4180/_next/image?url=%2FSRMB_vechile.png&w=384&q=75",
+              "transferBytes": 19140,
+              "encodedBytes": 18840
+            },
+            {
+              "url": "http://127.0.0.1:4180/_next/image?url=%2FAcc.png&w=384&q=75",
+              "transferBytes": 17624,
+              "encodedBytes": 17324
+            },
+            {
+              "url": "http://127.0.0.1:4180/_next/image?url=%2Fimages%2Fhome%2Fidea-to-installation.webp&w=384&q=75",
+              "transferBytes": 9946,
+              "encodedBytes": 9646
+            },
+            {
+              "url": "http://127.0.0.1:4180/?_rsc=7h4NYy5eoyMcNlUN",
+              "transferBytes": 1212,
+              "encodedBytes": 912
+            },
+            {
+              "url": "http://127.0.0.1:4180/?_rsc=yIp22O3xgPPxC28X",
+              "transferBytes": 3072,
+              "encodedBytes": 2772
+            },
+            {
+              "url": "http://127.0.0.1:4180/?_rsc=-ifekjItyoC3r9jU",
+              "transferBytes": 1083,
+              "encodedBytes": 783
+            },
+            {
+              "url": "http://127.0.0.1:4180/?_rsc=l_J7Ale9xobcnR1F",
+              "transferBytes": 3223,
+              "encodedBytes": 2923
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "Responsive routes have one heading and no horizontal overflow",
+      "status": "pass",
+      "evidence": [
+        {
+          "route": "/",
+          "width": 320,
+          "scrollWidth": 320,
+          "h1": 1
+        },
+        {
+          "route": "/services",
+          "width": 320,
+          "scrollWidth": 320,
+          "h1": 1
+        },
+        {
+          "route": "/services/glow-sign-boards",
+          "width": 320,
+          "scrollWidth": 320,
+          "h1": 1
+        },
+        {
+          "route": "/portfolio",
+          "width": 320,
+          "scrollWidth": 320,
+          "h1": 1
+        },
+        {
+          "route": "/about",
+          "width": 320,
+          "scrollWidth": 320,
+          "h1": 1
+        },
+        {
+          "route": "/contact",
+          "width": 320,
+          "scrollWidth": 320,
+          "h1": 1
+        },
+        {
+          "route": "/privacy",
+          "width": 320,
+          "scrollWidth": 320,
+          "h1": 1
+        },
+        {
+          "route": "/glow-sign-board-in-siliguri",
+          "width": 320,
+          "scrollWidth": 320,
+          "h1": 1
+        },
+        {
+          "route": "/",
+          "width": 390,
+          "scrollWidth": 390,
+          "h1": 1
+        },
+        {
+          "route": "/services",
+          "width": 390,
+          "scrollWidth": 390,
+          "h1": 1
+        },
+        {
+          "route": "/services/glow-sign-boards",
+          "width": 390,
+          "scrollWidth": 390,
+          "h1": 1
+        },
+        {
+          "route": "/portfolio",
+          "width": 390,
+          "scrollWidth": 390,
+          "h1": 1
+        },
+        {
+          "route": "/about",
+          "width": 390,
+          "scrollWidth": 390,
+          "h1": 1
+        },
+        {
+          "route": "/contact",
+          "width": 390,
+          "scrollWidth": 390,
+          "h1": 1
+        },
+        {
+          "route": "/privacy",
+          "width": 390,
+          "scrollWidth": 390,
+          "h1": 1
+        },
+        {
+          "route": "/glow-sign-board-in-siliguri",
+          "width": 390,
+          "scrollWidth": 390,
+          "h1": 1
+        },
+        {
+          "route": "/",
+          "width": 768,
+          "scrollWidth": 768,
+          "h1": 1
+        },
+        {
+          "route": "/services",
+          "width": 768,
+          "scrollWidth": 768,
+          "h1": 1
+        },
+        {
+          "route": "/services/glow-sign-boards",
+          "width": 768,
+          "scrollWidth": 768,
+          "h1": 1
+        },
+        {
+          "route": "/portfolio",
+          "width": 768,
+          "scrollWidth": 768,
+          "h1": 1
+        },
+        {
+          "route": "/about",
+          "width": 768,
+          "scrollWidth": 768,
+          "h1": 1
+        },
+        {
+          "route": "/contact",
+          "width": 768,
+          "scrollWidth": 768,
+          "h1": 1
+        },
+        {
+          "route": "/privacy",
+          "width": 768,
+          "scrollWidth": 768,
+          "h1": 1
+        },
+        {
+          "route": "/glow-sign-board-in-siliguri",
+          "width": 768,
+          "scrollWidth": 768,
+          "h1": 1
+        },
+        {
+          "route": "/",
+          "width": 1024,
+          "scrollWidth": 1024,
+          "h1": 1
+        },
+        {
+          "route": "/services",
+          "width": 1024,
+          "scrollWidth": 1024,
+          "h1": 1
+        },
+        {
+          "route": "/services/glow-sign-boards",
+          "width": 1024,
+          "scrollWidth": 1024,
+          "h1": 1
+        },
+        {
+          "route": "/portfolio",
+          "width": 1024,
+          "scrollWidth": 1024,
+          "h1": 1
+        },
+        {
+          "route": "/about",
+          "width": 1024,
+          "scrollWidth": 1024,
+          "h1": 1
+        },
+        {
+          "route": "/contact",
+          "width": 1024,
+          "scrollWidth": 1024,
+          "h1": 1
+        },
+        {
+          "route": "/privacy",
+          "width": 1024,
+          "scrollWidth": 1024,
+          "h1": 1
+        },
+        {
+          "route": "/glow-sign-board-in-siliguri",
+          "width": 1024,
+          "scrollWidth": 1024,
+          "h1": 1
+        },
+        {
+          "route": "/",
+          "width": 1440,
+          "scrollWidth": 1440,
+          "h1": 1
+        },
+        {
+          "route": "/services",
+          "width": 1440,
+          "scrollWidth": 1440,
+          "h1": 1
+        },
+        {
+          "route": "/services/glow-sign-boards",
+          "width": 1440,
+          "scrollWidth": 1440,
+          "h1": 1
+        },
+        {
+          "route": "/portfolio",
+          "width": 1440,
+          "scrollWidth": 1440,
+          "h1": 1
+        },
+        {
+          "route": "/about",
+          "width": 1440,
+          "scrollWidth": 1440,
+          "h1": 1
+        },
+        {
+          "route": "/contact",
+          "width": 1440,
+          "scrollWidth": 1440,
+          "h1": 1
+        },
+        {
+          "route": "/privacy",
+          "width": 1440,
+          "scrollWidth": 1440,
+          "h1": 1
+        },
+        {
+          "route": "/glow-sign-board-in-siliguri",
+          "width": 1440,
+          "scrollWidth": 1440,
+          "h1": 1
+        }
+      ]
+    },
+    {
+      "name": "Reduced motion keeps content visible and changes the poster without film playback",
+      "status": "pass",
+      "evidence": {
+        "transition": "idle",
+        "movies": [
+          {
+            "paused": true,
+            "preload": "none",
+            "time": 0
+          },
+          {
+            "paused": true,
+            "preload": "none",
+            "time": 0
+          }
+        ]
+      }
+    },
+    {
+      "name": "Selected project frames preserve source proportions on phones",
+      "status": "pass",
+      "evidence": [
+        {
+          "alt": "ACP and LED signage for Ambuja Cement fabricated by AD JEET",
+          "intrinsicRatio": 1,
+          "displayRatio": 1,
+          "fit": "contain"
+        },
+        {
+          "alt": "SRMB vehicle branding wrap on a delivery truck by AD JEET",
+          "intrinsicRatio": 1.3725490196078431,
+          "displayRatio": 1.3704496788008564,
+          "fit": "contain"
+        },
+        {
+          "alt": "Glow sign board for ACC Cement installed by AD JEET",
+          "intrinsicRatio": 1.7587939698492463,
+          "displayRatio": 1.75,
+          "fit": "contain"
+        }
+      ]
+    },
+    {
+      "name": "Portfolio filters sit below the header and still open a lightbox",
+      "status": "pass",
+      "evidence": {
+        "top": 80,
+        "header": 81
+      }
+    },
+    {
+      "name": "Selected-work lightbox restores focus to its opener",
+      "status": "pass",
+      "evidence": {
+        "focusRestored": true
+      }
+    },
+    {
+      "name": "Server-rendered homepage remains useful without JavaScript",
+      "status": "pass",
+      "evidence": {
+        "hiddenHeadings": []
+      }
+    },
+    {
+      "name": "Normal motion survives breakpoint changes and navigation",
+      "status": "pass",
+      "evidence": {
+        "transform": "none",
+        "width": 390
+      }
+    },
+    {
+      "name": "Both supplied films complete on the matching poster, including rapid theme changes",
+      "status": "pass",
+      "evidence": {
+        "transitions": [
+          {
+            "direction": "night-to-day",
+            "theme": "light"
+          },
+          {
+            "direction": "day-to-night",
+            "theme": "dark"
+          }
+        ],
+        "finalTheme": "light"
+      }
+    },
+    {
+      "name": "Production visuals at desktop and phone widths",
+      "status": "pass",
+      "evidence": [
+        "desktop-hero-day.png",
+        "desktop-selected-work.png",
+        "desktop-process.png",
+        "desktop-services.png",
+        "mobile-hero-day.png",
+        "mobile-hero-night.png",
+        "mobile-selected-work.png",
+        "small-phone-hero.png"
+      ]
+    },
+    {
+      "name": "Browser has no uncaught application errors",
+      "status": "pass",
+      "evidence": []
+    }
+  ]
+}

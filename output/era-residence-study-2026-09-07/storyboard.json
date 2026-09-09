@@ -1,0 +1,68 @@
+[
+  {
+    "title": "The workshop",
+    "job": "Recognition + a clear action",
+    "image": "workshop-day.webp",
+    "imageLabel": "Existing real-workshop hero frame",
+    "headline": "Made to / be seen.",
+    "layout": "Real workshop, intact original logo, existing global theme control, visible WhatsApp action.",
+    "motion": "Line reveal; restrained desktop exit movement. The supplied film plays only after a theme change.",
+    "mobile": "Static crop and brief entrance. Keep the theme control and enquiry visible.",
+    "dependency": "Licensed Cesura and Pristina; verified crops across both films and posters."
+  },
+  {
+    "title": "Selected work",
+    "job": "Proof before more explanation",
+    "image": "project-acp.png",
+    "imageLabel": "Existing Ambuja ACP/LED project asset",
+    "headline": "Real work, early.",
+    "layout": "One lead installation, then two supporting projects with readable captions and unequal image sizes.",
+    "motion": "A simple sign-face mask opens into the lead image over at most 0.6 viewport of scroll.",
+    "mobile": "Full images in a vertical sequence. Preserve the actual lettering in each crop.",
+    "dependency": "Use the existing Ambuja, SRMB and ACC source records; no invented outcomes."
+  },
+  {
+    "title": "Service choices",
+    "job": "Find the right kind of work",
+    "image": null,
+    "imageLabel": "Proposed service structure",
+    "headline": "Storefront. Campaign. Space.",
+    "layout": "Three generous ruled rows. Each has a plain-language description and a clear link.",
+    "motion": "Short desktop preview crossfade where relevant imagery exists; focus and click work equally.",
+    "mobile": "Descriptions remain visible. Each row is an ordinary, easy-to-tap link.",
+    "dependency": "Use existing line illustrations where a relevant project photo is missing."
+  },
+  {
+    "title": "The process",
+    "job": "Make starting a project easier",
+    "image": "process.webp",
+    "imageLabel": "Existing workshop illustration, not completed-project evidence",
+    "headline": "From idea to installation.",
+    "layout": "A strong image beside the existing three steps: space, details, make/install.",
+    "motion": "Optional desktop sticky media changes with the steps; text stays in normal document flow.",
+    "mobile": "Image and steps stack. All instructions are understandable without motion.",
+    "dependency": "Use the labelled illustration initially; real fabrication and installation photos improve the final story."
+  },
+  {
+    "title": "Regional coverage",
+    "job": "Establish relevance",
+    "image": "project-acc.png",
+    "imageLabel": "Existing ACC project asset",
+    "headline": "Work in the world.",
+    "layout": "One contextual installation photograph and the verified named coverage list.",
+    "motion": "A brief decorative route/rule reveal; no invented geographical claims.",
+    "mobile": "Readable place names and a direct location/enquiry link.",
+    "dependency": "Coverage stays sourced from lib/coverage.ts."
+  },
+  {
+    "title": "The enquiry",
+    "job": "Turn interest into a brief",
+    "image": null,
+    "imageLabel": "Proposed closing composition",
+    "headline": "What are we putting your name on?",
+    "layout": "Cyan panel, one clear prompt, yellow WhatsApp action and project-brief alternative.",
+    "motion": "One headline entrance with quiet button feedback.",
+    "mobile": "Direct action with generous touch targets. Keep the existing enquiry dock rules.",
+    "dependency": "Reuse the current WhatsApp destination, form route and analytics."
+  }
+]
