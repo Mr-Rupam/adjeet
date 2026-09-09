@@ -39,7 +39,7 @@ export default function PortfolioPage() {
 
       <Suspense
         fallback={
-          <div className="border-b-2 border-ink py-32 text-center">
+          <div className="border-b border-rule py-32 text-center">
             <span
               className="inline-block h-6 w-6 animate-spin rounded-full border-2 border-rule"
               style={{ borderTopColor: 'var(--signal)' }}

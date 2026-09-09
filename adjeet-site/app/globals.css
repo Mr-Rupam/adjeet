@@ -36,6 +36,7 @@ h1, h2, h3, h4, h5, h6 {
 
 p {
   max-width: 65ch;
+<<<<<<< HEAD
 }
 
 button,
@@ -87,6 +88,63 @@ section[id] {
   color: var(--signal-text);
 }
 
+=======
+}
+
+button,
+a {
+  -webkit-tap-highlight-color: transparent;
+}
+
+button:not(:disabled) {
+  cursor: pointer;
+}
+
+:focus-visible {
+  outline: 2px solid var(--focus-ring);
+  outline-offset: 4px;
+}
+
+section[id] {
+  scroll-margin-top: 104px;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body,
+  .site-header,
+  .site-footer,
+  .page-masthead,
+  .section-inverse {
+    transition: background-color 320ms ease, color 320ms ease, border-color 320ms ease;
+  }
+}
+
+.display {
+  font-family: var(--font-heading);
+  font-weight: 600;
+  line-height: 1.04;
+  letter-spacing: -0.018em;
+}
+
+.spec {
+  font-family: var(--font-hind-siliguri), sans-serif;
+  font-weight: 500;
+  font-size: 0.76rem;
+  line-height: 1;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+/* Cyan paint remains the brand surface; text gets a readable ink variant. */
+.text-signal {
+  color: var(--signal-text);
+}
+
+>>>>>>> origin/main
 .brand-logo {
   display: inline-flex;
   width: clamp(150px, 45vw, 200px);
@@ -299,7 +357,11 @@ section[id] {
   align-items: center;
   justify-content: center;
   border: 1px solid color-mix(in srgb, var(--ink) 22%, transparent);
+<<<<<<< HEAD
   border-radius: var(--radius-button);
+=======
+  border-radius: 999px;
+>>>>>>> origin/main
   background: color-mix(in srgb, var(--paper) 72%, transparent);
   color: var(--ink);
   transition: transform 180ms ease, background-color 180ms ease, border-color 180ms ease;
@@ -334,10 +396,13 @@ section[id] {
   background: var(--paper);
 }
 
+<<<<<<< HEAD
 .button-shape {
   border-radius: var(--radius-button);
 }
 
+=======
+>>>>>>> origin/main
 .cta {
   display: inline-flex;
   min-height: 48px;
@@ -345,7 +410,11 @@ section[id] {
   justify-content: center;
   gap: 0.55rem;
   border: 1px solid var(--signal);
+<<<<<<< HEAD
   border-radius: var(--radius-button);
+=======
+  border-radius: 999px;
+>>>>>>> origin/main
   background: var(--signal);
   color: var(--signal-ink);
   font-size: 0.92rem;
@@ -408,7 +477,11 @@ section[id] {
   align-items: center;
   justify-content: center;
   border: 1px solid color-mix(in srgb, var(--ink) 22%, transparent);
+<<<<<<< HEAD
   border-radius: var(--radius-button);
+=======
+  border-radius: 999px;
+>>>>>>> origin/main
   background: color-mix(in srgb, var(--paper) 72%, transparent);
   color: var(--ink);
 }
