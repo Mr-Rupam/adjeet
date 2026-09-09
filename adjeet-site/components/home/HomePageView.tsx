@@ -6,19 +6,12 @@ import { QuoteCTA } from '@/components/ui/QuoteCTA'
 import { HomeMotion } from '@/components/motion/HomeMotion'
 import { HeroScene } from './HeroScene'
 import { ProjectGallery } from './ProjectGallery'
-<<<<<<< HEAD
-=======
-import { ProcessStory } from './ProcessStory'
->>>>>>> origin/main
 import styles from './Home.module.css'
 
 const SERVICE_GROUPS = [
   {
     id: 'storefront',
-<<<<<<< HEAD
     label: '01',
-=======
->>>>>>> origin/main
     title: 'Your storefront',
     body: 'Glow signs, ACP and LED faces, and window graphics that make the first look count.',
     href: '/services#storefront',
@@ -26,10 +19,7 @@ const SERVICE_GROUPS = [
   },
   {
     id: 'campaign',
-<<<<<<< HEAD
     label: '02',
-=======
->>>>>>> origin/main
     title: 'Your next campaign',
     body: 'Flex, wall, roadside and vehicle work that carries a message beyond one address.',
     href: '/services#campaign',
@@ -37,10 +27,7 @@ const SERVICE_GROUPS = [
   },
   {
     id: 'space-event',
-<<<<<<< HEAD
     label: '03',
-=======
->>>>>>> origin/main
     title: 'Your space or event',
     body: 'In-shop branding, displays and event work when every surface has a job to do.',
     href: '/services#space-event',
@@ -48,15 +35,12 @@ const SERVICE_GROUPS = [
   },
 ] as const
 
-<<<<<<< HEAD
 const PROCESS = [
   { number: '01', title: 'Show us the space.', body: 'A site photo, your location and rough dimensions give us a place to start.' },
   { number: '02', title: 'Work out the details.', body: 'We help shape the artwork, size, materials and lighting around your brief.' },
   { number: '03', title: 'Make it. Install it.', body: 'Print, fabrication and finishing come together before the work goes to site.' },
 ]
 
-=======
->>>>>>> origin/main
 function GroupMark({ kind }: { kind: (typeof SERVICE_GROUPS)[number]['mark'] }) {
   if (kind === 'frontage') {
     return <svg viewBox="0 0 64 64" aria-hidden="true"><path d="M10 28h44v26H10zM16 28V16h32v12M20 38h8m8 0h8M20 46h24" /></svg>
@@ -76,11 +60,7 @@ export function HomePageView() {
         <div className={styles.heroScrim} aria-hidden="true" />
         <div className={styles.heroContent}>
           <p className={styles.heroMeta} data-hero-meta><span /> Siliguri · Since {FOUNDED_YEAR}</p>
-<<<<<<< HEAD
           <h1 id="home-heading" data-hero-title>Made to<br /><span>be seen.</span></h1>
-=======
-          <h1 id="home-heading" data-hero-title data-reveal-text>Made to<br /><span data-reveal-script>be seen.</span></h1>
->>>>>>> origin/main
           <p className={styles.heroLead} data-hero-lead>Signage, print &amp; outdoor branding. Designed. Fabricated. Installed.</p>
           <div className={styles.heroActions} data-hero-actions>
             <QuoteCTA source="hero" tone="yellow" label="WhatsApp your project" />
@@ -93,17 +73,10 @@ export function HomePageView() {
       <ProjectGallery />
 
       <section id="services" className={styles.services} aria-labelledby="services-heading">
-<<<<<<< HEAD
         <div className={styles.sectionIntro} data-home-reveal>
           <div>
             <p className={styles.kicker}>What we make</p>
             <h2 id="services-heading">Choose your<br />canvas.</h2>
-=======
-        <div className={styles.sectionIntro}>
-          <div>
-            <p className={styles.kicker}>What we make</p>
-            <h2 id="services-heading" data-reveal-text>Choose your<br />canvas.</h2>
->>>>>>> origin/main
           </div>
           <p>One workshop, ten ways to put a name where people will notice it.</p>
         </div>
@@ -111,10 +84,7 @@ export function HomePageView() {
           {SERVICE_GROUPS.map(group => (
             <Link href={group.href} key={group.id} className={styles.serviceGroup} data-home-reveal>
               <div className={styles.serviceMark}><GroupMark kind={group.mark} /></div>
-<<<<<<< HEAD
               <span className={styles.groupIndex}>{group.label}</span>
-=======
->>>>>>> origin/main
               <div>
                 <h3>{group.title}</h3>
                 <p>{group.body}</p>
@@ -126,7 +96,6 @@ export function HomePageView() {
         <Link href="/services" className={styles.textLink}>All 10 services <ArrowUpRight size={18} aria-hidden="true" /></Link>
       </section>
 
-<<<<<<< HEAD
       <section id="how-it-works" className={styles.process} aria-labelledby="process-heading">
         <div className={styles.sectionIntro} data-home-reveal>
           <div>
@@ -161,19 +130,6 @@ export function HomePageView() {
         <div className={styles.coverageCopy} data-home-reveal>
           <p className={styles.kicker}>From city streets to hill roads</p>
           <h2 id="coverage-heading">Out where a good<br />sign goes far.</h2>
-=======
-      <ProcessStory />
-
-      <section className={styles.coverage} aria-labelledby="coverage-heading">
-        <div className={styles.coverageImage} data-reveal-image>
-          <div className={styles.coverageMedia} data-motion-media>
-            <Image src="/Acc.png" alt="An ACC roadside sign installed by AD JEET" fill sizes="(max-width: 767px) 100vw, 52vw" className={styles.coverImage} />
-          </div>
-        </div>
-        <div className={styles.coverageCopy}>
-          <p className={styles.kicker}>From city streets to hill roads</p>
-          <h2 id="coverage-heading" data-reveal-text>Out where a good<br />sign goes far.</h2>
->>>>>>> origin/main
           <p>Based in Siliguri, working across North Bengal. Tell us where the work is and we&apos;ll start from there.</p>
           <ul aria-label="Areas we serve">
             {COVERAGE_AREAS.map(area => <li key={area.name}>{area.name}{'hq' in area && area.hq ? <span>Siliguri base</span> : null}</li>)}
@@ -183,15 +139,9 @@ export function HomePageView() {
       </section>
 
       <section className={styles.enquiry} aria-labelledby="enquiry-heading">
-<<<<<<< HEAD
         <div data-home-reveal>
           <p className={styles.enquiryKicker}>Start with a photo</p>
           <h2 id="enquiry-heading">What are we putting<br />your name on?</h2>
-=======
-        <div>
-          <p className={styles.enquiryKicker}>Start with a photo</p>
-          <h2 id="enquiry-heading" data-reveal-text>What are we putting<br />your name on?</h2>
->>>>>>> origin/main
         </div>
         <div className={styles.enquiryBody} data-home-reveal>
           <p>Send a photo of your space. Tell us where it is. Let&apos;s start there.</p>

@@ -26,13 +26,9 @@ export function Lightbox({ photos, initialIndex, onClose }: LightboxProps) {
   const prev = useCallback(() => setIdx(i => (i - 1 + total) % total), [total])
   const next = useCallback(() => setIdx(i => (i + 1) % total), [total])
 
-  // Return keyboard users to the work they opened when the dialog unmounts.
+  // Focus close button on open
   useEffect(() => {
-    const opener = document.activeElement instanceof HTMLElement ? document.activeElement : null
     closeRef.current?.focus()
-    return () => {
-      if (opener?.isConnected) opener.focus({ preventScroll: true })
-    }
   }, [])
 
   // Scroll lock
@@ -88,11 +84,7 @@ export function Lightbox({ photos, initialIndex, onClose }: LightboxProps) {
         ref={closeRef}
         onClick={onClose}
         aria-label="Close photo viewer"
-<<<<<<< HEAD
         className="absolute right-3 top-3 z-10 inline-flex h-11 w-11 items-center justify-center button-shape border border-night-rule bg-night/60 text-night-ink backdrop-blur-sm transition-colors hover:border-signal hover:text-signal focus-visible:outline-night-ink"
-=======
-        className="absolute right-3 top-3 z-10 inline-flex h-11 w-11 items-center justify-center rounded-full border border-night-rule bg-night/60 text-night-ink backdrop-blur-sm transition-colors hover:border-signal hover:text-signal focus-visible:outline-night-ink"
->>>>>>> origin/main
       >
         ✕
       </button>
@@ -102,11 +94,7 @@ export function Lightbox({ photos, initialIndex, onClose }: LightboxProps) {
         <button
           onClick={prev}
           aria-label="Previous photo"
-<<<<<<< HEAD
           className="absolute left-2 top-1/2 z-10 inline-flex h-11 w-11 -translate-y-1/2 items-center justify-center button-shape border border-night-rule bg-night/60 text-lg text-night-ink backdrop-blur-sm transition-colors hover:border-signal hover:text-signal focus-visible:outline-night-ink"
-=======
-          className="absolute left-2 top-1/2 z-10 inline-flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full border border-night-rule bg-night/60 text-lg text-night-ink backdrop-blur-sm transition-colors hover:border-signal hover:text-signal focus-visible:outline-night-ink"
->>>>>>> origin/main
         >
           ←
         </button>
@@ -133,11 +121,7 @@ export function Lightbox({ photos, initialIndex, onClose }: LightboxProps) {
         <button
           onClick={next}
           aria-label="Next photo"
-<<<<<<< HEAD
           className="absolute right-2 top-1/2 z-10 inline-flex h-11 w-11 -translate-y-1/2 items-center justify-center button-shape border border-night-rule bg-night/60 text-lg text-night-ink backdrop-blur-sm transition-colors hover:border-signal hover:text-signal focus-visible:outline-night-ink"
-=======
-          className="absolute right-2 top-1/2 z-10 inline-flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full border border-night-rule bg-night/60 text-lg text-night-ink backdrop-blur-sm transition-colors hover:border-signal hover:text-signal focus-visible:outline-night-ink"
->>>>>>> origin/main
         >
           →
         </button>

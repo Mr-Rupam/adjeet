@@ -1,10 +1,7 @@
 /* AD-JEET is read from its physical mark: cyan enamel, yellow sweep, chalk
    ground, and the petrol-blue shadow behind an illuminated sign. */
 :root {
-<<<<<<< HEAD
   --radius-button: 999px;
-=======
->>>>>>> origin/main
   --paper: #F2F1E9;
   --paper-elevated: #FCFCF7;
   --ink: #12333B;
@@ -55,10 +52,6 @@
   --section-py: clamp(4.75rem, 10vw, 8.5rem);
   --content-max: 1240px;
   --page-gutter: clamp(1.25rem, 3vw, 2.5rem);
-<<<<<<< HEAD
-=======
-  --header-height: 80px;
->>>>>>> origin/main
   --font-heading: 'Cesura', 'Caesura', 'Cæsura', var(--font-barlow-condensed), serif;
   --font-script: 'Pristina', 'Segoe Script', cursive;
   --signal-text: #08779A;
@@ -83,15 +76,6 @@
   --studio-dark-muted: var(--night-ink-muted);
   --studio-section: var(--section-py);
   --studio-gutter: clamp(1.25rem, 4vw, 4rem);
-<<<<<<< HEAD
-=======
-}
-
-@media (min-width: 768px) {
-  :root {
-    --header-height: 88px;
-  }
->>>>>>> origin/main
 }
 
 :root[data-theme="dark"] {

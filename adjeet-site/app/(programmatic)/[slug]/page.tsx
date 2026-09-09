@@ -78,12 +78,12 @@ export default async function ProgrammaticPage({ params }: { params: Promise<Par
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLdString(breadcrumb) }} />
 
       {/* Masthead */}
-      <section className="relative overflow-hidden border-b border-rule bg-paper">
+      <section className="relative overflow-hidden border-b-2 border-ink bg-paper">
         <div aria-hidden="true" className="grid-mat pointer-events-none absolute inset-0" />
         <div aria-hidden="true" className="grain pointer-events-none absolute inset-0" />
 
-        <div className="relative mx-auto w-full max-w-content px-5 pt-6 md:px-8" data-site-reveal="meta">
-          <nav aria-label="Breadcrumb" className="spec border-b border-rule pb-3 text-ink-muted">
+        <div className="relative mx-auto w-full max-w-content px-5 pt-6 md:px-8">
+          <nav aria-label="Breadcrumb" className="spec border-b-2 border-ink pb-3 text-ink-muted">
             <ol className="m-0 flex list-none gap-2 p-0">
               <li><Link href="/" className="transition-colors hover:text-ink">Home</Link></li>
               <li aria-hidden="true">/</li>
@@ -99,13 +99,13 @@ export default async function ProgrammaticPage({ params }: { params: Promise<Par
         </div>
 
         <div className="relative mx-auto w-full max-w-content px-5 pb-12 pt-10 md:px-8 md:pb-16 md:pt-14">
-          <h1 className="display m-0 mt-4 text-ink" data-reveal-text style={{ fontSize: 'clamp(2.5rem, 6.5vw, 5.5rem)' }}>
+          <h1 className="display m-0 mt-4 text-ink" style={{ fontSize: 'clamp(2.5rem, 6.5vw, 5.5rem)' }}>
             {page.headline}
           </h1>
 
-          <dl className="m-0 mt-8 flex flex-wrap gap-6 md:gap-10" data-site-reveal="stats">
+          <dl className="m-0 mt-8 flex flex-wrap gap-6 md:gap-10">
             {page.stats.map(s => (
-              <div key={s.label} className="flex flex-col border-l border-rule pl-4">
+              <div key={s.label} className="flex flex-col border-l-2 border-ink pl-4">
                 <dt className="spec order-2 text-ink-subtle">{s.label}</dt>
                 <dd className="display order-1 m-0 text-4xl text-ink">{s.value}</dd>
               </div>
@@ -115,11 +115,11 @@ export default async function ProgrammaticPage({ params }: { params: Promise<Par
       </section>
 
       {/* Body */}
-      <section className="border-b border-rule bg-paper">
+      <section className="border-b-2 border-ink bg-paper">
         <div className="mx-auto max-w-content px-5 py-14 md:px-8 md:py-20">
           <div className="max-w-2xl space-y-5">
             {paragraphs.map((p, i) => (
-              <p key={i} className="text-base leading-relaxed text-ink-muted" data-site-reveal="body">{p}</p>
+              <p key={i} className="text-[15px] leading-relaxed text-ink-muted">{p}</p>
             ))}
           </div>
         </div>
@@ -130,7 +130,7 @@ export default async function ProgrammaticPage({ params }: { params: Promise<Par
 
       {/* Related cities */}
       {page.relatedCities.length > 0 && (
-        <section className="border-b border-rule bg-paper-elevated">
+        <section className="border-b-2 border-ink bg-paper-elevated">
           <div className="mx-auto max-w-content px-5 py-12 md:px-8 md:py-16">
             <p className="spec mb-5 text-signal">Also available in</p>
             <div className="flex flex-wrap gap-3">
@@ -138,14 +138,14 @@ export default async function ProgrammaticPage({ params }: { params: Promise<Par
                 <Link
                   key={city}
                   href={`/${page.service}-in-${city}`}
-                  className="spec min-h-11 border border-rule px-4 py-2.5 text-ink transition-colors hover:border-signal hover:text-signal"
+                  className="spec border-2 border-ink px-4 py-2.5 text-ink transition-colors hover:bg-ink hover:text-paper"
                 >
                   {service.name} in {CITY_LABELS[city] ?? city}
                 </Link>
               ))}
               <Link
                 href={`/services/${service.slug}`}
-                className="spec min-h-11 border border-rule px-4 py-2.5 text-ink-muted transition-colors hover:border-signal hover:text-signal"
+                className="spec border-2 border-ink/25 px-4 py-2.5 text-ink-muted transition-colors hover:border-ink hover:text-ink"
               >
                 ← All {service.name}
               </Link>
@@ -157,8 +157,7 @@ export default async function ProgrammaticPage({ params }: { params: Promise<Par
       {/* CTA */}
       <section className="bg-signal">
         <div className="mx-auto max-w-content px-5 py-16 md:px-8 md:py-20">
-          <p className="spec text-signal-ink">Start the brief</p>
-          <h2 className="display mt-3 text-signal-ink" data-reveal-text style={{ fontSize: 'clamp(2.25rem, 6vw, 5rem)' }}>
+          <h2 className="display mt-4 text-signal-ink" style={{ fontSize: 'clamp(2.25rem, 6vw, 5rem)' }}>
             {service.name}
             <br />
             in {cityLabel}.
@@ -166,15 +165,11 @@ export default async function ProgrammaticPage({ params }: { params: Promise<Par
           <WhatsAppLink
             href={waUrl}
             source={`programmatic:${slug}`}
-            className="cta cta--md mt-8"
+            className="mt-8 inline-flex items-center gap-2 border-2 border-ink bg-ink px-7 py-4 text-sm font-bold uppercase tracking-[0.08em] text-paper shadow-[5px_5px_0_0_rgba(0,0,0,0.35)] transition-all hover:-translate-x-px hover:-translate-y-px hover:shadow-[7px_7px_0_0_rgba(0,0,0,0.35)] active:translate-x-0.5 active:translate-y-0.5 active:shadow-[2px_2px_0_0_rgba(0,0,0,0.35)]"
           >
             WhatsApp us now →
           </WhatsAppLink>
-<<<<<<< HEAD
           <p className="spec mt-8 text-signal-ink">Share a photo, size and location for a project-specific quote.</p>
-=======
-          <p className="spec mt-8 text-signal-ink" data-site-reveal="body">Share a photo, size and location for a project-specific quote.</p>
->>>>>>> origin/main
         </div>
       </section>
     </>

@@ -6,15 +6,9 @@ export function CommissionCTA() {
   return (
     <section className="bg-signal text-signal-ink">
       <div className="mx-auto grid max-w-content gap-8 px-5 py-16 md:grid-cols-[1.1fr_0.9fr] md:items-end md:px-8 md:py-24">
-<<<<<<< HEAD
         <div data-site-reveal="title">
           <p className="spec">Start with a photo</p>
           <h2 className="display mt-4 max-w-[10ch]" style={{ fontSize: 'clamp(3.6rem, 9vw, 8rem)' }}>
-=======
-        <div>
-          <p className="spec">Start with a photo</p>
-          <h2 className="display mt-4 max-w-[10ch]" data-reveal-text style={{ fontSize: 'clamp(3.6rem, 9vw, 8rem)' }}>
->>>>>>> origin/main
             Your name has a place.
           </h2>
         </div>

@@ -58,23 +58,14 @@ export default function ContactPage() {
         <div className="mx-auto grid max-w-content gap-12 px-5 py-16 md:px-8 md:py-24 lg:grid-cols-[1.2fr_0.8fr] lg:gap-16">
           <div>
             <p className="spec text-signal">Project brief</p>
-<<<<<<< HEAD
             <h2 className="display mt-3 text-ink" style={{ fontSize: 'var(--text-display-2)' }}>Put the useful details here.</h2>
             <p className="mt-4 max-w-[41ch] text-base leading-relaxed text-ink-muted">The form reaches the same team. Tell us the location, service and timing you have in mind.</p>
-=======
-            <h2 className="display mt-3 text-ink" data-reveal-text style={{ fontSize: 'var(--text-display-2)' }}>Put the useful details here.</h2>
-            <p className="mt-4 max-w-[41ch] text-base leading-relaxed text-ink-muted" data-site-reveal="body">The form reaches the same team. Tell us the location, service and timing you have in mind.</p>
->>>>>>> origin/main
             <div className="mt-8 rounded-[1.15rem] border border-rule bg-paper p-5 shadow-[var(--elev-1)] md:p-8">
               <LeadForm />
             </div>
           </div>
 
-<<<<<<< HEAD
           <aside className="self-start lg:sticky lg:top-28">
-=======
-          <aside className="self-start lg:sticky lg:top-[calc(var(--header-height)+1.5rem)]">
->>>>>>> origin/main
             <div className="border-t border-rule py-6">
               <p className="spec text-signal">Office</p>
               <p className="display mt-2 text-3xl text-ink">Platinum Square</p>

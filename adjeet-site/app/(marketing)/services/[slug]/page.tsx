@@ -91,11 +91,7 @@ export default async function ServiceDetailPage({
         <div aria-hidden="true" className="grid-mat pointer-events-none absolute inset-0" />
         <div aria-hidden="true" className="grain pointer-events-none absolute inset-0" />
 
-<<<<<<< HEAD
         <div className="relative mx-auto w-full max-w-content px-5 pt-6 md:px-8">
-=======
-        <div className="relative mx-auto w-full max-w-content px-5 pt-6 md:px-8" data-site-reveal="meta">
->>>>>>> origin/main
           <div className="spec flex flex-wrap items-baseline justify-between gap-x-6 gap-y-1 border-b border-rule pb-3 text-ink-muted">
             <nav aria-label="Breadcrumb" className="flex items-baseline gap-2">
               <Link href="/" className="transition-colors hover:text-ink">Home</Link>
@@ -111,15 +107,15 @@ export default async function ServiceDetailPage({
         </div>
 
         <div className="relative mx-auto w-full max-w-content px-5 pb-12 pt-10 md:px-8 md:pb-14 md:pt-14">
-          <h1 className="display m-0 text-ink" data-reveal-text style={{ fontSize: 'clamp(2.75rem, 7.5vw, 6.5rem)' }}>
+          <h1 className="display m-0 text-ink" style={{ fontSize: 'clamp(2.75rem, 7.5vw, 6.5rem)' }}>
             {service.name}
           </h1>
-          <p className="spec mt-4 text-signal" data-site-reveal="label">{service.tagline}</p>
-          <p className="mt-6 max-w-[62ch] text-base leading-relaxed text-ink-muted" data-site-reveal="body">
+          <p className="spec mt-4 text-signal">{service.tagline}</p>
+          <p className="mt-6 max-w-[62ch] text-base leading-relaxed text-ink-muted">
             {service.description}
           </p>
 
-          <div className="mt-8 flex flex-wrap items-center gap-4" data-site-reveal="actions">
+          <div className="mt-8 flex flex-wrap items-center gap-4">
             <WhatsAppLink
               href={waUrl}
               source={`service:${service.slug}`}
@@ -139,11 +135,7 @@ export default async function ServiceDetailPage({
 
       <section className="border-b border-rule bg-paper">
         <div className="mx-auto grid max-w-content gap-8 px-5 py-12 md:grid-cols-[1.05fr_0.95fr] md:items-center md:gap-14 md:px-8 md:py-16">
-<<<<<<< HEAD
           <figure className="m-0">
-=======
-          <figure className="m-0" data-site-reveal="media">
->>>>>>> origin/main
             <div className="relative aspect-[4/3] overflow-hidden rounded-[1rem] bg-night">
               <Image
                 src={workPhoto ? workPhoto.src : '/images/home/materials.webp'}
@@ -159,17 +151,10 @@ export default async function ServiceDetailPage({
           </figure>
           <div>
             <p className="spec text-signal">What you are planning</p>
-<<<<<<< HEAD
             <h2 className="display mt-3 text-ink" style={{ fontSize: 'var(--text-display-2)' }}>
               The material and the place need to agree.
             </h2>
             <p className="mt-5 max-w-[42ch] text-base leading-relaxed text-ink-muted">
-=======
-            <h2 className="display mt-3 text-ink" data-reveal-text style={{ fontSize: 'var(--text-display-2)' }}>
-              The material and the place need to agree.
-            </h2>
-            <p className="mt-5 max-w-[42ch] text-base leading-relaxed text-ink-muted" data-site-reveal="body">
->>>>>>> origin/main
               Use the specifications below to prepare a useful brief. A site photo and rough dimensions are usually enough to begin.
             </p>
           </div>
@@ -180,8 +165,8 @@ export default async function ServiceDetailPage({
       <section className="border-b border-rule bg-paper-elevated" aria-label="Service specifications">
         <div className="mx-auto max-w-content px-5 py-12 md:px-8 md:py-16">
           <p className="spec mb-8 text-signal">Spec sheet: {service.name}</p>
-          <div className="grid border-t border-rule md:grid-cols-3 md:divide-x md:divide-rule">
-            <div className="border-b border-rule py-6 md:border-b-0 md:px-6 md:first:pl-0">
+          <div className="grid gap-6 md:grid-cols-3 lg:gap-8">
+            <div className="plate p-6">
               <h2 className="spec m-0 text-ink-subtle">Materials</h2>
               <ul className="m-0 mt-4 list-none space-y-2 p-0">
                 {service.materials.map(m => (
@@ -191,7 +176,7 @@ export default async function ServiceDetailPage({
                 ))}
               </ul>
             </div>
-            <div className="border-b border-rule py-6 md:border-b-0 md:px-6">
+            <div className="plate p-6">
               <h2 className="spec m-0 text-ink-subtle">Sizes / Formats</h2>
               <ul className="m-0 mt-4 list-none space-y-2 p-0">
                 {service.sizes.map(s => (
@@ -201,7 +186,7 @@ export default async function ServiceDetailPage({
                 ))}
               </ul>
             </div>
-            <div className="py-6 md:pl-6">
+            <div className="plate-signal p-6">
               <h2 className="spec m-0 text-ink-subtle">Turnaround</h2>
               <p className="display m-0 mt-4 text-4xl text-ink">{service.turnaround}</p>
               <p className="spec m-0 mt-2 text-ink-subtle">Typical lead time, site-dependent</p>
@@ -216,8 +201,8 @@ export default async function ServiceDetailPage({
           <div className="mx-auto max-w-content px-5 py-12 md:px-8 md:py-16">
             <div className="grid gap-10 lg:grid-cols-[1fr_2fr] lg:gap-16">
               <div>
-                <h2 className="display mt-3 text-ink" data-reveal-text style={{ fontSize: 'var(--text-display-2)' }}>
-                  Questions worth settling before work starts.
+                <h2 className="display mt-3 text-ink" style={{ fontSize: 'var(--text-display-2)' }}>
+                  Asked on every site visit.
                 </h2>
               </div>
               <Accordion items={service.faqs} />
@@ -231,18 +216,18 @@ export default async function ServiceDetailPage({
         <section className="border-b border-rule bg-paper">
           <div className="mx-auto max-w-content px-5 py-12 md:px-8 md:py-16">
             <p className="spec mb-6 text-signal">Often ordered together</p>
-            <ol className="m-0 list-none border-t border-rule p-0">
+            <ol className="m-0 list-none border-t-2 border-ink p-0">
               {related.map(r => (
-                <li key={r.slug} className="border-b border-rule">
+                <li key={r.slug} className="border-b-2 border-ink">
                   <Link
                     href={`/services/${r.slug}`}
-                    className="group flex min-h-20 items-center justify-between gap-4 py-4 transition-colors hover:text-signal md:px-3"
+                    className="group flex items-baseline justify-between gap-4 px-2 py-4 transition-colors hover:bg-ink md:px-4"
                   >
                     <span className="min-w-0">
-                      <span className="display block text-xl text-ink transition-colors group-hover:text-signal md:text-2xl">
+                      <span className="display block text-xl text-ink transition-colors group-hover:text-paper md:text-2xl">
                         {r.name}
                       </span>
-                      <span className="mt-0.5 block text-sm text-ink-muted">
+                      <span className="mt-0.5 block text-xs text-ink-subtle transition-colors group-hover:text-paper/60">
                         {r.tagline}
                       </span>
                     </span>

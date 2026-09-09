@@ -39,11 +39,7 @@ export function PageMasthead({ meta = [], title, lead, children, compact }: Page
       <div className="relative mx-auto w-full max-w-content px-5 pb-12 pt-10 md:px-8 md:pb-16 md:pt-14">
         <h1
           className="display m-0 text-ink"
-<<<<<<< HEAD
           data-site-reveal="title"
-=======
-          data-reveal-text
->>>>>>> origin/main
           style={{ fontSize: compact ? 'clamp(2.75rem, 7.5vw, 7rem)' : 'var(--text-display-1)' }}
         >
           {title}
