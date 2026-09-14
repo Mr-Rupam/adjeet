@@ -1,14 +1,13 @@
-import type { Metadata } from 'next'
+import { buildPageMetadata } from '@/lib/seo'
 import { PageMasthead } from '@/components/street/PageMasthead'
 import { ServicesBoard } from '@/components/street/ServicesBoard'
 import { CommissionCTA } from '@/components/street/CommissionCTA'
 
-export const metadata: Metadata = {
-  title: 'Signage & Outdoor Advertising Services',
-  description:
-    'From glow sign boards and ACP LED signage to flex printing, vehicle branding, and events. AD JEET delivers quality signage across North Bengal.',
-  alternates: { canonical: 'https://adjeet.in/services' },
-}
+export const metadata = buildPageMetadata({
+  title: "Signage & Printing Services in Siliguri",
+  description: "Explore all 10 AD JEET services: glow signs, ACP and LED signage, flex printing, vehicle branding and more. Design to installation across North Bengal.",
+  path: "/services",
+})
 
 const PROCESS = [
   {
@@ -40,18 +39,18 @@ export default function ServicesPage() {
         meta={['10 services', 'Siliguri', 'Since 1990']}
         title={
           <>
-            Make the street
+            Signage & printing.
             <br />
-            remember <span className="glow-signal text-signal">your name.</span>
+            <span className="text-signal">Made in Siliguri.</span>
           </>
         }
-        lead="Start with the place, then choose the surface. The service list below helps you find the right conversation."
+        lead="Ten ways to put your business in view. From a single shopfront to a campaign across North Bengal."
       />
 
       <ServicesBoard />
 
       {/* Process: brief to street */}
-      <section className="border-b-2 border-ink bg-paper-elevated">
+      <section className="service-process">
         <div className="mx-auto max-w-content px-5 py-16 md:px-8 md:py-24">
           <div className="mb-10 md:mb-14">
             <h2 className="display mt-3 text-ink" style={{ fontSize: 'var(--text-display-2)' }}>

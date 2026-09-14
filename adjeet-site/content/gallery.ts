@@ -33,8 +33,8 @@ export const photos: GalleryPhoto[] = [
   {
     id: 'gs-gates',
     src: '/Gates.png',
-    alt: 'Glow sign board for Gates branding executed by AD JEET',
-    service: 'glow-sign-boards',
+    alt: 'Anchor by Panasonic branded entrance for Durga Puja by AD JEET',
+    service: 'events-and-puja',
     city: 'darjeeling',
     year: 2023,
     featured: true,
@@ -51,8 +51,8 @@ export const photos: GalleryPhoto[] = [
   {
     id: 'gs-airtel',
     src: '/airtel.png',
-    alt: 'Airtel glow sign board installation in Cooch Behar by AD JEET',
-    service: 'glow-sign-boards',
+    alt: 'Airtel wall advertising painted by AD JEET',
+    service: 'wall-painting',
     city: 'cooch-behar',
     year: 2024,
     featured: true,

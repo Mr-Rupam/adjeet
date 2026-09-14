@@ -82,10 +82,10 @@ export function HeroScene() {
     >
       <picture className="heroSceneLayer" data-testid="hero-day-layer" data-visible={staticTheme === 'light'}>
         {/* The raw frame stays tied directly to the supplied transition film. */}
-        <img data-testid="hero-background-image" src="/hero/workshop/day.webp" alt="" width="1280" height="720" fetchPriority="high" />
+        <img data-testid="hero-background-image" src="/hero/workshop/day.webp" alt="" width="1280" height="720" loading="lazy" />
       </picture>
       <picture className="heroSceneLayer" data-testid="hero-night-layer" data-visible={staticTheme === 'dark'}>
-        <img data-testid="hero-background-image" src="/hero/workshop/night.webp" alt="" width="1280" height="720" />
+        <img data-testid="hero-background-image" src="/hero/workshop/night.webp" alt="" width="1280" height="720" loading="lazy" />
       </picture>
       <video
         ref={dayToNightRef}
@@ -95,7 +95,7 @@ export function HeroScene() {
         src="/hero/workshop/day-to-night.mp4"
         muted
         playsInline
-        preload="auto"
+        preload="none"
         onPlaying={() => revealFilm('day-to-night')}
         onEnded={() => finishFilm('day-to-night')}
       />
@@ -107,7 +107,7 @@ export function HeroScene() {
         src="/hero/workshop/night-to-day.mp4"
         muted
         playsInline
-        preload="auto"
+        preload="none"
         onPlaying={() => revealFilm('night-to-day')}
         onEnded={() => finishFilm('night-to-day')}
       />

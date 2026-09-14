@@ -1,9 +1,9 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
+import { buildPageMetadata } from '@/lib/seo'
 
 export const metadata: Metadata = {
-  title: 'Privacy Policy',
-  description: 'Privacy policy for AD JEET: how we collect, use, and protect your information.',
+  ...buildPageMetadata({ title: 'Privacy Policy', description: 'Privacy policy for AD JEET: how we collect, use, and protect your information.', path: '/privacy' }),
   robots: { index: false },
 }
 

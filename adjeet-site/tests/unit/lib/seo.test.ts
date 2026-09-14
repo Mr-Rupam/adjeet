@@ -74,11 +74,12 @@ describe('buildLocalBusinessJsonLd', () => {
     expect(result.address['@type']).toBe('PostalAddress')
   })
 
-  it('has geo coordinates', () => {
+  it('uses a stable business identity without inventing a precise map pin', () => {
     const result = buildLocalBusinessJsonLd()
-    expect(result.geo['@type']).toBe('GeoCoordinates')
-    expect(typeof result.geo.latitude).toBe('number')
-    expect(typeof result.geo.longitude).toBe('number')
+    expect(result['@id']).toBe(siteConfig.url + '/#business')
+    expect(result.email).toBe('ranjitadjeet@gmail.com')
+    expect(result.founder.name).toBe('Ranjit Das')
+    expect(result).not.toHaveProperty('geo')
   })
 
   it('areaServed contains all 5 districts', () => {

@@ -1,16 +1,16 @@
+import { buildPageMetadata } from '@/lib/seo'
 import Image from 'next/image'
 import Link from 'next/link'
-import type { Metadata } from 'next'
-import { buildBreadcrumbJsonLd, jsonLdString, siteConfig } from '@/lib/seo'
+import { buildBreadcrumbJsonLd, jsonLdString } from '@/lib/seo'
 import { CommissionCTA } from '@/components/street/CommissionCTA'
 import { COVERAGE_AREAS, FOUNDED_YEAR } from '@/lib/coverage'
 import styles from './About.module.css'
 
-export const metadata: Metadata = {
-  title: 'About AD JEET: A Signmaking Story Since 1990',
-  description: 'Founded by Ranjit Das at 20, AD JEET grew from one room in his flat to its own workshop in Siliguri. 35+ years of quality and consistency.',
-  alternates: { canonical: `${siteConfig.url}/about` },
-}
+export const metadata = buildPageMetadata({
+  title: "About Our Siliguri Signage Workshop",
+  description: "Founded by Ranjit Das in 1990, AD JEET grew from one room to its own workshop in Siliguri. Meet the business behind our North Bengal signage work.",
+  path: "/about",
+})
 const breadcrumb = buildBreadcrumbJsonLd([{ name: 'Home', url: '/' }, { name: 'About', url: '/about' }])
 const JOURNEY = [
   { marker: String(FOUNDED_YEAR), title: 'One room. A beginning.', body: 'At 20, Ranjit Das started AD JEET in a small room in his own flat.' },
@@ -25,13 +25,13 @@ export default function AboutPage() {
       <section className={styles.intro} aria-labelledby="about-heading">
         <div className={styles.introCopy}>
           <p className="spec text-signal">Siliguri · Since {FOUNDED_YEAR}</p>
-          <h1 id="about-heading">From one room<br />to our own<br /><span>workshop.</span></h1>
+          <h1 id="about-heading">AD JEET. <br />A Siliguri workshop, <br /><span>since 1990.</span></h1>
           <p>Ranjit Das was 20 when he started AD JEET. More than 35 years later, the space has changed. The belief in doing good work has stayed.</p>
           <a href="#our-story" className={styles.storyLink}>Follow our story <span aria-hidden="true">↓</span></a>
         </div>
         <figure className={styles.workshop}>
-          <div><Image src="/hero/workshop/day.webp" alt="The AD JEET workshop in Siliguri today" fill priority sizes="(max-width: 767px) 100vw, 55vw" className="object-cover" /></div>
-          <figcaption>The workshop today. Siliguri, North Bengal.</figcaption>
+          <div><Image src="/hero/workshop/day.webp" alt="Visualisation of the AD JEET workshop in Siliguri" fill priority sizes="(max-width: 767px) 100vw, 55vw" className="object-cover" /></div>
+          <figcaption>Workshop visualisation. Siliguri, North Bengal.</figcaption>
         </figure>
       </section>
       <section id="our-story" className={styles.story} aria-labelledby="story-heading">

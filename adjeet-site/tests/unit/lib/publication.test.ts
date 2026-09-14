@@ -3,8 +3,8 @@ import { hasPhotos, isAwaitingPhotos } from '@/lib/publication'
 import { photos } from '@/content/gallery'
 import { SERVICE_SLUGS } from '@/content/services'
 
-describe('publication gate', () => {
-  it('a service is publishable exactly when it has a photograph', () => {
+describe('project media availability', () => {
+  it('photo availability follows the gallery without deciding indexing', () => {
     const withPhotos = new Set(photos.map(p => p.service))
     for (const slug of SERVICE_SLUGS) {
       expect(hasPhotos(slug), slug).toBe(withPhotos.has(slug))
@@ -12,25 +12,21 @@ describe('publication gate', () => {
     }
   })
 
-  // A living record of what is currently held out of search. When a photograph
-  // lands for one of these, this test fails and the name is removed here: that
-  // failure IS the signal that a page just went live.
+  // A media inventory; all service pages remain eligible for indexing.
   it('records which trades are still waiting on photography', () => {
     const waiting = SERVICE_SLUGS.filter(isAwaitingPhotos).sort()
     expect(waiting).toEqual([
-      'events-and-puja',
       'f-pole-installation',
       'flex-printing',
       'in-shop-branding',
       'one-way-vision',
       'product-display',
-      'wall-painting',
     ])
   })
 
-  it('the trades with photographs are published', () => {
+  it('records the trades with project photographs', () => {
     const live = SERVICE_SLUGS.filter(hasPhotos).sort()
-    expect(live).toEqual(['acp-led-signage', 'glow-sign-boards', 'vehicle-branding'])
+    expect(live).toEqual(['acp-led-signage', 'events-and-puja', 'glow-sign-boards', 'vehicle-branding', 'wall-painting'])
   })
 
   it('every photographed service resolves to a known service slug', () => {

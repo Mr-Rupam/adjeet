@@ -1,15 +1,18 @@
-import type { Metadata } from 'next'
 import { HomePageView } from '@/components/home/HomePageView'
+import { buildPageMetadata, buildFaqJsonLd, jsonLdString, siteConfig } from '@/lib/seo'
+import { homeFaqs } from '@/content/home-faqs'
 
-export const metadata: Metadata = {
-  title: 'AD JEET: North Bengal Signage & Outdoor Advertising',
-  description:
-    'Signage, print and outdoor branding from Siliguri for businesses across North Bengal since 1990.',
-  alternates: { canonical: 'https://adjeet.in' },
-}
+export const metadata = buildPageMetadata({
+  title: 'Signage & Outdoor Advertising in Siliguri',
+  description: siteConfig.description,
+  path: '/',
+})
 
 export default function HomePage() {
   return (
-    <HomePageView />
+    <>
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLdString(buildFaqJsonLd(homeFaqs)) }} />
+      <HomePageView />
+    </>
   )
 }

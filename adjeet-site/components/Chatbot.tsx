@@ -2,6 +2,7 @@
 
 import { useState, useRef, useEffect, useCallback, type FormEvent, type KeyboardEvent } from 'react'
 import { ADJEET_GREETING } from '@/lib/chatbot-prompt'
+import { Hammer, UserRound } from 'lucide-react'
 import './Chatbot.css'
 
 interface Message {
@@ -46,21 +47,32 @@ export function Chatbot() {
 
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const inputRef = useRef<HTMLTextAreaElement>(null)
+  const triggerRef = useRef<HTMLButtonElement>(null)
   const msgIdRef = useRef(0)
 
   // Auto-scroll to bottom
   const scrollToBottom = useCallback(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+    messagesEndRef.current?.scrollIntoView({ behavior: reduceMotion ? 'instant' : 'smooth' })
   }, [])
 
   useEffect(() => {
     scrollToBottom()
   }, [messages, isLoading, scrollToBottom])
 
-  // Focus input when chat opens
+  // Keep the non-modal assistant keyboard-accessible without trapping the page.
   useEffect(() => {
-    if (isOpen) {
-      setTimeout(() => inputRef.current?.focus(), 300)
+    if (!isOpen) return
+    const trigger = triggerRef.current
+    const timer = setTimeout(() => inputRef.current?.focus(), 100)
+    const onKey = (event: globalThis.KeyboardEvent) => {
+      if (event.key === 'Escape') setIsOpen(false)
+    }
+    document.addEventListener('keydown', onKey)
+    return () => {
+      clearTimeout(timer)
+      document.removeEventListener('keydown', onKey)
+      trigger?.focus()
     }
   }, [isOpen])
 
@@ -155,13 +167,14 @@ export function Chatbot() {
         role="dialog"
         aria-label="AD JEET Chat Assistant"
         aria-hidden={!isOpen}
+        inert={!isOpen}
       >
         {/* Header */}
         <div className="chatbot-header">
-          <div className="chatbot-header__avatar">🏗️</div>
+          <div className="chatbot-header__avatar"><Hammer size={19} aria-hidden="true" /></div>
           <div className="chatbot-header__info">
             <div className="chatbot-header__name">JEET, AD JEET Assistant</div>
-            <div className="chatbot-header__status">Online</div>
+            <div className="chatbot-header__status">AI assistant</div>
           </div>
           <button
             className="chatbot-header__close"
@@ -176,11 +189,11 @@ export function Chatbot() {
         </div>
 
         {/* Messages */}
-        <div className="chatbot-messages" aria-live="polite">
+        <div className="chatbot-messages" role="log" aria-label="Conversation" aria-live="polite">
           {messages.map((msg) => (
             <div key={msg.id} className={`chatbot-msg chatbot-msg--${msg.role === 'assistant' ? 'bot' : 'user'}`}>
               <div className="chatbot-msg__avatar">
-                {msg.role === 'assistant' ? '🏗️' : '👤'}
+                {msg.role === 'assistant' ? <Hammer size={15} aria-hidden="true" /> : <UserRound size={15} aria-hidden="true" />}
               </div>
               <div className="chatbot-msg__content">
                 {formatContent(msg.content)}
@@ -191,9 +204,9 @@ export function Chatbot() {
           {/* Typing indicator */}
           {isLoading && (
             <div className="chatbot-msg chatbot-msg--bot">
-              <div className="chatbot-msg__avatar">🏗️</div>
+              <div className="chatbot-msg__avatar"><Hammer size={15} aria-hidden="true" /></div>
               <div className="chatbot-msg__content">
-                <div className="chatbot-typing">
+                <div className="chatbot-typing" role="status" aria-label="Assistant is replying">
                   <div className="chatbot-typing__dot" />
                   <div className="chatbot-typing__dot" />
                   <div className="chatbot-typing__dot" />
@@ -250,12 +263,13 @@ export function Chatbot() {
 
         {/* Footer */}
         <div className="chatbot-footer">
-          Powered by AD JEET • For urgent queries, call +91 98320 11524
+          For urgent queries, <a href="tel:+919832011524" className="underline">call +91 98320 11524</a>
         </div>
       </div>
 
       {/* ─── Bubble button ────────────────────────────────────────────── */}
       <button
+        ref={triggerRef}
         className="chatbot-bubble"
         onClick={toggleChat}
         data-open={isOpen}

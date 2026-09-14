@@ -26,15 +26,16 @@ export function Lightbox({ photos, initialIndex, onClose }: LightboxProps) {
   const prev = useCallback(() => setIdx(i => (i - 1 + total) % total), [total])
   const next = useCallback(() => setIdx(i => (i + 1) % total), [total])
 
-  // Focus close button on open
-  useEffect(() => {
-    closeRef.current?.focus()
-  }, [])
-
   // Scroll lock
   useEffect(() => {
+    const trigger = document.activeElement as HTMLElement | null
+    const previousOverflow = document.body.style.overflow
     document.body.style.overflow = 'hidden'
-    return () => { document.body.style.overflow = '' }
+    closeRef.current?.focus()
+    return () => {
+      document.body.style.overflow = previousOverflow
+      if (trigger?.isConnected) trigger.focus()
+    }
   }, [])
 
   // Keyboard navigation + focus trap

@@ -20,7 +20,7 @@ import { ServicePageTracker } from '@/components/PageViewTracker'
 import { Accordion } from '@/components/ui/Accordion'
 import { CommissionCTA } from '@/components/street/CommissionCTA'
 import { WhatsAppLink } from '@/components/ui/WhatsAppLink'
-import { isAwaitingPhotos, AWAITING_PHOTOS_ROBOTS } from '@/lib/publication'
+import { programmaticPages, CITY_LABELS } from '@/content/programmatic'
 import { photos } from '@/content/gallery'
 
 type Params = { slug: string }
@@ -37,11 +37,7 @@ export async function generateMetadata({
   const { slug } = await params
   const service = getServiceBySlug(slug as ServiceSlug)
   if (!service) return {}
-  // Held out of search until this trade has a photograph. See lib/publication.
-  return {
-    ...generateServiceMetadata(service),
-    ...(isAwaitingPhotos(service.slug) ? AWAITING_PHOTOS_ROBOTS : {}),
-  }
+  return generateServiceMetadata(service)
 }
 
 export default async function ServiceDetailPage({
@@ -86,83 +82,32 @@ export default async function ServiceDetailPage({
         dangerouslySetInnerHTML={{ __html: jsonLdString(breadcrumbSchema) }}
       />
 
-      {/* Masthead */}
-      <section className="relative overflow-hidden border-b border-rule bg-paper">
-        <div aria-hidden="true" className="grid-mat pointer-events-none absolute inset-0" />
-        <div aria-hidden="true" className="grain pointer-events-none absolute inset-0" />
-
-        <div className="relative mx-auto w-full max-w-content px-5 pt-6 md:px-8">
-          <div className="spec flex flex-wrap items-baseline justify-between gap-x-6 gap-y-1 border-b border-rule pb-3 text-ink-muted">
-            <nav aria-label="Breadcrumb" className="flex items-baseline gap-2">
-              <Link href="/" className="transition-colors hover:text-ink">Home</Link>
-              <span aria-hidden="true">/</span>
-              <Link href="/services" className="transition-colors hover:text-ink">Services</Link>
-              <span aria-hidden="true">/</span>
-              <span className="text-ink">{service.name}</span>
-            </nav>
-            <span aria-label={`Service ${serviceIndex} of ${SERVICE_SLUGS.length}`}>
-              Trade {indexStr} / {totalStr}
-            </span>
-          </div>
-        </div>
-
-        <div className="relative mx-auto w-full max-w-content px-5 pb-12 pt-10 md:px-8 md:pb-14 md:pt-14">
-          <h1 className="display m-0 text-ink" style={{ fontSize: 'clamp(2.75rem, 7.5vw, 6.5rem)' }}>
-            {service.name}
-          </h1>
-          <p className="spec mt-4 text-signal">{service.tagline}</p>
-          <p className="mt-6 max-w-[62ch] text-base leading-relaxed text-ink-muted">
-            {service.description}
-          </p>
-
-          <div className="mt-8 flex flex-wrap items-center gap-4">
-            <WhatsAppLink
-              href={waUrl}
-              source={`service:${service.slug}`}
-              className="cta cta--yellow cta--md"
-            >
-              Quote this job →
-            </WhatsAppLink>
-            <Link
-              href="/services"
-              className="inline-flex min-h-11 items-center gap-2 text-sm font-medium text-ink underline underline-offset-4"
-            >
-              ← All trades
-            </Link>
-          </div>
-        </div>
-      </section>
-
-      <section className="border-b border-rule bg-paper">
-        <div className="mx-auto grid max-w-content gap-8 px-5 py-12 md:grid-cols-[1.05fr_0.95fr] md:items-center md:gap-14 md:px-8 md:py-16">
-          <figure className="m-0">
-            <div className="relative aspect-[4/3] overflow-hidden rounded-[1rem] bg-night">
-              <Image
-                src={workPhoto ? workPhoto.src : '/images/home/materials.webp'}
-                alt={workPhoto ? workPhoto.alt : `Material visualization for ${service.name}`}
-                fill
-                sizes="(max-width: 767px) calc(100vw - 40px), 52vw"
-                className="object-cover"
-              />
-            </div>
-            <figcaption className="mt-3 text-xs text-ink-subtle">
-              {workPhoto ? 'Documented project photograph' : 'Material visualization, not a project photograph'}
-            </figcaption>
-          </figure>
+      <section className="service-detail-hero field-container">
+        <nav aria-label="Breadcrumb" className="service-detail-breadcrumb">
+          <Link href="/">Home</Link><span aria-hidden="true">/</span><Link href="/services">Services</Link><span aria-hidden="true">/</span><span>{service.name}</span>
+        </nav>
+        <div className="service-detail-grid">
           <div>
-            <p className="spec text-signal">What you are planning</p>
-            <h2 className="display mt-3 text-ink" style={{ fontSize: 'var(--text-display-2)' }}>
-              The material and the place need to agree.
-            </h2>
-            <p className="mt-5 max-w-[42ch] text-base leading-relaxed text-ink-muted">
-              Use the specifications below to prepare a useful brief. A site photo and rough dimensions are usually enough to begin.
-            </p>
+            <p className="spec text-signal">Service {indexStr} / {totalStr}</p>
+            <h1>{service.name} <span className="service-location">in Siliguri &amp; North Bengal</span></h1>
+            <p className="spec text-signal mb-5">{service.tagline}</p>
+            <p className="service-description">{service.description}</p>
+            <div className="mt-7 flex flex-wrap items-center gap-5">
+              <WhatsAppLink href={waUrl} source={'service:' + service.slug} className="cta cta--md">Quote this job →</WhatsAppLink>
+              <Link href="/services" className="field-link">All trades ↗</Link>
+            </div>
           </div>
+          <figure>
+            <div className="service-detail-media">
+              <Image src={workPhoto ? workPhoto.src : '/images/home/materials.webp'} alt={workPhoto ? workPhoto.alt : 'Material visualization for ' + service.name} fill preload sizes="(max-width: 767px) 100vw, 48vw" />
+            </div>
+            <figcaption className="service-detail-caption">{workPhoto ? 'Documented project photograph' : 'Material visualization, not a project photograph'}</figcaption>
+          </figure>
         </div>
       </section>
 
       {/* Spec sheet */}
-      <section className="border-b border-rule bg-paper-elevated" aria-label="Service specifications">
+      <section className="service-specs border-b border-rule" aria-label="Service specifications">
         <div className="mx-auto max-w-content px-5 py-12 md:px-8 md:py-16">
           <p className="spec mb-8 text-signal">Spec sheet: {service.name}</p>
           <div className="grid gap-6 md:grid-cols-3 lg:gap-8">
@@ -189,7 +134,7 @@ export default async function ServiceDetailPage({
             <div className="plate-signal p-6">
               <h2 className="spec m-0 text-ink-subtle">Turnaround</h2>
               <p className="display m-0 mt-4 text-4xl text-ink">{service.turnaround}</p>
-              <p className="spec m-0 mt-2 text-ink-subtle">Typical lead time, site-dependent</p>
+              <p className="spec m-0 mt-2 text-ink-subtle">Planning estimate. Confirm your schedule before ordering.</p>
             </div>
           </div>
         </div>
@@ -202,12 +147,20 @@ export default async function ServiceDetailPage({
             <div className="grid gap-10 lg:grid-cols-[1fr_2fr] lg:gap-16">
               <div>
                 <h2 className="display mt-3 text-ink" style={{ fontSize: 'var(--text-display-2)' }}>
-                  Asked on every site visit.
+                  Your {service.name.toLowerCase()} questions.
                 </h2>
               </div>
               <Accordion items={service.faqs} />
             </div>
           </div>
+        </section>
+      )}
+
+      {programmaticPages.some(page => page.service === service.slug) && (
+        <section className="field-container service-locations" aria-labelledby="service-locations-heading">
+          <h2 id="service-locations-heading">Plan your project by location</h2>
+          <p>Our workshop is in Siliguri. Find the site details to include for work across North Bengal.</p>
+          <nav aria-label="Regional service guides">{programmaticPages.filter(page => page.service === service.slug).map(page => <Link key={page.slug} href={'/' + page.slug}>{service.name} in {CITY_LABELS[page.city]} ↗</Link>)}</nav>
         </section>
       )}
 
@@ -227,7 +180,7 @@ export default async function ServiceDetailPage({
                       <span className="display block text-xl text-ink transition-colors group-hover:text-paper md:text-2xl">
                         {r.name}
                       </span>
-                      <span className="mt-0.5 block text-xs text-ink-subtle transition-colors group-hover:text-paper/60">
+                      <span className="mt-0.5 block text-xs text-ink-subtle transition-colors group-hover:text-paper">
                         {r.tagline}
                       </span>
                     </span>

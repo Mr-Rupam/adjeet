@@ -30,23 +30,23 @@ test.describe('/services/[slug] detail', () => {
 
   test('renders service name as heading', async ({ page }) => {
     await expect(
-      page.getByRole('heading', { name: 'Glow Sign Boards' })
+      page.getByRole('heading', { name: /Glow Sign Boards/ })
     ).toBeVisible()
   })
 
   test('breadcrumb shows correct path', async ({ page }) => {
     const breadcrumb = page.getByRole('navigation', { name: 'Breadcrumb' })
     await expect(breadcrumb.getByRole('link', { name: 'Services' })).toBeVisible()
-    await expect(page.getByRole('heading', { name: 'Glow Sign Boards', level: 1 })).toBeVisible()
+    await expect(page.getByRole('heading', { name: /Glow Sign Boards/, level: 1 })).toBeVisible()
   })
 
   test('FAQ accordion opens and closes', async ({ page }) => {
-    const firstQuestion = page.getByRole('button', { name: /how long do the led strips last/i })
+    const firstQuestion = page.locator('summary').filter({ hasText: /how long do the led strips last/i })
     await expect(firstQuestion).toBeVisible()
     await firstQuestion.click()
-    await expect(page.getByText(/30,000–50,000 hours/)).toBeVisible()
+    await expect(page.getByText(/LED life depends on the selected modules/)).toBeVisible()
     await firstQuestion.click()
-    await expect(page.getByText(/30,000–50,000 hours/)).not.toBeVisible()
+    await expect(page.getByText(/LED life depends on the selected modules/)).not.toBeVisible()
   })
 
   test('WhatsApp CTA href starts with wa.me', async ({ page }) => {

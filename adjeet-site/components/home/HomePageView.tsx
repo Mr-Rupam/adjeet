@@ -1,157 +1,98 @@
 import Image from 'next/image'
 import Link from 'next/link'
-import { ArrowDown, ArrowUpRight, MapPin } from 'lucide-react'
+import { ArrowDown, ArrowUpRight } from 'lucide-react'
 import { COVERAGE_AREAS, FOUNDED_YEAR } from '@/lib/coverage'
 import { QuoteCTA } from '@/components/ui/QuoteCTA'
-import { HomeMotion } from '@/components/motion/HomeMotion'
 import { HeroScene } from './HeroScene'
 import { ProjectGallery } from './ProjectGallery'
 import { ClientStreet } from '@/components/street/ClientStreet'
+import { CommissionCTA } from '@/components/street/CommissionCTA'
+import { homeFaqs } from '@/content/home-faqs'
+import { services } from '@/content/services'
 import styles from './Home.module.css'
 
-const SERVICE_GROUPS = [
-  {
-    id: 'storefront',
-    label: '01',
-    title: 'Your storefront',
-    body: 'Glow signs, ACP and LED faces, and window graphics that make the first look count.',
-    href: '/services#storefront',
-    mark: 'frontage',
-  },
-  {
-    id: 'campaign',
-    label: '02',
-    title: 'Your next campaign',
-    body: 'Flex, wall, roadside and vehicle work that carries a message beyond one address.',
-    href: '/services#campaign',
-    mark: 'campaign',
-  },
-  {
-    id: 'space-event',
-    label: '03',
-    title: 'Your space or event',
-    body: 'In-shop branding, displays and event work when every surface has a job to do.',
-    href: '/services#space-event',
-    mark: 'space',
-  },
-] as const
-
-const PROCESS = [
-  { number: '01', title: 'Show us the space.', body: 'A site photo, your location and rough dimensions give us a place to start.' },
-  { number: '02', title: 'Work out the details.', body: 'We help shape the artwork, size, materials and lighting around your brief.' },
-  { number: '03', title: 'Make it. Install it.', body: 'Print, fabrication and finishing come together before the work goes to site.' },
+const GROUPS = [
+  { id: 'storefront', title: 'Your storefront', detail: 'Glow signs · ACP & LED · Window graphics', image: '/Ambuja_cement_ACP-LED.png', alt: 'Ambuja Cement storefront signage by AD JEET' },
+  { id: 'campaign', title: 'Your next campaign', detail: 'Flex · Vehicle branding · Wall painting · F-poles', image: '/SRMB_vechile.png', alt: 'SRMB branding on a delivery vehicle' },
+  { id: 'space-event', title: 'Your space or event', detail: 'In-shop branding · Events · Product displays', image: '/Gates.png', alt: 'Anchor by Panasonic branded entrance for Durga Puja by AD JEET' },
 ]
-
-function GroupMark({ kind }: { kind: (typeof SERVICE_GROUPS)[number]['mark'] }) {
-  if (kind === 'frontage') {
-    return <svg viewBox="0 0 64 64" aria-hidden="true"><path d="M10 28h44v26H10zM16 28V16h32v12M20 38h8m8 0h8M20 46h24" /></svg>
-  }
-  if (kind === 'campaign') {
-    return <svg viewBox="0 0 64 64" aria-hidden="true"><path d="M14 17h28v24H14zM42 25h8l-8 8M20 47h24M32 41v6" /></svg>
-  }
-  return <svg viewBox="0 0 64 64" aria-hidden="true"><path d="M12 18h40v28H12zM20 28h24M20 36h16M46 18v28" /></svg>
-}
+const PROCESS = [
+  { title: 'Show us the space.', body: 'Send a site photo, the location and rough dimensions. A finished brief is optional.' },
+  { title: 'Make a plan.', body: 'Work through artwork, materials, lighting and the right scale for your site.' },
+  { title: 'Bring it to life.', body: 'Print, fabrication and finishing come together before the work goes to installation.' },
+]
 
 export function HomePageView() {
   return (
     <div className={styles.home} data-home-page>
-      <HomeMotion />
       <section id="hero-section" className={styles.hero} aria-labelledby="home-heading">
-        <HeroScene />
-        <div className={styles.heroScrim} aria-hidden="true" />
-        <div className={styles.heroContent}>
-          <p className={styles.heroMeta} data-hero-meta><span /> Siliguri · Since {FOUNDED_YEAR}</p>
-          <h1 id="home-heading" data-hero-title>Signage, print &amp;<br /><span>outdoor branding.</span></h1>
-          <p className={styles.heroLead} data-hero-lead>Designed, fabricated and installed from our Siliguri workshop for businesses across North Bengal.</p>
-          <div className={styles.heroActions} data-hero-actions>
-            <QuoteCTA source="hero" tone="yellow" label="WhatsApp your project" />
-            <a href="#selected-work" className={styles.heroTextLink}><ArrowDown size={17} aria-hidden="true" /> See what&apos;s out there</a>
+        <div className={styles.heroCopy}>
+          <p className={styles.kicker}><span className={styles.dot} /> Siliguri, North Bengal · Est. {FOUNDED_YEAR}</p>
+          <h1 id="home-heading">Signage &amp; <br />outdoor advertising <br /><span>in Siliguri.</span></h1>
+          <div className={styles.heroDescription}>
+            <p className={styles.heroCategory}>From your shopfront to the streets of North Bengal.</p>
+            <p>Glow sign boards, ACP &amp; LED signage, flex printing and vehicle branding. Designed, fabricated and installed from our Siliguri workshop.</p>
           </div>
+          <div className={styles.heroActions}>
+            <QuoteCTA source="hero" label="WhatsApp your project" />
+            <a href="#selected-work" className={styles.textLink}>Explore the work <ArrowDown size={18} aria-hidden="true" /></a>
+          </div>
+          <p className={styles.heroFoot}>From a shopfront to a street full of possibilities.</p>
         </div>
-        <p className={styles.heroCaption} data-hero-caption>AD JEET workshop, Siliguri.</p>
+        <Link href="/portfolio?service=acp-led-signage" className={styles.heroProject} aria-label="Explore Ambuja Cement ACP and LED signage">
+          <Image src="/Ambuja_cement_ACP-LED.png" alt="Ambuja Cement illuminated storefront signage by AD JEET" fill preload sizes="(max-width: 767px) 100vw, 54vw" className={styles.coverImage} />
+          <span className={styles.projectTag}>Out in the world <ArrowUpRight size={19} aria-hidden="true" /></span>
+          <div className={styles.heroProjectCaption}><span><strong>Ambuja Cement</strong><span>ACP &amp; LED signage</span></span><span className={styles.roundArrow}><ArrowUpRight aria-hidden="true" /></span></div>
+        </Link>
       </section>
-
-      <ClientStreet />
-
+      <div className={styles.factStrip} aria-label="AD JEET at a glance">
+        <span><strong>Since 1990</strong> A signmaking story</span>
+        <span><strong>10 services</strong> One working team</span>
+        <span><strong>North Bengal</strong> Based in Siliguri</span>
+      </div>
       <ProjectGallery />
-
+      <ClientStreet />
       <section id="services" className={styles.services} aria-labelledby="services-heading">
-        <div className={styles.sectionIntro} data-home-reveal>
-          <div>
-            <p className={styles.kicker}>What we make</p>
-            <h2 id="services-heading">Choose your<br />canvas.</h2>
-          </div>
-          <p>One workshop, ten ways to put a name where people will notice it.</p>
+        <div className={styles.sectionIntro}>
+          <div><p className={styles.kicker}>02 / What we make</p><h2 id="services-heading">Signage, print<br /><span>&amp; branding.</span></h2></div>
+          <div><p>A new shopfront. A campaign on the move. An event that needs to feel like you. Start with where your name belongs.</p><Link href="/services" className={styles.textLink}>All 10 services <ArrowUpRight size={18} aria-hidden="true" /></Link></div>
         </div>
         <div className={styles.serviceGroups}>
-          {SERVICE_GROUPS.map(group => (
-            <Link href={group.href} key={group.id} className={styles.serviceGroup} data-home-reveal>
-              <div className={styles.serviceMark}><GroupMark kind={group.mark} /></div>
-              <span className={styles.groupIndex}>{group.label}</span>
-              <div>
-                <h3>{group.title}</h3>
-                <p>{group.body}</p>
-              </div>
-              <ArrowUpRight size={21} aria-hidden="true" />
+          {GROUPS.map((group, index) => (
+            <Link key={group.id} href={'/services#' + group.id} className={styles.serviceGroup}>
+              <div className={styles.serviceImage}><Image src={group.image} alt={group.alt} fill sizes="(max-width: 767px) 100vw, 33vw" className={styles.coverImage} /><span>0{index + 1}</span></div>
+              <div className={styles.serviceTitle}><h3>{group.title}</h3><ArrowUpRight size={24} aria-hidden="true" /></div><p>{group.detail}</p>
             </Link>
           ))}
         </div>
-        <Link href="/services" className={styles.textLink}>All 10 services <ArrowUpRight size={18} aria-hidden="true" /></Link>
+        <nav aria-label="Explore signage and advertising services" className={styles.serviceLinks}>
+          {services.map(service => <Link href={'/services/' + service.slug} key={service.slug}>{service.name}<ArrowUpRight size={15} aria-hidden="true" /></Link>)}
+        </nav>
       </section>
-
+      <section className={styles.workshop} aria-labelledby="workshop-heading">
+        <div className={styles.workshopMedia}><HeroScene /><span className={styles.workshopCaption}>AD JEET workshop, Siliguri. · Workshop visualisation</span></div>
+        <div className={styles.workshopCopy}>
+          <p className={styles.kicker}>03 / The people behind the signs</p>
+          <h2 id="workshop-heading">A place to<br /><span>make it happen.</span></h2>
+          <p>In 1990, Ranjit Das started AD JEET in one room. Today, our own workshop in Siliguri brings the work together, from the first drawing to the final fitting.</p>
+          <Link href="/about" className={styles.textLink}>Meet AD JEET <ArrowUpRight size={18} aria-hidden="true" /></Link>
+          <p className={styles.sceneNote}>Try the day / night switch in the navigation.</p>
+        </div>
+      </section>
       <section id="how-it-works" className={styles.process} aria-labelledby="process-heading">
-        <div className={styles.sectionIntro} data-home-reveal>
-          <div>
-            <p className={styles.kicker}>How it comes together</p>
-            <h2 id="process-heading">From idea<br />to installation.</h2>
-          </div>
-          <p>You don&apos;t need a finished brief. Start with the space and what you want people to see.</p>
-        </div>
-        <div className={styles.processLayout}>
-          <figure className={styles.processMedia} data-home-reveal>
-            <Image src="/images/home/idea-to-installation.webp" alt="Illustration of a sign maker checking a metal letter beside an acrylic face, LEDs and a storefront sketch" fill sizes="(max-width: 1023px) calc(100vw - 40px), (max-width: 1320px) 50vw, 640px" className={styles.coverImage} />
-            <figcaption>Workshop illustration</figcaption>
-          </figure>
-          <div className={styles.processCopy} data-home-reveal>
-            <ol>
-              {PROCESS.map(step => (
-                <li key={step.number}>
-                  <span aria-hidden="true">{step.number}</span>
-                  <div><h3>{step.title}</h3><p>{step.body}</p></div>
-                </li>
-              ))}
-            </ol>
-            <Link href="/contact" className={styles.textLink}>Start with your space <ArrowUpRight size={18} aria-hidden="true" /></Link>
-          </div>
-        </div>
+        <div className={styles.sectionIntro}><div><p className={styles.kicker}>04 / Your idea, made real</p><h2 id="process-heading">From idea<br />to installation.</h2></div><p>You don&apos;t need to know the material names.<br />You just need a place to start.</p></div>
+        <ol className={styles.processSteps}>{PROCESS.map((step, index) => <li key={step.title}><span className={styles.stepNumber}>0{index + 1}</span><h3>{step.title}</h3><p>{step.body}</p></li>)}</ol>
       </section>
-
       <section className={styles.coverage} aria-labelledby="coverage-heading">
-        <div className={styles.coverageImage} data-home-reveal>
-          <Image src="/Acc.png" alt="An ACC roadside sign installed by AD JEET" fill sizes="(max-width: 767px) 100vw, 52vw" className={styles.coverImage} />
-        </div>
-        <div className={styles.coverageCopy} data-home-reveal>
-          <p className={styles.kicker}>From city streets to hill roads</p>
-          <h2 id="coverage-heading">Out where a good<br />sign goes far.</h2>
-          <p>Based in Siliguri, working across North Bengal. Tell us where the work is and we&apos;ll start from there.</p>
-          <ul aria-label="Areas we serve">
-            {COVERAGE_AREAS.map(area => <li key={area.name}>{area.name}{'hq' in area && area.hq ? <span>Siliguri base</span> : null}</li>)}
-          </ul>
-          <Link href="/contact" className={styles.textLink}>Tell us your location <MapPin size={18} aria-hidden="true" /></Link>
-        </div>
+        <div className={styles.coverageCopy}><p className={styles.kicker}>05 / Local knowledge. Regional reach.</p><h2 id="coverage-heading">Made in Siliguri.<br /><span>Seen across<br />North Bengal.</span></h2><p>From hill roads to high streets, we help businesses put their name in the right place.</p><ul aria-label="Areas we serve">{COVERAGE_AREAS.map(area => <li key={area.name}>{area.name}</li>)}</ul><Link href="/contact" className={styles.textLink}>Tell us your location <ArrowUpRight size={18} aria-hidden="true" /></Link></div>
+        <figure className={styles.coverageMap}><Image src="/images/north-bengal-coverage.svg" alt="Map of AD JEET's North Bengal coverage, based in Siliguri" width={900} height={1000} sizes="(max-width: 767px) 100vw, 45vw" /><figcaption>Approximate coverage. Tell us where your project is.</figcaption></figure>
       </section>
-
-      <section className={styles.enquiry} aria-labelledby="enquiry-heading">
-        <div data-home-reveal>
-          <p className={styles.enquiryKicker}>Start with a photo</p>
-          <h2 id="enquiry-heading">What are we putting<br />your name on?</h2>
-        </div>
-        <div className={styles.enquiryBody} data-home-reveal>
-          <p>Send a photo of your space. Tell us where it is. Let&apos;s start there.</p>
-          <QuoteCTA source="home-enquiry" tone="yellow" label="WhatsApp your project" />
-          <Link href="/contact" className={styles.enquiryLink}>Or send a project brief <ArrowUpRight size={18} aria-hidden="true" /></Link>
-        </div>
+      <section className={styles.faq} aria-labelledby="home-faq-heading">
+        <div className={styles.sectionIntro}><div><p className={styles.kicker}>06 / Before we start</p><h2 id="home-faq-heading">Your signage<br /><span>questions, answered.</span></h2></div><p>What we make, where we work and what to send for a quote.</p></div>
+        <div className={styles.faqList}>{homeFaqs.map(faq => <details key={faq.q}><summary>{faq.q}</summary><p>{faq.a}</p></details>)}</div>
+        <Link href="/contact" className={styles.textLink}>Request a signage quote <ArrowUpRight size={18} aria-hidden="true" /></Link>
       </section>
+      <CommissionCTA />
     </div>
   )
 }

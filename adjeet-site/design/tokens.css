@@ -1,24 +1,24 @@
-/* AD-JEET is read from its physical mark: cyan enamel, yellow sweep, chalk
-   ground, and the petrol-blue shadow behind an illuminated sign. */
+/* Fieldwork: a printed portfolio, cobalt enamel and the contrast of sign lettering. */
 :root {
-  --radius-button: 999px;
-  --paper: #F2F1E9;
-  --paper-elevated: #FCFCF7;
-  --ink: #12333B;
-  --ink-muted: #496269;
-  --ink-subtle: #607980;
-  --rule: #C9D7D4;
+  --radius-button: 2px;
+  --paper: #F3F1EB;
+  --paper-elevated: #FAF9F5;
+  --ink: #20211F;
+  --ink-muted: #5A5D57;
+  --ink-subtle: #686B64;
+  --rule: #CECEC5;
 
-  --signal: #109FCC;
-  --signal-hot: #F1F36D;
-  --signal-ink: #08262D;
-  --glow: #66CEE7;
+  --cobalt: #2446CC;
+  --signal: #2446CC;
+  --signal-hot: #2446CC;
+  --signal-ink: #FFFFFF;
+  --glow: #A4B5FF;
 
-  --night: #0A222A;
-  --night-elevated: #11343D;
+  --night: #20211F;
+  --night-elevated: #2A2C28;
   --night-rule: rgb(242 241 233 / 18%);
   --night-ink: #F2F1E9;
-  --night-ink-muted: #BDD1CE;
+  --night-ink-muted: #C7C9BF;
   --surface-inverse: var(--night);
 
   /* Kept as aliases while the established route components use their old
@@ -33,8 +33,8 @@
   --warning: #9A700C;
   --error: #A34438;
 
-  --elev-1: 0 1px 2px rgb(8 38 45 / 7%), 0 10px 26px rgb(8 38 45 / 8%);
-  --elev-2: 0 18px 52px rgb(8 38 45 / 14%);
+  --elev-1: 0 1px 0 var(--rule);
+  --elev-2: 0 4px 0 var(--rule);
   --plate-shadow: 0 18px 42px rgb(8 38 45 / 12%);
   --plate-shadow-signal: 0 18px 42px rgb(16 159 204 / 20%);
 
@@ -50,12 +50,12 @@
   --space-32: 128px;
 
   --section-py: clamp(4.75rem, 10vw, 8.5rem);
-  --content-max: 1240px;
-  --page-gutter: clamp(1.25rem, 3vw, 2.5rem);
-  --font-heading: 'Cesura', 'Caesura', 'Cæsura', var(--font-barlow-condensed), serif;
+  --content-max: 1320px;
+  --page-gutter: clamp(1.375rem, 4vw, 4rem);
+  --font-heading: var(--font-barlow-condensed), sans-serif;
   --font-script: 'Pristina', 'Segoe Script', cursive;
-  --signal-text: #08779A;
-  --focus-ring: #08779A;
+  --signal-text: #2446CC;
+  --focus-ring: #2446CC;
   --text-mega: clamp(4.2rem, 14vw, 12rem);
   --text-display-1: clamp(3.1rem, 7vw, 7.4rem);
   --text-display-2: clamp(2.15rem, 4.5vw, 4rem);
@@ -79,23 +79,24 @@
 }
 
 :root[data-theme="dark"] {
-  --paper: #0A222A;
-  --paper-elevated: #11343D;
+  --paper: #1C1E1B;
+  --paper-elevated: #252823;
   --ink: #F2F1E9;
-  --ink-muted: #BDD1CE;
-  --ink-subtle: #91ACA8;
-  --rule: #28515A;
-  --signal: #66CEE7;
-  --signal-text: #66CEE7;
-  --focus-ring: #F1F36D;
-  --signal-hot: #F1F36D;
-  --signal-ink: #08262D;
+  --ink-muted: #C7C9BF;
+  --ink-subtle: #ACB0A5;
+  --error: #FFAB9E;
+  --rule: #474B42;
+  --signal: #A4B5FF;
+  --signal-text: #A4B5FF;
+  --focus-ring: #A4B5FF;
+  --signal-hot: #A4B5FF;
+  --signal-ink: #171D37;
   --glow: #A0E8F5;
-  --night: #07191F;
-  --night-elevated: #0D2A33;
+  --night: #141612;
+  --night-elevated: #252823;
   --night-rule: rgb(242 241 233 / 17%);
   --night-ink: #F2F1E9;
-  --night-ink-muted: #BDD1CE;
+  --night-ink-muted: #C7C9BF;
   --surface-inverse: var(--night);
   --adjeet-blue: var(--signal);
   --adjeet-blue-deep: #07191F;

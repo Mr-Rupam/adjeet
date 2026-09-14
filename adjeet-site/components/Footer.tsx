@@ -1,9 +1,10 @@
+import { business } from '@/lib/business'
 import Link from 'next/link'
 import { BrandLogo } from '@/components/BrandLogo'
 import { WhatsAppLink } from '@/components/ui/WhatsAppLink'
 
-const WHATSAPP_DISPLAY = '+91 98320 11524'
-const WHATSAPP_HREF = 'https://wa.me/919832011524'
+const WHATSAPP_DISPLAY = business.phoneDisplay
+const WHATSAPP_HREF = `https://wa.me/${business.phone.replace('+', '')}`
 
 export function Footer() {
   return (
@@ -30,17 +31,17 @@ export function Footer() {
         <div className="min-w-0">
           <p className="spec mb-3 text-signal-hot">Talk to the workshop</p>
           <address className="not-italic text-sm leading-relaxed text-night-ink-muted">
-            <p className="m-0">Platinum Square, Siliguri, West Bengal 734001</p>
-            <p className="mt-4">Workshop: Patiram Jote, Siliguri, West Bengal</p>
+            <p className="m-0">{business.office}, {business.city}, {business.region} {business.postalCode}</p>
+            <p className="mt-4">Workshop: {business.workshop}, {business.city}, {business.region}</p>
           </address>
           <p className="mt-4 text-sm text-night-ink-muted">{WHATSAPP_DISPLAY}</p>
           <div className="flex flex-wrap gap-x-3 text-sm">
             <WhatsAppLink href={WHATSAPP_HREF} source="footer" className="footer-link">
               WhatsApp
             </WhatsAppLink>
-            <a href="tel:+919832011524" className="footer-link" aria-label={`Call ${WHATSAPP_DISPLAY}`}>Call</a>
+            <a href={"tel:" + business.phone} className="footer-link" aria-label={`Call ${WHATSAPP_DISPLAY}`}>Call</a>
           </div>
-          <a href="mailto:ranjitadjeet@gmail.com" className="footer-link max-w-full break-all text-sm">ranjitadjeet@gmail.com</a>
+          <a href={"mailto:" + business.email} className="footer-link max-w-full break-all text-sm">{business.email}</a>
         </div>
       </div>
 

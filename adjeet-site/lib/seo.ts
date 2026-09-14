@@ -1,12 +1,33 @@
 import type { Metadata } from 'next'
 import type { Service } from '@/content/services'
 import { COVERAGE_AREAS } from '@/lib/coverage'
+import { business } from '@/lib/business'
 
 export const siteConfig = {
-  name: 'AD JEET',
-  url: 'https://adjeet.in',
-  ogImage: '/og-image.jpg',
-  description: 'Signage, print and outdoor branding from Siliguri for businesses across North Bengal since 1990.',
+  name: business.name,
+  url: business.url,
+  ogImage: '/Ambuja_cement_ACP-LED.png',
+  description: 'Signage and outdoor advertising in Siliguri since 1990. Glow sign boards, ACP & LED signage, flex printing and vehicle branding across North Bengal.',
+}
+
+export function buildPageMetadata({ title, description, path }: {
+  title: string
+  description: string
+  path: string
+}): Metadata {
+  const fullTitle = `${title} | ${siteConfig.name}`
+  const url = path === '/' ? siteConfig.url : siteConfig.url + path
+  return {
+    title: { absolute: fullTitle },
+    description,
+    alternates: { canonical: url },
+    openGraph: {
+      title: fullTitle, description, url, siteName: siteConfig.name,
+      type: 'website', locale: 'en_IN',
+      images: [{ url: siteConfig.ogImage, alt: 'Ambuja Cement ACP and LED signage by AD JEET' }],
+    },
+    twitter: { card: 'summary_large_image', title: fullTitle, description, images: [siteConfig.ogImage] },
+  }
 }
 
 // Defense in depth: escape `<` so a stray `</script>` inside JSON-LD can never
@@ -17,46 +38,50 @@ export function jsonLdString(schema: unknown): string {
 }
 
 export function generateServiceMetadata(service: Service): Metadata {
-  return {
-    title: `${service.name} in North Bengal`,
-    description: `${service.tagline}. Serving Siliguri, Jalpaiguri, Cooch Behar, Darjeeling, Malda.`,
-    alternates: { canonical: `/services/${service.slug}` },
-  }
+  return buildPageMetadata({
+    title: `${service.name} in Siliguri`,
+    description: `${service.name} from AD JEET in Siliguri. Compare materials, plan your project and request a quote for work across North Bengal.`,
+    path: `/services/${service.slug}`,
+  })
 }
 
 export function buildLocalBusinessJsonLd() {
   return {
     '@context': 'https://schema.org',
     '@type': 'LocalBusiness',
+    '@id': `${siteConfig.url}/#business`,
     name: siteConfig.name,
     description: siteConfig.description,
     url: siteConfig.url,
-    telephone: '+919832011524',
+    telephone: business.phone,
+    email: business.email,
+    logo: siteConfig.url + business.logo,
+    image: siteConfig.url + siteConfig.ogImage,
+    foundingDate: String(business.foundingYear),
+    founder: { '@type': 'Person', name: business.founder },
     address: {
       '@type': 'PostalAddress',
-      streetAddress: 'Platinum Square',
-      addressLocality: 'Siliguri',
-      addressRegion: 'West Bengal',
-      postalCode: '734001',
+      streetAddress: business.office,
+      addressLocality: business.city,
+      addressRegion: business.region,
+      postalCode: business.postalCode,
       addressCountry: 'IN',
-    },
-    geo: {
-      '@type': 'GeoCoordinates',
-      latitude: 26.7271,
-      longitude: 88.3953,
     },
     areaServed: COVERAGE_AREAS.map(a => a.name),
   }
 }
 
-export function buildServiceJsonLd(service: Service) {
+export function buildServiceJsonLd(service: Service, location?: { city: string; path: string; description: string }) {
+  const url = siteConfig.url + (location?.path ?? `/services/${service.slug}`)
   return {
     '@context': 'https://schema.org',
     '@type': 'Service',
-    name: service.name,
-    description: service.description,
-    provider: { '@type': 'LocalBusiness', name: siteConfig.name },
-    areaServed: COVERAGE_AREAS.map(a => a.name),
+    '@id': `${url}#service`,
+    url,
+    name: location ? `${service.name} in ${location.city}` : service.name,
+    description: location?.description ?? service.description,
+    provider: { '@id': `${siteConfig.url}/#business` },
+    areaServed: location ? [location.city] : COVERAGE_AREAS.map(a => a.name),
     serviceType: service.name,
   }
 }

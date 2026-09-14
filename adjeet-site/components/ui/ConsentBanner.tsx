@@ -71,7 +71,7 @@ export function ConsentBanner() {
     >
       <p className="mb-4 max-w-prose text-sm text-ink-muted md:mb-0">
         We use analytics cookies (Google Analytics 4) to understand how visitors use our site.
-        No personal data is shared with third parties.{' '}
+        Analytics requires your consent.{' '}
         <Link href="/privacy" className="underline hover:text-ink">Privacy Policy</Link>
       </p>
       <div className="flex shrink-0 gap-3">

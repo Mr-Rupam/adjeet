@@ -36,3 +36,24 @@
  .trust { padding-top:5rem; padding-bottom:5rem; }
  .trustCopy { margin-left:40%; }
 }
+
+/* Fieldwork: preserve the founder's story, open up the page rhythm. */
+.intro { border-bottom: 1px solid var(--rule); }
+.intro h1 { font-weight: 500; font-size: clamp(64px,8vw,115px); text-transform: uppercase; line-height: .92; margin-block: 28px; }
+.introCopy { padding-left: var(--page-gutter); }
+.intro .workshop > div { height: calc(100% - 48px); }
+.workshop figcaption { min-height: 48px; background: var(--paper-elevated); font-size: 12px; }
+.sectionHeading h2 { font-weight: 500; }
+.journey li > p { color: var(--signal-text); }
+.journey h3 { font-weight: 500; font-size: 34px; }
+.trust { background: var(--night); color: var(--night-ink); }
+.trust > p { color: #a4b5ff; }
+.trust h2 { font-weight: 500; }
+.trustCopy p { color: var(--night-ink-muted); margin-bottom: 18px; }
+.map img { background: #f2f1e9; }
+@media(max-width:767px) {
+.intro h1 { font-size: clamp(57px,13vw,87px); }
+.intro .workshop > div { min-height: 0; height: auto; aspect-ratio: 1.5; }
+.journey li { grid-template-columns: 100px 1fr; gap: 20px; }
+.journey h3 { font-size: 28px; }.journey li div p { font-size: 15px; }
+}

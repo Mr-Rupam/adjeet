@@ -6,10 +6,16 @@ import { useState, useRef, useEffect, type FormEvent } from 'react'
 import { leadSchema, type LeadInput, TIMELINE_OPTIONS, COVERAGE_CITIES } from '@/lib/lead-schema'
 import { Turnstile, type TurnstileInstance } from '@marsidev/react-turnstile'
 import { services } from '@/content/services'
+import { QuoteCTA } from '@/components/ui/QuoteCTA'
+import { business } from '@/lib/business'
 
 export function LeadForm() {
+  const siteKey = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY
+    || (process.env.NODE_ENV !== 'production' ? '1x00000000000000000000AA' : '')
   const [submitted, setSubmitted] = useState(false)
   const [serverError, setServerError] = useState<string | null>(null)
+  const successRef = useRef<HTMLDivElement>(null)
+  useEffect(() => { if (submitted) successRef.current?.focus() }, [submitted])
 
   const {
     register,
@@ -66,14 +72,25 @@ export function LeadForm() {
 
   if (submitted) {
     return (
-      <div className="rounded-2xl border border-rule bg-paper p-10 text-center shadow-[var(--elev-1)]">
+      <div ref={successRef} tabIndex={-1} role="status" className="border border-rule bg-paper p-8 text-center">
         <div className="mb-4 inline-flex h-14 w-14 items-center justify-center rounded-full bg-signal">
           <span className="text-2xl text-signal-ink">✓</span>
         </div>
         <h3 className="display mb-2 text-2xl text-ink">Message received.</h3>
         <p className="mx-auto max-w-sm text-sm text-ink-muted">
-          Our team will review your request and get back to you within 2 business hours.
+          Our team will review your request and contact you about the next steps.
         </p>
+      </div>
+    )
+  }
+
+  if (!siteKey) {
+    return (
+      <div className="form-unavailable" data-form-unavailable>
+        <h3>Send your brief directly.</h3>
+        <p>The online form is temporarily unavailable. Send your site photo, size, location and target date to the team on WhatsApp.</p>
+        <QuoteCTA source="contact-form-fallback" label="WhatsApp your brief" />
+        <a href={'tel:' + business.phone} className="field-link">Call {business.phoneDisplay}</a>
       </div>
     )
   }
@@ -91,6 +108,7 @@ export function LeadForm() {
 
   return (
     <form onSubmit={handleFormSubmit} noValidate className="space-y-5">
+      <p className="text-sm text-ink-muted">Fields marked * are required.</p>
       {/* Honeypot */}
       <input
         {...register('_hp')}
@@ -121,6 +139,7 @@ export function LeadForm() {
             autoComplete="name"
             placeholder="Your full name"
             className={errors.name ? fieldError : fieldNormal}
+            aria-invalid={!!errors.name}
             aria-describedby={errors.name ? 'lead-name-err' : undefined}
             {...register('name')}
           />
@@ -139,6 +158,7 @@ export function LeadForm() {
             autoComplete="tel"
             placeholder="+91 98765 43210"
             className={errors.phone ? fieldError : fieldNormal}
+            aria-invalid={!!errors.phone}
             aria-describedby={errors.phone ? 'lead-phone-err' : undefined}
             {...register('phone')}
           />
@@ -156,6 +176,7 @@ export function LeadForm() {
         <select
           id="lead-city"
           className={errors.city ? fieldError : fieldNormal}
+          aria-invalid={!!errors.city}
           aria-describedby={errors.city ? 'lead-city-err' : undefined}
           {...register('city')}
         >
@@ -171,9 +192,9 @@ export function LeadForm() {
 
       {/* Service Interest */}
       <div>
-        <fieldset>
+        <fieldset aria-describedby={errors.serviceInterest ? 'lead-services-err' : undefined}>
           <legend className={label}>Services you need *</legend>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2 mt-1">
+          <div className="grid grid-cols-1 min-[360px]:grid-cols-2 gap-2 mt-1">
             {services.map(s => (
               <label
                 key={s.slug}
@@ -191,7 +212,7 @@ export function LeadForm() {
           </div>
         </fieldset>
         {errors.serviceInterest && (
-          <p className={errMsg}>
+          <p id="lead-services-err" className={errMsg}>
             <span className="text-[10px]">⚠</span> {errors.serviceInterest.message}
           </p>
         )}
@@ -225,27 +246,14 @@ export function LeadForm() {
 
       {/* Turnstile: dev test key only outside production */}
       <div className="flex flex-col items-center">
-        {(() => {
-          const siteKey = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY
-            || (process.env.NODE_ENV !== 'production' ? '1x00000000000000000000AA' : '')
-          if (!siteKey) {
-            return (
-              <p className="text-xs text-error text-center max-w-sm">
-                CAPTCHA is temporarily unavailable. Please reach us on WhatsApp at +91 98320 11524.
-              </p>
-            )
-          }
-          return (
             <Turnstile
               ref={turnstileRef}
               siteKey={siteKey}
               onSuccess={(token) => setValue('cfTurnstileResponse', token, { shouldValidate: true })}
               onError={() => setServerError('CAPTCHA failed. Please try again.')}
               onExpire={() => setValue('cfTurnstileResponse', '', { shouldValidate: true })}
-              options={{ theme: widgetTheme }}
+              options={{ theme: widgetTheme, size: 'compact' }}
             />
-          )
-        })()}
         {errors.cfTurnstileResponse && (
           <p className={errMsg}>
             <span className="text-[10px]">⚠</span> {errors.cfTurnstileResponse.message}
@@ -255,7 +263,7 @@ export function LeadForm() {
 
       {/* Server error */}
       {serverError && (
-        <div className="flex items-start gap-2 border-2 border-error bg-error/5 px-4 py-3 text-sm text-error">
+        <div role="alert" className="flex items-start gap-2 border-2 border-error bg-error/5 px-4 py-3 text-sm text-error">
           <span className="mt-0.5">⚠</span>
           <p>{serverError}</p>
         </div>
@@ -265,7 +273,7 @@ export function LeadForm() {
       <button
         type="submit"
         disabled={isSubmitting}
-        className="min-h-[54px] w-full rounded-full border border-signal-hot bg-signal-hot px-6 py-3 text-sm font-medium text-signal-ink transition-transform hover:-translate-y-px active:translate-y-0 disabled:opacity-50"
+        className="min-h-[54px] w-full button-shape border border-signal-hot bg-signal-hot px-6 py-3 text-sm font-medium text-signal-ink transition-transform hover:-translate-y-px active:translate-y-0 disabled:opacity-50"
       >
         {isSubmitting ? (
           <span className="flex items-center justify-center gap-2">
@@ -279,7 +287,7 @@ export function LeadForm() {
 
       {/* Trust line */}
       <p className="spec text-center text-ink-subtle">
-        Your data is stored securely. We never share it with third parties.
+        We use your details to respond to your enquiry.
       </p>
     </form>
   )

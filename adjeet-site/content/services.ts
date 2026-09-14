@@ -40,7 +40,7 @@ export const services: Service[] = [
     faqs: [
       {
         q: 'How long do the LED strips last?',
-        a: 'Quality SMD LED strips typically last 30,000–50,000 hours under normal usage. We use branded drivers and ICs to extend lifespan.',
+        a: 'LED life depends on the selected modules, driver, ventilation and operating hours. Ask for the component specifications and warranty terms with your quote so you can compare the actual system being supplied.',
       },
       {
         q: 'Can you install on a second-floor facade?',
@@ -52,7 +52,7 @@ export const services: Service[] = [
       },
       {
         q: 'What warranty do you offer?',
-        a: 'We provide a one-year warranty on LED components and fabrication workmanship. Driver replacements are covered within this period.',
+        a: 'Warranty terms depend on the components and project scope. Ask the team to confirm the covered parts, workmanship, service arrangements and warranty period in writing before ordering.',
       },
     ],
     relatedServices: ['acp-led-signage', 'f-pole-installation', 'in-shop-branding'],
@@ -65,13 +65,13 @@ export const services: Service[] = [
     tagline: 'Clean, durable faces for modern brands',
     description:
       'Aluminium Composite Panel (ACP) cladding combined with LED module lighting creates the clean, premium look demanded by banks, telecom showrooms, and retail chains. We cut, route, and bond ACP to precise dimensions, then back-light or face-light with uniform LED modules. The result is a sign that reads well at distance and retains its finish through years of sun and rain.',
-    materials: ['ACP (Alucobond / local)', 'LED modules', 'Aluminium extrusion', 'PVC flex backing', 'Stainless steel fixings'],
+    materials: ['ACP sheet (grade agreed per project)', 'LED modules', 'Aluminium extrusion', 'PVC flex backing', 'Stainless steel fixings'],
     sizes: ['Custom sizing from 2 sq ft to full building facade'],
     turnaround: '7–10 working days',
     faqs: [
       {
         q: 'Which ACP brands do you work with?',
-        a: 'We stock both Alucobond (imported) and quality domestic ACP. Domestic is cost-effective for interior signage; Alucobond is recommended for exterior long-term installations.',
+        a: 'The ACP brand, grade, finish and intended use should be agreed for your project. Send any brand specifications with your brief so the team can confirm availability and quote the appropriate panel.',
       },
       {
         q: 'Can you match a brand\'s exact Pantone colour?',
@@ -91,7 +91,7 @@ export const services: Service[] = [
     name: 'Flex Printing',
     tagline: 'Large-format print for every surface',
     description:
-      'High-resolution flex banner and vinyl printing for hoardings, retail backdrops, event walls, and temporary signage. We print on 280 gsm and 440 gsm flex media using UV-resistant solvent inks, then eyelet, hem, or mount to your specification. Turnaround is fast. Most standard runs are ready within 24–48 hours.',
+      'High-resolution flex banner and vinyl printing for hoardings, retail backdrops, event walls, and temporary signage. We print on 280 gsm and 440 gsm flex media using UV-resistant solvent inks, then eyelet, hem, or mount to your specification. Confirm the media, finishing and required date with the team before production.',
     materials: ['280 gsm frontlit flex', '440 gsm blockout flex', 'One-way vision vinyl', 'Matte/gloss vinyl sticker'],
     sizes: ['A3 to 40×10 ft continuous roll, custom cut to order'],
     turnaround: '1–3 working days',
@@ -106,7 +106,7 @@ export const services: Service[] = [
       },
       {
         q: 'How do I calculate the cost?',
-        a: 'Flex printing is priced per square foot plus media grade. Contact us on WhatsApp with dimensions and quantity for an instant quote.',
+        a: 'Flex printing is priced per square foot plus media grade. Contact us on WhatsApp with dimensions, quantity, finishing and delivery requirements for a project quote.',
       },
     ],
     relatedServices: ['vehicle-branding', 'events-and-puja', 'one-way-vision'],
@@ -125,15 +125,15 @@ export const services: Service[] = [
     faqs: [
       {
         q: 'Will the wrap damage my vehicle\'s original paint?',
-        a: 'No. Quality cast vinyl is paint-safe and fully removable within its 5-year lifespan without leaving residue, provided the original paint is in good condition.',
+        a: 'Removal depends on the film, paint condition, age and previous repairs. Share surface photographs and arrange an inspection; paint safety and residue-free removal cannot be guaranteed for every vehicle.',
       },
       {
         q: 'Can you brand a fleet of 20 vehicles?',
-        a: 'Absolutely. Fleet projects receive priority scheduling and volume pricing. We can handle sequential numbering, driver name plates, and route displays.',
+        a: 'Send the vehicle count, models, artwork versions and available fitting windows. The team will confirm capacity, application arrangements and a quote for the complete fleet.',
       },
       {
         q: 'How long does the wrap last outdoors in North Bengal\'s climate?',
-        a: 'Cast vinyl lasts 5–7 years; calendered vinyl 2–4 years. UV laminate significantly extends outdoor life in high-sun exposure areas.',
+        a: 'Outdoor life varies with the chosen film, lamination, sunlight, cleaning and surface condition. Confirm the material specification and care guidance for your vehicle rather than relying on a single lifespan for every wrap.',
       },
     ],
     relatedServices: ['flex-printing', 'in-shop-branding', 'one-way-vision'],
@@ -145,7 +145,7 @@ export const services: Service[] = [
     name: 'Wall Painting',
     tagline: 'Durable outdoor advertising on any wall',
     description:
-      'Hand-painted and stencil-painted wall advertising for rural markets, highways, and peri-urban areas where flex and backlit signs are impractical. Our painters use exterior-grade enamel and weather-shield paints that withstand monsoon rain and humidity. Wall painting remains cost-effective and legally permissible in many areas where hoardings require permissions, making it ideal for FMCG brand campaigns across the Dooars and Terai.',
+      'Hand-painted and stencil-painted wall advertising for rural markets, highways, and peri-urban areas where flex and backlit signs are impractical. Our painters use exterior-grade enamel and weather-shield paints that withstand monsoon rain and humidity. The wall location, surface condition, owner permission and any applicable local requirements should be checked before a campaign is scheduled.',
     materials: ['Exterior enamel paint', 'Weather-shield emulsion', 'Primer', 'Stencil film'],
     sizes: ['10 sq ft to 500+ sq ft wall area'],
     turnaround: '3–7 working days (site-dependent)',
@@ -172,7 +172,7 @@ export const services: Service[] = [
     name: 'F-Pole Installation',
     tagline: 'High-visibility roadside display structures',
     description:
-      'Fabrication and installation of F-pole (flag pole) sign structures that elevate your branding to eye-catching height along highways, commercial corridors, and roundabouts. We design and weld custom MS/GI pole structures, anchor them with concrete foundations sized for local wind loads, and mount illuminated or non-illuminated sign faces. Trusted by fuel stations, hospitals, hotels, and retail chains across Siliguri and district towns.',
+      'Fabrication and installation of F-pole (flag pole) sign structures that elevate your branding to eye-catching height along highways, commercial corridors, and roundabouts. We design and weld custom MS/GI pole structures, anchor them with concrete foundations sized for local wind loads, and mount illuminated or non-illuminated sign faces. Suitable applications include entrance and roadside identification for fuel stations, hospitals, hotels and shops, subject to a site assessment.',
     materials: ['MS hollow section (pole)', 'GI pipe', 'RCC foundation', 'ACP/flex sign face', 'LED floodlight (optional)'],
     sizes: ['10 ft to 40 ft pole height, single or double arm'],
     turnaround: '10–15 working days (includes foundation curing)',
@@ -183,7 +183,7 @@ export const services: Service[] = [
       },
       {
         q: 'Can the pole withstand Nor\'wester storms?',
-        a: 'Our foundations are designed to IS 875 wind load standards for West Bengal. We recommend periodic inspection after severe storms.',
+        a: 'Wind performance depends on the site, sign area, pole and foundation design. A qualified structural assessment is needed for the proposed installation; ask for the applicable design specification and inspection plan before approving the work.',
       },
       {
         q: 'Can I change the sign face later without replacing the pole?',
@@ -199,7 +199,7 @@ export const services: Service[] = [
     name: 'In-Shop Branding',
     tagline: 'Turn your interior into a brand experience',
     description:
-      'Complete interior branding solutions for retail outlets, showrooms, restaurants, and offices, from wall graphics and product display headers to hanging banners, directional signage, and branded counter fascias. We handle concept-to-installation so the finished space is consistent with your brand guidelines. Preferred vendor for telecom, FMCG, and banking sector rollouts across North Bengal.',
+      'Complete interior branding solutions for retail outlets, showrooms, restaurants, and offices, from wall graphics and product display headers to hanging banners, directional signage, and branded counter fascias. We handle concept-to-installation so the finished space is consistent with your brand guidelines. Discuss a single outlet or a multi-site rollout with the team, including access, artwork and installation scope.',
     materials: ['ACP panels', 'Backlit acrylic', 'Vinyl wall graphics', 'Foam board', 'Hanging display systems'],
     sizes: ['Single counter to full-store rollout'],
     turnaround: '7–14 working days (scope-dependent)',
@@ -210,7 +210,7 @@ export const services: Service[] = [
       },
       {
         q: 'Do you handle multiple outlet rollouts simultaneously?',
-        a: 'Yes. We have teams that can execute parallel installations across Siliguri, Jalpaiguri, and Cooch Behar zones simultaneously.',
+        a: 'Share the outlet list, sizes and target dates. The team will confirm capacity and whether a phased or parallel installation schedule is practical for your project.',
       },
       {
         q: 'Can you match my HO-supplied brand kit?',
@@ -226,18 +226,18 @@ export const services: Service[] = [
     name: 'Events & Puja Decoration',
     tagline: 'Make every celebration unforgettable',
     description:
-      'End-to-end signage and decoration for Durga Puja pandals, corporate events, product launches, and public celebrations across North Bengal. We supply stage backdrops, entrance arches, flex banners, directional signage, LED flex borders, and themed props, all fabricated in our Siliguri workshop and installed on-site. Trusted by community puja committees and corporate event teams for over two decades.',
+      'End-to-end signage and decoration for Durga Puja pandals, corporate events, product launches, and public celebrations across North Bengal. We supply stage backdrops, entrance arches, flex banners, directional signage, LED flex borders, and themed props, all fabricated in our Siliguri workshop and installed on-site. Share the venue, event date and setup requirements to discuss a coordinated production and installation plan.',
     materials: ['Flex print backdrop', 'MS arch frame', 'LED pixel strip', 'Thermocol prop', 'Fabric draping'],
     sizes: ['10×10 ft stall to full pandal/stage setup'],
     turnaround: '3–10 working days (varies by event scale)',
     faqs: [
       {
         q: 'Do you handle Durga Puja pandal decoration?',
-        a: 'Yes, this is one of our busiest seasons. We work with committees across Siliguri, Jalpaiguri, and Cooch Behar. Book early. Slots fill by August.',
+        a: 'Yes. Send the venue, theme, dimensions, setup date and dismantling requirements. Seasonal availability and the final scope must be confirmed with the team before booking.',
       },
       {
         q: 'Can you supply and install within 48 hours for an urgent event?',
-        a: 'For standard flex and banner elements yes, subject to workshop capacity. Fabricated structures need at least 5 days. Call us to check availability.',
+        a: 'Call with the artwork, dimensions, quantity and event deadline. The team must confirm material availability, production capacity, transport and installation before accepting an urgent date.',
       },
       {
         q: 'Do you dismantle and remove after the event?',
@@ -253,7 +253,7 @@ export const services: Service[] = [
     name: 'One-Way Vision',
     tagline: 'Brand your glass without blocking the view',
     description:
-      'Perforated vinyl film that lets your brand show prominently from outside while maintaining clear sightlines from inside, ideal for shopfront glazing, vehicle rear windows, and glass partition branding. We print on 50/50 perforation vinyl (50% ink, 50% clear holes) using high-resolution solvent printing, then cut and apply to glass surfaces. The result is professional exterior branding with zero interior obstruction.',
+      'Perforated vinyl film that lets your brand show prominently from outside while retaining a view through the perforations from inside, ideal for shopfront glazing, vehicle rear windows, and glass partition branding. We print on 50/50 perforation vinyl (50% ink, 50% clear holes) using high-resolution solvent printing, then cut and apply to glass surfaces. Visibility depends on the film, lighting and placement. Discuss the intended view and any restrictions before application.',
     materials: ['50/50 perforated vinyl', 'Window application film', 'Solvent print ink'],
     sizes: ['Custom cut to glass dimensions'],
     turnaround: '3–5 working days',
@@ -268,7 +268,7 @@ export const services: Service[] = [
       },
       {
         q: 'Is it removable?',
-        a: 'Yes, fully removable without residue, provided the glass surface is clean and the film has not been on for more than 3–4 years.',
+        a: 'Removal depends on the film, adhesive, age and glass condition. Ask for the selected film specification and removal guidance; an inspection may be needed for older installations.',
       },
     ],
     relatedServices: ['vehicle-branding', 'in-shop-branding', 'flex-printing'],
@@ -287,11 +287,11 @@ export const services: Service[] = [
     faqs: [
       {
         q: 'Can you manufacture 500 identical standees for a pan-Bengal campaign?',
-        a: 'Yes. We have the capacity for medium-run production. For orders above 200 units, contact us for a volume quote and production schedule.',
+        a: 'Send the quantity, artwork, dimensions, materials and delivery locations. The team will confirm a sample or prototype process, production capacity and schedule before accepting a bulk order.',
       },
       {
         q: 'Do you ship to distributors outside Siliguri?',
-        a: 'Yes. We pack flat-pack or assembled and ship via road freight to Kolkata, Guwahati, and points in between. Transport cost is additional.',
+        a: 'Share the destination, quantity and whether the units should arrive assembled or packed flat. Delivery availability, packing, freight costs and timing are confirmed as part of the quote.',
       },
       {
         q: 'Can you add QR codes or scratch-card elements?',

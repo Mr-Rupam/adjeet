@@ -1,23 +1,16 @@
 import { notFound } from 'next/navigation'
 import type { Metadata } from 'next'
 import Link from 'next/link'
-import { programmaticPages, getProgrammaticPage } from '@/content/programmatic'
+import { programmaticPages, getProgrammaticPage, CITY_LABELS } from '@/content/programmatic'
 import { getServiceBySlug, type ServiceSlug } from '@/content/services'
 import { getPhotosByService } from '@/content/gallery'
 import { defaultWhatsAppUrl } from '@/lib/whatsapp'
-import { buildBreadcrumbJsonLd, buildServiceJsonLd, buildFaqJsonLd, jsonLdString, siteConfig } from '@/lib/seo'
+import { buildBreadcrumbJsonLd, buildServiceJsonLd, buildFaqJsonLd, jsonLdString, buildPageMetadata } from '@/lib/seo'
 import { GalleryStrip } from '@/components/sections/GalleryStrip'
 import { ProgrammaticPageTracker } from '@/components/PageViewTracker'
 import { WhatsAppLink } from '@/components/ui/WhatsAppLink'
-import { isAwaitingPhotos, AWAITING_PHOTOS_ROBOTS } from '@/lib/publication'
-
-const CITY_LABELS: Record<string, string> = {
-  siliguri: 'Siliguri',
-  jalpaiguri: 'Jalpaiguri',
-  'cooch-behar': 'Cooch Behar',
-  darjeeling: 'Darjeeling',
-  malda: 'Malda',
-}
+import { PageMasthead } from '@/components/street/PageMasthead'
+import { Accordion } from '@/components/ui/Accordion'
 
 type Params = { slug: string }
 
@@ -31,21 +24,11 @@ export async function generateMetadata({ params }: { params: Promise<Params> }):
   if (!page) return {}
   const service = getServiceBySlug(page.service as ServiceSlug)
   const city = CITY_LABELS[page.city] ?? page.city
-  return {
-    // Deliberately NOT page.headline: those run 65-94 characters and are
-    // written to work as the on-page <h1>. As a <title> they truncate in the
-    // SERP, and the manual "| AD JEET" collided with the root layout's
-    // '%s | AD JEET' template, so every one of these 25 pages rendered the
-    // brand twice. Service + city keeps it keyword-first and inside ~60.
+  return buildPageMetadata({
     title: service ? `${service.name} in ${city}` : page.headline,
-    description: [service?.tagline?.replace(/[.\s]+$/, ''), `For projects in ${city} and North Bengal`, 'Contact AD JEET to discuss your brief']
-      .filter(Boolean)
-      .join('. ') + '.',
-    alternates: { canonical: `${siteConfig.url}/${slug}` },
-    // Held out of search until this trade has a photograph. 25 near-identical
-    // city pages with no images read as doorway content. See lib/publication.
-    ...(isAwaitingPhotos(page.service) ? AWAITING_PHOTOS_ROBOTS : {}),
-  }
+    description: `${service?.name} in ${city} from AD JEET's Siliguri workshop. Materials, site-planning guidance and project quotes for North Bengal.`,
+    path: `/${slug}`,
+  })
 }
 
 export default async function ProgrammaticPage({ params }: { params: Promise<Params> }) {
@@ -59,11 +42,16 @@ export default async function ProgrammaticPage({ params }: { params: Promise<Par
   const photos = getPhotosByService(page.service as ServiceSlug).filter(p => p.city === page.city)
   const waUrl = defaultWhatsAppUrl({ service: service.name, city: CITY_LABELS[page.city] })
   const cityLabel = CITY_LABELS[page.city] ?? page.city
+  const relatedCityPages = page.relatedCities.flatMap(city => {
+    const match = programmaticPages.find(candidate => candidate.service === page.service && candidate.city === city)
+    return match ? [match] : []
+  })
 
-  const serviceSchema = buildServiceJsonLd(service)
+  const serviceSchema = buildServiceJsonLd(service, { city: cityLabel, path: `/${slug}`, description: page.body })
   const faqSchema = service.faqs.length > 0 ? buildFaqJsonLd(service.faqs) : null
   const breadcrumb = buildBreadcrumbJsonLd([
     { name: 'Home', url: '/' },
+    { name: 'Services', url: '/services' },
     { name: service.name, url: `/services/${service.slug}` },
     { name: cityLabel, url: `/${slug}` },
   ])
@@ -77,56 +65,34 @@ export default async function ProgrammaticPage({ params }: { params: Promise<Par
       {faqSchema && <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLdString(faqSchema) }} />}
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLdString(breadcrumb) }} />
 
-      {/* Masthead */}
-      <section className="relative overflow-hidden border-b-2 border-ink bg-paper">
-        <div aria-hidden="true" className="grid-mat pointer-events-none absolute inset-0" />
-        <div aria-hidden="true" className="grain pointer-events-none absolute inset-0" />
-
-        <div className="relative mx-auto w-full max-w-content px-5 pt-6 md:px-8">
-          <nav aria-label="Breadcrumb" className="spec border-b-2 border-ink pb-3 text-ink-muted">
-            <ol className="m-0 flex list-none gap-2 p-0">
-              <li><Link href="/" className="transition-colors hover:text-ink">Home</Link></li>
-              <li aria-hidden="true">/</li>
-              <li>
-                <Link href={`/services/${service.slug}`} className="transition-colors hover:text-ink">
-                  {service.name}
-                </Link>
-              </li>
-              <li aria-hidden="true">/</li>
-              <li className="text-ink">{cityLabel}</li>
-            </ol>
-          </nav>
+      <nav aria-label="Breadcrumb" className="field-container service-detail-breadcrumb regional-breadcrumb">
+        <Link href="/">Home</Link><span aria-hidden="true">/</span><Link href="/services">Services</Link><span aria-hidden="true">/</span><Link href={'/services/' + service.slug}>{service.name}</Link><span aria-hidden="true">/</span><span aria-current="page">{cityLabel}</span>
+      </nav>
+      <PageMasthead compact meta={[service.name, cityLabel, 'North Bengal']} title={page.headline} lead={service.tagline}>
+        <WhatsAppLink href={waUrl} source={'programmatic:' + slug} className="cta cta--md">Discuss your project ↗</WhatsAppLink>
+      </PageMasthead>
+      <section className="regional-body field-container">
+        <div className="regional-copy">
+          {paragraphs.map((p, i) => <p key={i}>{p}</p>)}
+          <h2>Planning your {cityLabel} project</h2>
+          <p>{page.localBrief}</p>
+          <h2>What we can make</h2>
+          <p>{service.description}</p>
         </div>
-
-        <div className="relative mx-auto w-full max-w-content px-5 pb-12 pt-10 md:px-8 md:pb-16 md:pt-14">
-          <h1 className="display m-0 mt-4 text-ink" style={{ fontSize: 'clamp(2.5rem, 6.5vw, 5.5rem)' }}>
-            {page.headline}
-          </h1>
-
-          <dl className="m-0 mt-8 flex flex-wrap gap-6 md:gap-10">
-            {page.stats.map(s => (
-              <div key={s.label} className="flex flex-col border-l-2 border-ink pl-4">
-                <dt className="spec order-2 text-ink-subtle">{s.label}</dt>
-                <dd className="display order-1 m-0 text-4xl text-ink">{s.value}</dd>
-              </div>
-            ))}
-          </dl>
-        </div>
+        <aside className="regional-spec">
+          <p className="spec text-signal">Project notes / {cityLabel}</p>
+          <dl><div><dt>Workshop base</dt><dd>Siliguri</dd></div><div><dt>Project location</dt><dd>{cityLabel}</dd></div><div><dt>Quote and schedule</dt><dd>Confirmed for your site</dd></div></dl>
+          <p>Send a location, photos, approximate dimensions and your target date.</p>
+          <Link href={'/services/' + service.slug} className="field-link">Materials &amp; specifications ↗</Link>
+        </aside>
       </section>
-
-      {/* Body */}
-      <section className="border-b-2 border-ink bg-paper">
-        <div className="mx-auto max-w-content px-5 py-14 md:px-8 md:py-20">
-          <div className="max-w-2xl space-y-5">
-            {paragraphs.map((p, i) => (
-              <p key={i} className="text-[15px] leading-relaxed text-ink-muted">{p}</p>
-            ))}
-          </div>
-        </div>
-      </section>
-
       {/* Gallery */}
       {photos.length > 0 && <GalleryStrip photos={photos} />}
+
+      <section className="field-container regional-faq" aria-labelledby="regional-faq-heading">
+        <h2 id="regional-faq-heading">{service.name}: questions before you order</h2>
+        <Accordion items={service.faqs} />
+      </section>
 
       {/* Related cities */}
       {page.relatedCities.length > 0 && (
@@ -134,13 +100,13 @@ export default async function ProgrammaticPage({ params }: { params: Promise<Par
           <div className="mx-auto max-w-content px-5 py-12 md:px-8 md:py-16">
             <p className="spec mb-5 text-signal">Also available in</p>
             <div className="flex flex-wrap gap-3">
-              {page.relatedCities.map(city => (
+              {relatedCityPages.map(relatedPage => (
                 <Link
-                  key={city}
-                  href={`/${page.service}-in-${city}`}
+                  key={relatedPage.slug}
+                  href={`/${relatedPage.slug}`}
                   className="spec border-2 border-ink px-4 py-2.5 text-ink transition-colors hover:bg-ink hover:text-paper"
                 >
-                  {service.name} in {CITY_LABELS[city] ?? city}
+                  {service.name} in {CITY_LABELS[relatedPage.city] ?? relatedPage.city}
                 </Link>
               ))}
               <Link
@@ -154,22 +120,10 @@ export default async function ProgrammaticPage({ params }: { params: Promise<Par
         </section>
       )}
 
-      {/* CTA */}
-      <section className="bg-signal">
-        <div className="mx-auto max-w-content px-5 py-16 md:px-8 md:py-20">
-          <h2 className="display mt-4 text-signal-ink" style={{ fontSize: 'clamp(2.25rem, 6vw, 5rem)' }}>
-            {service.name}
-            <br />
-            in {cityLabel}.
-          </h2>
-          <WhatsAppLink
-            href={waUrl}
-            source={`programmatic:${slug}`}
-            className="mt-8 inline-flex items-center gap-2 border-2 border-ink bg-ink px-7 py-4 text-sm font-bold uppercase tracking-[0.08em] text-paper shadow-[5px_5px_0_0_rgba(0,0,0,0.35)] transition-all hover:-translate-x-px hover:-translate-y-px hover:shadow-[7px_7px_0_0_rgba(0,0,0,0.35)] active:translate-x-0.5 active:translate-y-0.5 active:shadow-[2px_2px_0_0_rgba(0,0,0,0.35)]"
-          >
-            WhatsApp us now →
-          </WhatsAppLink>
-          <p className="spec mt-8 text-signal-ink">Share a photo, size and location for a project-specific quote.</p>
+      <section className="commission">
+        <div className="field-container commission-inner">
+          <div><p className="spec">Start with the site</p><h2>{service.name}<br />in {cityLabel}.</h2></div>
+          <div className="commission-actions"><p>Share a photo, size and location for a project-specific quote.</p><WhatsAppLink href={waUrl} source={'programmatic:' + slug} className="cta cta--md">WhatsApp us now →</WhatsAppLink></div>
         </div>
       </section>
     </>

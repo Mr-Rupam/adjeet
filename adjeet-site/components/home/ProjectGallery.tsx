@@ -5,9 +5,9 @@ import { photos } from '@/content/gallery'
 import styles from './Home.module.css'
 
 const SELECTED_WORK = [
-  { id: 'acp-ambuja', label: 'ACP & LED signage' },
-  { id: 'vb-srmb', label: 'Vehicle branding' },
-  { id: 'gs-acc', label: 'Glow sign board' },
+  { id: 'gs-acc', label: 'Glow sign board', client: 'ACC' },
+  { id: 'vb-srmb', label: 'Vehicle branding', client: 'SRMB' },
+  { id: 'acp-ambuja', label: 'ACP & LED signage', client: 'Ambuja Cement' },
 ] as const
 
 export function ProjectGallery() {
@@ -21,15 +21,15 @@ export function ProjectGallery() {
     <section id="selected-work" className={styles.work} aria-labelledby="work-heading">
       <div className={styles.sectionIntro} data-home-reveal>
         <div>
-          <p className={styles.kicker}>Selected work</p>
-          <h2 id="work-heading">You&apos;ve probably<br />seen our work.</h2>
+          <p className={styles.kicker}>01 / Selected work</p>
+            <h2 id="work-heading">You&apos;ve probably<br /><span>seen our work.</span></h2>
         </div>
         <p>Real installations from the routes our team works every day.</p>
       </div>
 
       <div className={styles.workGrid}>
         {projects.map((project, index) => (
-          <Link href="/portfolio" key={project.id} className={`${styles.workCard} ${index === 0 ? styles.workCardLead : ''}`} data-home-reveal aria-label={`${project.photo.alt}. Explore all work.`}>
+          <Link href={`/portfolio?service=${project.photo.service}`} key={project.id} className={styles.workCard} aria-label={`${project.photo.alt}. Explore all work.`}>
             <figure>
               <div className={styles.workImage}>
                 <Image
@@ -41,7 +41,7 @@ export function ProjectGallery() {
                 />
               </div>
               <figcaption>
-                <span>{project.label}</span>
+                <span><strong>{project.client}</strong><small>{project.label} / North Bengal</small></span>
                 <ArrowUpRight size={18} aria-hidden="true" />
               </figcaption>
             </figure>
