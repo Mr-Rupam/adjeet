@@ -1,5 +1,7 @@
-// GA4 measurement ID: set NEXT_PUBLIC_GA_ID in .env.local / Vercel env vars
-export const GA_ID = process.env.NEXT_PUBLIC_GA_ID ?? ''
+// GA4 measurement ID for adjeet.in. A measurement ID is public (it ships in the
+// page either way), so it lives in code; NEXT_PUBLIC_GA_ID can still override it.
+// The tag only loads after a visitor accepts analytics in the consent banner.
+export const GA_ID = process.env.NEXT_PUBLIC_GA_ID || 'G-MHDXYFE82G'
 
 type GtagFn = (...args: unknown[]) => void
 
