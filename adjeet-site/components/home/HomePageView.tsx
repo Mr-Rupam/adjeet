@@ -31,7 +31,7 @@ export function HomePageView() {
           <h1 id="home-heading">Signage &amp; <br />outdoor advertising <br /><span>in Siliguri.</span></h1>
           <div className={styles.heroDescription}>
             <p className={styles.heroCategory}>From your shopfront to the streets of North Bengal.</p>
-            <p>Glow sign boards, ACP &amp; LED signage, flex printing and vehicle branding. Designed, fabricated and installed from our Siliguri workshop.</p>
+            <p>Glow sign boards, ACP &amp; 3D LED letters, flex printing and vehicle branding. Designed, fabricated and installed from our Siliguri workshop for North Bengal and Sikkim.</p>
           </div>
           <div className={styles.heroActions}>
             <QuoteCTA source="hero" label="WhatsApp your project" />

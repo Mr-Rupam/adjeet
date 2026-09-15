@@ -37,6 +37,9 @@ export const COVERAGE_AREAS = [
   { name: 'North Dinajpur' },
   { name: 'South Dinajpur' },
   { name: 'The Dooars' },
+  // The 2025 company profile sells "North Bengal & Sikkim", with installs
+  // photographed in Gangtok and Rangpo.
+  { name: 'Sikkim' },
 ] as const
 
 /**

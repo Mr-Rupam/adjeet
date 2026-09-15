@@ -106,6 +106,13 @@ export default async function ServiceDetailPage({
         </div>
       </section>
 
+      {/* A short, quotable definition for searchers and answer engines */}
+      <section className="field-container service-locations" aria-labelledby="service-answer-heading">
+        <h2 id="service-answer-heading">{service.question}</h2>
+        <p>{service.answer}</p>
+        <p>Also known as: {service.alternateNames.join(', ')}.</p>
+      </section>
+
       {/* Spec sheet */}
       <section className="service-specs border-b border-rule" aria-label="Service specifications">
         <div className="mx-auto max-w-content px-5 py-12 md:px-8 md:py-16">

@@ -1,6 +1,7 @@
 import { test, expect, type Page } from '@playwright/test'
 import { programmaticPages } from '../../content/programmatic'
 import { SERVICE_SLUGS } from '../../content/services'
+import { COVERAGE_AREAS } from '../../lib/coverage'
 
 test.beforeEach(async ({ page }) => {
   await page.addInitScript(() => {
@@ -9,11 +10,11 @@ test.beforeEach(async ({ page }) => {
   })
 })
 
-test('new homepage keeps real project discovery and all ten coverage areas accessible', async ({ page }) => {
+test('new homepage keeps real project discovery and every coverage area accessible', async ({ page }) => {
   await page.goto('/')
   await expect(page.getByRole('heading', { level: 1 })).toHaveText('Signage & outdoor advertising in Siliguri.')
   await expect(page.locator('#hero-section').getByRole('link', { name: 'WhatsApp your project' })).toBeVisible()
-  await expect(page.getByRole('list', { name: 'Areas we serve' }).getByRole('listitem')).toHaveCount(10)
+  await expect(page.getByRole('list', { name: 'Areas we serve' }).getByRole('listitem')).toHaveCount(COVERAGE_AREAS.length)
   await page.getByRole('link', { name: 'Explore Ambuja Cement ACP and LED signage' }).click()
   await expect(page).toHaveURL(/service=acp-led-signage/)
   await expect(page.getByRole('button', { name: /^View:/ })).toHaveCount(1)

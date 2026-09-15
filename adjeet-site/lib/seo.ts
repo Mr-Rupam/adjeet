@@ -1,5 +1,5 @@
 import type { Metadata } from 'next'
-import type { Service } from '@/content/services'
+import { services, type Service } from '@/content/services'
 import { COVERAGE_AREAS } from '@/lib/coverage'
 import { business } from '@/lib/business'
 
@@ -7,7 +7,7 @@ export const siteConfig = {
   name: business.name,
   url: business.url,
   ogImage: '/Ambuja_cement_ACP-LED.png',
-  description: 'Signage and outdoor advertising in Siliguri since 1990. Glow sign boards, ACP & LED signage, flex printing and vehicle branding across North Bengal.',
+  description: 'Sign board makers in Siliguri since 1990: glow sign boards, ACP and 3D LED letters, flex printing and vehicle branding for North Bengal and Sikkim.',
 }
 
 export function buildPageMetadata({ title, description, path }: {
@@ -39,8 +39,8 @@ export function jsonLdString(schema: unknown): string {
 
 export function generateServiceMetadata(service: Service): Metadata {
   return buildPageMetadata({
-    title: `${service.name} in Siliguri`,
-    description: `${service.name} from AD JEET in Siliguri. Compare materials, plan your project and request a quote for work across North Bengal.`,
+    title: service.seoTitle,
+    description: service.metaDescription,
     path: `/services/${service.slug}`,
   })
 }
@@ -51,6 +51,9 @@ export function buildLocalBusinessJsonLd() {
     '@type': 'LocalBusiness',
     '@id': `${siteConfig.url}/#business`,
     name: siteConfig.name,
+    // "Jeet" alone resolves to unrelated people, so spell out the variants
+    // buyers and directories use for the same business.
+    alternateName: ['ADJEET', 'AD-JEET', 'Ad Jeet Siliguri'],
     description: siteConfig.description,
     url: siteConfig.url,
     telephone: business.phone,
@@ -68,6 +71,15 @@ export function buildLocalBusinessJsonLd() {
       addressCountry: 'IN',
     },
     areaServed: COVERAGE_AREAS.map(a => a.name),
+    knowsAbout: services.flatMap(service => [service.name, ...service.alternateNames]),
+    hasOfferCatalog: {
+      '@type': 'OfferCatalog',
+      name: 'Signage, printing and outdoor advertising services',
+      itemListElement: services.map(service => ({
+        '@type': 'Offer',
+        itemOffered: { '@type': 'Service', name: service.name, url: `${siteConfig.url}/services/${service.slug}` },
+      })),
+    },
   }
 }
 
@@ -79,7 +91,8 @@ export function buildServiceJsonLd(service: Service, location?: { city: string; 
     '@id': `${url}#service`,
     url,
     name: location ? `${service.name} in ${location.city}` : service.name,
-    description: location?.description ?? service.description,
+    alternateName: service.alternateNames,
+    description: location?.description ?? service.answer,
     provider: { '@id': `${siteConfig.url}/#business` },
     areaServed: location ? [location.city] : COVERAGE_AREAS.map(a => a.name),
     serviceType: service.name,

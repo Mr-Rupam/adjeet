@@ -28,6 +28,8 @@ const ROW_2: Client[] = [
   { name: 'SEL TMT', sector: 'Steel' },
   { name: 'Adani Cement', sector: 'Cement' },
   { name: 'Anchor', sector: 'Electricals' },
+  { name: 'SD Lion TMT', sector: 'Steel' },
+  { name: 'Dish TV', sector: 'DTH' },
 ]
 
 export function ClientStreet() {

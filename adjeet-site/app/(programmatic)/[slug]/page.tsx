@@ -22,11 +22,10 @@ export async function generateMetadata({ params }: { params: Promise<Params> }):
   const { slug } = await params
   const page = getProgrammaticPage(slug)
   if (!page) return {}
-  const service = getServiceBySlug(page.service as ServiceSlug)
   const city = CITY_LABELS[page.city] ?? page.city
   return buildPageMetadata({
-    title: service ? `${service.name} in ${city}` : page.headline,
-    description: `${service?.name} in ${city} from AD JEET's Siliguri workshop. Materials, site-planning guidance and project quotes for North Bengal.`,
+    title: `${page.searchPhrase} in ${city}`,
+    description: `${page.searchPhrase} in ${city} and nearby ${page.nearbyAreas.slice(0, 2).join(' and ')}, made at AD JEET's Siliguri workshop. What to send, materials and a project quote.`,
     path: `/${slug}`,
   })
 }
@@ -46,9 +45,11 @@ export default async function ProgrammaticPage({ params }: { params: Promise<Par
     const match = programmaticPages.find(candidate => candidate.service === page.service && candidate.city === city)
     return match ? [match] : []
   })
+  // The local question leads, so the same answer appears on the page and in the FAQ markup.
+  const faqs = [page.faq, ...service.faqs]
 
   const serviceSchema = buildServiceJsonLd(service, { city: cityLabel, path: `/${slug}`, description: page.body })
-  const faqSchema = service.faqs.length > 0 ? buildFaqJsonLd(service.faqs) : null
+  const faqSchema = buildFaqJsonLd(faqs)
   const breadcrumb = buildBreadcrumbJsonLd([
     { name: 'Home', url: '/' },
     { name: 'Services', url: '/services' },
@@ -62,13 +63,13 @@ export default async function ProgrammaticPage({ params }: { params: Promise<Par
     <>
       <ProgrammaticPageTracker service={page.service} city={page.city} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLdString(serviceSchema) }} />
-      {faqSchema && <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLdString(faqSchema) }} />}
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLdString(faqSchema) }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLdString(breadcrumb) }} />
 
       <nav aria-label="Breadcrumb" className="field-container service-detail-breadcrumb regional-breadcrumb">
         <Link href="/">Home</Link><span aria-hidden="true">/</span><Link href="/services">Services</Link><span aria-hidden="true">/</span><Link href={'/services/' + service.slug}>{service.name}</Link><span aria-hidden="true">/</span><span aria-current="page">{cityLabel}</span>
       </nav>
-      <PageMasthead compact meta={[service.name, cityLabel, 'North Bengal']} title={page.headline} lead={service.tagline}>
+      <PageMasthead compact meta={[service.name, cityLabel, page.city === 'gangtok' ? 'Sikkim' : 'North Bengal']} title={page.headline} lead={service.tagline}>
         <WhatsAppLink href={waUrl} source={'programmatic:' + slug} className="cta cta--md">Discuss your project ↗</WhatsAppLink>
       </PageMasthead>
       <section className="regional-body field-container">
@@ -76,12 +77,14 @@ export default async function ProgrammaticPage({ params }: { params: Promise<Par
           {paragraphs.map((p, i) => <p key={i}>{p}</p>)}
           <h2>Planning your {cityLabel} project</h2>
           <p>{page.localBrief}</p>
+          <h2>{service.question}</h2>
+          <p>{service.answer}</p>
           <h2>What we can make</h2>
           <p>{service.description}</p>
         </div>
         <aside className="regional-spec">
           <p className="spec text-signal">Project notes / {cityLabel}</p>
-          <dl><div><dt>Workshop base</dt><dd>Siliguri</dd></div><div><dt>Project location</dt><dd>{cityLabel}</dd></div><div><dt>Quote and schedule</dt><dd>Confirmed for your site</dd></div></dl>
+          <dl><div><dt>Workshop base</dt><dd>Siliguri</dd></div><div><dt>Project location</dt><dd>{cityLabel}</dd></div><div><dt>Nearby areas</dt><dd>{page.nearbyAreas.join(', ')}</dd></div><div><dt>Quote and schedule</dt><dd>Confirmed for your site</dd></div></dl>
           <p>Send a location, photos, approximate dimensions and your target date.</p>
           <Link href={'/services/' + service.slug} className="field-link">Materials &amp; specifications ↗</Link>
         </aside>
@@ -90,12 +93,12 @@ export default async function ProgrammaticPage({ params }: { params: Promise<Par
       {photos.length > 0 && <GalleryStrip photos={photos} />}
 
       <section className="field-container regional-faq" aria-labelledby="regional-faq-heading">
-        <h2 id="regional-faq-heading">{service.name}: questions before you order</h2>
-        <Accordion items={service.faqs} />
+        <h2 id="regional-faq-heading">{page.searchPhrase} in {cityLabel}: questions before you order</h2>
+        <Accordion items={faqs} />
       </section>
 
       {/* Related cities */}
-      {page.relatedCities.length > 0 && (
+      {relatedCityPages.length > 0 && (
         <section className="border-b-2 border-ink bg-paper-elevated">
           <div className="mx-auto max-w-content px-5 py-12 md:px-8 md:py-16">
             <p className="spec mb-5 text-signal">Also available in</p>

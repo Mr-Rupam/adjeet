@@ -1,24 +1,49 @@
 import { type CitySlug } from '@/content/cities'
 import { getServiceBySlug } from '@/content/services'
+import { business } from '@/lib/business'
 
-export type ProgrammaticCity = CitySlug
+// Gangtok has regional guides but no portfolio photographs yet, so it stays out
+// of the gallery's CitySlug list and therefore out of the portfolio city filter.
+export type ProgrammaticCity = CitySlug | 'gangtok'
 export const PROG_SERVICES = ['glow-sign-boards', 'acp-led-signage', 'flex-printing', 'vehicle-branding', 'f-pole-installation'] as const
 export type ProgrammaticService = (typeof PROG_SERVICES)[number]
-export const CITY_LABELS: Record<CitySlug, string> = { siliguri: 'Siliguri', jalpaiguri: 'Jalpaiguri', 'cooch-behar': 'Cooch Behar', darjeeling: 'Darjeeling', malda: 'Malda' }
+export const CITY_LABELS: Record<ProgrammaticCity, string> = { siliguri: 'Siliguri', jalpaiguri: 'Jalpaiguri', 'cooch-behar': 'Cooch Behar', darjeeling: 'Darjeeling', malda: 'Malda', gangtok: 'Gangtok' }
+
+/** The singular phrase buyers type, matching the page URL, and a plain name for the work. */
+const SEARCH_TERMS: Record<ProgrammaticService, { phrase: string; work: string }> = {
+  'glow-sign-boards': { phrase: 'Glow Sign Board', work: 'glow sign boards' },
+  'acp-led-signage': { phrase: 'ACP & LED Sign Board', work: 'ACP and LED signage' },
+  'flex-printing': { phrase: 'Flex Printing', work: 'flex prints and banners' },
+  'vehicle-branding': { phrase: 'Vehicle Branding', work: 'vehicle branding' },
+  'f-pole-installation': { phrase: 'F-Pole Sign', work: 'F-pole signs' },
+}
+
+/** Nearby towns people name in enquiries. Geography only, not branch or install claims. */
+const NEARBY_AREAS: Record<ProgrammaticCity, string[]> = {
+  siliguri: ['Matigara', 'Bagdogra', 'Naxalbari'],
+  jalpaiguri: ['Mal Bazar', 'Dhupguri', 'Maynaguri'],
+  'cooch-behar': ['Dinhata', 'Mathabhanga', 'Tufanganj'],
+  darjeeling: ['Kurseong', 'Mirik', 'Sonada'],
+  malda: ['English Bazar', 'Old Malda', 'Chanchal'],
+  gangtok: ['Rangpo', 'Singtam', 'Ranipool'],
+}
 
 export interface ProgrammaticPage {
   service: ProgrammaticService
-  city: CitySlug
+  city: ProgrammaticCity
   slug: string
   headline: string
+  searchPhrase: string
   body: string
   localBrief: string
-  relatedCities: CitySlug[]
+  nearbyAreas: string[]
+  faq: { q: string; a: string }
+  relatedCities: ProgrammaticCity[]
 }
 
 // Existing routes retained. These are service-area planning guides, not claims
 // of local branches, completed installations or guaranteed travel schedules.
-const briefs: { service: ProgrammaticService; city: CitySlug; slug: string; localBrief: string }[] = [
+const briefs: { service: ProgrammaticService; city: ProgrammaticCity; slug: string; localBrief: string }[] = [
   {"service": "glow-sign-boards", "city": "siliguri", "slug": "glow-sign-board-in-siliguri", "localBrief": "Share one straight-on photograph of your Siliguri shopfront and another from the approach customers use. Include the available sign width, shutters or awnings below it, and a photograph after dark if the business opens in the evening. These details help us discuss letter size, illumination and installation access before a site measurement."},
   {"service": "glow-sign-boards", "city": "jalpaiguri", "slug": "glow-sign-board-in-jalpaiguri", "localBrief": "For a Jalpaiguri glow sign, include the shopfront dimensions and photographs showing rain cover, nearby signs and the proposed power connection. If several branches need matching signs, list each address and size separately. This lets the team discuss a consistent layout while checking the mounting surface and electrical access at each site."},
   {"service": "glow-sign-boards", "city": "cooch-behar", "slug": "glow-sign-board-in-cooch-behar", "localBrief": "Planning a glow sign for a Cooch Behar shop or office? Show how the frontage looks from both directions, and note any shared entrance or neighbouring sign that limits the available space. Send the exact site location with the brief so transport, measurement and installation can be discussed together before production is booked."},
@@ -44,17 +69,29 @@ const briefs: { service: ProgrammaticService; city: CitySlug; slug: string; loca
   {"service": "f-pole-installation", "city": "cooch-behar", "slug": "f-pole-installation-in-cooch-behar", "localBrief": "For a Cooch Behar roadside or entrance sign, show the proposed position in relation to the property boundary, entrance and any existing structures. Provide an exact location and explain who controls the land. The brief should cover permissions, site assessment, foundation work, transport and installation so the complete scope can be reviewed together."},
   {"service": "f-pole-installation", "city": "darjeeling", "slug": "f-pole-installation-in-darjeeling", "localBrief": "For an F-pole project in Darjeeling, provide an exact location and photographs showing the slope, retaining structures and installation access. A qualified site and structural assessment is needed before discussing a foundation or pole height. Send any available drawings with the enquiry; no standard foundation depth or wind-performance claim applies to every hill site."},
   {"service": "f-pole-installation", "city": "malda", "slug": "f-pole-installation-in-malda", "localBrief": "For a Malda F-pole enquiry, send a site pin, photographs from both approach directions and any available plot or entrance drawings. Note overhead services and access for installation equipment. Ask for the quote to identify design, permissions, civil work, fabrication, transport and fitting responsibilities before committing to a production or installation date."},
+  // Sikkim guides: the company profile lists Gangtok and Rangpo installs.
+  {"service": "glow-sign-boards", "city": "gangtok", "slug": "glow-sign-board-in-gangtok", "localBrief": "For a Gangtok glow sign, photograph the frontage from the road and from any steps or lane leading to the shop, since many hillside and market premises are reached on foot. Note the power point, the height above the walkway and any signage rules your building or market follows. The sign size, hill transport and fitting day are planned once the location is clear."},
+  {"service": "acp-led-signage", "city": "gangtok", "slug": "acp-led-signage-in-gangtok", "localBrief": "For ACP signage or 3D LED letters in Gangtok, photograph the full facade, the fixing surface and the route from the nearest point where a vehicle can stop. Panel sizes may need to suit narrow roads and stairways. Share brand guidelines, the site pin and any building rules on exterior fixtures so the panel layout, fixing and transport can be quoted together."},
 ]
 
 export const programmaticPages: ProgrammaticPage[] = briefs.map(brief => {
   const service = getServiceBySlug(brief.service)!
   const city = CITY_LABELS[brief.city]
-  const body = `AD JEET provides ${service.name.toLowerCase()} for projects in ${city}, with design and fabrication based at our Siliguri workshop. Share your exact site location to discuss measurement, delivery and installation for the agreed project scope.`
+  const { phrase, work } = SEARCH_TERMS[brief.service]
+  const nearbyAreas = NEARBY_AREAS[brief.city]
+  const nearbyList = `${nearbyAreas.slice(0, -1).join(', ')} and ${nearbyAreas.at(-1)}`
+  const body = `AD JEET provides ${service.name.toLowerCase()} for projects in ${city}, with design and fabrication based at our Siliguri workshop. We also plan work in nearby areas such as ${nearbyList}. Share your exact site location to discuss measurement, delivery and installation for the agreed project scope.`
   return {
     ...brief,
     headline: `${service.name} in ${city}`,
+    searchPhrase: phrase,
     body,
-    relatedCities: Object.keys(CITY_LABELS).filter(other => other !== brief.city) as CitySlug[],
+    nearbyAreas,
+    faq: {
+      q: `Can AD JEET handle ${work} for a site in ${city}?`,
+      a: `Yes. Design and fabrication happen at our Siliguri workshop, and delivery and installation in ${city} are agreed for each site, including nearby areas such as ${nearbyList}. Send the exact location, site photos, approximate size and target date on WhatsApp at ${business.phoneDisplay} for a project quote.`,
+    },
+    relatedCities: (Object.keys(CITY_LABELS) as ProgrammaticCity[]).filter(other => other !== brief.city),
   }
 })
 

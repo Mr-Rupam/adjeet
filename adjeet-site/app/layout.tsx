@@ -19,7 +19,7 @@ const siteDescription = siteConfig.description
 export const metadata: Metadata = {
   metadataBase: new URL('https://adjeet.in'),
   title: {
-    default: 'Signage & Outdoor Advertising in Siliguri | AD JEET',
+    default: 'Sign Board Makers & Outdoor Advertising in Siliguri | AD JEET',
     template: '%s | AD JEET',
   },
   description: siteDescription,
@@ -27,7 +27,7 @@ export const metadata: Metadata = {
     google: '_uBPSx4pM-PlgTFlrNQ2C6hzGj90A9JUeW4XH7nJc5g',
   },
   openGraph: {
-    title: 'Signage & Outdoor Advertising in Siliguri | AD JEET',
+    title: 'Sign Board Makers & Outdoor Advertising in Siliguri | AD JEET',
     description: siteDescription,
     url: 'https://adjeet.in',
     siteName: 'AD JEET',
@@ -37,7 +37,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Signage & Outdoor Advertising in Siliguri | AD JEET',
+    title: 'Sign Board Makers & Outdoor Advertising in Siliguri | AD JEET',
     description: siteDescription,
     images: [siteConfig.ogImage],
   },

@@ -21,7 +21,7 @@ async function checkAccessibility(page, route, theme, width) {
 async function crawl() {
   const sitemap = await fetch(base + '/sitemap.xml').then(response => response.text())
   const urls = [...sitemap.matchAll(/<loc>(.*?)<\/loc>/g)].map(match => match[1])
-  assert.equal(urls.length, 40)
+  assert.equal(urls.length, 42)
   assert.equal(new Set(urls).size, urls.length)
   assert(!urls.includes(canonicalBase + '/privacy'))
   const graph = new Map()
@@ -97,7 +97,7 @@ async function crawl() {
   assert(!/info@adjeet|Jeet Kumar Sarkar/.test(llms))
   const missing = await fetch(base + '/not-a-real-service')
   assert.equal(missing.status, 404)
-  console.log('Crawl: 40 canonical pages, matching metadata and FAQ text, all reachable from home; 6 bot-agent responses passed.')
+  console.log('Crawl: ' + urls.length + ' canonical pages, matching metadata and FAQ text, all reachable from home; 6 bot-agent responses passed.')
 }
 
 async function visual() {

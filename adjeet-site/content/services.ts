@@ -1,3 +1,5 @@
+import { SERVICE_SEARCH, type ServiceSearch } from '@/content/service-search'
+
 export const SERVICE_SLUGS = [
   'glow-sign-boards',
   'acp-led-signage',
@@ -13,7 +15,7 @@ export const SERVICE_SLUGS = [
 
 export type ServiceSlug = (typeof SERVICE_SLUGS)[number]
 
-export interface Service {
+export interface Service extends Omit<ServiceSearch, 'faqs'> {
   slug: string
   name: string
   tagline: string
@@ -27,7 +29,9 @@ export interface Service {
   icon: string
 }
 
-export const services: Service[] = [
+type ServiceBase = Omit<Service, Exclude<keyof ServiceSearch, 'faqs'>>
+
+const baseServices: ServiceBase[] = [
   {
     slug: 'glow-sign-boards',
     name: 'Glow Sign Boards',
@@ -303,6 +307,13 @@ export const services: Service[] = [
     icon: 'display',
   },
 ]
+
+// Search phrasing lives in content/service-search.ts. Its buyer questions come
+// first because they match what people ask before they know the trade terms.
+export const services: Service[] = baseServices.map(service => {
+  const { faqs, ...search } = SERVICE_SEARCH[service.slug as ServiceSlug]
+  return { ...service, ...search, faqs: [...faqs, ...service.faqs] }
+})
 
 export function getServiceBySlug(slug: ServiceSlug): Service | undefined {
   return services.find(s => s.slug === slug)

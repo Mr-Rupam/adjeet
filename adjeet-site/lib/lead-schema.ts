@@ -10,7 +10,7 @@ export const TIMELINE_OPTIONS = [
 
 export const COVERAGE_CITIES = [
   'Siliguri', 'Jalpaiguri', 'Cooch Behar', 'Darjeeling', 'Malda',
-  'Alipurduar', 'Kalimpong', 'Other',
+  'Alipurduar', 'Kalimpong', 'Gangtok', 'Other',
 ] as const
 
 export const leadSchema = z.object({

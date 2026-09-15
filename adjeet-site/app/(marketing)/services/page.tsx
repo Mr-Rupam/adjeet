@@ -4,8 +4,8 @@ import { ServicesBoard } from '@/components/street/ServicesBoard'
 import { CommissionCTA } from '@/components/street/CommissionCTA'
 
 export const metadata = buildPageMetadata({
-  title: "Signage & Printing Services in Siliguri",
-  description: "Explore all 10 AD JEET services: glow signs, ACP and LED signage, flex printing, vehicle branding and more. Design to installation across North Bengal.",
+  title: "Sign Board, Signage & Printing Services in Siliguri",
+  description: "All 10 AD JEET services: glow sign boards, ACP and 3D LED letters, flex and hoarding printing, vehicle branding, wall painting and more across North Bengal.",
   path: "/services",
 })
 

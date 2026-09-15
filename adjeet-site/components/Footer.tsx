@@ -13,7 +13,7 @@ export function Footer() {
         <div className="col-span-2 md:col-span-1">
           <BrandLogo className="w-[200px] max-w-full" />
           <p className="mt-4 max-w-[38ch] text-sm leading-relaxed text-night-ink-muted">
-            Signage, print, and outdoor work made in Siliguri for businesses across North Bengal.
+            Signage, print, and outdoor work made in Siliguri for businesses across North Bengal and Sikkim.
           </p>
           <p className="spec mt-3 text-signal-hot md:mt-8">Since 1990</p>
         </div>

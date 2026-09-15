@@ -10,9 +10,12 @@ export const business = {
   phoneDisplay: '+91 98320 11524',
   email: 'ranjitadjeet@gmail.com',
   logo: '/brand/adjeet-original.png',
-  office: 'Platinum Square',
+  // Station Feeder Road (S.F. Road) post office area. Other businesses in the
+  // same building list "Platinum Square, S.F Road, Siliguri 734005"; 734001 is
+  // the Siliguri head office PIN and was wrong here.
+  office: 'Platinum Square, Station Feeder Road',
   workshop: 'Patiram Jote',
   city: 'Siliguri',
   region: 'West Bengal',
-  postalCode: '734001',
+  postalCode: '734005',
 } as const

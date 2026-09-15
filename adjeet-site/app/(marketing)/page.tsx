@@ -3,7 +3,7 @@ import { buildPageMetadata, buildFaqJsonLd, jsonLdString, siteConfig } from '@/l
 import { homeFaqs } from '@/content/home-faqs'
 
 export const metadata = buildPageMetadata({
-  title: 'Signage & Outdoor Advertising in Siliguri',
+  title: 'Sign Board Makers & Outdoor Advertising in Siliguri',
   description: siteConfig.description,
   path: '/',
 })

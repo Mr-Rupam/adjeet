@@ -31,6 +31,6 @@ describe('sitemap', () => {
     expect(entries).toHaveLength(5 + SERVICE_SLUGS.length + getProgrammaticSlugs().length)
   })
   it('uses the content review date rather than the deployment date', () => {
-    for (const entry of entries) expect(entry.lastModified).toEqual(new Date('2026-09-14'))
+    for (const entry of entries) expect(entry.lastModified).toEqual(new Date('2026-09-15'))
   })
 })

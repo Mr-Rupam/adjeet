@@ -71,7 +71,7 @@ export default function PrivacyPage() {
           <h2 className="display text-xl text-ink mb-3">6. Your Rights</h2>
           <p>
             You have the right to access, correct, or delete personal data we hold about you. To exercise these
-            rights, contact us via WhatsApp at +91 98320 11524 or visit our office at Platinum Square, Siliguri.
+            rights, contact us via WhatsApp at +91 98320 11524 or visit our office at Platinum Square, Station Feeder Road, Siliguri 734005.
           </p>
         </section>
 
