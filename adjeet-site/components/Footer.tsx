@@ -31,8 +31,8 @@ export function Footer() {
         <div className="min-w-0">
           <p className="spec mb-3 text-signal-hot">Talk to the workshop</p>
           <address className="not-italic text-sm leading-relaxed text-night-ink-muted">
-            <p className="m-0">{business.office}, {business.city}, {business.region} {business.postalCode}</p>
-            <p className="mt-4">Workshop: {business.workshop}, {business.city}, {business.region}</p>
+            <p className="m-0">Workshop: {business.street}, {business.city}, {business.region} {business.postalCode}</p>
+            <p className="mt-4">Office: {business.office}, {business.city} {business.officePostalCode}</p>
           </address>
           <p className="mt-4 text-sm text-night-ink-muted">{WHATSAPP_DISPLAY}</p>
           <div className="flex flex-wrap gap-x-3 text-sm">

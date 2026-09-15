@@ -7,7 +7,7 @@ export const homeFaqs = [
   },
   {
     q: 'Where is AD JEET based, and which areas do you serve?',
-    a: `Our office is at ${business.office}, Siliguri, West Bengal ${business.postalCode}, and our workshop is in ${business.workshop}, Siliguri. We serve projects across North Bengal, including Darjeeling, Jalpaiguri, Cooch Behar, Alipurduar, Kalimpong, Malda, North and South Dinajpur and the Dooars, and in Sikkim, including Gangtok. Share your exact location to confirm a site visit and installation schedule.`,
+    a: `Our workshop is at ${business.street}, Siliguri, West Bengal ${business.postalCode}, open ${business.hours}. Our office is at ${business.office}, Siliguri ${business.officePostalCode}. We serve projects across North Bengal, including Darjeeling, Jalpaiguri, Cooch Behar, Alipurduar, Kalimpong, Malda, North and South Dinajpur and the Dooars, and in Sikkim, including Gangtok. Share your exact location to confirm a site visit and installation schedule.`,
   },
   {
     q: 'How much does a sign board cost in Siliguri?',

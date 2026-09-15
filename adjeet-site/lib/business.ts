@@ -10,12 +10,20 @@ export const business = {
   phoneDisplay: '+91 98320 11524',
   email: 'ranjitadjeet@gmail.com',
   logo: '/brand/adjeet-original.png',
-  // Station Feeder Road (S.F. Road) post office area. Other businesses in the
-  // same building list "Platinum Square, S.F Road, Siliguri 734005"; 734001 is
-  // the Siliguri head office PIN and was wrong here.
-  office: 'Platinum Square, Station Feeder Road',
+  // Primary address, copied from the owner-managed Google Business Profile
+  // (checked 2026-09-15). Structured data and directory listings must use this
+  // exact address so every source agrees on where AD JEET is.
   workshop: 'Patiram Jote',
+  street: 'Chowrangi More, Kalabagan Road, opp. B.T. Ranadev S.S.K. School, near Kalimandir, Patiram Jote',
+  postalCode: '734010',
+  // Second address. Other businesses in this building list
+  // "Platinum Square, S.F Road, Siliguri 734005".
+  office: 'Platinum Square, Station Feeder Road',
+  officePostalCode: '734005',
   city: 'Siliguri',
   region: 'West Bengal',
-  postalCode: '734005',
+  // Map pin and hours from the same Business Profile.
+  geo: { latitude: 26.6989425, longitude: 88.4010972 },
+  mapsUrl: 'https://maps.google.com/?cid=1175174050283154218',
+  hours: 'Monday to Saturday, 10 am to 8 pm; closed Sunday',
 } as const

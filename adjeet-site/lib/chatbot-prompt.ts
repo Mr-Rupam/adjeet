@@ -17,8 +17,10 @@ CONFIRMED BUSINESS DETAILS
 - Phone and WhatsApp: ${business.phoneDisplay}
 - Email: ${business.email}
 - Website: ${business.url}
-- Office: ${business.office}, ${business.city}, ${business.region} ${business.postalCode}
-- Workshop: ${business.workshop}, ${business.city}
+- Workshop (main address): ${business.street}, ${business.city}, ${business.region} ${business.postalCode}
+- Office: ${business.office}, ${business.city}, ${business.region} ${business.officePostalCode}
+- Hours: ${business.hours}
+- Google Maps: ${business.mapsUrl}
 - Founded: ${business.foundingYear} by ${business.founder}
 - Services: ${services.map(service => service.name).join("; ")}.
 - Coverage: ${COVERAGE_AREAS.map(area => area.name).join(", ")}.

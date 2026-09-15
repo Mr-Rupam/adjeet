@@ -27,9 +27,9 @@ export default function ContactPage() {
         <aside className="contact-intro">
           <h2>A conversation.<br />Then a plan.</h2>
           {METHODS.map(item => <a key={item.method} href={item.href} target={item.external ? '_blank' : undefined} rel={item.external ? 'noopener noreferrer' : undefined} className="contact-method"><span className="spec">{item.method} ↗</span><strong>{item.value}</strong><small>{item.note}</small></a>)}
-          <div className="contact-address"><p className="spec">Find us in Siliguri</p><h3>Office / {business.office}</h3><p>{business.city}, {business.region} {business.postalCode}</p><h3>Workshop / {business.workshop}</h3><p>{business.city}, {business.region}</p></div>
-          <a className="contact-location-link" href="https://www.google.com/maps/search/?api=1&query=Platinum+Square+Station+Feeder+Road+Siliguri+734005" target="_blank" rel="noopener noreferrer">
-            <span className="spec">Plan your visit</span><strong>Platinum Square, S.F. Road, Siliguri</strong><span>Find the office in Google Maps ↗</span>
+          <div className="contact-address"><p className="spec">Find us in Siliguri</p><h3>Workshop / {business.workshop}</h3><p>{business.street}, {business.city}, {business.region} {business.postalCode}. Open {business.hours}.</p><h3>Office / {business.office}</h3><p>{business.city}, {business.region} {business.officePostalCode}</p></div>
+          <a className="contact-location-link" href={business.mapsUrl} target="_blank" rel="noopener noreferrer">
+            <span className="spec">Plan your visit</span><strong>AD JEET, Patiram Jote, Siliguri</strong><span>Open our Google Maps listing ↗</span>
           </a>
         </aside>
         <div className="contact-form"><h2>Send a project brief.</h2><p>The location, what you need and when you need it.</p><LeadForm /></div>
