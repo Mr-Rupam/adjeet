@@ -34,9 +34,13 @@ export default function PrivacyPage() {
         <section>
           <h2 className="display text-xl text-ink mb-3">2. Analytics</h2>
           <p>
-            With your consent, we use Google Analytics 4 to understand how visitors use this site. Analytics
-            cookies are only set after you accept via the consent banner. You can withdraw consent at any time
-            by clearing your browser storage. We do not use analytics data to identify individual visitors.
+            We use Google Analytics 4 with Google Consent Mode to understand how visitors use this site. Until you
+            make a choice in the consent banner, Google Analytics runs without cookies or identifiers and sends
+            only anonymous signals, such as a page being viewed, which Google may use for aggregated, modelled
+            reports. Analytics cookies are set only if you accept. If you decline, Google Analytics is switched
+            off. Advertising storage and ad personalisation are always off. You can change your choice at any
+            time by clearing your browser storage for this site. We do not use analytics data to identify
+            individual visitors.
           </p>
         </section>
 

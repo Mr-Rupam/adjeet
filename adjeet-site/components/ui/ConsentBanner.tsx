@@ -54,7 +54,8 @@ export function ConsentBanner() {
   function respond(value: 'accepted' | 'declined') {
     localStorage.setItem(CONSENT_KEY, value)
     setVisible(false)
-    if (value === 'accepted' && typeof window !== 'undefined') {
+    // Analytics listens for both answers: accept turns on cookies, decline switches GA4 off.
+    if (typeof window !== 'undefined') {
       window.dispatchEvent(new CustomEvent('adjeet:consent', { detail: value }))
     }
   }
@@ -70,8 +71,8 @@ export function ConsentBanner() {
       className="fixed inset-x-0 bottom-0 z-50 border-t-2 border-ink bg-paper-elevated p-5 md:flex md:items-center md:justify-between md:gap-8"
     >
       <p className="mb-4 max-w-prose text-sm text-ink-muted md:mb-0">
-        We use analytics cookies (Google Analytics 4) to understand how visitors use our site.
-        Analytics requires your consent.{' '}
+        We use Google Analytics to understand how visitors use our site. Until you choose, it runs
+        without cookies or identifiers. Accept to allow analytics cookies, or decline to switch analytics off.{' '}
         <Link href="/privacy" className="underline hover:text-ink">Privacy Policy</Link>
       </p>
       <div className="flex shrink-0 gap-3">
