@@ -42,6 +42,11 @@ export default function PrivacyPage() {
             time by clearing your browser storage for this site. We do not use analytics data to identify
             individual visitors.
           </p>
+          <p className="mt-2">
+            We also use Vercel Web Analytics, provided by our hosting company, to count page views in
+            aggregate. It sets no cookies, stores no identifiers and does not track you across sites, so it
+            runs for every visitor regardless of the consent banner.
+          </p>
         </section>
 
         <section>

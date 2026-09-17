@@ -8,6 +8,7 @@ import { WhatsAppFAB } from '@/components/WhatsAppFAB'
 import { Chatbot } from '@/components/Chatbot'
 import { ConsentBanner } from '@/components/ui/ConsentBanner'
 import { Analytics } from '@/components/Analytics'
+import { Analytics as VercelAnalytics } from '@vercel/analytics/next'
 import { ReducedMotionWrapper } from '@/components/motion/ReducedMotionWrapper'
 import { SiteMotion } from '@/components/motion/SiteMotion'
 import { buildLocalBusinessJsonLd, jsonLdString, siteConfig } from '@/lib/seo'
@@ -75,6 +76,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <WhatsAppFAB />
           <ConsentBanner />
           <Analytics />
+          {/* Cookieless, aggregate page views for every visitor, independent of the GA4 consent banner. */}
+          <VercelAnalytics />
         </ReducedMotionWrapper>
       </body>
     </html>
