@@ -3,7 +3,7 @@ type BadgeVariant = 'default' | 'blue' | 'ochre' | 'success'
 const BADGE_CLASSES: Record<BadgeVariant, string> = {
   default: 'bg-paper-elevated text-ink-muted',
   blue: 'bg-signal text-signal-ink',
-  ochre: 'bg-ochre text-signal-ink',
+  ochre: 'bg-ochre text-signal-hot-ink',
   success: 'bg-success text-night-ink',
 }
 

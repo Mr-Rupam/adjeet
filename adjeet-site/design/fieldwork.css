@@ -27,15 +27,15 @@
 .field-masthead--compact h1 { font-size: clamp(44px,6vw,80px); }
 .field-masthead-aside > p { font-size: 16px; line-height: 1.7; color: var(--ink-muted); max-width: 35ch; }
 .field-masthead-actions { margin-top: 24px; }
-.commission { background: var(--cobalt); color: #fff; }
+.commission { background: var(--cerulean-deep); color: #fff; }
 .commission-inner { display: grid; grid-template-columns: 1.5fr 1fr; align-items: end; gap: 50px; padding-block: 68px; }
 .commission h2 { font-family: var(--font-heading); font-size: clamp(50px,6vw,86px); font-weight: 500; line-height: 1; margin: 22px 0 0; letter-spacing: -.02em; }
 .commission-actions { display: flex; flex-direction: column; align-items: start; gap: 18px; }
 .commission-actions p { font-size: 17px; line-height: 1.6; }
-.commission .cta { background: #f3f1eb; border-color: #f3f1eb; color: #20211f; }
+.commission .cta { background: var(--map-paper); border-color: var(--map-paper); color: #172229; }
 .commission .field-link:hover { color: #fff; opacity: .8; }
 .commission :focus-visible { outline-color: #fff; }
-.site-footer .text-signal-hot { color: #a4b5ff; }
+.site-footer .text-signal-hot { color: var(--gold); }
 .site-footer .brand-logo { background: transparent; padding: 0; width: 185px; }
 .site-footer .footer-link { min-height: 44px; }
 .site-footer > div:first-child { padding-block: 55px; }

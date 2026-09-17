@@ -104,7 +104,7 @@
   width: 36px;
   height: 36px;
   border-radius: 50%;
-  background: rgb(242 241 233 / 20%);
+  background: rgb(242 235 221 / 20%);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -138,7 +138,7 @@
 .chatbot-header__close {
   background: none;
   border: none;
-  color: rgb(242 241 233 / 80%);
+  color: rgb(242 235 221 / 80%);
   cursor: pointer;
   width: 28px;
   height: 28px;
@@ -149,7 +149,7 @@
   transition: background 0.15s;
 }
 .chatbot-header__close:hover {
-  background: rgb(242 241 233 / 15%);
+  background: rgb(242 235 221 / 15%);
   color: var(--night-ink);
 }
 

@@ -122,37 +122,40 @@ section[id] {
   box-shadow: var(--elev-2);
 }
 
-.glow-signal,
-.night-glow-signal {
+.glow-signal {
   color: var(--signal);
+}
+
+.night-glow-signal {
+  color: var(--glow);
 }
 
 :root[data-theme="dark"] .glow-signal,
 .night-glow-signal {
-  text-shadow: 0 0 2px rgb(160 232 245 / 82%), 0 0 18px rgb(102 206 231 / 60%), 0 0 46px rgb(16 159 204 / 28%);
+  text-shadow: 0 0 2px rgb(172 226 246 / 82%), 0 0 18px rgb(92 198 236 / 60%), 0 0 46px rgb(0 153 208 / 28%);
 }
 
 :root[data-theme="dark"] .glow-tube,
 .night-glow-tube {
   color: var(--night-ink);
-  text-shadow: 0 0 2px rgb(242 241 233 / 92%), 0 0 18px rgb(102 206 231 / 55%), 0 0 44px rgb(16 159 204 / 30%);
+  text-shadow: 0 0 2px rgb(242 241 233 / 92%), 0 0 18px rgb(92 198 236 / 55%), 0 0 44px rgb(0 153 208 / 30%);
 }
 
 .light-pool {
-  box-shadow: 0 0 0 1px rgb(102 206 231 / 18%), 0 22px 54px rgb(0 0 0 / 22%);
+  box-shadow: 0 0 0 1px rgb(92 198 236 / 18%), 0 22px 54px rgb(0 0 0 / 22%);
 }
 
 .grid-mat {
   background-image:
-    linear-gradient(to right, rgb(18 51 59 / 6%) 1px, transparent 1px),
-    linear-gradient(to bottom, rgb(18 51 59 / 6%) 1px, transparent 1px);
+    linear-gradient(to right, rgb(23 34 41 / 6%) 1px, transparent 1px),
+    linear-gradient(to bottom, rgb(23 34 41 / 6%) 1px, transparent 1px);
   background-size: clamp(32px, 6vw, 72px) clamp(32px, 6vw, 72px);
 }
 
 :root[data-theme="dark"] .grid-mat {
   background-image:
-    linear-gradient(to right, rgb(242 241 233 / 7%) 1px, transparent 1px),
-    linear-gradient(to bottom, rgb(242 241 233 / 7%) 1px, transparent 1px);
+    linear-gradient(to right, rgb(242 235 221 / 7%) 1px, transparent 1px),
+    linear-gradient(to bottom, rgb(242 235 221 / 7%) 1px, transparent 1px);
 }
 
 .grain {
@@ -356,7 +359,7 @@ section[id] {
 }
 
 .cta:hover {
-  box-shadow: 0 12px 26px rgb(16 159 204 / 28%);
+  box-shadow: 0 12px 26px rgb(0 153 208 / 28%);
   transform: translateY(-2px);
 }
 
@@ -370,13 +373,13 @@ section[id] {
 }
 
 .cta--yellow {
-  border-color: var(--signal-hot);
+  border-color: color-mix(in srgb, var(--signal-hot) 82%, var(--signal-hot-ink));
   background: var(--signal-hot);
-  color: var(--signal-ink);
+  color: var(--signal-hot-ink);
 }
 
 .cta--yellow:hover {
-  box-shadow: 0 12px 26px rgb(241 243 109 / 24%);
+  box-shadow: 0 12px 26px rgb(233 207 63 / 30%);
 }
 
 .cta:active {
@@ -428,7 +431,7 @@ section[id] {
   flex-direction: column;
   overflow: auto;
   background:
-    radial-gradient(circle at 88% 7%, rgb(16 159 204 / 18%), transparent 26rem),
+    radial-gradient(circle at 88% 7%, rgb(0 153 208 / 18%), transparent 26rem),
     var(--paper);
   color: var(--ink);
   padding: max(1.25rem, env(safe-area-inset-top, 0px)) 1.25rem max(1.5rem, env(safe-area-inset-bottom, 0px));
@@ -536,7 +539,7 @@ section[id] {
 .quote-dock__cta {
   width: 100%;
   min-height: 54px;
-  box-shadow: 0 14px 30px rgb(8 38 45 / 24%);
+  box-shadow: 0 14px 30px rgb(13 27 36 / 24%);
   pointer-events: auto;
 }
 
