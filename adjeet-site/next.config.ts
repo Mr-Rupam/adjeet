@@ -37,7 +37,10 @@ const securityHeaders = [
       "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
       "font-src 'self' https://fonts.gstatic.com",
       "img-src 'self' data: https:",
-      "connect-src 'self' https://www.google-analytics.com https://analytics.google.com https://www.googletagmanager.com https://challenges.cloudflare.com",
+      // GA4 hits: consent-denied cookieless pings go to www.google.com/g/collect,
+      // consent-granted hits go to regional hosts such as
+      // region1.google-analytics.com and region1.analytics.google.com.
+      "connect-src 'self' https://*.google-analytics.com https://analytics.google.com https://*.analytics.google.com https://www.google.com https://www.googletagmanager.com https://challenges.cloudflare.com",
       "frame-src https://www.google.com https://maps.google.com https://challenges.cloudflare.com",
       "frame-ancestors 'none'",
       "base-uri 'none'",
