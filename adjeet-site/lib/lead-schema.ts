@@ -1,4 +1,4 @@
-import { z } from 'zod'
+import { z } from '@/lib/zod'
 import { SERVICE_SLUGS } from '@/content/services'
 
 export const TIMELINE_OPTIONS = [
