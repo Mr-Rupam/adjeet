@@ -10,6 +10,13 @@ const ALLOWED_ORIGINS = [
   'https://adjeet.vercel.app',
   'https://www.adjeet.vercel.app',
   'http://localhost:3000',
+  // A Vercel preview may post from its own deployment and branch URLs, so the
+  // form can be tested before it ships. Production never widens this list.
+  ...(process.env.VERCEL_ENV === 'preview'
+    ? [process.env.VERCEL_URL, process.env.VERCEL_BRANCH_URL]
+        .filter((host): host is string => Boolean(host))
+        .map((host) => `https://${host}`)
+    : []),
 ]
 
 // Fix 2: Upstash Redis rate limiter (replaces in-memory Map)
