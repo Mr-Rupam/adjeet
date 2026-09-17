@@ -55,10 +55,10 @@
 .journey li > p { color: var(--signal-text); }
 .journey h3 { font-weight: 500; font-size: 34px; }
 .trust { background: var(--night); color: var(--night-ink); }
-.trust > p { color: #a4b5ff; }
+.trust > p { color: var(--signal-hot); }
 .trust h2 { font-weight: 500; }
 .trustCopy p { color: var(--night-ink-muted); margin-bottom: 18px; }
-.map img { background: #f2f1e9; }
+.map img { background: var(--map-paper); }
 @media(max-width:767px) {
 .intro h1 { font-size: clamp(57px,13vw,87px); }
 .intro .workshop > div { min-height: 0; height: auto; aspect-ratio: 1.5; }

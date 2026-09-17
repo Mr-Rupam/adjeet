@@ -105,7 +105,7 @@
   font-weight: 700;
   line-height: 1.0;
   letter-spacing: -0.03em;
-  color: #F5F0E8;
+  color: var(--night-ink);
   margin: 0;
   max-width: 14ch;
 }
@@ -135,7 +135,7 @@
   gap: 10px;
   padding: 14px 28px;
   background: var(--adjeet-blue);
-  color: #FFFFFF;
+  color: var(--signal-ink);
   font-family: var(--font-inter), system-ui, sans-serif;
   font-weight: 600;
   font-size: 13.5px;
@@ -329,7 +329,7 @@
   display: block;
   padding: 15px 20px;
   background: var(--adjeet-blue);
-  color: #FFFFFF;
+  color: var(--signal-ink);
   font-family: var(--font-inter), system-ui, sans-serif;
   font-weight: 600;
   font-size: 13px;
@@ -375,7 +375,7 @@
 /* ─── CTA Strip ──────────────────────────────────────────────────────────── */
 
 .ctaStrip {
-  background: #0C0B09;
+  background: var(--night);
   border-bottom: 1px solid rgba(255, 255, 255, 0.06);
 }
 
@@ -406,7 +406,7 @@
   font-family: var(--font-serif), serif;
   font-size: clamp(1.5rem, 3vw, 2.25rem);
   font-weight: 700;
-  color: #F5F0E8;
+  color: var(--night-ink);
   letter-spacing: -0.02em;
   line-height: 1.15;
   margin: 0;
@@ -418,7 +418,7 @@
   gap: 10px;
   padding: 16px 32px;
   background: var(--adjeet-blue);
-  color: #FFFFFF;
+  color: var(--signal-ink);
   font-family: var(--font-inter), system-ui, sans-serif;
   font-weight: 600;
   font-size: 14px;
@@ -437,7 +437,7 @@
 /* ─── Lead Form Section ──────────────────────────────────────────────────── */
 
 .leadSection {
-  background: #F0EBE3;
+  background: var(--paper-deep);
   border-bottom: 1px solid var(--rule);
 }
 
@@ -482,7 +482,7 @@
 /* ─── Related Services ───────────────────────────────────────────────────── */
 
 .related {
-  background: #0C0B09;
+  background: var(--night);
   border-bottom: 1px solid rgba(255, 255, 255, 0.05);
 }
 
@@ -515,14 +515,14 @@
   flex-direction: column;
   gap: 10px;
   padding: 28px 28px 24px;
-  background: #0C0B09;
+  background: var(--night);
   text-decoration: none;
   position: relative;
   transition: background 0.18s;
 }
 
 .relatedCard:hover {
-  background: #161410;
+  background: var(--night-elevated);
 }
 
 .relatedCard:hover .relatedArrow {
@@ -534,7 +534,7 @@
   font-family: var(--font-serif), serif;
   font-size: 1.125rem;
   font-weight: 700;
-  color: #F5F0E8;
+  color: var(--night-ink);
   letter-spacing: -0.02em;
   line-height: 1.2;
 }

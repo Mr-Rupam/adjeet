@@ -54,7 +54,7 @@
 .workshopCaption { position: absolute; left: 18px; right: 18px; bottom: 16px; width: fit-content; padding: 6px 10px; background: rgb(0 0 0 / 70%); color: #fff; font-size: 11px; }
 .workshopCopy { padding: 65px clamp(30px,5vw,80px); display: flex; flex-direction: column; align-items: start; }
 .workshopCopy h2 { font-size: clamp(44px,4.8vw,70px); }
-.workshopCopy h2 span { color: #a4b5ff; }
+.workshopCopy h2 span { color: var(--glow); }
 .workshopCopy > p:not(.kicker) { color: var(--night-ink-muted); font-size: 16px; margin-top: 26px; }
 .workshopCopy > .textLink { margin-top: 24px; }
 .workshopCopy > .sceneNote { font-size: 12px!important; margin-top: auto!important; padding-top: 30px; }
@@ -70,9 +70,9 @@
 .coverageCopy > p:not(.kicker) { margin-top: 24px; font-size: 16px; color: var(--ink-muted); max-width: 38ch; }
 .coverage ul { display: flex; flex-wrap: wrap; gap: 8px 20px; list-style: none; margin: 24px 0; padding: 0; max-width: 450px; }
 .coverage li { font-size: 14px; }
-.coverageMap { margin: 0; background: #f2f1e9; padding: 28px; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+.coverageMap { margin: 0; background: var(--map-paper); padding: 28px; display: flex; flex-direction: column; align-items: center; justify-content: center; }
 .coverageMap img { width: 100%; max-width: 390px; height: auto; }
-.coverageMap figcaption { font-size: 11px; color: #496269; text-align: center; }
+.coverageMap figcaption { font-size: 11px; color: #4F5655; text-align: center; }
 @media(min-width:1600px) { .heroCopy { padding-left: max(60px,calc((100vw - 1480px)/2)); }.hero { min-height: 760px; } }
 @media(max-width:1023px) {
 .hero h1 { font-size: clamp(46px,5.65vw,58px); }.heroCopy { padding-inline: 28px; }.heroProject { min-height: 580px; }.heroDescription p { font-size: 15px; }.heroFoot { font-size: 11px; }.sectionIntro { gap: 30px; }.work,.services,.process { padding-block: 64px; }.factStrip > span { flex-direction: column; gap: 3px; align-items: center; }.workshopMedia { min-height: 520px; }.workshopCopy { padding: 40px 28px; }.serviceGroups { gap: 18px; }.serviceTitle h3 { font-size: 27px; }
