@@ -47,6 +47,11 @@ export default function PrivacyPage() {
             aggregate. It sets no cookies, stores no identifiers and does not track you across sites, so it
             runs for every visitor regardless of the consent banner.
           </p>
+          <p className="mt-2">
+            Vercel Speed Insights, from the same provider, measures how quickly pages load and respond (Core
+            Web Vitals) during real visits. It sets no cookies and stores no identifiers, and it also runs for
+            every visitor.
+          </p>
         </section>
 
         <section>
