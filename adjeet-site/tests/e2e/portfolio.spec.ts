@@ -1,4 +1,5 @@
 import { expect, test } from '@playwright/test'
+import { photos } from '../../content/gallery'
 
 test.describe('Portfolio filters', () => {
   test.beforeEach(async ({ page }) => {
@@ -10,12 +11,12 @@ test.describe('Portfolio filters', () => {
 
   test('keeps the compact mobile filter rails labelled, scrollable and operable', async ({ page }) => {
     const tradeFilters = page.getByRole('group', { name: 'Filter work by trade' })
-    const cityFilters = page.getByRole('group', { name: 'Filter work by city' })
+    const brandFilters = page.getByRole('group', { name: 'Filter work by brand' })
 
     await expect(tradeFilters).toBeVisible()
-    await expect(cityFilters).toBeVisible()
+    await expect(brandFilters).toBeVisible()
     expect(await tradeFilters.evaluate(element => element.scrollWidth > element.clientWidth)).toBe(true)
-    expect(await cityFilters.evaluate(element => element.scrollWidth > element.clientWidth)).toBe(true)
+    expect(await brandFilters.evaluate(element => element.scrollWidth > element.clientWidth)).toBe(true)
 
     const acp = tradeFilters.getByRole('button', { name: 'ACP & LED Signage' })
     await acp.click()
@@ -42,6 +43,6 @@ test.describe('Portfolio filters', () => {
     await expect.poll(async () => image.evaluate(element => (element as HTMLImageElement).naturalWidth)).toBeGreaterThan(0)
     const imageBox = await image.boundingBox()
     expect(imageBox!.width).toBeGreaterThan(300)
-    await expect(dialog.getByText(/glow sign board for acc cement/i)).toBeVisible()
+    await expect(dialog.getByText(photos[0].alt)).toBeVisible()
   })
 })

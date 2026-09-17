@@ -4,10 +4,11 @@ import { PortfolioContent } from './PortfolioContent'
 import { buildBreadcrumbJsonLd, jsonLdString } from '@/lib/seo'
 import { PageMasthead } from '@/components/street/PageMasthead'
 import { CommissionCTA } from '@/components/street/CommissionCTA'
+import { photos, getClients } from '@/content/gallery'
 
 export const metadata = buildPageMetadata({
   title: "Signage & Vehicle Branding Portfolio",
-  description: "See AD JEET project photographs, including ACC Cement signs, Ambuja Cement ACP and LED signage, and SRMB vehicle branding. Explore our North Bengal work.",
+  description: "Over 100 AD JEET project photographs: glow signs, ACP facades, wall paintings, vehicle wraps and puja gates for Airtel, Havells, Supreme, Shyam Steel, Star Cement and more.",
   path: "/portfolio",
 })
 
@@ -28,14 +29,14 @@ export default async function PortfolioPage() {
       />
 
       <PageMasthead
-        meta={['Selected work', 'North Bengal', 'Five documented projects']}
+        meta={['Selected work', getClients().length + ' brands', photos.length + ' project photographs']}
         title={
           <>
             Signage &amp; branding. <br />
             <span className="glow-signal text-signal">Our work in North Bengal.</span>
           </>
         }
-        lead="A focused selection of project photographs. Filter by what was made or where the work was recorded."
+        lead="Shopfronts, walls, vehicles and puja gates, photographed on site. Filter by what was made or by the brand on the sign."
       />
 
       <PortfolioContent />

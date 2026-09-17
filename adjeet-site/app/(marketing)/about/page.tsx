@@ -4,6 +4,7 @@ import Link from 'next/link'
 import { buildBreadcrumbJsonLd, jsonLdString } from '@/lib/seo'
 import { CommissionCTA } from '@/components/street/CommissionCTA'
 import { COVERAGE_AREAS, FOUNDED_YEAR } from '@/lib/coverage'
+import { clientSlug, getPhotoById } from '@/content/gallery'
 import styles from './About.module.css'
 
 export const metadata = buildPageMetadata({
@@ -18,6 +19,9 @@ const JOURNEY = [
   { marker: 'A place of our own', title: 'The first owned office.', body: 'Ranjit purchased his first office, giving the business a place of its own.' },
   { marker: 'Today', title: 'Our own workshop.', body: 'He went on to build his own workshop. AD JEET is still growing, with the same focus on the quality of every job.' },
 ]
+// National brands, photographed where the work went up.
+const CLIENT_WORK = ['airtel-008', 'star-cement-022', 'supreme-pipe-069', 'emami-089'].map(getPhotoById)
+
 export default function AboutPage() {
   return (
     <>
@@ -51,6 +55,16 @@ export default function AboutPage() {
           <p>That trust rests on the quality of the work and the consistency we bring to it. It is how we have grown, and how we intend to keep growing.</p>
           <Link href="/portfolio" className="cta cta--md cta--yellow">See our work <span aria-hidden="true">↗</span></Link>
         </div>
+        <ul className={styles.clientWork} aria-label="Work for national brands">
+          {CLIENT_WORK.map(photo => (
+            <li key={photo.id}>
+              <Link href={'/portfolio?client=' + clientSlug(photo.client)}>
+                <span className={styles.clientWorkImage}><Image src={photo.src} alt={photo.alt} fill sizes="(max-width: 767px) 50vw, 25vw" className="object-cover" /></span>
+                <span className={styles.clientWorkName}>{photo.client}</span>
+              </Link>
+            </li>
+          ))}
+        </ul>
       </section>
       <section className={styles.coverage} aria-labelledby="coverage-heading">
         <div className={styles.sectionHeading}>

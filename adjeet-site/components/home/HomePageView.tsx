@@ -9,12 +9,13 @@ import { ClientStreet } from '@/components/street/ClientStreet'
 import { CommissionCTA } from '@/components/street/CommissionCTA'
 import { homeFaqs } from '@/content/home-faqs'
 import { services } from '@/content/services'
+import { getPhotoById } from '@/content/gallery'
 import styles from './Home.module.css'
 
 const GROUPS = [
-  { id: 'storefront', title: 'Your storefront', detail: 'Glow signs · ACP & LED · Window graphics', image: '/Ambuja_cement_ACP-LED.png', alt: 'Ambuja Cement storefront signage by AD JEET' },
-  { id: 'campaign', title: 'Your next campaign', detail: 'Flex · Vehicle branding · Wall painting · F-poles', image: '/SRMB_vechile.png', alt: 'SRMB branding on a delivery vehicle' },
-  { id: 'space-event', title: 'Your space or event', detail: 'In-shop branding · Events · Product displays', image: '/Gates.png', alt: 'Anchor by Panasonic branded entrance for Durga Puja by AD JEET' },
+  { id: 'storefront', title: 'Your storefront', detail: 'Glow signs · ACP & LED · Window graphics', photo: getPhotoById('havells-015') },
+  { id: 'campaign', title: 'Your next campaign', detail: 'Flex · Vehicle branding · Wall painting · F-poles', photo: getPhotoById('toptech-tmt-047') },
+  { id: 'space-event', title: 'Your space or event', detail: 'In-shop branding · Events · Product displays', photo: getPhotoById('toptech-tmt-040') },
 ]
 const PROCESS = [
   { title: 'Show us the space.', body: 'Send a site photo, the location and rough dimensions. A finished brief is optional.' },
@@ -60,7 +61,7 @@ export function HomePageView() {
         <div className={styles.serviceGroups}>
           {GROUPS.map((group, index) => (
             <Link key={group.id} href={'/services#' + group.id} className={styles.serviceGroup}>
-              <div className={styles.serviceImage}><Image src={group.image} alt={group.alt} fill sizes="(max-width: 767px) 100vw, 33vw" className={styles.coverImage} /><span>0{index + 1}</span></div>
+              <div className={styles.serviceImage}><Image src={group.photo.src} alt={group.photo.alt} fill sizes="(max-width: 767px) 100vw, 33vw" className={styles.coverImage} /><span>0{index + 1}</span></div>
               <div className={styles.serviceTitle}><h3>{group.title}</h3><ArrowUpRight size={24} aria-hidden="true" /></div><p>{group.detail}</p>
             </Link>
           ))}

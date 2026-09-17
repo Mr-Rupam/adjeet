@@ -1,8 +1,12 @@
+import Link from 'next/link'
+import { clientSlug, getPhotosByClient } from '@/content/gallery'
 import styles from './ClientStreet.module.css'
 
 interface Client {
   name: string
   sector: string
+  /** Portfolio brand filter, when the gallery files the work under another name. */
+  portfolio?: string
 }
 
 const ROW_1: Client[] = [
@@ -26,8 +30,8 @@ const ROW_2: Client[] = [
   { name: 'Elegant TMT Bar', sector: 'Steel' },
   { name: 'Astral Pipe', sector: 'Piping' },
   { name: 'SEL TMT', sector: 'Steel' },
-  { name: 'Adani Cement', sector: 'Cement' },
-  { name: 'Anchor', sector: 'Electricals' },
+  { name: 'Adani Cement', sector: 'Cement', portfolio: 'acc' },
+  { name: 'Anchor', sector: 'Electricals', portfolio: 'anchor-by-panasonic' },
   { name: 'SD Lion TMT', sector: 'Steel' },
   { name: 'Dish TV', sector: 'DTH' },
 ]
@@ -41,11 +45,19 @@ export function ClientStreet() {
           <p>National names. Local craftsmanship.</p>
         </div>
         <ul className={styles.names} aria-label="Past clients">
-          {[...ROW_1, ...ROW_2].map(client => (
-            <li key={client.name}><span>{client.name}</span></li>
-          ))}
+          {[...ROW_1, ...ROW_2].map(client => {
+            const slug = client.portfolio ?? clientSlug(client.name)
+            const count = getPhotosByClient(slug).length
+            return (
+              <li key={client.name}>
+                {count > 0
+                  ? <Link href={'/portfolio?client=' + slug} aria-label={`${client.name}: see ${count} project photo${count === 1 ? '' : 's'}`}>{client.name}</Link>
+                  : <span>{client.name}</span>}
+              </li>
+            )
+          })}
         </ul>
-        <p className={styles.note}>Partial list: national brands via their regional agencies, plus 400+ local businesses.</p>
+        <p className={styles.note}>Partial list: national brands via their regional agencies, plus 400+ local businesses. Underlined names open their project photos.</p>
       </div>
     </section>
   )

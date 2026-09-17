@@ -2,6 +2,9 @@ import { test, expect, type Page } from '@playwright/test'
 import { programmaticPages } from '../../content/programmatic'
 import { SERVICE_SLUGS } from '../../content/services'
 import { COVERAGE_AREAS } from '../../lib/coverage'
+import { photos } from '../../content/gallery'
+
+const acpCount = photos.filter(p => p.service === 'acp-led-signage').length
 
 test.beforeEach(async ({ page }) => {
   await page.addInitScript(() => {
@@ -17,7 +20,7 @@ test('new homepage keeps real project discovery and every coverage area accessib
   await expect(page.getByRole('list', { name: 'Areas we serve' }).getByRole('listitem')).toHaveCount(COVERAGE_AREAS.length)
   await page.getByRole('link', { name: 'Explore Ambuja Cement ACP and LED signage' }).click()
   await expect(page).toHaveURL(/service=acp-led-signage/)
-  await expect(page.getByRole('button', { name: /^View:/ })).toHaveCount(1)
+  await expect(page.getByRole('button', { name: /^View:/ })).toHaveCount(acpCount)
 })
 
 test('all service and regional routes resolve, with regional links matching the content records', async ({ page, request }) => {
@@ -37,13 +40,13 @@ test('filter combinations announce counts, recover from empty results and suppor
   await page.goto('/portfolio')
   const trade = page.getByRole('group', { name: 'Filter work by trade' })
   await trade.getByRole('button', { name: 'ACP & LED Signage', exact: true }).click()
-  await expect(page.getByRole('status')).toHaveText('1 project')
-  await page.getByRole('group', { name: 'Filter work by city' }).getByRole('button', { name: 'Malda', exact: true }).click()
+  await expect(page.getByRole('status')).toHaveText(acpCount + ' projects')
+  await page.getByRole('group', { name: 'Filter work by brand' }).getByRole('button', { name: 'Airtel', exact: true }).click()
   await expect(page.getByRole('heading', { name: /No projects match/ })).toBeVisible()
   await page.goBack()
-  await expect(page.getByRole('status')).toHaveText('1 project')
+  await expect(page.getByRole('status')).toHaveText(acpCount + ' projects')
   await page.getByRole('button', { name: 'Clear filters' }).click()
-  await expect(page.getByRole('button', { name: /^View:/ })).toHaveCount(5)
+  await expect(page.getByRole('button', { name: /^View:/ })).toHaveCount(photos.length)
   await page.getByRole('button', { name: 'Featured', exact: true }).click()
   await expect(page.getByRole('button', { name: 'Featured', exact: true })).toHaveAttribute('aria-pressed', 'true')
 })
@@ -55,9 +58,9 @@ test('photo viewer supports keyboard navigation and returns focus to its project
   const dialog = page.getByRole('dialog', { name: 'Photo viewer' })
   await expect(dialog.getByRole('button', { name: 'Close photo viewer' })).toBeFocused()
   await page.keyboard.press('ArrowRight')
-  await expect(dialog.getByRole('img')).toHaveAttribute('alt', /Ambuja/)
+  await expect(dialog.getByRole('img')).toHaveAttribute('alt', photos[1].alt)
   await page.keyboard.press('ArrowLeft')
-  await expect(dialog.getByRole('img')).toHaveAttribute('alt', /ACC Cement/)
+  await expect(dialog.getByRole('img')).toHaveAttribute('alt', photos[0].alt)
   await page.keyboard.press('Escape')
   await expect(dialog).toHaveCount(0)
   await expect(project).toBeFocused()
@@ -69,8 +72,8 @@ test('Back closes the photo viewer safely when the previous filter has no projec
   await page.goto('/portfolio')
   await page.getByRole('group', { name: 'Filter work by trade' }).getByRole('button', { name: 'ACP & LED Signage', exact: true }).click()
   await expect(page).toHaveURL(/service=acp-led-signage/)
-  await page.getByRole('group', { name: 'Filter work by city' }).getByRole('button', { name: 'Malda', exact: true }).click()
-  await expect(page).toHaveURL(/city=malda/)
+  await page.getByRole('group', { name: 'Filter work by brand' }).getByRole('button', { name: 'Airtel', exact: true }).click()
+  await expect(page).toHaveURL(/client=airtel/)
   await expect(page.getByRole('heading', { name: /No projects match/ })).toBeVisible()
   await page.getByRole('button', { name: 'Clear filters' }).click()
   await expect(page).toHaveURL('/portfolio')
@@ -80,7 +83,7 @@ test('Back closes the photo viewer safely when the previous filter has no projec
   await expect(page.getByRole('heading', { name: /No projects match/ })).toBeVisible()
   await expect(page.getByRole('dialog', { name: 'Photo viewer' })).toHaveCount(0)
   await page.goForward()
-  await expect(page.getByRole('button', { name: /^View:/ })).toHaveCount(5)
+  await expect(page.getByRole('button', { name: /^View:/ })).toHaveCount(photos.length)
   await expect(page.getByRole('dialog', { name: 'Photo viewer' })).toHaveCount(0)
   expect(errors).toEqual([])
 })

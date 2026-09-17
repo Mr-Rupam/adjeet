@@ -2,14 +2,17 @@
 
 import { useState } from 'react'
 import Image from 'next/image'
+import Link from 'next/link'
 import { Lightbox, type LightboxPhoto } from '@/components/ui/Lightbox'
 import type { GalleryPhoto } from '@/content/gallery'
 
 interface GalleryStripProps {
   photos: GalleryPhoto[]
+  title?: string
+  link?: { href: string; label: string }
 }
 
-export function GalleryStrip({ photos }: GalleryStripProps) {
+export function GalleryStrip({ photos, title = 'Project gallery', link }: GalleryStripProps) {
   const lightboxPhotos: LightboxPhoto[] = photos.map(p => ({ src: p.src, alt: p.alt }))
   const [isOpen, setIsOpen] = useState(false)
   const [initialIndex, setInitialIndex] = useState(0)
@@ -22,7 +25,10 @@ export function GalleryStrip({ photos }: GalleryStripProps) {
   return (
     <section className="border-b-2 border-ink bg-paper py-12 md:py-16">
       <div className="mx-auto max-w-content px-5 md:px-8">
-        <p className="spec mb-6 text-signal">Project gallery</p>
+        <div className="mb-6 flex flex-wrap items-baseline justify-between gap-3">
+          <h2 className="spec m-0 text-signal">{title}</h2>
+          {link && <Link href={link.href} className="field-link">{link.label} ↗</Link>}
+        </div>
         <div className="flex snap-x snap-mandatory gap-4 overflow-x-auto pb-4">
           {photos.map((photo, idx) => (
             <button

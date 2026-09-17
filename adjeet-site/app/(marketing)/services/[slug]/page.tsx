@@ -21,7 +21,8 @@ import { Accordion } from '@/components/ui/Accordion'
 import { CommissionCTA } from '@/components/street/CommissionCTA'
 import { WhatsAppLink } from '@/components/ui/WhatsAppLink'
 import { programmaticPages, CITY_LABELS } from '@/content/programmatic'
-import { photos } from '@/content/gallery'
+import { getPhotosByService, getServiceCover } from '@/content/gallery'
+import { GalleryStrip } from '@/components/sections/GalleryStrip'
 
 type Params = { slug: string }
 
@@ -56,7 +57,8 @@ export default async function ServiceDetailPage({
   const related = service.relatedServices
     .map(s => services.find(x => x.slug === s))
     .filter((s): s is NonNullable<typeof s> => Boolean(s))
-  const workPhoto = photos.find(photo => photo.service === service.slug)
+  const workPhoto = getServiceCover(service.slug as ServiceSlug)
+  const servicePhotos = getPhotosByService(service.slug as ServiceSlug)
 
   const serviceSchema = buildServiceJsonLd(service)
   const faqSchema = buildFaqJsonLd(service.faqs)
@@ -146,6 +148,14 @@ export default async function ServiceDetailPage({
           </div>
         </div>
       </section>
+
+      {servicePhotos.length > 0 && (
+        <GalleryStrip
+          photos={servicePhotos}
+          title={`${service.name}: ${servicePhotos.length} project photo${servicePhotos.length === 1 ? '' : 's'}`}
+          link={{ href: `/portfolio?service=${service.slug}`, label: 'Open in the portfolio' }}
+        />
+      )}
 
       {/* FAQs */}
       {service.faqs.length > 0 && (
