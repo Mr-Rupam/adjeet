@@ -25,8 +25,10 @@ let ratelimit: { limit: (id: string) => Promise<{ success: boolean }> } | null =
 async function getRateLimiter() {
   if (ratelimit) return ratelimit
 
-  const url = process.env.UPSTASH_REDIS_REST_URL
-  const token = process.env.UPSTASH_REDIS_REST_TOKEN
+  // The Upstash integration from the Vercel Marketplace names these KV_REST_API_*.
+  // Redis.fromEnv() below reads either pair.
+  const url = process.env.UPSTASH_REDIS_REST_URL || process.env.KV_REST_API_URL
+  const token = process.env.UPSTASH_REDIS_REST_TOKEN || process.env.KV_REST_API_TOKEN
 
   if (!url || !token) {
     // Dev fallback: always allow
