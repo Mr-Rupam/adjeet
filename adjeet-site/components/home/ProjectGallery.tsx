@@ -1,20 +1,19 @@
 import Image from 'next/image'
 import Link from 'next/link'
 import { ArrowUpRight } from 'lucide-react'
-import { photos } from '@/content/gallery'
+import { getPhotoById } from '@/content/gallery'
 import styles from './Home.module.css'
 
 const SELECTED_WORK = [
-  { id: 'gs-acc', label: 'Glow sign board', client: 'ACC' },
-  { id: 'vb-srmb', label: 'Vehicle branding', client: 'SRMB' },
-  { id: 'acp-ambuja', label: 'ACP & LED signage', client: 'Ambuja Cement' },
+  { id: 'captain-tmt-bar-078', label: 'Wall painting' },
+  { id: 'supreme-pipe-085', label: 'Durga Puja gate' },
+  { id: 'acc-102', label: 'Shop boards' },
 ] as const
 
 export function ProjectGallery() {
   const projects = SELECTED_WORK.map(project => {
-    const photo = photos.find(candidate => candidate.id === project.id)
-    if (!photo) throw new Error(`Missing selected work photo: ${project.id}`)
-    return { ...project, photo }
+    const photo = getPhotoById(project.id)
+    return { ...project, client: photo.client, photo }
   })
 
   return (

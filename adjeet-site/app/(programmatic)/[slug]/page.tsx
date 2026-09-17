@@ -38,7 +38,10 @@ export default async function ProgrammaticPage({ params }: { params: Promise<Par
   const service = getServiceBySlug(page.service as ServiceSlug)
   if (!service) notFound()
 
-  const photos = getPhotosByService(page.service as ServiceSlug).filter(p => p.city === page.city)
+  // Prefer photos recorded in this city. Otherwise show the trade's work without naming a place for it.
+  const servicePhotos = getPhotosByService(page.service as ServiceSlug)
+  const cityPhotos = servicePhotos.filter(p => p.city === page.city)
+  const photos = cityPhotos.length > 0 ? cityPhotos : servicePhotos
   const waUrl = defaultWhatsAppUrl({ service: service.name, city: CITY_LABELS[page.city] })
   const cityLabel = CITY_LABELS[page.city] ?? page.city
   const relatedCityPages = page.relatedCities.flatMap(city => {
@@ -90,7 +93,13 @@ export default async function ProgrammaticPage({ params }: { params: Promise<Par
         </aside>
       </section>
       {/* Gallery */}
-      {photos.length > 0 && <GalleryStrip photos={photos} />}
+      {photos.length > 0 && (
+        <GalleryStrip
+          photos={photos}
+          title={cityPhotos.length > 0 ? `${service.name} in ${cityLabel}: project photos` : `${service.name}: recent AD JEET work`}
+          link={{ href: `/portfolio?service=${service.slug}`, label: 'More in the portfolio' }}
+        />
+      )}
 
       <section className="field-container regional-faq" aria-labelledby="regional-faq-heading">
         <h2 id="regional-faq-heading">{page.searchPhrase} in {cityLabel}: questions before you order</h2>

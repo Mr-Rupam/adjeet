@@ -19,7 +19,7 @@ export function trackLeadSubmit(params: { city: string; timeline: string }) {
   gtag('event', 'lead_submit', params)
 }
 
-export function trackPortfolioFilter(params: { filter_type: 'service' | 'city'; filter_value: string }) {
+export function trackPortfolioFilter(params: { filter_type: 'service' | 'client'; filter_value: string }) {
   gtag('event', 'portfolio_filter', params)
 }
 
