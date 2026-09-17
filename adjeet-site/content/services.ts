@@ -60,7 +60,7 @@ const baseServices: ServiceBase[] = [
       },
     ],
     relatedServices: ['acp-led-signage', 'f-pole-installation', 'in-shop-branding'],
-    heroImage: '/airtel.png',
+    heroImage: '/images/work/havells-glow-sign-015.webp',
     icon: 'lightbulb',
   },
   {
@@ -114,7 +114,7 @@ const baseServices: ServiceBase[] = [
       },
     ],
     relatedServices: ['vehicle-branding', 'events-and-puja', 'one-way-vision'],
-    heroImage: '/images/services/flex-printing-hero.jpg',
+    heroImage: '/images/work/captain-tmt-bar-shop-board-072.webp',
     icon: 'print',
   },
   {
@@ -141,7 +141,7 @@ const baseServices: ServiceBase[] = [
       },
     ],
     relatedServices: ['flex-printing', 'in-shop-branding', 'one-way-vision'],
-    heroImage: '/SRMB_vechile.png',
+    heroImage: '/images/work/toptech-tmt-vehicle-047.webp',
     icon: 'truck',
   },
   {
@@ -168,7 +168,7 @@ const baseServices: ServiceBase[] = [
       },
     ],
     relatedServices: ['flex-printing', 'f-pole-installation', 'vehicle-branding'],
-    heroImage: '/images/services/wall-painting-hero.jpg',
+    heroImage: '/images/work/sel-tmt-wall-painting-058.webp',
     icon: 'paint-roller',
   },
   {
@@ -195,7 +195,7 @@ const baseServices: ServiceBase[] = [
       },
     ],
     relatedServices: ['glow-sign-boards', 'acp-led-signage', 'flex-printing'],
-    heroImage: '/images/services/f-pole-installation-hero.jpg',
+    heroImage: '/images/work/sel-tmt-f-pole-055.webp',
     icon: 'flag-pole',
   },
   {
@@ -222,7 +222,7 @@ const baseServices: ServiceBase[] = [
       },
     ],
     relatedServices: ['acp-led-signage', 'glow-sign-boards', 'product-display'],
-    heroImage: '/images/services/in-shop-branding-hero.jpg',
+    heroImage: '/images/work/toptech-tmt-in-shop-040.webp',
     icon: 'store',
   },
   {
@@ -249,7 +249,7 @@ const baseServices: ServiceBase[] = [
       },
     ],
     relatedServices: ['flex-printing', 'in-shop-branding', 'wall-painting'],
-    heroImage: '/images/services/events-puja-hero.jpg',
+    heroImage: '/images/work/supreme-pipe-event-085.webp',
     icon: 'sparkles',
   },
   {
@@ -276,7 +276,7 @@ const baseServices: ServiceBase[] = [
       },
     ],
     relatedServices: ['vehicle-branding', 'in-shop-branding', 'flex-printing'],
-    heroImage: '/images/services/one-way-vision-hero.jpg',
+    heroImage: '/images/home/materials.webp',
     icon: 'eye',
   },
   {
@@ -303,7 +303,7 @@ const baseServices: ServiceBase[] = [
       },
     ],
     relatedServices: ['in-shop-branding', 'acp-led-signage', 'flex-printing'],
-    heroImage: '/images/services/product-display-hero.jpg',
+    heroImage: '/images/work/havells-display-020.webp',
     icon: 'display',
   },
 ]
