@@ -12,7 +12,8 @@ async function post(origin: string) {
   return POST(req)
 }
 
-describe('/api/lead origin check', () => {
+// The first import of the route is slow on a cold transform cache.
+describe('/api/lead origin check', { timeout: 20000 }, () => {
   afterEach(() => {
     vi.unstubAllEnvs()
   })

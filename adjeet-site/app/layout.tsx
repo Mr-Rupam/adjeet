@@ -9,6 +9,7 @@ import { Chatbot } from '@/components/Chatbot'
 import { ConsentBanner } from '@/components/ui/ConsentBanner'
 import { Analytics } from '@/components/Analytics'
 import { Analytics as VercelAnalytics } from '@vercel/analytics/next'
+import { SpeedInsights } from '@vercel/speed-insights/next'
 import { ReducedMotionWrapper } from '@/components/motion/ReducedMotionWrapper'
 import { SiteMotion } from '@/components/motion/SiteMotion'
 import { buildLocalBusinessJsonLd, jsonLdString, siteConfig } from '@/lib/seo'
@@ -78,6 +79,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <Analytics />
           {/* Cookieless, aggregate page views for every visitor, independent of the GA4 consent banner. */}
           <VercelAnalytics />
+          {/* Cookieless Core Web Vitals from real visits, also independent of the consent banner. */}
+          <SpeedInsights />
         </ReducedMotionWrapper>
       </body>
     </html>
