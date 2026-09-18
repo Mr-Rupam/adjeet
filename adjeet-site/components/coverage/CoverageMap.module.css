@@ -1,0 +1,315 @@
+/*
+ * The coverage map, in both layers.
+ *
+ * Colours are derived from the brand tokens rather than restated, so the map
+ * follows the day/night toggle for free. The static SVG this replaces was
+ * stranded on the rejected cobalt palette and could not respond to the theme
+ * at all, because it was an <img>.
+ */
+
+.stage {
+  width: 100%;
+  --map-land: #E7DFCB;
+  --map-line: #B9AE97;
+  --map-reach: var(--cerulean);
+  --map-surface: var(--paper-deep);
+  --map-structure: #5F5C52;
+
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  min-width: 0;
+}
+
+:global(:root[data-theme='dark']) .stage {
+  --map-land: #16252C;
+  --map-line: #35454D;
+  --map-reach: var(--glow);
+  --map-surface: #101B21;
+  --map-structure: #46555D;
+}
+
+/* The map surface ------------------------------------------------------ */
+
+.surface {
+  position: relative;
+  overflow: hidden;
+  aspect-ratio: 570 / 752;
+  max-height: 640px;
+  border: 1px solid var(--rule);
+  background: var(--map-surface);
+}
+
+.flat,
+.terrain {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+/*
+ * The terrain fades in over the flat map rather than replacing it. The flat map
+ * stays mounted underneath, so if WebGL dies mid-session it is still there,
+ * drawn and correct. It is only faded out, because leaving it visible showed
+ * its reach wash and land tone through the sky behind the mountains.
+ *
+ * Both halves of the swap wait for `ready`, the terrain's first drawn frame.
+ * While it is still `loading` the canvas is invisible and lets clicks through,
+ * so a relief that never arrives leaves the flat map working, not an empty
+ * panel with a transparent canvas lying on top of it.
+ */
+.terrain {
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 900ms ease;
+}
+
+.surface[data-terrain='ready'] .terrain {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.surface[data-terrain='ready'] .flat {
+  opacity: 0;
+  transition: opacity 700ms ease;
+}
+
+/* Flat map internals --------------------------------------------------- */
+
+.land { fill: var(--map-land); }
+
+.border {
+  fill: none;
+  stroke: var(--map-line);
+  stroke-width: 1.4;
+  stroke-linejoin: round;
+  stroke-linecap: round;
+}
+
+.context {
+  fill: var(--ink-subtle);
+  font-family: var(--font-heading), sans-serif;
+  font-size: 17px;
+  letter-spacing: 3px;
+  opacity: 0.65;
+}
+
+.reachWash { pointer-events: none; }
+
+/* Reach rings, so the map answers "how far do you come out?" on its face. */
+.reachRing ellipse {
+  fill: none;
+  stroke: var(--map-reach);
+  stroke-width: 1.1;
+  stroke-dasharray: 6 5;
+  opacity: 0.55;
+  pointer-events: none;
+}
+
+.reachRing text {
+  fill: var(--map-reach);
+  font-family: var(--font-heading), sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  opacity: 0.85;
+  paint-order: stroke;
+  stroke: var(--map-land);
+  stroke-width: 4;
+  pointer-events: none;
+}
+
+.route {
+  stroke: var(--signal-text);
+  stroke-width: 1.6;
+  stroke-dasharray: 5 6;
+  opacity: 0.75;
+  pointer-events: none;
+}
+
+/* Signboards ----------------------------------------------------------- */
+
+/*
+ * A hoarding, not a map pin: shadow on the ground, two legs, a footing, then
+ * the frame, the face and the printed keyline. Drawn as flat colour to match
+ * the rest of the site rather than with gradients and gloss.
+ */
+
+.board { cursor: pointer; }
+
+.boardHit {
+  fill: transparent;
+  stroke: none;
+}
+
+.boardShadow {
+  fill: var(--ink);
+  opacity: 0.14;
+}
+
+.leg {
+  stroke: var(--map-structure);
+  stroke-width: 2.2;
+  stroke-linecap: round;
+}
+
+.footing { fill: var(--map-structure); }
+
+.boardPlate {
+  transition: transform 240ms cubic-bezier(0.2, 0.8, 0.2, 1);
+  transform-box: fill-box;
+  transform-origin: center bottom;
+}
+
+.boardFrame { fill: var(--map-structure); }
+
+.boardKeyline {
+  fill: none;
+  stroke: var(--ink);
+  stroke-width: 0.9;
+  opacity: 0.3;
+}
+
+/* One face for every covered place. The map states coverage, not a ranking. */
+.boardCovered .boardFace { fill: var(--cerulean-deep); }
+.boardCovered .boardKeyline { stroke: #fff; opacity: 0.45; }
+.boardCovered .boardLabel { fill: #fff; }
+
+.boardBase .boardFace { fill: var(--gold); }
+.boardBase .boardKeyline { stroke: var(--signal-hot-ink); opacity: 0.38; }
+.boardBase .boardLabel { fill: var(--signal-hot-ink); }
+
+.boardActive .boardPlate { transform: scale(1.14) translateY(-2px); }
+.boardActive .boardShadow { opacity: 0.2; }
+
+.boardLabel {
+  font-family: var(--font-heading), sans-serif;
+  font-size: 15px;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  pointer-events: none;
+}
+
+/* Caption -------------------------------------------------------------- */
+
+.caption {
+  margin: 0;
+  color: var(--ink-subtle);
+  font-size: 11px;
+  line-height: 1.5;
+}
+
+/* The place list ------------------------------------------------------- */
+
+.placeList {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2px 16px;
+  margin: 24px 0;
+  padding: 0;
+  list-style: none;
+}
+
+.placeButton {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 10px;
+  width: 100%;
+  min-height: 44px;
+  padding: 6px 8px 6px 0;
+  border: 0;
+  border-bottom: 1px solid var(--rule);
+  background: transparent;
+  color: var(--ink);
+  font: inherit;
+  text-align: left;
+  transition: color 160ms, padding-left 160ms, border-color 160ms;
+}
+
+.placeButton:hover,
+.placeButtonActive {
+  padding-left: 8px;
+  border-color: var(--signal-text);
+  color: var(--signal-text);
+}
+
+.placeName { font-size: 14.5px; }
+
+.placeDistance,
+.placeTag {
+  flex-shrink: 0;
+  letter-spacing: 0.04em;
+}
+
+/* The distance is the only fact each row gives now, so it reads at 12px. */
+.placeDistance { color: var(--ink-subtle); font-size: 12px; font-variant-numeric: tabular-nums; }
+.placeTag { color: var(--signal-hot-ink); background: var(--gold); padding: 2px 6px; font-size: 11px; }
+
+/* The detail card ------------------------------------------------------ */
+
+.detail {
+  /* Reserved so selecting a place never shifts the page under the cursor. */
+  min-height: 132px;
+  padding-top: 14px;
+  border-top: 1px solid var(--rule);
+}
+
+.detailIntro {
+  margin: 0;
+  max-width: 40ch;
+  color: var(--ink-muted);
+  font-size: 14px;
+}
+
+.detailHead {
+  display: flex;
+  align-items: baseline;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+
+.detailName {
+  margin: 0;
+  font-family: var(--font-heading), sans-serif;
+  font-size: 30px;
+  font-weight: 500;
+  line-height: 1;
+}
+
+.detailMeta {
+  margin: 0;
+  color: var(--ink-muted);
+  font-size: 13px;
+}
+
+.detailCta {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 44px;
+  margin-top: 12px;
+  border-bottom: 1px solid currentColor;
+  font-size: 14px;
+  font-weight: 500;
+  text-decoration: none;
+}
+
+.detailCta:hover { color: var(--signal-text); }
+
+/* Responsive ----------------------------------------------------------- */
+
+@media (max-width: 767px) {
+  .surface { aspect-ratio: 1 / 1; max-height: none; }
+  .placeList { gap: 2px 12px; }
+  .detailName { font-size: 26px; }
+  .detail { min-height: 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .terrain,
+  .surface[data-terrain='ready'] .flat { transition: none; }
+  .boardPlate,
+  .placeButton { transition: none; }
+}

@@ -90,8 +90,13 @@ test.describe('Home page', () => {
   test('shows the named coverage places without claiming a false administrative grouping', async ({ page }) => {
     const coverage = page.getByRole('list', { name: 'Areas we serve' })
     await expect(coverage.getByRole('listitem')).toHaveCount(COVERAGE_AREAS.length)
-    await expect(coverage.getByRole('listitem').filter({ hasText: /^Siliguri/ })).toBeVisible()
-    await expect(coverage.getByRole('listitem').filter({ hasText: /^The Dooars$/ })).toBeVisible()
+    // Each place is now a control that drives the coverage map, and carries its
+    // own detail alongside the name ("Workshop", or a distance such as "37 km"), so
+    // the item text is no longer the bare place name. The claim under test is
+    // unchanged: every area is named in its own right, never rolled up into a
+    // district count.
+    await expect(coverage.getByRole('button', { name: /^Siliguri/ })).toBeVisible()
+    await expect(coverage.getByRole('button', { name: /^The Dooars/ })).toBeVisible()
   })
 
   test('keeps one direct enquiry close', async ({ page }) => {
