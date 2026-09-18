@@ -28,6 +28,19 @@ export function LeadForm() {
     defaultValues: { serviceInterest: [], timeline: 'immediate', cfTurnstileResponse: '' },
   })
 
+  // The coverage map sends visitors here with the place they picked, as
+  // `/contact?city=Jalpaiguri`. Read from `window.location` rather than
+  // `useSearchParams`, which would force this statically rendered page into a
+  // Suspense boundary for one optional field. The value is checked against the
+  // enum before it is used, so a hand-edited URL cannot seed something the
+  // schema will reject on submit.
+  useEffect(() => {
+    const requested = new URLSearchParams(window.location.search).get('city')
+    if (requested && (COVERAGE_CITIES as readonly string[]).includes(requested)) {
+      setValue('city', requested as LeadInput['city'], { shouldValidate: true })
+    }
+  }, [setValue])
+
   const turnstileRef = useRef<TurnstileInstance>(null)
 
   // The CAPTCHA was pinned to `theme: 'light'`, so it rendered as a white slab

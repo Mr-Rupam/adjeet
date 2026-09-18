@@ -112,6 +112,9 @@
   --adjeet-blue-deep: #071015;
   --plate-shadow: 0 18px 44px rgb(0 0 0 / 28%);
   --plate-shadow-signal: 0 18px 44px rgb(92 198 236 / 16%);
+  /* The map surface was left on the cream value, so it burned as a bright
+     slab inside the night theme. */
+  --map-paper: #101B21;
 }
 
 @theme {

@@ -1,7 +1,10 @@
 import Image from 'next/image'
 import Link from 'next/link'
 import { ArrowDown, ArrowUpRight } from 'lucide-react'
-import { COVERAGE_AREAS, FOUNDED_YEAR } from '@/lib/coverage'
+import { FOUNDED_YEAR } from '@/lib/coverage'
+import { CoverageMapProvider } from '@/components/coverage/CoverageMapContext'
+import { CoveragePlaceList } from '@/components/coverage/CoveragePlaceList'
+import { CoverageStage } from '@/components/coverage/CoverageStage'
 import { QuoteCTA } from '@/components/ui/QuoteCTA'
 import { HeroScene } from './HeroScene'
 import { ProjectGallery } from './ProjectGallery'
@@ -85,8 +88,18 @@ export function HomePageView() {
         <ol className={styles.processSteps}>{PROCESS.map((step, index) => <li key={step.title}><span className={styles.stepNumber}>0{index + 1}</span><h3>{step.title}</h3><p>{step.body}</p></li>)}</ol>
       </section>
       <section className={styles.coverage} aria-labelledby="coverage-heading">
-        <div className={styles.coverageCopy}><p className={styles.kicker}>05 / Local knowledge. Regional reach.</p><h2 id="coverage-heading">Made in Siliguri.<br /><span>Seen across<br />North Bengal.</span></h2><p>From hill roads to high streets, we help businesses put their name in the right place.</p><ul aria-label="Areas we serve">{COVERAGE_AREAS.map(area => <li key={area.name}>{area.name}</li>)}</ul><Link href="/contact" className={styles.textLink}>Tell us your location <ArrowUpRight size={18} aria-hidden="true" /></Link></div>
-        <figure className={styles.coverageMap}><Image src="/images/north-bengal-coverage.svg" alt="Map of AD JEET's North Bengal coverage, based in Siliguri" width={900} height={1000} sizes="(max-width: 767px) 100vw, 45vw" /><figcaption>Approximate coverage. Tell us where your project is.</figcaption></figure>
+        <CoverageMapProvider>
+          <div className={styles.coverageCopy}>
+            <p className={styles.kicker}>05 / Local knowledge. Regional reach.</p>
+            <h2 id="coverage-heading">Made in Siliguri.<br /><span>Seen across<br />North Bengal.</span></h2>
+            <p>From hill roads to high streets, we help businesses put their name in the right place. Pick your town to start a quote.</p>
+            <CoveragePlaceList />
+            <Link href="/contact" className={styles.textLink}>Tell us your location <ArrowUpRight size={18} aria-hidden="true" /></Link>
+          </div>
+          <div className={styles.coverageMap}>
+            <CoverageStage caption="Coverage is approximate, not a fixed boundary." />
+          </div>
+        </CoverageMapProvider>
       </section>
       <section className={styles.faq} aria-labelledby="home-faq-heading">
         <div className={styles.sectionIntro}><div><p className={styles.kicker}>06 / Before we start</p><h2 id="home-faq-heading">Your signage<br /><span>questions, answered.</span></h2></div><p>What we make, where we work and what to send for a quote.</p></div>

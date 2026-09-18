@@ -3,7 +3,10 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { buildBreadcrumbJsonLd, jsonLdString } from '@/lib/seo'
 import { CommissionCTA } from '@/components/street/CommissionCTA'
-import { COVERAGE_AREAS, FOUNDED_YEAR } from '@/lib/coverage'
+import { FOUNDED_YEAR } from '@/lib/coverage'
+import { CoverageMapProvider } from '@/components/coverage/CoverageMapContext'
+import { CoveragePlaceList } from '@/components/coverage/CoveragePlaceList'
+import { CoverageStage } from '@/components/coverage/CoverageStage'
 import { clientSlug, getPhotoById } from '@/content/gallery'
 import styles from './About.module.css'
 
@@ -67,16 +70,17 @@ export default function AboutPage() {
         </ul>
       </section>
       <section className={styles.coverage} aria-labelledby="coverage-heading">
-        <div className={styles.sectionHeading}>
-          <p className="spec text-signal">Where we work</p>
-          <h2 id="coverage-heading">Rooted in Siliguri.<br />Across North Bengal.</h2>
-          <p>From the hills to the Dooars and south to Malda, our work reaches businesses across the region.</p>
-          <ul>{COVERAGE_AREAS.map(area => <li key={area.name}>{area.name}</li>)}</ul>
-        </div>
-        <figure className={styles.map}>
-          <a href="/images/north-bengal-coverage.svg" target="_blank" rel="noopener noreferrer" aria-label="Open the coverage map at full size"><Image src="/images/north-bengal-coverage.svg" alt="North Bengal coverage map with Siliguri as the base and a soft highlight reaching Darjeeling, Kalimpong, Jalpaiguri, the Dooars, Alipurduar, Cooch Behar, North and South Dinajpur, and Malda" width={900} height={1000} sizes="(max-width: 767px) 100vw, 58vw" /></a>
-          <figcaption>Coverage shown approximately; the fade is not a fixed service boundary.</figcaption>
-        </figure>
+        <CoverageMapProvider>
+          <div className={styles.sectionHeading}>
+            <p className="spec text-signal">Where we work</p>
+            <h2 id="coverage-heading">Rooted in Siliguri.<br />Across North Bengal.</h2>
+            <p>From the hills to the Dooars and south to Malda, our work reaches businesses across the region. Pick your town to see how far we travel to reach it.</p>
+            <CoveragePlaceList />
+          </div>
+          <div className={styles.map}>
+            <CoverageStage caption="Coverage shown approximately; the reach is not a fixed service boundary." />
+          </div>
+        </CoverageMapProvider>
       </section>
       <CommissionCTA />
     </>

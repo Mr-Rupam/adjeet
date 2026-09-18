@@ -1,0 +1,13 @@
+{
+  "bounds": {
+    "west": 87,
+    "east": 90.6,
+    "south": 24,
+    "north": 27.8
+  },
+  "size": 256,
+  "minMetres": -92,
+  "maxMetres": 7913,
+  "encoding": "terrarium",
+  "source": "AWS terrain tiles (Mapzen), z8, resampled to equirectangular"
+}
