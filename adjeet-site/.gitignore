@@ -21,7 +21,9 @@ build/
 next-env.d.ts
 
 # ─── Testing artifacts ────────────────────────────────
-coverage/
+# Anchored to the project root. Unanchored, `coverage/` matched at any depth and
+# silently swallowed `components/coverage/`, the coverage map components.
+/coverage/
 test-results/
 playwright-report/
 blob-report/

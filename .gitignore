@@ -27,7 +27,10 @@ build/
 next-env.d.ts
 
 # ─── Testing ──────────────────────────────────────────
-coverage/
+# Anchored per project root. Unanchored, `coverage/` matched at any depth and
+# silently swallowed `adjeet-site/components/coverage/`.
+/coverage/
+/adjeet-site/coverage/
 test-results/
 playwright-report/
 blob-report/
