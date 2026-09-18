@@ -35,6 +35,8 @@ AD-JEET is a marketing website for a North Bengal signage company. The entire pr
 - **Add a service:** edit `content/services.ts`
 - **Change design tokens:** edit `design/tokens.css`
 - **Update email recipient:** edit `from`/`to` in `app/api/lead/route.ts`
+- **Add a place to the coverage map:** add it with `lat`/`lon` to `COVERAGE_AREAS` in `lib/coverage.ts`, then map it to a lead form city in `lib/coverage-places.ts`
+- **Regenerate the map terrain or borders:** run `node scripts/build-coverage-terrain.mjs` from `adjeet-site/` and commit `public/data/` and `content/coverage-geometry.ts`. It fetches tiles at build time only; the site never does
 
 ## Env Setup
 
