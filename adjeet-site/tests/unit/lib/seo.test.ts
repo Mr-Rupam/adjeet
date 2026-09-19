@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { buildFaqJsonLd, buildBreadcrumbJsonLd, buildServiceJsonLd, buildLocalBusinessJsonLd, siteConfig } from '@/lib/seo'
+import { buildFaqJsonLd, buildBreadcrumbJsonLd, buildServiceJsonLd, buildLocalBusinessJsonLd, buildPageMetadata, buildWebSiteJsonLd, siteConfig } from '@/lib/seo'
 import { services } from '@/content/services'
 
 describe('buildFaqJsonLd', () => {
@@ -54,6 +54,23 @@ describe('buildServiceJsonLd', () => {
     expect(result.name).toBe(service.name)
     expect(Array.isArray(result.areaServed)).toBe(true)
     expect(result.areaServed).toContain('Siliguri')
+  })
+})
+
+describe('buildWebSiteJsonLd', () => {
+  // Google takes the site name printed above each search result from this
+  // schema on the home page. Without it, results read "adjeet.in".
+  it('names the site AD JEET at the canonical home page', () => {
+    const result = buildWebSiteJsonLd()
+    const home = buildPageMetadata({ title: 'Home', description: 'Home page', path: '/' })
+    expect(result['@type']).toBe('WebSite')
+    expect(result.name).toBe('AD JEET')
+    expect(new URL(result.url).href).toBe(new URL(String(home.alternates?.canonical)).href)
+  })
+
+  it('offers only the unhyphenated spelling as a fallback name', () => {
+    // The brand dropped "AD-JEET"; Google may show an alternate verbatim.
+    expect(buildWebSiteJsonLd().alternateName).toEqual(['ADJEET'])
   })
 })
 

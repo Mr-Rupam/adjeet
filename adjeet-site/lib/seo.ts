@@ -45,6 +45,20 @@ export function generateServiceMetadata(service: Service): Metadata {
   })
 }
 
+// Google prints the site name above each result from this schema on the home
+// page; without it, results fall back to the bare domain.
+export function buildWebSiteJsonLd() {
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'WebSite',
+    name: siteConfig.name,
+    // Only the unhyphenated spelling: the brand dropped "AD-JEET", and Google
+    // can show an alternate name exactly as written.
+    alternateName: ['ADJEET'],
+    url: `${siteConfig.url}/`,
+  }
+}
+
 export function buildLocalBusinessJsonLd() {
   return {
     '@context': 'https://schema.org',

@@ -1,5 +1,5 @@
 import { HomePageView } from '@/components/home/HomePageView'
-import { buildPageMetadata, buildFaqJsonLd, jsonLdString, siteConfig } from '@/lib/seo'
+import { buildPageMetadata, buildFaqJsonLd, buildWebSiteJsonLd, jsonLdString, siteConfig } from '@/lib/seo'
 import { homeFaqs } from '@/content/home-faqs'
 
 export const metadata = buildPageMetadata({
@@ -11,6 +11,7 @@ export const metadata = buildPageMetadata({
 export default function HomePage() {
   return (
     <>
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLdString(buildWebSiteJsonLd()) }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLdString(buildFaqJsonLd(homeFaqs)) }} />
       <HomePageView />
     </>
