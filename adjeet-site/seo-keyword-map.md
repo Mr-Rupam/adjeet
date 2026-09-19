@@ -33,6 +33,7 @@ Not targeted: "hoarding advertising Siliguri" (media-space rental, sold by Media
 - **Regional guides:** titles use the singular searched phrase ("Glow Sign Board in Jalpaiguri"). Each guide names nearby towns (Mal Bazar, Dinhata, Kurseong, Rangpo and others), and opens with a local "Can AD JEET handle ... in <city>?" answer. Two Gangtok guides added (42 sitemap URLs).
 - **GEO:** the LocalBusiness entity now carries `alternateName` (ADJEET, AD-JEET), `knowsAbout` and an `OfferCatalog` linking every service. Service entities carry `alternateName` and the quotable answer. `llms.txt` now has a one-line entity definition, services with definitions and alternate names, regional guides, and the home FAQ.
 - Sikkim added to coverage, and Gangtok to the enquiry form, based on the 2025 company profile. SD Lion TMT and Dish TV added to the client list, from the same profile.
+- **Site name (2026-09-19):** the home page carries `WebSite` structured data naming the site "AD JEET", with "ADJEET" as the only alternate, so Google can print the brand above results instead of the bare domain. Source: `buildWebSiteJsonLd` in `lib/seo.ts`.
 
 ## Needs the owner (not code)
 
@@ -41,6 +42,7 @@ Not targeted: "hoarding advertising Siliguri" (media-space rental, sold by Media
 3. **Reviews.** Ask repeat brand and local clients for Google reviews that mention the work ("glow sign board", "ACP board") and the town.
 4. **Proof for Gangtok and district pages.** Add dated project photographs per town to `content/gallery.ts` as they are confirmed, so the regional guides carry local evidence.
 5. **Bengali and Hindi queries** (for example "সাইন বোর্ড শিলিগুড়ি", "साइन बोर्ड सिलीगुड़ी") appear in directory titles. Consider a Bengali version of the home and glow sign pages after Search Console shows demand.
+6. **Recrawl the home page.** Google shows the site name and the AJ icon only after it reprocesses the home page, which can take weeks for a domain first live on 5 September 2026. In Search Console, run URL Inspection on `https://adjeet.in/` and request indexing after any change to either.
 
 ## How we will know it worked
 
@@ -49,5 +51,6 @@ Leading indicators, checked in Search Console after deployment and resubmitting 
 - The two Gangtok URLs and the updated regional guides are indexed.
 - WhatsApp clicks tagged `service:*` and `programmatic:*` in analytics increase.
 - Bing Webmaster Tools AI Performance shows citations of adjeet.in pages.
+- Results show "AD JEET" and the AJ icon above the adjeet.in link. Until Google has the icon, its copy at `https://t1.gstatic.com/faviconV2?client=SOCIAL&type=FAVICON&fallback_opts=TYPE,SIZE,URL&url=https://adjeet.in&size=64` is a grey globe.
 
 If impressions for the priority terms stay flat after 8 weeks while pages are indexed, the gap is off-site authority (items 2 and 3 above), not on-page copy.
