@@ -95,31 +95,45 @@ cyan/yellow `--signal` pair. DESIGN.md wins. Prune or date-stamp the May entries
 sets the wrong expectation for anyone implementing chips. Fix the sentence, not
 the token.
 
-### [ ] Invert the regional page content hierarchy
+### [x] Invert the regional page content hierarchy
+**Done 2026-09-20** (PR: regional-pages-inversion). `localBrief` is the unheaded lead; the two shared blocks merged under one `About {service}` h2.
+
 Templated `body` is cut; `localBrief` becomes the unheaded lead paragraph. The
 two shared blocks merge under one `About {service}` h2. See plan §1.
 
-### [ ] Delete the `.regional-spec` panel and its 34px `dd` rule
+### [x] Delete the `.regional-spec` panel and its 34px `dd` rule
+**Done 2026-09-20.** Panel and `dd` rule deleted, not restyled. Replaced by a "Send us" list and one inline `Nearby:` line at body scale.
+
 `design/fieldwork.css:118` sets every definition value at 34px display type, so
 "Confirmed for your site" is the largest text on a 390px screen. Three of the
 four rows are filler. See plan §3.
 
-### [ ] Point JSON-LD description at `localBrief`
+### [x] Point JSON-LD description at `localBrief`
+**Done 2026-09-20.** `buildServiceJsonLd` now receives `page.localBrief`; `body` deleted from the interface and the builder.
+
 `buildServiceJsonLd` consumes `page.body`. Once `body` stops rendering, the
 schema describes invisible content on 27 pages. See plan §2.
 
-### [ ] Caption fallback gallery photos with their provenance
+### [x] Caption fallback gallery photos with their provenance
+**Done 2026-09-20.** `GalleryStrip` gained an optional `note` prop, rendered only on the `cityPhotos.length === 0` path.
+
 Only 8 of 109 gallery photos carry a city; none carry Gangtok. ~25 of 27 pages
 show photos from elsewhere. See plan §4.
 
-### [ ] Add `defaultCity` / `defaultService` props to LeadForm
+### [x] Add `defaultCity` / `defaultService` props to LeadForm
+**Done 2026-09-20.** Optional typed props; the `?city=` fallback still works (verified: `/contact?city=Malda` prefills, plain `/contact` stays empty).
+
 Currently takes no props and reads `?city=` from `window.location`. See plan §5.
 
-### [ ] Regional gallery has no empty state
+### [x] Regional gallery has no empty state
+**Done 2026-09-20.** `photos.length === 0` renders a heading, a sentence and a WhatsApp link. Still unreachable for the 5 current PROG_SERVICES.
+
 `photos.length > 0 &&` drops the section silently. Unreachable for today's five
 services, reachable the moment `PROG_SERVICES` grows. See plan state table.
 
-### [ ] U1: how are the three related cities chosen?
+### [x] U1: how are the three related cities chosen?
+**Resolved 2026-09-20.** Rotated declared order via `rotateFrom()`. Plain declared order would have orphaned both Gangtok pages, which sort last. Verified: 3 chips per page, Gangtok linked from 3 pages.
+
 **Open.** No city-to-city distance data exists. Recommendation in the plan is
 declared order. Blocks plan task 7 only.
 
