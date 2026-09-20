@@ -122,3 +122,37 @@ services, reachable the moment `PROG_SERVICES` grows. See plan state table.
 ### [ ] U1: how are the three related cities chosen?
 **Open.** No city-to-city distance data exists. Recommendation in the plan is
 declared order. Blocks plan task 7 only.
+
+---
+
+## E2E suite (P0) — found during /ship 2026-09-20
+
+16 e2e tests fail on `origin/main`. Verified pre-existing: reverting the five
+source files of `regional-pages-inversion` to main reproduces the same failures,
+so none are caused by that branch. Three distinct root causes.
+
+### [ ] P0: Turnstile unreachable in the e2e environment (lead-form x2)
+`tests/e2e/lead-form.spec.ts:32` and `:48` wait for
+`iframe[src*="challenges.cloudflare.com"]` and time out at 10s. Probing
+`/contact` live: **0 Turnstile iframes render**, console shows
+`ERR_CONNECTION_REFUSED` plus a CSP entry for challenges.cloudflare.com. The
+`cf-turnstile-response` field renders, so the component mounts; the widget
+never loads. Environmental, not an app bug. Either allow the host in the dev
+CSP, or stub Turnstile in the e2e run.
+
+### [ ] P0: Homepage e2e asserts a DOM the site no longer has (x12)
+`home-responsive.spec.ts:4` (5 viewports), `home.spec.ts:11/68/75/82`,
+`fieldwork.spec.ts:16/181`, `navigation-footer.spec.ts:8`.
+Two concrete mismatches:
+- `#hero-section + #client-history` resolves to **0 elements** (the adjacent-sibling
+  relationship the test asserts no longer exists)
+- `#client-history li` has **21** entries, the test expects **19**
+These look like the tests lagging the deliberate homepage/client-strip changes
+rather than a regression. Decide which DOM is correct, then update the specs.
+
+### [ ] P0: services.spec heading selector is too loose (x1)
+`tests/e2e/services.spec.ts:31` uses
+`getByRole('heading', { name: /Glow Sign Boards/ })`, which now matches two
+elements and trips Playwright strict mode: the `h1` "Glow Sign Boards in
+Siliguri" and the gallery `h2` "Glow Sign Boards: 9 project photos". Anchor the
+regex or scope it to the `h1`.
