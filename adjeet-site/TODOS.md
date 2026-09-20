@@ -76,3 +76,49 @@ HeroSandbox is built but not on the homepage (removed 2026-05-02 per /plan-eng-r
 **Pending.** Confirm in `next build` output that Khand and Anek Latin declared in Hero.sandbox.tsx ('use client') produce correct preload `<link>` tags. Reference: Hero.tsx (server component) loads the same fonts correctly.
 
 **Depends on:** TypeScript build passing.
+
+---
+
+## From 2026-09-20 plan-design-review (regional pages)
+
+Plan: `design/regional-pages-2026-09-20.md`. Scope is the 27 programmatic
+service-area pages at `app/(programmatic)/[slug]/page.tsx`.
+
+### [ ] Doc rot: this file contradicts DESIGN.md
+**Flagged 2026-09-20.** Everything above dated May 2026 describes amber accents,
+Khand headings, Fraunces and JetBrains Mono. `DESIGN.md` (7 September 2026)
+supersedes all of it with Cesura display, Hind Siliguri body and the
+cyan/yellow `--signal` pair. DESIGN.md wins. Prune or date-stamp the May entries.
+
+### [ ] DESIGN.md calls `--radius-button` a "pill radius"
+**Flagged 2026-09-20.** The token is `2px` (`design/tokens.css:3`). The wording
+sets the wrong expectation for anyone implementing chips. Fix the sentence, not
+the token.
+
+### [ ] Invert the regional page content hierarchy
+Templated `body` is cut; `localBrief` becomes the unheaded lead paragraph. The
+two shared blocks merge under one `About {service}` h2. See plan §1.
+
+### [ ] Delete the `.regional-spec` panel and its 34px `dd` rule
+`design/fieldwork.css:118` sets every definition value at 34px display type, so
+"Confirmed for your site" is the largest text on a 390px screen. Three of the
+four rows are filler. See plan §3.
+
+### [ ] Point JSON-LD description at `localBrief`
+`buildServiceJsonLd` consumes `page.body`. Once `body` stops rendering, the
+schema describes invisible content on 27 pages. See plan §2.
+
+### [ ] Caption fallback gallery photos with their provenance
+Only 8 of 109 gallery photos carry a city; none carry Gangtok. ~25 of 27 pages
+show photos from elsewhere. See plan §4.
+
+### [ ] Add `defaultCity` / `defaultService` props to LeadForm
+Currently takes no props and reads `?city=` from `window.location`. See plan §5.
+
+### [ ] Regional gallery has no empty state
+`photos.length > 0 &&` drops the section silently. Unreachable for today's five
+services, reachable the moment `PROG_SERVICES` grows. See plan state table.
+
+### [ ] U1: how are the three related cities chosen?
+**Open.** No city-to-city distance data exists. Recommendation in the plan is
+declared order. Blocks plan task 7 only.

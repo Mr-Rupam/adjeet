@@ -34,7 +34,6 @@ export interface ProgrammaticPage {
   slug: string
   headline: string
   searchPhrase: string
-  body: string
   localBrief: string
   nearbyAreas: string[]
   faq: { q: string; a: string }
@@ -74,24 +73,44 @@ const briefs: { service: ProgrammaticService; city: ProgrammaticCity; slug: stri
   {"service": "acp-led-signage", "city": "gangtok", "slug": "acp-led-signage-in-gangtok", "localBrief": "For ACP signage or 3D LED letters in Gangtok, photograph the full facade, the fixing surface and the route from the nearest point where a vehicle can stop. Panel sizes may need to suit narrow roads and stairways. Share brand guidelines, the site pin and any building rules on exterior fixtures so the panel layout, fixing and transport can be quoted together."},
 ]
 
+/** The other entries, read in declared order starting after `from` and wrapping. */
+function rotateFrom(all: ProgrammaticCity[], from: ProgrammaticCity): ProgrammaticCity[] {
+  const start = all.indexOf(from)
+  if (start === -1) return all.filter(city => city !== from)
+  return all.slice(start + 1).concat(all.slice(0, start))
+}
+
 export const programmaticPages: ProgrammaticPage[] = briefs.map(brief => {
   const service = getServiceBySlug(brief.service)!
   const city = CITY_LABELS[brief.city]
   const { phrase, work } = SEARCH_TERMS[brief.service]
   const nearbyAreas = NEARBY_AREAS[brief.city]
   const nearbyList = `${nearbyAreas.slice(0, -1).join(', ')} and ${nearbyAreas.at(-1)}`
-  const body = `AD JEET provides ${service.name.toLowerCase()} for projects in ${city}, with design and fabrication based at our Siliguri workshop. We also plan work in nearby areas such as ${nearbyList}. Share your exact site location to discuss measurement, delivery and installation for the agreed project scope.`
+  // There used to be a templated `body` paragraph here, identical on all 27
+  // pages with the service and city swapped in. It opened every page, which
+  // meant every page opened with the one paragraph that proved nothing. The
+  // hand-written `localBrief` leads instead, and the JSON-LD description reads
+  // from it too, so the schema describes content a visitor can actually see.
   return {
     ...brief,
     headline: `${service.name} in ${city}`,
     searchPhrase: phrase,
-    body,
     nearbyAreas,
     faq: {
       q: `Can AD JEET handle ${work} for a site in ${city}?`,
       a: `Yes. Design and fabrication happen at our Siliguri workshop, and delivery and installation in ${city} are agreed for each site, including nearby areas such as ${nearbyList}. Send the exact location, site photos, approximate size and target date on WhatsApp at ${business.phoneDisplay} for a project quote.`,
     },
-    relatedCities: (Object.keys(CITY_LABELS) as ProgrammaticCity[]).filter(other => other !== brief.city),
+    // Siblings in rotated declared order, starting from the city after this
+    // one. The page caps the list at three.
+    //
+    // There is no city-to-city distance data to sort by; `coverage-places.ts`
+    // knows distance from Siliguri only, which cannot order Gangtok against
+    // Malda for a visitor in Darjeeling. Plain declared order would be stable
+    // but would also orphan Gangtok: it sorts last, so it would never survive
+    // a top-three cut and the two Sikkim pages would receive no lateral links
+    // at all. Rotating spreads the links evenly across the set and keeps the
+    // result deterministic per page.
+    relatedCities: rotateFrom(Object.keys(CITY_LABELS) as ProgrammaticCity[], brief.city),
   }
 })
 

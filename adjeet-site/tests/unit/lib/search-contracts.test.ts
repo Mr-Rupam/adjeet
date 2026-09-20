@@ -26,11 +26,11 @@ describe('search and answer consistency', () => {
     const provider = buildLocalBusinessJsonLd()
     for (const page of programmaticPages) {
       const service = services.find(service => service.slug === page.service)!
-      const schema = buildServiceJsonLd(service, { city: CITY_LABELS[page.city], path: '/' + page.slug, description: page.body })
+      const schema = buildServiceJsonLd(service, { city: CITY_LABELS[page.city], path: '/' + page.slug, description: page.localBrief })
       expect(schema.provider['@id']).toBe(provider['@id'])
       expect(schema.areaServed).toEqual([CITY_LABELS[page.city]])
       expect(schema.url).toBe(business.url + '/' + page.slug)
-      expect(schema.description).toBe(page.body)
+      expect(schema.description).toBe(page.localBrief)
       expect(page.localBrief).toBeTruthy()
     }
     expect(new Set(programmaticPages.map(page => page.localBrief)).size).toBe(programmaticPages.length)
