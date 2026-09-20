@@ -1,10 +1,10 @@
 import { describe, expect, it, vi } from 'vitest'
 import { renderToStaticMarkup } from 'react-dom/server'
 import ProgrammaticPage from '@/app/(programmatic)/[slug]/page'
-import { programmaticPages, CITY_LABELS } from '@/content/programmatic'
+import { programmaticPages, CITY_LABELS, PROG_SERVICES } from '@/content/programmatic'
 import { getPhotosByService } from '@/content/gallery'
 import { COVERAGE_CITIES } from '@/lib/lead-schema'
-import type { ServiceSlug } from '@/content/services'
+import { SERVICE_SLUGS, type ServiceSlug } from '@/content/services'
 
 // The form is a client island with a CAPTCHA widget; what this page owes it is
 // the prefill, so the stub records exactly that and nothing else renders.
@@ -88,12 +88,17 @@ describe('regional page', () => {
     }
   }, ALL_PAGES_TIMEOUT)
 
-  // The page checks membership rather than casting, so a label added on one
-  // side only degrades to "no prefill". That fallback is currently unreachable
-  // and should stay that way: this is the guard that keeps it so.
-  it('keeps every regional city label inside the enquiry form city list', () => {
+  // The page checks membership rather than casting for both prefills, so a
+  // value added on one side only degrades to "no prefill" instead of seeding
+  // something the schema rejects or a checkbox that is never rendered. Both
+  // fallbacks are unreachable today and should stay that way: these are the
+  // guards that keep them so.
+  it('keeps every regional city and trade inside the enquiry form lists', () => {
     for (const label of Object.values(CITY_LABELS)) {
       expect(COVERAGE_CITIES as readonly string[], `"${label}" would lose its form prefill`).toContain(label)
+    }
+    for (const service of PROG_SERVICES) {
+      expect(SERVICE_SLUGS as readonly string[], `"${service}" has no checkbox to tick`).toContain(service)
     }
   })
 
