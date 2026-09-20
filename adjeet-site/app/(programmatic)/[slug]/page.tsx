@@ -2,7 +2,7 @@ import { notFound } from 'next/navigation'
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import { programmaticPages, getProgrammaticPage, CITY_LABELS } from '@/content/programmatic'
-import { getServiceBySlug, type ServiceSlug } from '@/content/services'
+import { getServiceBySlug, SERVICE_SLUGS, type ServiceSlug } from '@/content/services'
 import { getPhotosByService } from '@/content/gallery'
 import { defaultWhatsAppUrl } from '@/lib/whatsapp'
 import { COVERAGE_CITIES, type LeadInput } from '@/lib/lead-schema'
@@ -56,6 +56,15 @@ export default async function ProgrammaticPage({ params }: { params: Promise<Par
     ? (cityLabel as LeadInput['city'])
     : undefined
 
+  // Same guard for the trade, for the same reason: PROG_SERVICES and
+  // SERVICE_SLUGS are separate lists. A slug that is not rendered as a checkbox
+  // would leave every box visibly unchecked while the form value still carried
+  // it, so the visitor submits a service they never picked, or gets a generic
+  // "Invalid form data." All five current values pass.
+  const leadService = (SERVICE_SLUGS as readonly string[]).includes(page.service)
+    ? (page.service as ServiceSlug)
+    : undefined
+
   // `relatedCities` arrives in rotated declared order; the cut to three happens
   // after the existence filter so a service with no page in the next city along
   // still offers three links rather than two.
@@ -102,7 +111,7 @@ export default async function ProgrammaticPage({ params }: { params: Promise<Par
       <section className="regional-body field-container">
         <p className="regional-lead">{page.localBrief}</p>
         <div className="regional-sendus">
-          <h2 className="spec text-signal">Send us</h2>
+          <p className="spec text-signal">Send us</p>
           <ul>
             <li>a location pin</li>
             <li>photos of the frontage</li>
@@ -118,7 +127,15 @@ export default async function ProgrammaticPage({ params }: { params: Promise<Par
         <GalleryStrip
           photos={photos}
           title={cityPhotos.length > 0 ? `${service.name} in ${cityLabel}: project photos` : `${service.name}: recent AD JEET work`}
-          note={cityPhotos.length > 0 ? undefined : `From our Siliguri workshop and North Bengal installations. We have not photographed a ${cityLabel} project yet.`}
+          /*
+            Scoped to the trade, not the city. `cityPhotos` filters by service
+            AND city, so an empty list means "no photos of THIS TRADE in this
+            city". It does not mean we have never worked there. The earlier
+            wording claimed the latter, which was false on 21 of the 27 pages
+            and self-contradicting on the four Siliguri ones, where the previous
+            sentence names the Siliguri workshop.
+          */
+          note={cityPhotos.length > 0 ? undefined : `From our Siliguri workshop and North Bengal installations. We have not photographed ${page.work} in ${cityLabel} yet.`}
           link={{ href: `/portfolio?service=${service.slug}`, label: 'More in the portfolio' }}
         />
       ) : (
@@ -128,14 +145,14 @@ export default async function ProgrammaticPage({ params }: { params: Promise<Par
           grows, and an unexplained missing section is worse than a sentence.
         */
         <section className="regional-gallery-empty field-container">
-          <h2 className="spec text-signal">{service.name}: recent AD JEET work</h2>
-          <p>We are photographing recent {service.name.toLowerCase()} work. Ask to see it in person, or on WhatsApp.</p>
+          <h2 className="spec text-signal">{service.name}: photography in progress</h2>
+          <p>We are photographing recent {page.work} work. Ask to see it in person, or on WhatsApp.</p>
           <WhatsAppLink href={waUrl} source={'programmatic-nophotos:' + slug} className="field-link">Ask to see this work ↗</WhatsAppLink>
         </section>
       )}
 
       <section className="regional-about field-container">
-        <h2>About {service.name.toLowerCase()}</h2>
+        <h2>About {page.work}</h2>
         <p>{service.answer}</p>
         <p>{service.description}</p>
       </section>
@@ -184,7 +201,7 @@ export default async function ProgrammaticPage({ params }: { params: Promise<Par
         <div className="field-container">
           <h2>Or send the brief here.</h2>
           <p>Your city and trade are filled in already.</p>
-          <LeadForm defaultCity={leadCity} defaultService={page.service as ServiceSlug} />
+          <LeadForm defaultCity={leadCity} defaultService={leadService} />
         </div>
       </section>
     </>

@@ -34,6 +34,15 @@ export interface ProgrammaticPage {
   slug: string
   headline: string
   searchPhrase: string
+  /**
+   * A plain name for the trade, in running-prose case: "glow sign boards",
+   * "ACP and LED signage", "F-pole signs".
+   *
+   * Use this instead of `service.name.toLowerCase()` anywhere the trade appears
+   * mid-sentence. Lowercasing `service.name` destroys the acronyms, which turns
+   * "ACP & LED Signage" into "acp & led signage" in a 40px display heading.
+   */
+  work: string
   localBrief: string
   nearbyAreas: string[]
   faq: { q: string; a: string }
@@ -76,7 +85,12 @@ const briefs: { service: ProgrammaticService; city: ProgrammaticCity; slug: stri
 /** The other entries, read in declared order starting after `from` and wrapping. */
 function rotateFrom(all: ProgrammaticCity[], from: ProgrammaticCity): ProgrammaticCity[] {
   const start = all.indexOf(from)
-  if (start === -1) return all.filter(city => city !== from)
+  // `from` is always a CITY_LABELS key, so this cannot fire today. It throws
+  // rather than falling back: the obvious fallback is declared order, which
+  // sorts Gangtok last, drops it from every top-three cut, and orphans both
+  // Sikkim pages. That is the exact bug the rotation exists to prevent, and it
+  // would happen silently.
+  if (start === -1) throw new Error(`rotateFrom: "${from}" is not in the city list`)
   return all.slice(start + 1).concat(all.slice(0, start))
 }
 
@@ -95,6 +109,7 @@ export const programmaticPages: ProgrammaticPage[] = briefs.map(brief => {
     ...brief,
     headline: `${service.name} in ${city}`,
     searchPhrase: phrase,
+    work,
     nearbyAreas,
     faq: {
       q: `Can AD JEET handle ${work} for a site in ${city}?`,

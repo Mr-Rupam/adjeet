@@ -31,7 +31,7 @@ AD-JEET is a marketing website for a North Bengal signage company. The entire pr
 
 ## Common Tasks
 
-- **Add a city to the lead form:** edit `lib/lead-schema.ts` → `city` enum. If the city also gets regional pages, add the same label to `CITY_LABELS` in `content/programmatic.ts` — the two lists are maintained separately, and a label missing from the enum silently drops the regional page's prefill (it degrades to an empty dropdown rather than failing)
+- **Add a city to the lead form:** edit `lib/lead-schema.ts` → `city` enum. If the city also gets regional pages, add the same label to `CITY_LABELS` in `content/programmatic.ts`. The two lists are maintained separately, and a label missing from the enum silently drops the regional page's prefill (it degrades to an empty dropdown rather than failing)
 - **Add a regional service-area page:** add a brief to `briefs` in `content/programmatic.ts`. `localBrief` is the only per-page content and it leads the page, so write it for that town specifically; the rest of the page is shared
 - **Add a service:** edit `content/services.ts`
 - **Change design tokens:** edit `design/tokens.css`
