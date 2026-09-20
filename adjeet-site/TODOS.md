@@ -170,3 +170,32 @@ rather than a regression. Decide which DOM is correct, then update the specs.
 elements and trips Playwright strict mode: the `h1` "Glow Sign Boards in
 Siliguri" and the gallery `h2` "Glow Sign Boards: 9 project photos". Anchor the
 regex or scope it to the `h1`.
+
+---
+
+## Regional pages: remaining coverage (from /ship 2026-09-20)
+
+Coverage audit put the branch at 78% of changed paths (25/32), passing the 60%
+minimum and missing the 80% target. Five of the seven gaps are cosmetic or
+unreachable. Two are not.
+
+### [ ] P1: e2e the prefilled lead form on a regional page, success path
+`tests/e2e/lead-form.spec.ts` covers submit-success on `/contact` only. The form
+is new on the 27 regional pages and those carry the highest-intent search
+traffic, so a break there costs leads while `/contact` stays green and nothing
+flags it. Blocked on the same Turnstile problem as the existing e2e P0: the
+widget never loads in this environment, so it needs stubbing or a CSP allowance
+first.
+
+### [ ] P1: e2e the prefilled form against a 500 from /api/lead
+Same file, same gap. Assert the visitor sees the `role="alert"` banner and the
+WhatsApp fallback, and can recover. Covered on `/contact`, not on a regional page.
+
+### [ ] P3: viewport check either side of the 1024px grid switch
+`.regional-body` is a single column below 1024px and a `1.6fr 1fr` grid above it.
+Verified by hand at 320/390/768/1440, not automated.
+
+### [ ] P3: assert heading order on a regional page
+"Send us" was briefly a 12px `<h2>`, an outline peer of the 40px `About` heading.
+Fixed, but nothing stops it regressing. One test asserting the h1/h2 sequence
+would hold it.
