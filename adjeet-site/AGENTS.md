@@ -24,14 +24,15 @@ AD-JEET is a marketing website for a North Bengal signage company. The entire pr
 
 - `app/api/lead/route.ts` is the lead form submission pipeline
 - `app/api/chatbot/route.ts` is the chatbot response handler
-- `components/sections/LeadForm.tsx` is the contact form UI
+- `components/sections/LeadForm.tsx` is the lead form UI, on `/contact` and on the 27 regional pages. It takes optional `defaultCity` / `defaultService` props to prefill, and still reads `?city=` from the URL when they are absent
 - `design/tokens.css` holds all design tokens (colours, spacing, type scale)
 - `lib/lead-schema.ts` is the Zod schema for lead form validation (add cities/services here)
 - `lib/env.ts` gives validated env var access via `@t3-oss/env-nextjs`
 
 ## Common Tasks
 
-- **Add a city to the lead form:** edit `lib/lead-schema.ts` → `city` enum
+- **Add a city to the lead form:** edit `lib/lead-schema.ts` → `city` enum. If the city also gets regional pages, add the same label to `CITY_LABELS` in `content/programmatic.ts` — the two lists are maintained separately, and a label missing from the enum silently drops the regional page's prefill (it degrades to an empty dropdown rather than failing)
+- **Add a regional service-area page:** add a brief to `briefs` in `content/programmatic.ts`. `localBrief` is the only per-page content and it leads the page, so write it for that town specifically; the rest of the page is shared
 - **Add a service:** edit `content/services.ts`
 - **Change design tokens:** edit `design/tokens.css`
 - **Update email recipient:** edit `from`/`to` in `app/api/lead/route.ts`
