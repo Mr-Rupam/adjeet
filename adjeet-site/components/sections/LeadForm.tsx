@@ -5,11 +5,24 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { useState, useRef, useEffect, type FormEvent } from 'react'
 import { leadSchema, type LeadInput, TIMELINE_OPTIONS, COVERAGE_CITIES } from '@/lib/lead-schema'
 import { Turnstile, type TurnstileInstance } from '@marsidev/react-turnstile'
-import { services } from '@/content/services'
+import { services, type ServiceSlug } from '@/content/services'
 import { QuoteCTA } from '@/components/ui/QuoteCTA'
 import { business } from '@/lib/business'
 
-export function LeadForm() {
+export interface LeadFormProps {
+  /**
+   * Seed the city and service when the page already knows them.
+   *
+   * The regional pages at `app/(programmatic)/[slug]` exist to prove we know
+   * which town the visitor is in, so making them pick it out of a dropdown
+   * wastes what the page just demonstrated. Both are optional; `/contact`
+   * renders the form with neither and behaves exactly as before.
+   */
+  defaultCity?: LeadInput['city']
+  defaultService?: ServiceSlug
+}
+
+export function LeadForm({ defaultCity, defaultService }: LeadFormProps = {}) {
   const siteKey = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY
     || (process.env.NODE_ENV !== 'production' ? '1x00000000000000000000AA' : '')
   const [submitted, setSubmitted] = useState(false)
@@ -25,7 +38,12 @@ export function LeadForm() {
   } = useForm<LeadInput>({
     resolver: zodResolver(leadSchema),
     mode: 'onBlur',
-    defaultValues: { serviceInterest: [], timeline: 'immediate', cfTurnstileResponse: '' },
+    defaultValues: {
+      serviceInterest: defaultService ? [defaultService] : [],
+      timeline: 'immediate',
+      cfTurnstileResponse: '',
+      ...(defaultCity ? { city: defaultCity } : {}),
+    },
   })
 
   // The coverage map sends visitors here with the place they picked, as
@@ -35,11 +53,18 @@ export function LeadForm() {
   // enum before it is used, so a hand-edited URL cannot seed something the
   // schema will reject on submit.
   useEffect(() => {
+    // A page that knows its own city wins over the query string. Every regional
+    // page is served statically for any query string, so without this guard
+    // `/glow-sign-board-in-siliguri?city=Malda` renders an H1 reading Siliguri,
+    // copy saying the city is filled in already, and a select reading Malda.
+    // The value passes the enum check, so it submits as a silently wrong lead
+    // rather than being rejected.
+    if (defaultCity) return
     const requested = new URLSearchParams(window.location.search).get('city')
     if (requested && (COVERAGE_CITIES as readonly string[]).includes(requested)) {
       setValue('city', requested as LeadInput['city'], { shouldValidate: true })
     }
-  }, [setValue])
+  }, [setValue, defaultCity])
 
   const turnstileRef = useRef<TurnstileInstance>(null)
 

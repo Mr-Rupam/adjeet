@@ -10,9 +10,17 @@ interface GalleryStripProps {
   photos: GalleryPhoto[]
   title?: string
   link?: { href: string; label: string }
+  /**
+   * Where this work was photographed, when it was not photographed where the
+   * page says. Only 8 of the gallery's photos record a city, so a regional
+   * page usually shows the trade's work from somewhere else. The heading says
+   * so, but a visitor scanning images reads pictures, not headings. Plain text
+   * in the section, never a tooltip.
+   */
+  note?: string
 }
 
-export function GalleryStrip({ photos, title = 'Project gallery', link }: GalleryStripProps) {
+export function GalleryStrip({ photos, title = 'Project gallery', link, note }: GalleryStripProps) {
   const lightboxPhotos: LightboxPhoto[] = photos.map(p => ({ src: p.src, alt: p.alt }))
   const [isOpen, setIsOpen] = useState(false)
   const [initialIndex, setInitialIndex] = useState(0)
@@ -47,6 +55,7 @@ export function GalleryStrip({ photos, title = 'Project gallery', link }: Galler
             </button>
           ))}
         </div>
+        {note && <p className="max-w-[65ch] text-sm text-ink-muted">{note}</p>}
         {isOpen && (
           <Lightbox
             photos={lightboxPhotos}
