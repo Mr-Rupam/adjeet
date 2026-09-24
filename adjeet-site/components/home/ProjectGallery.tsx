@@ -17,7 +17,7 @@ export function ProjectGallery() {
   })
 
   return (
-    <section id="selected-work" className={styles.work} aria-labelledby="work-heading">
+    <section id="selected-work" className={styles.work} aria-labelledby="work-heading" data-home-section>
       <div className={styles.sectionIntro} data-home-reveal>
         <div>
           <p className={styles.kicker}>01 / Selected work</p>
@@ -28,9 +28,9 @@ export function ProjectGallery() {
 
       <div className={styles.workGrid}>
         {projects.map((project, index) => (
-          <Link href={`/portfolio?service=${project.photo.service}`} key={project.id} className={styles.workCard} aria-label={`${project.photo.alt}. Explore all work.`}>
+          <Link href={`/portfolio?service=${project.photo.service}`} key={project.id} className={styles.workCard} aria-label={`${project.photo.alt}. Explore all work.`} data-home-card>
             <figure>
-              <div className={styles.workImage} data-home-image={index === 0 ? 'shutter' : ''}>
+              <div className={styles.workImage} data-home-image={index === 0 ? 'shutter' : ''} data-light-surface>
                 <Image
                   src={project.photo.src}
                   alt={project.photo.alt}
@@ -39,7 +39,7 @@ export function ProjectGallery() {
                   className={styles.coverImage}
                 />
               </div>
-              <figcaption>
+              <figcaption data-home-caption>
                 <span><strong>{project.client}</strong><small>{project.label} / North Bengal</small></span>
                 <ArrowUpRight size={18} aria-hidden="true" />
               </figcaption>

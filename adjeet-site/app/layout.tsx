@@ -12,6 +12,8 @@ import { Analytics as VercelAnalytics } from '@vercel/analytics/next'
 import { SpeedInsights } from '@vercel/speed-insights/next'
 import { ReducedMotionWrapper } from '@/components/motion/ReducedMotionWrapper'
 import { SiteMotion } from '@/components/motion/SiteMotion'
+import { EntryIntroScript } from '@/components/motion/EntryIntroScript'
+import { EntryLoader } from '@/components/motion/EntryLoader'
 import { buildLocalBusinessJsonLd, jsonLdString, siteConfig } from '@/lib/seo'
 import './globals.css'
 import '@/design/fieldwork.css'
@@ -54,6 +56,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     >
       <head>
         <ThemeScript />
+        <EntryIntroScript />
         {/* One authoritative LocalBusiness for the whole site. It lives in the
             ROOT layout, not the (marketing) one, so the programmatic city pages
             are covered too. They previously received only a stale inline copy
@@ -66,9 +69,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       </head>
       <body className="min-h-screen flex flex-col bg-paper text-ink">
         <ReducedMotionWrapper>
+          <EntryLoader />
           <SkipLink />
           <Nav />
-          <main id="main-content" className="flex-1 pt-20 md:pt-[88px]">
+          <main id="main-content" tabIndex={-1} className="flex-1 pt-20 md:pt-[88px]">
             {children}
           </main>
           <SiteMotion />

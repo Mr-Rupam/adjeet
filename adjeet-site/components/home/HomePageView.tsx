@@ -40,28 +40,28 @@ export function HomePageView() {
           </div>
           <p className={styles.heroFoot}>From a shopfront to a street full of possibilities.</p>
         </div>
-        <Link href="/portfolio?service=acp-led-signage" className={styles.heroProject} aria-label="Explore Ambuja Cement ACP and LED signage">
+        <Link href="/portfolio?service=acp-led-signage" className={styles.heroProject} aria-label="Explore Ambuja Cement ACP and LED signage" data-light-surface>
           <Image src="/Ambuja_cement_ACP-LED.png" alt="Ambuja Cement illuminated storefront signage by AD JEET" fill preload sizes="(max-width: 767px) 100vw, 54vw" className={styles.coverImage} data-hero-image />
           <span className={styles.projectTag}>Out in the world <ArrowUpRight size={19} aria-hidden="true" /></span>
           <div className={styles.heroProjectCaption} data-hero-caption><span><strong>Ambuja Cement</strong><span>ACP &amp; LED signage</span></span><span className={styles.roundArrow}><ArrowUpRight aria-hidden="true" /></span></div>
         </Link>
       </section>
       <div className={styles.factStrip} aria-label="AD JEET at a glance">
-        <span><strong>Since 1990</strong> A signmaking story</span>
-        <span><strong>10 services</strong> One working team</span>
-        <span><strong>North Bengal</strong> Based in Siliguri</span>
+        <span data-home-fact><strong>Since 1990</strong> A signmaking story</span>
+        <span data-home-fact><strong>10 services</strong> One working team</span>
+        <span data-home-fact><strong>North Bengal</strong> Based in Siliguri</span>
       </div>
       <ProjectGallery />
       <ClientStreet />
-      <section id="services" className={styles.services} aria-labelledby="services-heading">
+      <section id="services" className={styles.services} aria-labelledby="services-heading" data-home-section>
         <div className={styles.sectionIntro}>
           <div><p className={styles.kicker}>02 / What we make</p><h2 id="services-heading" data-home-title>Signage, print<br /><span>&amp; branding.</span></h2></div>
           <div><p>A new shopfront. A campaign on the move. An event that needs to feel like you. Start with where your name belongs.</p><Link href="/services" className={styles.textLink}>All 10 services <ArrowUpRight size={18} aria-hidden="true" /></Link></div>
         </div>
         <div className={styles.serviceGroups}>
           {GROUPS.map((group, index) => (
-            <Link key={group.id} href={'/services#' + group.id} className={styles.serviceGroup}>
-              <div className={styles.serviceImage} data-home-image><Image src={group.photo.src} alt={group.photo.alt} fill sizes="(max-width: 767px) 100vw, 33vw" className={styles.coverImage} /><span>0{index + 1}</span></div>
+            <Link key={group.id} href={'/services#' + group.id} className={styles.serviceGroup} data-home-service>
+              <div className={styles.serviceImage} data-home-image data-light-surface><Image src={group.photo.src} alt={group.photo.alt} fill sizes="(max-width: 767px) 100vw, 33vw" className={styles.coverImage} /><span>0{index + 1}</span></div>
               <div className={styles.serviceTitle}><h3>{group.title}</h3><ArrowUpRight size={24} aria-hidden="true" /></div><p>{group.detail}</p>
             </Link>
           ))}
@@ -71,8 +71,8 @@ export function HomePageView() {
         </nav>
       </section>
       <section className={styles.workshop} aria-labelledby="workshop-heading">
-        <div className={styles.workshopMedia}><HeroScene /><span className={styles.workshopCaption}>AD JEET workshop, Siliguri. · Workshop visualisation</span></div>
-        <div className={styles.workshopCopy}>
+        <div className={styles.workshopMedia} data-home-workshop-media><HeroScene /><span className={styles.workshopCaption}>AD JEET workshop, Siliguri. · Workshop visualisation</span></div>
+        <div className={styles.workshopCopy} data-home-workshop-copy>
           <p className={styles.kicker}>03 / The people behind the signs</p>
           <h2 id="workshop-heading" data-home-title>A place to<br /><span>make it happen.</span></h2>
           <p>In 1990, Ranjit Das started AD JEET in one room. Today, our own workshop in Siliguri brings the work together, from the first drawing to the final fitting.</p>
@@ -90,14 +90,14 @@ export function HomePageView() {
             <CoveragePlaceList />
             <Link href="/contact" className={styles.textLink}>Tell us your location <ArrowUpRight size={18} aria-hidden="true" /></Link>
           </div>
-          <div className={styles.coverageMap}>
+          <div className={styles.coverageMap} data-home-map>
             <CoverageStage caption="Coverage is approximate, not a fixed boundary." />
           </div>
         </CoverageMapProvider>
       </section>
-      <section className={styles.faq} aria-labelledby="home-faq-heading">
+      <section className={styles.faq} aria-labelledby="home-faq-heading" data-home-section>
         <div className={styles.sectionIntro}><div><p className={styles.kicker}>06 / Before we start</p><h2 id="home-faq-heading" data-home-title>Your signage<br /><span>questions, answered.</span></h2></div><p>What we make, where we work and what to send for a quote.</p></div>
-        <div className={styles.faqList}>{homeFaqs.map(faq => <details key={faq.q}><summary>{faq.q}</summary><p>{faq.a}</p></details>)}</div>
+        <div className={styles.faqList}>{homeFaqs.map(faq => <details key={faq.q} data-home-faq><summary>{faq.q}</summary><p>{faq.a}</p></details>)}</div>
         <Link href="/contact" className={styles.textLink}>Request a signage quote <ArrowUpRight size={18} aria-hidden="true" /></Link>
       </section>
       <CommissionCTA />

@@ -1,0 +1,44 @@
+.rail {
+  position: fixed;
+  z-index: 30;
+  top: 0;
+  right: 0;
+  width: 3px;
+  height: 100vh;
+  height: 100dvh;
+  pointer-events: none;
+  background: rgb(16 159 204 / 10%);
+}
+.railProgress {
+  display: block;
+  width: 100%;
+  height: 100%;
+  transform: scaleY(0);
+  transform-origin: top center;
+  background: linear-gradient(var(--signal-hot), var(--signal));
+  box-shadow: 0 0 12px rgb(16 159 204 / 75%);
+}
+.mediaFrame { overflow: clip; }
+.mediaSurface { position: relative; isolation: isolate; }
+.mediaSurface::after {
+  content: "";
+  position: absolute;
+  z-index: 2;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0;
+  transform: translateX(-120%);
+  background: linear-gradient(100deg, transparent 38%, rgb(255 255 255 / 40%) 50%, rgb(241 243 109 / 20%) 54%, transparent 64%);
+}
+.mediaSurface.mediaLit::after { animation: light-pass 1050ms cubic-bezier(.22, 1, .36, 1) both; }
+@keyframes light-pass {
+  0% { transform: translateX(-120%); opacity: 0; }
+  16% { opacity: .9; }
+  100% { transform: translateX(120%); opacity: 0; }
+}
+@media (max-width: 767px), (prefers-reduced-motion: reduce) {
+  .rail { display: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .mediaSurface.mediaLit::after { animation: none; }
+}

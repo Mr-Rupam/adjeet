@@ -73,8 +73,8 @@ export default function ServicesPage() {
           <figure className={styles.materialFigure} data-site-reveal="media">
             <div className={styles.materialImage}>
               <Image
-                src="/images/services/fabrication-vinyl-acp-study.webp"
-                alt="Material visualisation of hands applying printed vinyl to an aluminium composite panel"
+                src="/images/services/vinyl-acp-workshop-documentary.webp"
+                alt="Material visualisation of two workers applying printed vinyl to an aluminium composite panel"
                 fill
                 sizes="(max-width: 767px) calc(100vw - 40px), (max-width: 1280px) calc(100vw - 64px), 1216px"
               />

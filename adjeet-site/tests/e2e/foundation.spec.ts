@@ -43,6 +43,6 @@ test.describe('Foundation', () => {
 
   test('footer contains address text', async ({ page }) => {
     await page.goto('/')
-    await expect(page.getByText(/Siliguri/i).first()).toBeVisible()
+    await expect(page.getByRole('contentinfo').getByText(/Siliguri/i).first()).toBeVisible()
   })
 })

@@ -17,6 +17,15 @@ html[data-theme="dark"] {
   color-scheme: dark;
 }
 
+html[data-entry-intro="playing"] {
+  overflow: hidden;
+  scrollbar-gutter: stable;
+}
+
+html[data-entry-intro="playing"] body {
+  overflow: hidden;
+}
+
 body {
   min-width: 320px;
   margin: 0;

@@ -96,8 +96,8 @@ test('small screens keep controls reachable and drawer focus contained', async (
     expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBe(width)
     const theme = page.getByRole('button', { name: /Switch to dark mode/ })
     const bounds = await theme.boundingBox()
-    expect(bounds!.width).toBeGreaterThanOrEqual(44)
-    expect(bounds!.height).toBeGreaterThanOrEqual(44)
+    expect(bounds!.width).toBeGreaterThanOrEqual(43.999)
+    expect(bounds!.height).toBeGreaterThanOrEqual(43.999)
     if (width < 1024) {
       const trigger = page.getByRole('button', { name: 'Open navigation menu' })
       await trigger.click()

@@ -104,3 +104,99 @@
 .faqList summary { cursor:pointer; font-weight:500; font-size:18px; padding:22px 4px; }
 .faqList p { max-width:80ch; font-size:16px; line-height:1.75; color:var(--ink-muted); padding:0 4px 24px; }
 @media(max-width:767px) { .faq { padding-block:54px; }.faqList summary { font-size:16px; } }
+
+/* A moving highlight reads as light on lacquered, acrylic or painted work. */
+.home [data-light-surface] { isolation: isolate; }
+.home [data-light-surface]::before,
+.home [data-light-surface]::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+}
+.home [data-light-surface]::before {
+  background: radial-gradient(ellipse 210px 180px at var(--light-x, 50%) var(--light-y, 50%), rgb(255 255 255 / 28%), rgb(16 159 204 / 8%) 48%, transparent 78%);
+  mix-blend-mode: screen;
+  opacity: 0;
+  transition: opacity 300ms ease;
+}
+.home [data-light-surface]:hover::before,
+.heroProject:focus-visible::before,
+.workCard:focus-visible .workImage::before,
+.serviceGroup:focus-visible .serviceImage::before { opacity: 1; }
+.home [data-light-surface]::after {
+  background: linear-gradient(105deg, transparent 36%, rgb(255 255 255 / 0%) 43%, rgb(255 255 255 / 45%) 49%, rgb(241 243 109 / 25%) 52%, transparent 61%);
+  transform: translateX(-125%);
+  opacity: 0;
+}
+.home [data-light-surface]:global(.is-lit)::after {
+  animation: sign-light-pass 1100ms cubic-bezier(.22, 1, .36, 1) both;
+}
+@keyframes sign-light-pass {
+  0% { transform: translateX(-125%); opacity: 0; }
+  16% { opacity: .92; }
+  100% { transform: translateX(125%); opacity: 0; }
+}
+.heroProjectCaption,
+.projectTag,
+.serviceImage > span { z-index: 2; }
+
+/* The bright rule enters like a power line being traced between sections. */
+.work,
+.services,
+.faq { position: relative; }
+.work::before,
+.services::before,
+.faq::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: var(--page-gutter);
+  right: var(--page-gutter);
+  height: 2px;
+  background: linear-gradient(90deg, var(--signal), var(--signal-hot) 75%, transparent);
+  transform: scaleX(0);
+  transform-origin: left center;
+}
+.work:global(.is-traced)::before,
+.services:global(.is-traced)::before,
+.faq:global(.is-traced)::before {
+  animation: trace-rule 1150ms cubic-bezier(.22, 1, .36, 1) both;
+}
+@keyframes trace-rule { to { transform: scaleX(1); } }
+
+.workCard figcaption svg,
+.serviceTitle svg,
+.heroProjectCaption .roundArrow svg {
+  transition: transform 350ms cubic-bezier(.22, 1, .36, 1);
+}
+.workCard:is(:hover, :focus-visible) figcaption svg,
+.serviceGroup:is(:hover, :focus-visible) .serviceTitle svg,
+.heroProject:is(:hover, :focus-visible) .heroProjectCaption .roundArrow svg {
+  transform: translate(4px, -4px) rotate(7deg);
+}
+.workCard:is(:hover, :focus-visible) .coverImage,
+.serviceGroup:is(:hover, :focus-visible) .coverImage,
+.heroProject:is(:hover, :focus-visible) .coverImage {
+  transform: scale(1.065);
+}
+.faqList details { transition: background-color 260ms ease, padding-left 260ms ease; }
+.faqList details:is(:hover, :focus-within, [open]) {
+  background: var(--paper-elevated);
+  padding-left: 12px;
+}
+@media (prefers-reduced-motion: reduce) {
+  .home [data-light-surface]::before,
+  .home [data-light-surface]::after,
+  .work::before,
+  .services::before,
+  .faq::before { animation: none !important; transition: none !important; }
+  .workCard figcaption svg,
+  .serviceTitle svg,
+  .heroProjectCaption .roundArrow svg,
+  .faqList details { transition: none; }
+  .workCard:is(:hover, :focus-visible) figcaption svg,
+  .serviceGroup:is(:hover, :focus-visible) .serviceTitle svg,
+  .heroProject:is(:hover, :focus-visible) .heroProjectCaption .roundArrow svg { transform: none; }
+}

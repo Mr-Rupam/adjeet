@@ -1,0 +1,235 @@
+.intro {
+  position: fixed;
+  inset: 0;
+  z-index: 2000;
+  display: none;
+  overflow: hidden;
+  isolation: isolate;
+  color: #f6f0e3;
+  pointer-events: none;
+  touch-action: none;
+}
+
+:global(html[data-entry-intro='playing']) .intro {
+  display: block;
+  pointer-events: auto;
+  /* A failed hydration must never leave the site covered. */
+  animation: failSafe 0s 3s forwards;
+}
+
+.backdrop,
+.drafting {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.backdrop {
+  z-index: 0;
+  background: radial-gradient(ellipse at 50% 53%, #17313e 0%, #0d1b24 55%, #081117 100%);
+  animation: plateFade 2.05s both;
+}
+
+.drafting {
+  z-index: 1;
+  opacity: 0.34;
+  background-image:
+    linear-gradient(to right, rgb(144 214 234 / 13%) 1px, transparent 1px),
+    linear-gradient(to bottom, rgb(144 214 234 / 13%) 1px, transparent 1px);
+  background-size: clamp(42px, 8vw, 96px) clamp(42px, 8vw, 96px);
+  mask-image: linear-gradient(to right, transparent, black 18%, black 82%, transparent);
+  animation: plateFade 2.05s both;
+}
+
+.logoStage {
+  position: absolute;
+  z-index: 2;
+  top: 50%;
+  left: 50%;
+  width: min(74vw, 610px);
+  transform: translate(-50%, -50%);
+  text-align: center;
+  animation: logoExit 2.05s both;
+}
+
+.logoLight {
+  position: absolute;
+  inset: 16% 2% 16%;
+  border-radius: 50%;
+  background: radial-gradient(ellipse, rgb(0 153 208 / 38%), transparent 68%);
+  filter: blur(22px);
+  opacity: 0;
+  animation: ignite 2.05s both;
+}
+
+.logo {
+  position: relative;
+  display: block;
+  width: 100%;
+  height: auto;
+  filter: drop-shadow(0 0 0 transparent);
+  animation: logoIgnite 2.05s both;
+}
+
+.logoCaption {
+  position: relative;
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-top: clamp(1rem, 3.5vh, 2rem);
+  padding-top: 0.6rem;
+  border-top: 1px solid rgb(246 240 227 / 48%);
+  font: 500 clamp(0.55rem, 1.6vw, 0.72rem)/1.3 var(--font-hind-siliguri), sans-serif;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: #d5e3e3;
+}
+
+.shutter {
+  position: absolute;
+  z-index: 3;
+  left: 0;
+  width: 100%;
+  height: 50.2%;
+  background:
+    repeating-linear-gradient(0deg, transparent 0, transparent 22px, rgb(205 227 232 / 5%) 23px, transparent 24px),
+    linear-gradient(110deg, #122934, #0b1a23 42%, #18313e 80%, #0a1720);
+  box-shadow: 0 0 36px rgb(0 0 0 / 42%);
+  will-change: transform;
+}
+
+.shutterTop {
+  top: 0;
+  border-bottom: 2px solid #67bcd8;
+  animation: shutterTop 2.05s cubic-bezier(0.65, 0, 0.2, 1) both;
+}
+
+.shutterBottom {
+  bottom: 0;
+  border-top: 2px solid #67bcd8;
+  animation: shutterBottom 2.05s cubic-bezier(0.65, 0, 0.2, 1) both;
+}
+
+.cutLine {
+  position: absolute;
+  z-index: 4;
+  top: calc(50% - 1px);
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, #7ed5ef 12%, #e9cf3f 48%, #9bdbea 88%, transparent);
+  box-shadow: 0 0 12px #62c8ee, 0 0 30px rgb(98 200 238 / 62%);
+  transform-origin: left center;
+  animation: cutLine 2.05s both;
+}
+
+.cutSpark {
+  position: absolute;
+  z-index: 5;
+  top: calc(50% - 5px);
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #f4df72;
+  box-shadow: 0 0 13px 4px #f4df72, 0 0 40px 13px rgb(98 200 238 / 40%);
+  animation: cutSpark 2.05s both;
+}
+
+.skip,
+.footerNote {
+  position: absolute;
+  z-index: 6;
+  bottom: max(1.5rem, env(safe-area-inset-bottom));
+  font: 600 0.7rem/1 var(--font-hind-siliguri), sans-serif;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+}
+
+.skip {
+  right: max(1.5rem, env(safe-area-inset-right));
+  padding: 0.65rem 0.2rem;
+  border: 0;
+  border-bottom: 1px solid rgb(246 240 227 / 70%);
+  color: #f6f0e3;
+  background: transparent;
+  animation: controlsFade 2.05s both;
+}
+
+.skip:hover,
+.skip:focus-visible {
+  color: #e9cf3f;
+  border-color: #e9cf3f;
+}
+
+.skip span { margin-left: 0.45rem; }
+
+.footerNote {
+  left: max(1.5rem, env(safe-area-inset-left));
+  color: #9eb4bb;
+  animation: controlsFade 2.05s both;
+}
+
+@keyframes shutterTop {
+  0%, 13% { transform: translateY(0); }
+  45%, 68% { transform: translateY(-35%); }
+  100% { transform: translateY(-110%); }
+}
+
+@keyframes shutterBottom {
+  0%, 13% { transform: translateY(0); }
+  45%, 68% { transform: translateY(35%); }
+  100% { transform: translateY(110%); }
+}
+
+@keyframes cutLine {
+  0% { transform: scaleX(0); opacity: 0; }
+  5% { opacity: 1; }
+  19% { transform: scaleX(1); opacity: 1; }
+  34%, 100% { transform: scaleX(1); opacity: 0; }
+}
+
+@keyframes cutSpark {
+  0% { left: 0; opacity: 0; }
+  5% { opacity: 1; }
+  20% { left: calc(100% - 12px); opacity: 1; }
+  27%, 100% { left: calc(100% - 12px); opacity: 0; }
+}
+
+@keyframes logoIgnite {
+  0%, 31% { filter: brightness(0.42) saturate(0.5); }
+  43% { filter: brightness(1) saturate(1); }
+  56% { filter: brightness(1.2) drop-shadow(0 0 13px rgb(98 200 238 / 60%)); }
+  72%, 100% { filter: brightness(1) saturate(1); }
+}
+
+@keyframes ignite {
+  0%, 35% { opacity: 0; }
+  53% { opacity: 1; }
+  74%, 100% { opacity: 0; }
+}
+
+@keyframes logoExit {
+  0%, 71% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+  100% { opacity: 0; transform: translate(-50%, -54%) scale(1.04); }
+}
+
+@keyframes plateFade {
+  0%, 72% { opacity: 1; }
+  100% { opacity: 0; }
+}
+
+@keyframes controlsFade {
+  0%, 74% { opacity: 1; }
+  100% { opacity: 0; }
+}
+
+@keyframes failSafe { to { visibility: hidden; pointer-events: none; } }
+
+@media (max-width: 480px) {
+  .logoStage { width: 84vw; }
+  .logoCaption { letter-spacing: 0.08em; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .intro { display: none !important; }
+}
