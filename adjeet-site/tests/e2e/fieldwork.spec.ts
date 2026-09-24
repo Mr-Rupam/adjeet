@@ -202,6 +202,41 @@ test('both themes keep all client names and heading text inside small viewports'
   }
 })
 
+test('the enquiry button stays a readable light pill on the cerulean band in both themes', async ({ page }) => {
+  // `.cta` fades its background, so without reduced motion the colours read
+  // straight after a theme switch are still the previous theme's.
+  await page.emulateMedia({ reducedMotion: 'reduce' })
+  // Home renders CommissionCTA; the regional pages write their own band.
+  for (const route of ['/', '/glow-sign-board-in-siliguri']) {
+    await page.goto(route)
+    const button = page.locator('.commission-actions > .cta')
+    for (const theme of ['light', 'dark']) {
+      await page.evaluate(theme => document.documentElement.setAttribute('data-theme', theme), theme)
+      const contrast = await button.evaluate(element => {
+        const luminance = (color: string) => {
+          const match = color.match(/^rgba?\(([^)]+)\)$/)
+          const [r, g, b, alpha = 1] = match ? match[1].split(/[\s,/]+/).map(Number) : []
+          if (!match || alpha < 1) throw new Error('Expected an opaque rgb() colour, got ' + color)
+          const [lr, lg, lb] = [r, g, b].map(value => {
+            const channel = value / 255
+            return channel <= 0.04045 ? channel / 12.92 : ((channel + 0.055) / 1.055) ** 2.4
+          })
+          return 0.2126 * lr + 0.7152 * lg + 0.0722 * lb
+        }
+        const ratio = (a: string, b: string) => {
+          const [lighter, darker] = [luminance(a), luminance(b)].sort((x, y) => y - x)
+          return (lighter + 0.05) / (darker + 0.05)
+        }
+        const style = getComputedStyle(element)
+        const band = getComputedStyle(element.closest('.commission')!)
+        return { text: ratio(style.color, style.backgroundColor), pill: ratio(style.backgroundColor, band.backgroundColor) }
+      })
+      expect(contrast.text, `${route} ${theme}: button text on the pill`).toBeGreaterThanOrEqual(4.5)
+      expect(contrast.pill, `${route} ${theme}: pill against the band`).toBeGreaterThanOrEqual(3)
+    }
+  }
+})
+
 test('reduced motion switches workshop stills without playing the films', async ({ page }) => {
   await page.emulateMedia({ reducedMotion: 'reduce' })
   await page.goto('/')
