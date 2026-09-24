@@ -32,7 +32,11 @@
 .commission h2 { font-family: var(--font-heading); font-size: clamp(50px,6vw,86px); font-weight: 500; line-height: 1; margin: 22px 0 0; letter-spacing: -.02em; }
 .commission-actions { display: flex; flex-direction: column; align-items: start; gap: 18px; }
 .commission-actions p { font-size: 17px; line-height: 1.6; }
-.commission .cta { background: var(--map-paper); border-color: var(--map-paper); color: #172229; }
+/* The band stays cerulean in both themes, so its button stays a cream pill
+   with dark text. In dark mode the cream is --ink, so the pair swaps. Not
+   --map-paper: that token goes dark in dark mode for the coverage map. */
+.commission .cta { background: var(--paper); border-color: var(--paper); color: var(--ink); }
+:root[data-theme="dark"] .commission .cta { background: var(--ink); border-color: var(--ink); color: var(--paper); }
 .commission .field-link:hover { color: #fff; opacity: .8; }
 .commission :focus-visible { outline-color: #fff; }
 .site-footer .text-signal-hot { color: var(--gold); }
