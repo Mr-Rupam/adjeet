@@ -4,7 +4,7 @@
  * One record feeds every place a date appears, so they cannot disagree: the
  * sitemap's `lastmod`, the page's WebPage `dateModified`, and the "Reviewed"
  * line printed on service and regional pages. The IndexNow job submits exactly
- * the URLs whose date moved since the previous production deploy.
+ * the URLs whose date moved since the last submission IndexNow accepted.
  *
  * Move a date only when that page's text, structured data or links actually
  * change. Search engines stop trusting a `lastmod` that moves on every deploy,

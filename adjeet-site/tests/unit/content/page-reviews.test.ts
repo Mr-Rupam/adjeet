@@ -5,7 +5,7 @@ describe('page review dates', () => {
   it('is a real ISO date that is not in the future', () => {
     expect(SITE_REVIEWED).toMatch(/^\d{4}-\d{2}-\d{2}$/)
     expect(Number.isNaN(new Date(SITE_REVIEWED).getTime())).toBe(false)
-    // A future date would be fake freshness, and IndexNow would keep resubmitting.
+    // A future date would be fake freshness.
     // One day of grace: dates are UTC midnight, and India is 5.5 hours ahead.
     expect(new Date(SITE_REVIEWED).getTime()).toBeLessThanOrEqual(Date.now() + 24 * 60 * 60 * 1000)
   })
