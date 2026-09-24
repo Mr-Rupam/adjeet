@@ -29,15 +29,15 @@ export function ProcessStory() {
             <div className={styles.processMediaFrame} data-home-image="shutter">
               <div className={styles.processMediaInner}>
                 <Image
-                  src="/images/home/led-letter-fabrication-documentary.webp"
-                  alt="Process visualisation of LED modules being fitted into an unfinished metal channel letter"
+                  src="/images/home/led-letter-workshop-interior-visualisation.webp"
+                  alt="Workshop interior visualisation of a craftsperson fitting LED modules into an unfinished metal letter"
                   fill
                   sizes="(max-width: 1023px) calc(100vw - 40px), (max-width: 1320px) 50vw, 640px"
                   className={styles.coverImage}
                 />
               </div>
             </div>
-            <figcaption>Process visualisation · LED letter fabrication</figcaption>
+            <figcaption>Workshop interior visualisation · LED letter fabrication</figcaption>
           </figure>
           <div className={styles.processCopy}>
             <ol data-home-process>
