@@ -235,15 +235,25 @@ brief", prefilled with the town and services from the brief that failed, and
 tracked as `lead-form-error` so recoveries show up in analytics. Both lead
 form 500 tests assert it, on `/contact` and on a regional page.
 
-### [ ] P3: Next's image optimizer wedges an image size after an aborted request
-Found 2026-09-24 while moving e2e onto `next start`. Abort a
-`/_next/image?...&w=1200` request mid-resize and every later request for that
-exact URL hangs until the server restarts; other widths still work. adjeet.in is
-unaffected (Vercel resizes with its own service), but a long-running `next dev`
-or `next start` can hit it, and tests hit it constantly. The e2e job builds
-with `E2E_UNOPTIMIZED_IMAGES=1` (see `next.config.ts`) to stay clear of it.
-Worth checking against the next Next.js release and reporting upstream with the
-repro: request once with a 50ms timeout, then again.
+### [x] P3: Next's image optimizer wedges an image size after an aborted request
+Fixed 2026-09-24 with `patches/next+16.2.6.patch`, applied by `patch-package`
+on every install. Abort a `/_next/image` request while the source file is still
+streaming in and every later request for that exact URL hung until the server
+restarted. adjeet.in was never affected (Vercel resizes with its own service);
+`next dev`, `next start` and the e2e suite were.
+
+Cause: `fetchInternalImage` builds a mocked request and response that share
+the client's socket. When the client aborts, `send` (via `on-finished`) sees
+the response's socket as no longer writable, treats the response as finished
+and stops streaming without ending it, so `mocked.res.hasStreamed` never
+settles, and Next's response cache hands that pending promise to every later
+request for the same key. The patch gives the mocked response no socket.
+Before: 3 of 24 aborted sizes wedged; after: 0 of 24, twice.
+`tests/e2e/image-optimizer.spec.ts` guards it.
+
+Still present in next 16.2.12 and 16.3.6, so upgrading Next means regenerating
+the patch (`patch-package` fails the install if it no longer applies). Worth
+reporting upstream: `npx patch-package next --create-issue` drafts the issue.
 
 ### [ ] P2: `/api/lead` server checks are no longer covered by e2e
 The e2e lead form specs now answer `/api/lead` themselves (the real route

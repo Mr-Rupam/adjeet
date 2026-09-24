@@ -1,0 +1,17 @@
+diff --git a/node_modules/next/dist/server/image-optimizer.js b/node_modules/next/dist/server/image-optimizer.js
+index 5961d5c..56d180d 100644
+--- a/node_modules/next/dist/server/image-optimizer.js
++++ b/node_modules/next/dist/server/image-optimizer.js
+@@ -1020,6 +1020,12 @@ async function fetchInternalImage(href, _req, _res, maximumResponseBody, handleR
+             socket: _req.socket,
+             maximumResponseBody
+         });
++        // The mocked response shares the client socket. If the client aborts while
++        // the source image streams in, `send` sees that socket as finished and
++        // stops without ending the response, so `hasStreamed` never settles and
++        // every later request for this cache key waits on it forever. The
++        // response only collects buffers, so give it no socket.
++        mocked.res.socket = null;
+         await handleRequest(mocked.req, mocked.res, _url.default.parse(href, true));
+         await mocked.res.hasStreamed;
+         if (!mocked.res.statusCode) {
