@@ -1,7 +1,8 @@
 # Tells IndexNow search engines (Bing, and through it Copilot and ChatGPT
 # search) which adjeet.in pages changed, once Vercel reports a successful
-# production deployment. Pages count as changed when their sitemap lastmod,
-# set in adjeet-site/content/page-reviews.ts, is recent. Run it by hand with
+# production deployment. A page counts as changed when it is new to the
+# sitemap, or its lastmod (set in adjeet-site/content/page-reviews.ts) differs
+# from the one in the last submission IndexNow accepted. Run it by hand with
 # "all" ticked to resubmit every URL.
 name: IndexNow
 
@@ -10,11 +11,12 @@ on:
   workflow_dispatch:
     inputs:
       all:
-        description: Submit every sitemap URL, not only recently changed ones
+        description: Submit every sitemap URL, not only those changed since the last accepted submission
         type: boolean
         default: false
 
 permissions:
+  actions: read
   contents: read
   deployments: read
 
@@ -36,9 +38,10 @@ jobs:
         with:
           node-version: 22
 
-      # Pages whose review date is within a week of the previous production
-      # deploy are resubmitted. The week of overlap covers a branch that set its
-      # dates a few days before it merged.
+      # The fallback for a run with no snapshot to compare with (see the next
+      # step): pages whose review date is within a week of the previous
+      # production deploy are resubmitted. The week of overlap covers a branch
+      # that set its dates a few days before it merged.
       - name: Work out which pages to submit
         id: scope
         env:
@@ -57,6 +60,24 @@ jobs:
           if [ -z "$previous" ]; then echo "args=--all" >> "$GITHUB_OUTPUT"; exit 0; fi
           echo "args=--since $(date -u -d "${previous%%T*} - 7 days" +%F)" >> "$GITHUB_OUTPUT"
 
+      # The sitemap as IndexNow last accepted it: sitemap URL to lastmod, saved
+      # by the last run whose submission was accepted, and kept for 90 days.
+      # The script submits only the pages that are new or re-dated since, and
+      # falls back to the dates above when there is none. It is an artifact
+      # because actions/cache skips any run whose GITHUB_REF is empty, and
+      # every deploy-triggered run here has one: Vercel sets a deployment's ref
+      # to its commit SHA. Only this repository's own runs count, so a fork's
+      # pull request cannot plant a snapshot.
+      - name: Download the sitemap IndexNow last accepted
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          run_id=$(gh api "repos/$GITHUB_REPOSITORY/actions/artifacts?name=indexnow-snapshot" \
+            --jq '[.artifacts[] | select((.expired | not) and .workflow_run.head_repository_id == .workflow_run.repository_id)][0].workflow_run.id // empty')
+          if [ -n "$run_id" ]; then
+            gh run download "$run_id" --repo "$GITHUB_REPOSITORY" --name indexnow-snapshot --dir "${{ runner.temp }}/indexnow-accepted"
+          fi
+
       # Give the production domain a minute to switch to the new deployment,
       # so the sitemap read below is the one that just went live.
       - name: Wait for the domain to serve the new deployment
@@ -65,4 +86,20 @@ jobs:
 
       - name: Submit to IndexNow
         working-directory: adjeet-site
-        run: node scripts/indexnow.mjs ${{ steps.scope.outputs.args }}
+        run: |
+          node scripts/indexnow.mjs ${{ steps.scope.outputs.args }} \
+            --previous "${{ runner.temp }}/indexnow-accepted/snapshot.json" \
+            --save "${{ runner.temp }}/indexnow-snapshot/snapshot.json"
+
+      # The script saves a snapshot only once IndexNow answers 200 or 202, and
+      # this step runs only when that one succeeded. So a failed submission
+      # leaves the last accepted snapshot in place, and the next run submits
+      # the same pages again. A run with nothing to submit saves nothing.
+      # overwrite lets a re-run replace the snapshot its first attempt saved.
+      - uses: actions/upload-artifact@v4
+        with:
+          name: indexnow-snapshot
+          path: ${{ runner.temp }}/indexnow-snapshot/snapshot.json
+          if-no-files-found: ignore
+          retention-days: 90
+          overwrite: true
