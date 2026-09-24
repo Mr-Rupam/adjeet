@@ -7,7 +7,15 @@ import { leadSchema, type LeadInput, TIMELINE_OPTIONS, COVERAGE_CITIES } from '@
 import { Turnstile, type TurnstileInstance } from '@marsidev/react-turnstile'
 import { services, type ServiceSlug } from '@/content/services'
 import { QuoteCTA } from '@/components/ui/QuoteCTA'
+import { WhatsAppLink } from '@/components/ui/WhatsAppLink'
 import { business } from '@/lib/business'
+import { defaultWhatsAppUrl } from '@/lib/whatsapp'
+
+/** "A", "A and B", "A, B and C": the chosen services as they read in a sentence. */
+function listServices(names: string[]): string | undefined {
+  if (names.length < 2) return names[0]
+  return `${names.slice(0, -1).join(', ')} and ${names[names.length - 1]}`
+}
 
 export interface LeadFormProps {
   /**
@@ -34,6 +42,7 @@ export function LeadForm({ defaultCity, defaultService }: LeadFormProps = {}) {
     register,
     handleSubmit,
     setValue,
+    getValues,
     formState: { errors, isSubmitting },
   } = useForm<LeadInput>({
     resolver: zodResolver(leadSchema),
@@ -142,6 +151,15 @@ export function LeadForm({ defaultCity, defaultService }: LeadFormProps = {}) {
 
   function handleFormSubmit(e: FormEvent<HTMLFormElement>) {
     return handleSubmit(onSubmit)(e)
+  }
+
+  // The error banner tells the visitor to try WhatsApp, so it carries the link,
+  // prefilled with the town and trade from the brief that just failed to send.
+  function recoveryWhatsAppUrl() {
+    const { city, serviceInterest } = getValues()
+    const picked = new Set<string>(serviceInterest ?? [])
+    const chosen = services.filter(s => picked.has(s.slug)).map(s => s.name)
+    return defaultWhatsAppUrl({ service: listServices(chosen), city: city || undefined })
   }
 
   return (
@@ -303,7 +321,12 @@ export function LeadForm({ defaultCity, defaultService }: LeadFormProps = {}) {
       {serverError && (
         <div role="alert" className="flex items-start gap-2 border-2 border-error bg-error/5 px-4 py-3 text-sm text-error">
           <span className="mt-0.5">⚠</span>
-          <p>{serverError}</p>
+          <div>
+            <p>{serverError}</p>
+            <WhatsAppLink href={recoveryWhatsAppUrl()} source="lead-form-error" className="field-link">
+              WhatsApp your brief ↗
+            </WhatsAppLink>
+          </div>
         </div>
       )}
 

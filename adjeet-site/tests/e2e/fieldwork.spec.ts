@@ -3,6 +3,7 @@ import { programmaticPages } from '../../content/programmatic'
 import { SERVICE_SLUGS } from '../../content/services'
 import { COVERAGE_AREAS } from '../../lib/coverage'
 import { photos } from '../../content/gallery'
+import { CLIENT_NAMES } from './support/clients'
 
 const acpCount = photos.filter(p => p.service === 'acp-led-signage').length
 
@@ -160,6 +161,10 @@ test('assistant accepts a suggestion, handles failure and returns focus after Es
   await page.setViewportSize({ width: 1440, height: 900 })
   await page.route('**/api/chatbot', route => route.fulfill({ status: 503, json: { error: 'Chat is unavailable. Please call the workshop.' } }))
   await page.goto('/')
+  // `next dev` draws its "Open Next.js Dev Tools" button at the bottom left, over
+  // the centre of the chat bubble, so the click lands on it. It is not part of the
+  // site and production has no such button, so hide it for this test.
+  await page.addStyleTag({ content: 'nextjs-portal { display: none !important; }' })
   await page.getByRole('button', { name: 'Open AD JEET chat assistant' }).click()
   const chat = page.getByRole('dialog', { name: 'AD JEET Chat Assistant' })
   await expect(chat.getByRole('textbox')).toBeFocused()
@@ -183,7 +188,8 @@ test('both themes keep all client names and heading text inside small viewports'
     await page.setViewportSize({ width, height: 900 })
     await page.goto('/')
     await page.evaluate(() => document.fonts.ready)
-    await expect(page.locator('#client-history li')).toHaveCount(19)
+    expect(CLIENT_NAMES.length).toBeGreaterThan(0)
+    await expect(page.locator('#client-history li')).toHaveText(CLIENT_NAMES)
     for (const theme of ['light', 'dark']) {
       await page.evaluate(theme => document.documentElement.setAttribute('data-theme', theme), theme)
       const overflow = await page.locator('#hero-section h1, #client-history h2, #client-history li, #client-history p').evaluateAll(elements => elements.flatMap(element => {

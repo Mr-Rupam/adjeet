@@ -139,37 +139,76 @@ declared order. Blocks plan task 7 only.
 
 ---
 
-## E2E suite (P0) — found during /ship 2026-09-20
+## E2E suite (P0), found during /ship 2026-09-20
 
 16 e2e tests fail on `origin/main`. Verified pre-existing: reverting the five
 source files of `regional-pages-inversion` to main reproduces the same failures,
 so none are caused by that branch. Three distinct root causes.
 
-### [ ] P0: Turnstile unreachable in the e2e environment (lead-form x2)
-`tests/e2e/lead-form.spec.ts:32` and `:48` wait for
-`iframe[src*="challenges.cloudflare.com"]` and time out at 10s. Probing
-`/contact` live: **0 Turnstile iframes render**, console shows
-`ERR_CONNECTION_REFUSED` plus a CSP entry for challenges.cloudflare.com. The
-`cf-turnstile-response` field renders, so the component mounts; the widget
-never loads. Environmental, not an app bug. Either allow the host in the dev
-CSP, or stub Turnstile in the e2e run.
+**Resolved 2026-09-24.** All three are fixed below, and the suite can no longer
+rot unnoticed: the `e2e` job in `.github/workflows/ci.yml` now runs every spec
+against a production build on every push and pull request. It never ran in CI
+before, which is how 16 failures piled up.
 
-### [ ] P0: Homepage e2e asserts a DOM the site no longer has (x12)
-`home-responsive.spec.ts:4` (5 viewports), `home.spec.ts:11/68/75/82`,
-`fieldwork.spec.ts:16/181`, `navigation-footer.spec.ts:8`.
-Two concrete mismatches:
-- `#hero-section + #client-history` resolves to **0 elements** (the adjacent-sibling
-  relationship the test asserts no longer exists)
-- `#client-history li` has **21** entries, the test expects **19**
-These look like the tests lagging the deliberate homepage/client-strip changes
-rather than a regression. Decide which DOM is correct, then update the specs.
+### [x] P0: Turnstile unreachable in the e2e environment (lead-form x2)
+Fixed 2026-09-24. The original diagnosis (connection refused, CSP) was wrong:
+Cloudflare's script loads fine here and the dev CSP allows the host in
+`script-src`, `frame-src` and `connect-src`. The real cause is that Cloudflare's
+current `api.js` mounts its challenge iframe inside a **closed** shadow root, so
+`iframe[src*="challenges.cloudflare.com"]` could never match, even with the
+widget working. The CSP entry in the console was a different host
+(`va.vercel-scripts.com`, dev only). `tests/e2e/support/turnstile.ts` now
+stubs Turnstile inside the e2e run, served from the URLs the real widget uses so
+the CSP still applies, and the lead form specs answer `/api/lead` themselves.
 
-### [ ] P0: services.spec heading selector is too loose (x1)
-`tests/e2e/services.spec.ts:31` uses
-`getByRole('heading', { name: /Glow Sign Boards/ })`, which now matches two
-elements and trips Playwright strict mode: the `h1` "Glow Sign Boards in
-Siliguri" and the gallery `h2` "Glow Sign Boards: 9 project photos". Anchor the
-regex or scope it to the `h1`.
+### [x] P0: Homepage e2e asserts a DOM the site no longer has (x12)
+Fixed 2026-09-24. Ten of the twelve were the specs lagging deliberate changes,
+each traced to its commit: 1612d04 (the redesign moved the client history below
+the selected work, and changed the h1, the hero link, the services heading and
+the "Workshop visualisation" label), 5956e23 (SD Lion TMT and Dish TV took the
+clients from 19 to 21) and 068759d (new selected-work photos). The specs now
+check the section order and read the client list from `ClientStreet.tsx`, so
+the next client added needs no test edit. `fieldwork.spec.ts` also failed on the
+chat bubble because `next dev` draws its dev tools button on top of it; that
+test hides the button.
+
+The other two, `navigation-footer.spec.ts:8` at 390px and 1280px, were not DOM
+drift but a real bug, next entry.
+
+### [x] P0: pages opened at the previous page's scroll position
+Fixed 2026-09-24. Live on adjeet.in from 7ca85ee (the site motion commit)
+until this fix: at 390px, 5 of the 20 page-to-page navigations opened where
+the last page was scrolled, not at the top. Every route into `/portfolio`,
+and `/portfolio` to the homepage (at its own bottom, 9607px). Before 7ca85ee
+only the dev server showed it, so it was first logged here as dev only.
+
+Cause, traced with stack traces and an instrumented GSAP build: Next resets
+the scroll, then `ScrollTrigger.refresh()` (run by SiteMotion after every route
+change, and by HomeMotion) scrolls back to a position it recorded from the old
+page. Two ways that record goes stale: HomeMotion's `gsap.matchMedia()` records
+the scroll in a layout effect, before Next resets it; and GSAP 3.15 invalidates
+its cached scroll with `++cacheID`, which lands on the same number as its
+scroll-event counter after exactly one scroll event, the one Next's reset
+fires, so the old cached value is read as fresh. `/portfolio` creates no
+ScrollTriggers, so nothing re-reads the scroll before the refresh.
+`ScrollTrigger.clearScrollMemory()` alone does not fix it (it bumps both
+counters). `SiteMotion` now clears the memory and sets GSAP's cached scroll to
+the real position on each route change, after Next's reset and before any
+refresh; the 20-navigation matrix then lands at the top at 390px and 1280px.
+`navigation-footer.spec.ts` covers the `/portfolio` and homepage routes and
+checks the top still holds after the refresh window.
+
+### [ ] P3: DESIGN.md and design-loop.md describe the pre-redesign homepage
+`DESIGN.md:42` still gives the section order from before 1612d04 and calls the
+workshop scene "Workshop illustration" (the site says "visualisation");
+`design-loop.md:28` still says 19 clients. DESIGN.md is the design authority,
+so these are worth correcting.
+
+### [x] P0: services.spec heading selector is too loose (x1)
+Fixed 2026-09-24. `tests/e2e/services.spec.ts` matched both the `h1` "Glow Sign
+Boards in Siliguri" and the gallery `h2` "Glow Sign Boards: 9 project photos",
+tripping strict mode. The test was wrong, not the site: it is now scoped to
+`level: 1`.
 
 ---
 
@@ -179,23 +218,48 @@ Coverage audit put the branch at 78% of changed paths (25/32), passing the 60%
 minimum and missing the 80% target. Five of the seven gaps are cosmetic or
 unreachable. Two are not.
 
-### [ ] P1: e2e the prefilled lead form on a regional page, success path
-`tests/e2e/lead-form.spec.ts` covers submit-success on `/contact` only. The form
-is new on the 27 regional pages and those carry the highest-intent search
-traffic, so a break there costs leads while `/contact` stays green and nothing
-flags it. Blocked on the same Turnstile problem as the existing e2e P0: the
-widget never loads in this environment, so it needs stubbing or a CSP allowance
-first.
+### [x] P1: e2e the prefilled lead form on a regional page, success path
+Done 2026-09-24 in `tests/e2e/lead-form.spec.ts`, on `/glow-sign-board-in-siliguri`:
+asserts the city and trade arrive prefilled and the posted body carries both.
+These pages carry the highest-intent search traffic, so a break there used to
+cost leads while `/contact` stayed green.
 
-### [ ] P1: e2e the prefilled form against a 500 from /api/lead
-Same file, same gap. Assert the visitor sees the `role="alert"` banner and the
-WhatsApp fallback, and can recover. Covered on `/contact`, not on a regional page.
+### [x] P1: e2e the prefilled form against a 500 from /api/lead
+Done 2026-09-24, same file: the alert is announced, every field survives, and a
+retry with a fresh token reaches the success state.
 
-### [ ] P3: viewport check either side of the 1024px grid switch
-`.regional-body` is a single column below 1024px and a `1.6fr 1fr` grid above it.
-Verified by hand at 320/390/768/1440, not automated.
+### [x] P2: the lead form's error banner names WhatsApp but does not link to it
+Fixed 2026-09-24. After a failed submit the banner said "Something went wrong.
+Please try WhatsApp instead." with no link in it. It now carries "WhatsApp your
+brief", prefilled with the town and services from the brief that failed, and
+tracked as `lead-form-error` so recoveries show up in analytics. Both lead
+form 500 tests assert it, on `/contact` and on a regional page.
 
-### [ ] P3: assert heading order on a regional page
-"Send us" was briefly a 12px `<h2>`, an outline peer of the 40px `About` heading.
-Fixed, but nothing stops it regressing. One test asserting the h1/h2 sequence
-would hold it.
+### [ ] P3: Next's image optimizer wedges an image size after an aborted request
+Found 2026-09-24 while moving e2e onto `next start`. Abort a
+`/_next/image?...&w=1200` request mid-resize and every later request for that
+exact URL hangs until the server restarts; other widths still work. adjeet.in is
+unaffected (Vercel resizes with its own service), but a long-running `next dev`
+or `next start` can hit it, and tests hit it constantly. The e2e job builds
+with `E2E_UNOPTIMIZED_IMAGES=1` (see `next.config.ts`) to stay clear of it.
+Worth checking against the next Next.js release and reporting upstream with the
+repro: request once with a 50ms timeout, then again.
+
+### [ ] P2: `/api/lead` server checks are no longer covered by e2e
+The e2e lead form specs now answer `/api/lead` themselves (the real route
+verifies the token with Cloudflare from Node, and with `.env.local` loaded it
+would store a real lead and send notifications). The route's origin check,
+schema validation and token verification therefore need unit or integration
+coverage. Check what `tests/unit` already covers before adding any.
+
+### [x] P3: viewport check either side of the 1024px grid switch
+Done 2026-09-24 in `tests/e2e/regional-page.spec.ts`. The switch is
+`@media(min-width:1024px)` in `design/fieldwork.css`, so 1024 is two columns and
+1023 is one. The test checks 390 and 1023 stack, 1024 and 1440 sit side by side
+at 1.6 : 1, and no width scrolls sideways.
+
+### [x] P3: assert heading order on a regional page
+Done 2026-09-24, same file, on the first Siliguri and the first Gangtok page:
+one `h1`, then the gallery, About, FAQ, "{service} in {city}." and "Or send the
+brief here." `h2`s in that order, and "Send us" is a visible label that is not
+a heading at any level.

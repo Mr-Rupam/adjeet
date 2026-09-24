@@ -29,8 +29,10 @@ test.describe('/services/[slug] detail', () => {
   })
 
   test('renders service name as heading', async ({ page }) => {
+    // Level 1 only: the gallery's h2 ("Glow Sign Boards: 9 project photos")
+    // also carries the service name, so an unscoped match hits strict mode.
     await expect(
-      page.getByRole('heading', { name: /Glow Sign Boards/ })
+      page.getByRole('heading', { level: 1, name: /Glow Sign Boards/ })
     ).toBeVisible()
   })
 

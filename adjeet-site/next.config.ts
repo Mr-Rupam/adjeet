@@ -52,6 +52,14 @@ const securityHeaders = [
 ];
 
 const nextConfig: NextConfig = {
+  // The e2e job builds with E2E_UNOPTIMIZED_IMAGES=1, so `next start` serves
+  // images as they are. Next's built-in optimizer, which `next start` uses
+  // (Vercel resizes with its own service, so adjeet.in is unaffected), wedges
+  // an image size for good once a request for it is aborted mid-resize: every
+  // later request for that size hangs. A test that ends while the hero image
+  // is resizing aborts exactly such a request, and the next page to load that
+  // size never fires `load`. Never set on Vercel.
+  images: { unoptimized: process.env.E2E_UNOPTIMIZED_IMAGES === '1' },
   async headers() {
     return [
       {
