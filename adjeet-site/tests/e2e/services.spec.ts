@@ -13,7 +13,9 @@ test.describe('/services overview', () => {
   })
 
   test('renders 10 service tiles with taglines', async ({ page }) => {
-    const serviceLinks = page.locator('a[href^="/services/"]')
+    // The tiles live in the catalogue. The comparison table further down also
+    // links three services, so counting every service link on the page would not count tiles.
+    const serviceLinks = page.locator('#services a[href^="/services/"]')
     await expect(serviceLinks).toHaveCount(10)
     // First service tagline visible in expanded mode
     await expect(page.getByText('Illuminate your brand 24/7')).toBeVisible()

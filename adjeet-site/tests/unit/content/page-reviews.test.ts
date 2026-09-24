@@ -1,0 +1,21 @@
+import { describe, expect, it } from 'vitest'
+import { SITE_REVIEWED, formatReviewDate, reviewedOn } from '@/content/page-reviews'
+
+describe('page review dates', () => {
+  it('is a real ISO date that is not in the future', () => {
+    expect(SITE_REVIEWED).toMatch(/^\d{4}-\d{2}-\d{2}$/)
+    expect(Number.isNaN(new Date(SITE_REVIEWED).getTime())).toBe(false)
+    // A future date would be fake freshness, and IndexNow would keep resubmitting.
+    expect(new Date(SITE_REVIEWED).getTime()).toBeLessThanOrEqual(Date.now())
+  })
+
+  it('falls back to the site review for a page without its own date', () => {
+    expect(reviewedOn('/services/flex-printing')).toBe(SITE_REVIEWED)
+    expect(reviewedOn('/')).toBe(SITE_REVIEWED)
+  })
+
+  it('prints the date the way the pages show it, on the same day in every time zone', () => {
+    expect(formatReviewDate('2026-09-24')).toBe('24 September 2026')
+    expect(formatReviewDate('2026-01-01')).toBe('1 January 2026')
+  })
+})

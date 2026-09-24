@@ -1,16 +1,20 @@
 import { buildPageMetadata } from '@/lib/seo'
 import { connection } from 'next/server'
 import { PortfolioContent } from './PortfolioContent'
-import { buildBreadcrumbJsonLd, jsonLdString } from '@/lib/seo'
+import { buildBreadcrumbJsonLd, buildWebPageJsonLd, jsonLdString } from '@/lib/seo'
 import { PageMasthead } from '@/components/street/PageMasthead'
 import { CommissionCTA } from '@/components/street/CommissionCTA'
-import { photos, getClients } from '@/content/gallery'
+import { photos, getClients, getFeaturedPhotos } from '@/content/gallery'
 
-export const metadata = buildPageMetadata({
+const PAGE = {
   title: "Signage & Vehicle Branding Portfolio",
   description: "Over 100 AD JEET project photographs: glow signs, ACP facades, wall paintings, vehicle wraps and puja gates for Airtel, Havells, Supreme, Shyam Steel, Star Cement and more.",
   path: "/portfolio",
-})
+}
+
+export const metadata = buildPageMetadata(PAGE)
+
+const webPage = buildWebPageJsonLd({ ...PAGE, type: 'CollectionPage', image: getFeaturedPhotos()[0]?.src })
 
 const breadcrumb = buildBreadcrumbJsonLd([
   { name: 'Home', url: '/' },
@@ -23,6 +27,7 @@ export default async function PortfolioPage() {
   await connection()
   return (
     <>
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLdString(webPage) }} />
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: jsonLdString(breadcrumb) }}

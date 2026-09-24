@@ -12,6 +12,7 @@ import {
   buildServiceJsonLd,
   buildFaqJsonLd,
   buildBreadcrumbJsonLd,
+  buildWebPageJsonLd,
   generateServiceMetadata,
   jsonLdString,
 } from '@/lib/seo'
@@ -22,7 +23,10 @@ import { CommissionCTA } from '@/components/street/CommissionCTA'
 import { WhatsAppLink } from '@/components/ui/WhatsAppLink'
 import { programmaticPages, CITY_LABELS } from '@/content/programmatic'
 import { getPhotosByService, getServiceCover } from '@/content/gallery'
+import { formatReviewDate, reviewedOn } from '@/content/page-reviews'
+import { COMPARED_SLUGS } from '@/content/sign-comparison'
 import { GalleryStrip } from '@/components/sections/GalleryStrip'
+import { SignComparison } from '@/components/sections/SignComparison'
 
 type Params = { slug: string }
 
@@ -60,17 +64,30 @@ export default async function ServiceDetailPage({
   const workPhoto = getServiceCover(service.slug as ServiceSlug)
   const servicePhotos = getPhotosByService(service.slug as ServiceSlug)
 
+  const path = `/services/${service.slug}`
+  const reviewed = reviewedOn(path)
   const serviceSchema = buildServiceJsonLd(service)
+  const webPageSchema = buildWebPageJsonLd({
+    title: service.seoTitle,
+    description: service.metaDescription,
+    path,
+    mainEntityId: serviceSchema['@id'],
+    image: workPhoto?.src,
+  })
   const faqSchema = buildFaqJsonLd(service.faqs)
   const breadcrumbSchema = buildBreadcrumbJsonLd([
     { name: 'Home', url: '/' },
     { name: 'Services', url: '/services' },
-    { name: service.name, url: `/services/${service.slug}` },
+    { name: service.name, url: path },
   ])
 
   return (
     <>
       <ServicePageTracker service={service.slug} />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: jsonLdString(webPageSchema) }}
+      />
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: jsonLdString(serviceSchema) }}
@@ -113,7 +130,11 @@ export default async function ServiceDetailPage({
         <h2 id="service-answer-heading">{service.question}</h2>
         <p>{service.answer}</p>
         <p>Also known as: {service.alternateNames.join(', ')}.</p>
+        <p className="spec">Page reviewed <time dateTime={reviewed}>{formatReviewDate(reviewed)}</time></p>
       </section>
+
+      {/* Each compared board's page carries the comparison with the other two. */}
+      {COMPARED_SLUGS.includes(service.slug as ServiceSlug) && <SignComparison current={service.slug as ServiceSlug} />}
 
       {/* Spec sheet */}
       <section className="service-specs border-b border-rule" aria-label="Service specifications">

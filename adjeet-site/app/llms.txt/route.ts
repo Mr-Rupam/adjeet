@@ -3,6 +3,8 @@ import { COVERAGE_AREAS } from '@/lib/coverage'
 import { services } from '@/content/services'
 import { homeFaqs } from '@/content/home-faqs'
 import { programmaticPages, CITY_LABELS } from '@/content/programmatic'
+import { SITE_REVIEWED, formatReviewDate } from '@/content/page-reviews'
+import { COMPARED_BOARDS, COMPARISON_COLUMNS, COMPARISON_HEADING, COMPARISON_NOTE } from '@/content/sign-comparison'
 
 export const dynamic = 'force-static'
 
@@ -15,8 +17,11 @@ export function GET() {
     '',
     `> ${business.name} is a sign board, printing and outdoor advertising company in ${business.city}, West Bengal, India. Founded in ${business.foundingYear} by ${business.founder}. It designs, fabricates and installs signage from its own Siliguri workshop for businesses across North Bengal and Sikkim.`,
     '',
+    `Last reviewed: ${formatReviewDate(SITE_REVIEWED)}.`,
+    '',
     '## Business and contact',
     `- Name: ${business.name} (also written ADJEET or AD-JEET)`,
+    `- Not to be confused with similarly named advertising businesses elsewhere in West Bengal: ${business.name}'s workshop and office are both in ${business.city}, and it was founded in ${business.foundingYear} by ${business.founder}.`,
     `- Website: ${business.url}`,
     `- Phone / WhatsApp: ${business.phone}`,
     `- Email: ${business.email}`,
@@ -29,7 +34,11 @@ export function GET() {
     '- Site visits, installation schedules, prices, material specifications and warranty terms are confirmed for each project. Regional service pages do not represent separate offices.',
     '',
     '## Services',
-    ...services.map(service => `- [${service.name}](${business.url}/services/${service.slug}): ${service.answer} Also called: ${service.alternateNames.join(', ')}.`),
+    ...services.map(service => `- [${service.name}](${business.url}/services/${service.slug}): ${service.answer} Also called: ${service.alternateNames.join(', ')}. Planning lead time: ${service.turnaround}.`),
+    '',
+    `## ${COMPARISON_HEADING}`,
+    ...COMPARED_BOARDS.map(board => `- [${board.name}](${business.url}/services/${board.slug}): ${board.cells.map((cell, index) => `${COMPARISON_COLUMNS[index]}: ${cell}`).join('. ')}.`),
+    `- ${COMPARISON_NOTE}`,
     '',
     '## Regional service guides',
     ...programmaticPages.map(page => `- [${page.searchPhrase} in ${CITY_LABELS[page.city]}](${business.url}/${page.slug})`),
