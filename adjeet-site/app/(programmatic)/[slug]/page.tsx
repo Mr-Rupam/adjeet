@@ -6,7 +6,8 @@ import { getServiceBySlug, SERVICE_SLUGS, type ServiceSlug } from '@/content/ser
 import { getPhotosByService } from '@/content/gallery'
 import { defaultWhatsAppUrl } from '@/lib/whatsapp'
 import { COVERAGE_CITIES, type LeadInput } from '@/lib/lead-schema'
-import { buildBreadcrumbJsonLd, buildServiceJsonLd, buildFaqJsonLd, jsonLdString, buildPageMetadata } from '@/lib/seo'
+import { buildBreadcrumbJsonLd, buildServiceJsonLd, buildFaqJsonLd, buildWebPageJsonLd, jsonLdString, buildPageMetadata } from '@/lib/seo'
+import { formatReviewDate, reviewedOn } from '@/content/page-reviews'
 import { GalleryStrip } from '@/components/sections/GalleryStrip'
 import { LeadForm } from '@/components/sections/LeadForm'
 import { ProgrammaticPageTracker } from '@/components/PageViewTracker'
@@ -20,16 +21,21 @@ export function generateStaticParams() {
   return programmaticPages.map(p => ({ slug: p.slug }))
 }
 
+/** Title, description and path, shared by the page metadata and its WebPage node. */
+function pageSeo(page: NonNullable<ReturnType<typeof getProgrammaticPage>>) {
+  const city = CITY_LABELS[page.city] ?? page.city
+  return {
+    title: `${page.searchPhrase} in ${city}`,
+    description: `${page.searchPhrase} in ${city} and nearby ${page.nearbyAreas.slice(0, 2).join(' and ')}, made at AD JEET's Siliguri workshop. What to send, materials and a project quote.`,
+    path: `/${page.slug}`,
+  }
+}
+
 export async function generateMetadata({ params }: { params: Promise<Params> }): Promise<Metadata> {
   const { slug } = await params
   const page = getProgrammaticPage(slug)
   if (!page) return {}
-  const city = CITY_LABELS[page.city] ?? page.city
-  return buildPageMetadata({
-    title: `${page.searchPhrase} in ${city}`,
-    description: `${page.searchPhrase} in ${city} and nearby ${page.nearbyAreas.slice(0, 2).join(' and ')}, made at AD JEET's Siliguri workshop. What to send, materials and a project quote.`,
-    path: `/${slug}`,
-  })
+  return buildPageMetadata(pageSeo(page))
 }
 
 export default async function ProgrammaticPage({ params }: { params: Promise<Params> }) {
@@ -80,6 +86,8 @@ export default async function ProgrammaticPage({ params }: { params: Promise<Par
   // actually sees. It used to read from a templated `body` that was identical
   // across all 27 pages; that paragraph no longer exists.
   const serviceSchema = buildServiceJsonLd(service, { city: cityLabel, path: `/${slug}`, description: page.localBrief })
+  const webPageSchema = buildWebPageJsonLd({ ...pageSeo(page), mainEntityId: serviceSchema['@id'], image: photos[0]?.src })
+  const reviewed = reviewedOn(`/${slug}`)
   const faqSchema = buildFaqJsonLd(faqs)
   const breadcrumb = buildBreadcrumbJsonLd([
     { name: 'Home', url: '/' },
@@ -91,6 +99,7 @@ export default async function ProgrammaticPage({ params }: { params: Promise<Par
   return (
     <>
       <ProgrammaticPageTracker service={page.service} city={page.city} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLdString(webPageSchema) }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLdString(serviceSchema) }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLdString(faqSchema) }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLdString(breadcrumb) }} />
@@ -155,6 +164,7 @@ export default async function ProgrammaticPage({ params }: { params: Promise<Par
         <h2>About {page.work}</h2>
         <p>{service.answer}</p>
         <p>{service.description}</p>
+        <p className="spec regional-reviewed">Page reviewed <time dateTime={reviewed}>{formatReviewDate(reviewed)}</time></p>
       </section>
 
       <section className="field-container regional-faq" aria-labelledby="regional-faq-heading">

@@ -8,6 +8,8 @@ import { ADJEET_SYSTEM_PROMPT } from '@/lib/chatbot-prompt'
 import { generateServiceMetadata, buildServiceJsonLd, buildLocalBusinessJsonLd, jsonLdString } from '@/lib/seo'
 import { Accordion } from '@/components/ui/Accordion'
 import { GET } from '@/app/llms.txt/route'
+import { SITE_REVIEWED, formatReviewDate } from '@/content/page-reviews'
+import { COMPARED_BOARDS, COMPARISON_HEADING } from '@/content/sign-comparison'
 
 describe('search and answer consistency', () => {
   it('gives every service its own canonical and matching share title', () => {
@@ -53,6 +55,19 @@ describe('search and answer consistency', () => {
     }
     expect(text + ADJEET_SYSTEM_PROMPT).not.toMatch(/info@adjeet|Jeet Kumar Sarkar|500\+ installations|most trusted/i)
     for (const service of services) expect(text).toContain(`${business.url}/services/${service.slug}`)
+  })
+
+  it('gives the AI reading aid a review date, the disambiguating facts and the same comparison as the pages', async () => {
+    const text = await GET().text()
+    expect(text).toContain(`Last reviewed: ${formatReviewDate(SITE_REVIEWED)}.`)
+    expect(text).toMatch(/workshop and office are both in Siliguri, and it was founded in 1990 by Ranjit Das/)
+    expect(text).toContain(`## ${COMPARISON_HEADING}`)
+    for (const board of COMPARED_BOARDS) {
+      expect(text).toContain(`[${board.name}](${business.url}/services/${board.slug})`)
+      for (const cell of board.cells) expect(text).toContain(cell)
+    }
+    // House style, and Microsoft's AI answer guidance: no em dashes.
+    expect(text).not.toContain('—')
   })
 
   it('escapes script-breaking content in structured data', () => {

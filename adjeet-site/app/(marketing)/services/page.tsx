@@ -1,15 +1,20 @@
-import { buildPageMetadata } from '@/lib/seo'
+import { buildPageMetadata, buildWebPageJsonLd, jsonLdString } from '@/lib/seo'
 import Image from 'next/image'
 import { PageMasthead } from '@/components/street/PageMasthead'
 import { ServicesBoard } from '@/components/street/ServicesBoard'
 import { CommissionCTA } from '@/components/street/CommissionCTA'
+import { SignComparison } from '@/components/sections/SignComparison'
 import styles from './Services.module.css'
 
-export const metadata = buildPageMetadata({
+const PAGE = {
   title: "Sign Board, Signage & Printing Services in Siliguri",
   description: "All 10 AD JEET services: glow sign boards, ACP and 3D LED letters, flex and hoarding printing, vehicle branding, wall painting and more across North Bengal.",
   path: "/services",
-})
+}
+
+export const metadata = buildPageMetadata(PAGE)
+
+const webPage = buildWebPageJsonLd({ ...PAGE, type: 'CollectionPage' })
 
 const PROCESS = [
   {
@@ -37,6 +42,7 @@ const PROCESS = [
 export default function ServicesPage() {
   return (
     <>
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLdString(webPage) }} />
       <PageMasthead
         meta={['10 services', 'Siliguri', 'Since 1990']}
         title={
@@ -50,6 +56,8 @@ export default function ServicesPage() {
       />
 
       <ServicesBoard />
+
+      <SignComparison />
 
       {/* Process: brief to street */}
       <section className="service-process">

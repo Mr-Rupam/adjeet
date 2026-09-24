@@ -10,6 +10,9 @@ const out = path.resolve('..', 'output', 'search-postmortem-20260914', process.a
 const canonicalBase = 'https://adjeet.in'
 const normalize = text => (text || '').replace(/\s+/g, ' ').trim()
 const report = { base, pages: [], bots: [], viewports: [], accessibility: [], errors: [] }
+// Photos the sitemap lists under /portfolio. The portfolio must render every
+// one of them in its HTML, so its evidence count is never hardcoded again.
+let portfolioPhotos = 0
 const axeSource = await fs.readFile(path.resolve('node_modules/axe-core/axe.min.js'), 'utf8')
 async function checkAccessibility(page, route, theme, width) {
   await page.addScriptTag({ content: axeSource })
@@ -22,6 +25,8 @@ async function crawl() {
   const sitemap = await fetch(base + '/sitemap.xml').then(response => response.text())
   const urls = [...sitemap.matchAll(/<loc>(.*?)<\/loc>/g)].map(match => match[1])
   assert.equal(urls.length, 42)
+  portfolioPhotos = (sitemap.match(/<loc>https:\/\/adjeet\.in\/portfolio<\/loc>([\s\S]*?)<\/url>/)?.[1].match(/<image:loc>/g) || []).length
+  assert(portfolioPhotos > 0, 'sitemap lists no portfolio photos')
   assert.equal(new Set(urls).size, urls.length)
   assert(!urls.includes(canonicalBase + '/privacy'))
   const graph = new Map()
@@ -50,7 +55,7 @@ async function crawl() {
       assert.equal(business?.['@id'], canonicalBase + '/#business', route + ' business ID')
       const main = doc.querySelector('main')
       assert(main.querySelector('h1'), route + ' main content requires JavaScript')
-      if (route === '/portfolio') assert.equal(main.querySelectorAll('button[aria-label^="View:"]').length, 5, 'portfolio evidence missing from HTML')
+      if (route === '/portfolio') assert.equal(main.querySelectorAll('button[aria-label^="View:"]').length, portfolioPhotos, 'portfolio evidence missing from HTML')
       const body = main.cloneNode(true)
       body.querySelectorAll('script, style').forEach(node => node.remove())
       const content = normalize(body.textContent)
@@ -174,7 +179,7 @@ async function visual() {
     }
     report.noJavaScriptServiceAndRegionalFAQ = true
     await page.goto(base + '/portfolio')
-    assert.equal(await page.getByRole('button', { name: /^View:/ }).count(), 5)
+    assert.equal(await page.getByRole('button', { name: /^View:/ }).count(), portfolioPhotos)
     assert(await page.getByRole('button', { name: /^View:/ }).first().isVisible())
     report.noJavaScriptPortfolio = true
     await noJS.close()

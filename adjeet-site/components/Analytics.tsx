@@ -64,9 +64,17 @@ export function Analytics() {
           gtag('config', '${GA_ID}', { send_page_view: true });
         `}
       </Script>
+      {/*
+        gtag.js is about 500KB of script once unpacked. Loading it once the page
+        is idle keeps it off the main thread while the page hydrates and becomes
+        tappable on a phone. The inline block above still defines gtag() early,
+        so page views and events queue in dataLayer and send when it arrives.
+        A visitor who leaves within the first seconds is not counted here;
+        Vercel Web Analytics still counts every visit.
+      */}
       <Script
         src={`https://www.googletagmanager.com/gtag/js?id=${GA_ID}`}
-        strategy="afterInteractive"
+        strategy="lazyOnload"
       />
     </>
   )

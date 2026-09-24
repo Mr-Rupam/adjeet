@@ -1,15 +1,17 @@
 import { business } from '@/lib/business'
 import { buildPageMetadata } from '@/lib/seo'
 import { LeadForm } from '@/components/sections/LeadForm'
-import { buildBreadcrumbJsonLd, jsonLdString } from '@/lib/seo'
+import { buildBreadcrumbJsonLd, buildWebPageJsonLd, jsonLdString } from '@/lib/seo'
 import { PageMasthead } from '@/components/street/PageMasthead'
 import { QuoteCTA } from '@/components/ui/QuoteCTA'
 
-export const metadata = buildPageMetadata({
+const PAGE = {
   title: "Contact Our Siliguri Team for a Signage Quote",
   description: "Call or WhatsApp +91 98320 11524 for signage, printing and outdoor advertising in North Bengal. AD JEET office: Platinum Square, Station Feeder Road, Siliguri.",
   path: "/contact",
-})
+}
+export const metadata = buildPageMetadata(PAGE)
+const webPage = buildWebPageJsonLd({ ...PAGE, type: 'ContactPage' })
 const breadcrumb = buildBreadcrumbJsonLd([{ name: 'Home', url: '/' }, { name: 'Contact', url: '/contact' }])
 const METHODS = [
   { method: 'WhatsApp', value: business.phoneDisplay, note: 'Send a photo and tell us what you have in mind.', href: `https://wa.me/${business.phone.replace('+', '')}`, external: true },
@@ -19,6 +21,7 @@ const METHODS = [
 export default function ContactPage() {
   return (
     <>
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLdString(webPage) }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLdString(breadcrumb) }} />
       <PageMasthead meta={['Start a project', 'Siliguri / North Bengal']} title={<>Your signage project. <br /><span className="text-signal">Let&apos;s talk.</span></>} lead="Contact AD JEET in Siliguri for signage, printing and outdoor branding across North Bengal. Start with a site photo or a complete project brief.">
         <QuoteCTA source="contact" label="WhatsApp your project" />

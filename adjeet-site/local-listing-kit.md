@@ -1,8 +1,28 @@
 # AD JEET: local listing kit
 
-Checked 15 September 2026. **AD JEET already has a Google Business Profile**, managed by an owner (it shows owner photos and no "claim this business" link): https://maps.google.com/?cid=1175174050283154218. Do not create a second profile. Duplicates get merged or suspended.
+Checked 15 September 2026, updated 24 September 2026. **AD JEET already has a Google Business Profile**, managed by an owner (it shows owner photos and no "claim this business" link): https://maps.google.com/?cid=1175174050283154218. Do not create a second profile. Duplicates get merged or suspended.
 
 Copy the details below exactly. Google, Bing and AI assistants trust a business more when the name, address and phone match everywhere, character for character.
+
+## Why listings decide AI answers, not only the map
+
+Each assistant reads different sources when someone asks for a sign maker in Siliguri, so a listing missing from one of them makes AD JEET invisible in that assistant.
+
+| Where people ask | What it reads for local businesses |
+| --- | --- |
+| Google Maps, Google AI Mode, AI Overviews, Ask Maps | The Google Business Profile (category, services, photos, reviews), then the website. Ask Maps replaced the profile's Q&A section in March 2026 and answers from the profile, its reviews and the website. |
+| ChatGPT and Microsoft Copilot | Bing Places, directory listings, Facebook pages and the website. ChatGPT has no direct link to Google Business Profiles. |
+| Perplexity | Reviews and consistent citations across directories and local sites. |
+
+The 2026 Whitespark survey of local search experts ranks, for AI visibility: 1. appearing on "best of" and curated lists, 2. a dedicated page per service (the website has these), 3. mentions on industry sites, 4. mentions in articles and local news, 5. reviews on trusted sites. For the Google map pack the top factor is the **primary category**, which is why changing it to Sign shop comes first below.
+
+## Watch out: a similarly named business in Kolkata
+
+"Adjeet Advertising Agency" in Bowbazar, Kolkata (opposite Gate 5 of Kolkata Medical College, railway advertising) is a different business, with its own Justdial and IndiaMART pages and a YouTube channel. It is not AD JEET, and search engines and AI assistants can confuse the two.
+
+- Always list AD JEET as **AD JEET** with the Siliguri address, and put "Siliguri" and "since 1990" in every description.
+- If a directory asks "Is this your business?" about the Kolkata listing, answer no. Never claim, edit or merge it.
+- Do not link its YouTube channel or listings from the website.
 
 ## Business details (use everywhere)
 
@@ -48,17 +68,30 @@ Send after a job is installed, using the short review link from the Business Pro
 
 > Namaskar {name} ji, thank you for choosing AD JEET for your {sign type} in {town}. If you are happy with the work, a short Google review would help other businesses find us. Mentioning what we made and where helps too. {review link} Thank you, Team AD JEET
 
-Ask every satisfied client, not only the happiest ones, and never offer discounts or gifts for reviews (against Google policy).
+Ask every satisfied client, not only the happiest ones, and never offer discounts or gifts for reviews (against Google policy). A steady few each month counts for more than a burst, and AI assistants quote what reviews say, so a review that names the sign and the town ("ACP board for our showroom in Jalpaiguri") helps twice.
 
 ## Directory listings (same details, same order)
 
-| Site | Category to choose | Status |
-| --- | --- | --- |
-| Google Business Profile | Sign shop | Exists; update as above |
-| Bing Places (bingplaces.com, import from Google) | Sign shop | To do |
-| Justdial | Sign Board Manufacturers, Glow Sign Board Manufacturers | To do |
-| IndiaMART | Glow Sign Board, ACP Sign Board, Flex Printing Services | To do |
-| Sulekha | Sign Board Agencies | To do |
-| Facebook page | Advertising agency | To do |
+Do these in this order. Bing Places comes first because ChatGPT and Copilot read it, and it can import everything from the Google profile in a few minutes.
+
+| Order | Site | Category to choose | Why | Status |
+| --- | --- | --- | --- | --- |
+| 1 | Google Business Profile | Sign shop | Map pack, AI Mode, Ask Maps | Exists; update as above |
+| 2 | Bing Places (bingplaces.com, "Import from Google") | Sign shop | Feeds ChatGPT and Copilot | To do |
+| 3 | Justdial | Sign Board Manufacturers, Glow Sign Board Manufacturers | Ranks on page one for "glow sign board Siliguri" | To do |
+| 4 | IndiaMART | Glow Sign Board, ACP Sign Board, Flex Printing Services | Ranks on page one; B2B buyers | To do |
+| 5 | Sulekha | Sign Board Agencies | Ranks for "sign board agencies Siliguri" | To do |
+| 6 | Aajjo | Glow sign board (Siliguri) | Its Siliguri glow sign page ranks first for "glow sign board makers Siliguri" | To do |
+| 7 | Facebook page | Advertising agency | Read by ChatGPT; brand mentions | To do |
+| 8 | Apple Business Connect, Mappls (MapmyIndia) | Sign shop | Apple Maps and Siri; Indian map apps | Optional |
 
 Justdial, IndiaMART and Sulekha each need an account confirmed with a code sent to the business phone, so the owner registers first. Once each listing is live, add its URL to `sameAs` in `lib/seo.ts`. That already includes the Google Maps listing.
+
+## Get on the lists AI assistants quote
+
+Assistants answering "best sign board makers in Siliguri" summarise the pages that already rank for it: directory category pages and articles such as "Top 3D LED board manufacturers in Siliguri". Being named on them matters more to AI answers than any change to the website.
+
+- Once the Justdial, Sulekha and IndiaMART listings exist, they appear inside those directories' "top sign board makers in Siliguri" pages. Reviews there move AD JEET up those lists.
+- Ask the authors of local "top sign board makers" articles to consider AD JEET, with the website link and a few project photos.
+- Offer a short story to local news or city pages when a notable job goes up, for example Durga Puja gates or a large showroom front. A mention with the name "AD JEET" and "Siliguri" counts even without a link.
+- Brands and dealers AD JEET has worked for sometimes list their signage partners; a mention there is a strong signal.

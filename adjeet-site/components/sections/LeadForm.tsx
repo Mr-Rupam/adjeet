@@ -3,6 +3,7 @@
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useState, useRef, useEffect, type FormEvent } from 'react'
+import { DeferUntilNear } from '@/components/ui/DeferUntilNear'
 import { leadSchema, type LeadInput, TIMELINE_OPTIONS, COVERAGE_CITIES } from '@/lib/lead-schema'
 import { Turnstile, type TurnstileInstance } from '@marsidev/react-turnstile'
 import { services, type ServiceSlug } from '@/content/services'
@@ -300,8 +301,10 @@ export function LeadForm({ defaultCity, defaultService }: LeadFormProps = {}) {
         />
       </div>
 
-      {/* Turnstile: dev test key only outside production */}
+      {/* Turnstile: dev test key only outside production. It loads about 1MB, so
+          it waits until the visitor nears the form; the space it needs is held. */}
       <div className="flex flex-col items-center">
+          <DeferUntilNear reserve={{ minWidth: 150, minHeight: 140 }}>
             <Turnstile
               ref={turnstileRef}
               siteKey={siteKey}
@@ -310,6 +313,7 @@ export function LeadForm({ defaultCity, defaultService }: LeadFormProps = {}) {
               onExpire={() => setValue('cfTurnstileResponse', '', { shouldValidate: true })}
               options={{ theme: widgetTheme, size: 'compact' }}
             />
+          </DeferUntilNear>
         {errors.cfTurnstileResponse && (
           <p className={errMsg}>
             <span className="text-[10px]">⚠</span> {errors.cfTurnstileResponse.message}

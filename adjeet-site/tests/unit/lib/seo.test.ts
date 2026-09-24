@@ -1,6 +1,10 @@
 import { describe, it, expect } from 'vitest'
-import { buildFaqJsonLd, buildBreadcrumbJsonLd, buildServiceJsonLd, buildLocalBusinessJsonLd, buildPageMetadata, buildWebSiteJsonLd, siteConfig } from '@/lib/seo'
+import {
+  buildFaqJsonLd, buildBreadcrumbJsonLd, buildServiceJsonLd, buildLocalBusinessJsonLd, buildPageMetadata, buildWebSiteJsonLd,
+  buildFounderJsonLd, buildWebPageJsonLd, siteConfig, BUSINESS_ID, WEBSITE_ID, FOUNDER_ID,
+} from '@/lib/seo'
 import { services } from '@/content/services'
+import { reviewedOn } from '@/content/page-reviews'
 
 describe('buildFaqJsonLd', () => {
   it('returns FAQPage schema', () => {
@@ -72,6 +76,62 @@ describe('buildWebSiteJsonLd', () => {
     // The brand dropped "AD-JEET"; Google may show an alternate verbatim.
     expect(buildWebSiteJsonLd().alternateName).toEqual(['ADJEET'])
   })
+
+  it('is a node other pages can point at, published by the business', () => {
+    const result = buildWebSiteJsonLd()
+    expect(result['@id']).toBe(WEBSITE_ID)
+    expect(result.publisher).toEqual({ '@id': BUSINESS_ID })
+  })
+})
+
+describe('buildFounderJsonLd', () => {
+  it('is the same person the business names as its founder', () => {
+    const founder = buildFounderJsonLd()
+    const business = buildLocalBusinessJsonLd()
+    expect(founder['@type']).toBe('Person')
+    expect(founder['@id']).toBe(FOUNDER_ID)
+    expect(business.founder).toMatchObject({ '@id': FOUNDER_ID, name: founder.name })
+    expect(founder.worksFor).toEqual({ '@id': BUSINESS_ID })
+  })
+
+  it('says only what the About page says: 1990, at 20, from one room to a Siliguri workshop', () => {
+    expect(buildFounderJsonLd().description).toBe(
+      "Ranjit Das founded AD JEET in 1990, at 20, starting in a small room in his own flat. He went on to build the company's own signage workshop in Siliguri.",
+    )
+  })
+})
+
+describe('buildWebPageJsonLd', () => {
+  const page = { title: 'Glow Sign Board & LED Sign Board Makers in Siliguri', description: 'Glow sign boards made in Siliguri.', path: '/services/glow-sign-boards' }
+
+  it('repeats the page metadata: canonical URL and full title', () => {
+    const node = buildWebPageJsonLd(page)
+    const metadata = buildPageMetadata(page)
+    expect(node.url).toBe(metadata.alternates?.canonical)
+    expect(node['@id']).toBe(`${node.url}#webpage`)
+    expect(node.name).toBe((metadata.title as { absolute: string }).absolute)
+    expect(node.description).toBe(page.description)
+  })
+
+  it('belongs to the site, is about the business, and dates itself from the review record', () => {
+    const node = buildWebPageJsonLd(page)
+    expect(node.isPartOf).toEqual({ '@id': WEBSITE_ID })
+    expect(node.about).toEqual({ '@id': BUSINESS_ID })
+    expect(node.mainEntity).toEqual({ '@id': BUSINESS_ID })
+    expect(node.dateModified).toBe(reviewedOn(page.path))
+  })
+
+  it('names a more specific main entity and an absolute image when given them', () => {
+    const service = buildServiceJsonLd(services[0])
+    const node = buildWebPageJsonLd({ ...page, type: 'CollectionPage', mainEntityId: service['@id'], image: '/images/work/example.webp' })
+    expect(node['@type']).toBe('CollectionPage')
+    expect(node.mainEntity).toEqual({ '@id': service['@id'] })
+    expect(node.primaryImageOfPage).toEqual({ '@type': 'ImageObject', url: `${siteConfig.url}/images/work/example.webp` })
+  })
+
+  it('uses the bare domain for the home page, like its canonical', () => {
+    expect(buildWebPageJsonLd({ ...page, path: '/' }).url).toBe(siteConfig.url)
+  })
 })
 
 describe('buildLocalBusinessJsonLd', () => {
@@ -100,6 +160,16 @@ describe('buildLocalBusinessJsonLd', () => {
     expect(result.address.streetAddress).toContain('Patiram Jote')
     expect(result.geo).toMatchObject({ '@type': 'GeoCoordinates', latitude: 26.6989425, longitude: 88.4010972 })
     expect(result.sameAs).toContain(result.hasMap)
+  })
+
+  // An advertising agency with a near-identical name is listed in Kolkata. The
+  // entity carries the facts that tell them apart, without naming the other.
+  it('disambiguates by town, founder and founding year', () => {
+    const { disambiguatingDescription } = buildLocalBusinessJsonLd()
+    expect(disambiguatingDescription).toContain('Siliguri')
+    expect(disambiguatingDescription).toContain('Ranjit Das')
+    expect(disambiguatingDescription).toContain('1990')
+    expect(disambiguatingDescription).not.toMatch(/Kolkata|Bowbazar/i)
   })
 
   it('areaServed contains all 5 districts', () => {

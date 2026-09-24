@@ -1,7 +1,7 @@
 import { buildPageMetadata } from '@/lib/seo'
 import Image from 'next/image'
 import Link from 'next/link'
-import { buildBreadcrumbJsonLd, jsonLdString } from '@/lib/seo'
+import { buildBreadcrumbJsonLd, buildFounderJsonLd, buildWebPageJsonLd, jsonLdString } from '@/lib/seo'
 import { CommissionCTA } from '@/components/street/CommissionCTA'
 import { FOUNDED_YEAR } from '@/lib/coverage'
 import { CoverageMapProvider } from '@/components/coverage/CoverageMapContext'
@@ -10,11 +10,14 @@ import { CoverageStage } from '@/components/coverage/CoverageStage'
 import { clientSlug, getPhotoById } from '@/content/gallery'
 import styles from './About.module.css'
 
-export const metadata = buildPageMetadata({
+const PAGE = {
   title: "About Our Siliguri Signage Workshop",
   description: "Founded by Ranjit Das in 1990, AD JEET grew from one room to its own workshop in Siliguri. Meet the business behind our North Bengal signage work.",
   path: "/about",
-})
+}
+export const metadata = buildPageMetadata(PAGE)
+const webPage = buildWebPageJsonLd({ ...PAGE, type: 'AboutPage' })
+const founder = buildFounderJsonLd()
 const breadcrumb = buildBreadcrumbJsonLd([{ name: 'Home', url: '/' }, { name: 'About', url: '/about' }])
 const JOURNEY = [
   { marker: String(FOUNDED_YEAR), title: 'One room. A beginning.', body: 'At 20, Ranjit Das started AD JEET in a small room in his own flat.' },
@@ -28,6 +31,8 @@ const CLIENT_WORK = ['airtel-008', 'star-cement-022', 'supreme-pipe-069', 'emami
 export default function AboutPage() {
   return (
     <>
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLdString(webPage) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLdString(founder) }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLdString(breadcrumb) }} />
       <section className={styles.intro} aria-labelledby="about-heading">
         <div className={styles.introCopy}>
