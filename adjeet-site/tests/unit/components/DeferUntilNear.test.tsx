@@ -40,6 +40,25 @@ describe('DeferUntilNear', () => {
     expect(screen.getByText('widget')).toBeInTheDocument()
   })
 
+  it('stops observing and stops listening to the form once it is gone', () => {
+    const disconnect = vi.fn()
+    vi.stubGlobal('IntersectionObserver', class { observe() {} disconnect = disconnect })
+    const added = vi.spyOn(HTMLFormElement.prototype, 'addEventListener')
+    const removed = vi.spyOn(HTMLFormElement.prototype, 'removeEventListener')
+    const Harness = ({ show }: { show: boolean }) => (
+      <form><input aria-label="Name" />{show && <DeferUntilNear><p>widget</p></DeferUntilNear>}</form>
+    )
+    const { rerender } = render(<Harness show />)
+    const listener = added.mock.calls.find(([type]) => type === 'focusin')?.[1]
+    expect(listener).toBeTypeOf('function')
+    // The form outlives the component, so its focus listener must go with it.
+    rerender(<Harness show={false} />)
+    expect(disconnect).toHaveBeenCalled()
+    expect(removed).toHaveBeenCalledWith('focusin', listener)
+    added.mockRestore()
+    removed.mockRestore()
+  })
+
   it('renders straight away where IntersectionObserver does not exist', () => {
     vi.stubGlobal('IntersectionObserver', undefined)
     render(<DeferUntilNear><p>widget</p></DeferUntilNear>)
