@@ -37,6 +37,8 @@ AD-JEET is a marketing website for a North Bengal signage company. The entire pr
 - **Change design tokens:** edit `design/tokens.css`
 - **Update email recipient:** edit `from`/`to` in `app/api/lead/route.ts`
 - **Add a place to the coverage map:** add it with `lat`/`lon` to `COVERAGE_AREAS` in `lib/coverage.ts`, then map it to a lead form city in `lib/coverage-places.ts`
+- **After changing what a page says:** move its date in `content/page-reviews.ts` (`PAGE_REVIEWED` for one page, `SITE_REVIEWED` after reviewing the whole site). That date is the sitemap `lastmod`, the page's `dateModified` and its "Page reviewed" line, and it decides which URLs `.github/workflows/indexnow.yml` sends to Bing after the next production deploy. A change without a new date is never submitted
+- **Change structured data:** every JSON-LD builder is in `lib/seo.ts`, and all nodes point at the one business `@id`. Search and AI owner steps (listings, reviews, measurement) are in `seo-keyword-map.md` and `local-listing-kit.md`
 - **Regenerate the map terrain or borders:** run `node scripts/build-coverage-terrain.mjs` from `adjeet-site/` and commit `public/data/` and `content/coverage-geometry.ts`. It fetches tiles at build time only; the site never does
 
 ## Env Setup
