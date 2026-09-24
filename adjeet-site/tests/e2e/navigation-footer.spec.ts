@@ -1,10 +1,25 @@
-import { test, expect } from '@playwright/test'
+import { test, expect, type Page } from '@playwright/test'
 
 test.beforeEach(async ({ page }) => {
   await page.addInitScript(() => localStorage.setItem('adjeet-consent', 'declined'))
 })
 
+/**
+ * The new page is at the top, and stays there. ScrollTrigger's refresh runs a
+ * frame or more after the route changes (up to ~200ms later when it waits for
+ * scrolling to settle) and used to scroll back to the previous page's position,
+ * so a check straight after navigating could pass on the brief moment at 0.
+ */
+async function expectToStayAtTop(page: Page) {
+  await expect.poll(() => page.evaluate(() => window.scrollY)).toBeLessThan(5)
+  await page.waitForTimeout(600)
+  expect(await page.evaluate(() => window.scrollY)).toBeLessThan(5)
+}
+
 for (const width of [390, 1280]) {
+  // /portfolio runs no scroll animations of its own, and every route into it
+  // used to open at the previous page's scroll position (live on adjeet.in
+  // after 7ca85ee). See the note in components/motion/SiteMotion.tsx.
   test(`new pages start at the top from the footer at ${width}px`, async ({ page }) => {
     await page.setViewportSize({ width, height: 844 })
     await page.goto('/', { waitUntil: 'domcontentloaded' })
@@ -14,8 +29,19 @@ for (const width of [390, 1280]) {
       await expect.poll(() => page.evaluate(() => window.scrollY)).toBeGreaterThan(300)
       await link.click()
       await expect(page).toHaveURL(path)
-      await expect.poll(() => page.evaluate(() => window.scrollY)).toBeLessThan(5)
+      await expectToStayAtTop(page)
     }
+  })
+
+  test(`home starts at the top when reached from a scrolled page at ${width}px`, async ({ page }) => {
+    await page.setViewportSize({ width, height: 844 })
+    await page.goto('/portfolio', { waitUntil: 'domcontentloaded' })
+    const home = page.getByRole('contentinfo').getByRole('link', { name: 'AD JEET home' })
+    await home.scrollIntoViewIfNeeded()
+    await expect.poll(() => page.evaluate(() => window.scrollY)).toBeGreaterThan(300)
+    await home.click()
+    await expect(page).toHaveURL('/')
+    await expectToStayAtTop(page)
   })
 }
 

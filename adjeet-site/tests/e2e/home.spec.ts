@@ -1,5 +1,6 @@
 import { test, expect } from '@playwright/test'
 import { COVERAGE_AREAS } from '../../lib/coverage'
+import { photos } from '../../content/gallery'
 
 test.describe('Home page', () => {
   test.beforeEach(async ({ page }) => {
@@ -8,12 +9,14 @@ test.describe('Home page', () => {
     await page.reload()
   })
 
-  test('uses one clear hero proposition over the workshop scene', async ({ page }) => {
+  // Since the 1612d04 redesign the hero pairs the proposition with a real
+  // installation (Ambuja Cement); the workshop scene moved to its own section.
+  test('uses one clear hero proposition beside a real installation', async ({ page }) => {
     const hero = page.locator('#hero-section')
-    await expect(hero.getByRole('heading', { level: 1, name: /signage, print & outdoor branding/i })).toBeVisible()
+    await expect(hero.getByRole('heading', { level: 1, name: /signage & outdoor advertising in siliguri/i })).toBeVisible()
     await expect(page.getByRole('heading', { level: 1 })).toHaveCount(1)
     await expect(hero.getByText(/designed, fabricated and installed from our siliguri workshop/i)).toBeVisible()
-    await expect(hero.getByText(/ad jeet workshop, siliguri/i)).toBeVisible()
+    await expect(hero.getByRole('img', { name: /ambuja cement/i })).toBeVisible()
   })
 
   test('keeps the client history proof section on the landing page', async ({ page }) => {
@@ -69,18 +72,26 @@ test.describe('Home page', () => {
     const waLink = page.getByRole('link', { name: /whatsapp your project/i }).first()
     await expect(waLink).toBeVisible()
     expect(await waLink.getAttribute('href')).toMatch(/^https:\/\/wa\.me\//)
-    await expect(page.getByRole('link', { name: /see what.*out there/i })).toHaveAttribute('href', '#selected-work')
+    await expect(page.locator('#hero-section').getByRole('link', { name: /explore the work/i })).toHaveAttribute('href', '#selected-work')
   })
 
   test('keeps real work separate from generated visual direction', async ({ page }) => {
     await expect(page.getByRole('heading', { name: /you've probably seen our work/i })).toBeVisible()
     await expect(page.getByRole('img', { name: /ambuja cement/i })).toBeVisible()
-    await expect(page.getByRole('img', { name: /srmb vehicle branding/i })).toBeVisible()
-    await expect(page.getByText('Workshop illustration')).toBeVisible()
+    // The selected work changes with the gallery (068759d), so check that every
+    // image in it is a documented project photo rather than naming particular ones.
+    const workImages = page.locator('#selected-work').getByRole('img')
+    await expect(workImages.first()).toBeVisible()
+    const galleryAlts = new Set(photos.map(photo => photo.alt))
+    for (const alt of await workImages.evaluateAll(images => images.map(image => image.getAttribute('alt')))) {
+      expect(galleryAlts.has(alt ?? ''), `${alt} is a gallery project photo`).toBe(true)
+    }
+    // The generated workshop scene carries a visualisation label (1612d04).
+    await expect(page.getByText(/workshop visualisation/i)).toBeVisible()
   })
 
   test('organises services into three paths and preserves the all-services route', async ({ page }) => {
-    await expect(page.getByRole('heading', { name: /choose your canvas/i })).toBeVisible()
+    await expect(page.getByRole('heading', { name: /signage, print & branding/i })).toBeVisible()
     await expect(page.getByRole('link', { name: /your storefront/i })).toHaveAttribute('href', '/services#storefront')
     await expect(page.getByRole('link', { name: /your next campaign/i })).toHaveAttribute('href', '/services#campaign')
     await expect(page.getByRole('link', { name: /your space or event/i })).toHaveAttribute('href', '/services#space-event')

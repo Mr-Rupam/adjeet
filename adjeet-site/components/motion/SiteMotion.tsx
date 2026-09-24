@@ -1,6 +1,6 @@
 'use client'
 
-import { useLayoutEffect } from 'react'
+import { useLayoutEffect, useRef } from 'react'
 import { usePathname } from 'next/navigation'
 import { gsap } from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
@@ -14,6 +14,27 @@ if (typeof window !== 'undefined') {
 export function SiteMotion() {
   const pathname = usePathname()
   const prefersReducedMotion = useReducedMotion()
+  const previousPathname = useRef(pathname)
+
+  // After a route change, before anything refreshes ScrollTrigger. This
+  // component renders after <main> in the root layout, so this runs once the
+  // new page has mounted and Next has put the scroll where it belongs.
+  // ScrollTrigger has not caught up: refresh() records the scroll position and
+  // scrolls back to it when it finishes, and straight after a route change that
+  // record can be the previous page's. HomeMotion's matchMedia records it in a
+  // layout effect, before Next resets the scroll, and GSAP 3.15's cached scroll
+  // value survives exactly one scroll event, which is all Next's reset makes.
+  // Every route into /portfolio (no ScrollTriggers of its own to re-read the
+  // scroll) and /portfolio to the homepage opened at the old page's position.
+  // So forget the recorded positions and hand ScrollTrigger the real one. Not
+  // on first mount: there is no previous page, and in GSAP's first 500ms the
+  // setter would also switch the browser's scroll restoration to manual.
+  useLayoutEffect(() => {
+    if (previousPathname.current === pathname) return
+    previousPathname.current = pathname
+    ScrollTrigger.clearScrollMemory()
+    ScrollTrigger.getScrollFunc(window)(window.scrollY)
+  }, [pathname])
 
   useLayoutEffect(() => {
     if (prefersReducedMotion || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return

@@ -1,4 +1,5 @@
 import { test, expect } from '@playwright/test'
+import { CLIENT_NAMES } from './support/clients'
 
 for (const width of [320, 390, 430, 768, 1440]) {
   test(`hero and client names fit at ${width}px`, async ({ page }) => {
@@ -6,8 +7,12 @@ for (const width of [320, 390, 430, 768, 1440]) {
     await page.emulateMedia({ reducedMotion: 'reduce' })
     await page.goto('/')
     await page.evaluate(() => document.fonts.ready)
-    await expect(page.locator('#hero-section + #client-history')).toHaveCount(1)
-    await expect(page.locator('#client-history li')).toHaveCount(19)
+    // Since the 1612d04 redesign the client history follows the selected work
+    // instead of sitting directly under the hero (design-loop.md, "Coverage and purpose").
+    const sectionOrder = await page.locator('[data-home-page] > [id]').evaluateAll(sections => sections.map(section => section.id))
+    expect(sectionOrder.slice(0, 3)).toEqual(['hero-section', 'selected-work', 'client-history'])
+    expect(CLIENT_NAMES.length).toBeGreaterThan(0)
+    await expect(page.locator('#client-history li')).toHaveText(CLIENT_NAMES)
     for (const theme of ['light', 'dark']) {
       await page.evaluate(theme => document.documentElement.setAttribute('data-theme', theme), theme)
       const overflow = await page.locator('#hero-section h1, #client-history h2, #client-history li, #client-history p').evaluateAll(elements => {
