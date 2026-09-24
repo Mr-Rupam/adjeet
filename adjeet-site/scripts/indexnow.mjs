@@ -82,6 +82,12 @@ async function main() {
   const key = readKey()
   const keyLocation = `${site}/${key}.txt`
 
+  // Check the key before reading the sitemap. Right after a deploy the domain
+  // can still serve the previous build, whose sitemap would show no new dates;
+  // the first time, the key file exists only in the new build, so this also
+  // waits for it to go live.
+  if (!values['dry-run']) await confirmLiveKey(keyLocation, key)
+
   const sitemap = await fetch(`${site}/sitemap.xml`, { cache: 'no-store' })
   if (!sitemap.ok) throw new Error(`sitemap.xml returned ${sitemap.status}`)
   const entries = parseSitemap(await sitemap.text())
@@ -95,7 +101,6 @@ async function main() {
   console.log(`${urlList.length} URL(s) to submit:\n${urlList.map(url => '  ' + url).join('\n')}`)
   if (values['dry-run']) return
 
-  await confirmLiveKey(keyLocation, key)
   const response = await fetch('https://api.indexnow.org/indexnow', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json; charset=utf-8' },

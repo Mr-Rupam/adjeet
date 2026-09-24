@@ -6,7 +6,8 @@ describe('page review dates', () => {
     expect(SITE_REVIEWED).toMatch(/^\d{4}-\d{2}-\d{2}$/)
     expect(Number.isNaN(new Date(SITE_REVIEWED).getTime())).toBe(false)
     // A future date would be fake freshness, and IndexNow would keep resubmitting.
-    expect(new Date(SITE_REVIEWED).getTime()).toBeLessThanOrEqual(Date.now())
+    // One day of grace: dates are UTC midnight, and India is 5.5 hours ahead.
+    expect(new Date(SITE_REVIEWED).getTime()).toBeLessThanOrEqual(Date.now() + 24 * 60 * 60 * 1000)
   })
 
   it('falls back to the site review for a page without its own date', () => {
