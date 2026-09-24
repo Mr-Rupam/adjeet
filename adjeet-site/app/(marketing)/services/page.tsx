@@ -1,7 +1,9 @@
 import { buildPageMetadata } from '@/lib/seo'
+import Image from 'next/image'
 import { PageMasthead } from '@/components/street/PageMasthead'
 import { ServicesBoard } from '@/components/street/ServicesBoard'
 import { CommissionCTA } from '@/components/street/CommissionCTA'
+import styles from './Services.module.css'
 
 export const metadata = buildPageMetadata({
   title: "Sign Board, Signage & Printing Services in Siliguri",
@@ -52,11 +54,26 @@ export default function ServicesPage() {
       {/* Process: brief to street */}
       <section className="service-process">
         <div className="mx-auto max-w-content px-5 py-16 md:px-8 md:py-24">
-          <div className="mb-10 md:mb-14">
-            <h2 className="display mt-3 text-ink" style={{ fontSize: 'var(--text-display-2)' }}>
+          <div className={styles.processIntro}>
+            <p className="spec text-signal">The making / From brief to site</p>
+            <h2 className="display mt-3 text-ink" style={{ fontSize: 'var(--text-display-2)' }} data-site-reveal="title">
               From place to presence.
             </h2>
+            <p>Materials, print and finish meet at the bench before a sign reaches its site.</p>
           </div>
+
+          <figure className={styles.materialFigure} data-site-reveal="media">
+            <div className={styles.materialImage}>
+              <Image
+                src="/images/services/fabrication-vinyl-acp-study.webp"
+                alt="Material visualisation of hands applying printed vinyl to an aluminium composite panel"
+                fill
+                sizes="(max-width: 767px) calc(100vw - 40px), (max-width: 1280px) calc(100vw - 64px), 1216px"
+              />
+              <span className={styles.imageNote} aria-hidden="true">Print / vinyl / ACP</span>
+            </div>
+            <figcaption>Material visualisation. Illustrative fabrication scene, not a documented AD JEET project.</figcaption>
+          </figure>
 
           <ol className="m-0 grid list-none gap-6 p-0 sm:grid-cols-2 lg:grid-cols-4 lg:gap-8">
             {PROCESS.map(step => (

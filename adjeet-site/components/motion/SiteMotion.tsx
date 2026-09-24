@@ -23,6 +23,20 @@ export function SiteMotion() {
 
     const context = gsap.context(() => {
       gsap.utils.toArray<HTMLElement>('[data-site-reveal]', root).forEach(target => {
+        if (target.dataset.siteReveal === 'media') {
+          gsap.from(target, {
+            clipPath: 'inset(100% 0 0 0)',
+            duration: 1.05,
+            ease: 'power3.inOut',
+            scrollTrigger: {
+              trigger: target,
+              start: 'top 88%',
+              once: true,
+            },
+            onComplete: () => gsap.set(target, { clearProps: 'clipPath' }),
+          })
+          return
+        }
         gsap.from(target, {
           opacity: 0,
           y: target.dataset.siteReveal === 'title' ? 16 : 12,

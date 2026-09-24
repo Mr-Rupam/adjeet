@@ -21,7 +21,7 @@ export function ProjectGallery() {
       <div className={styles.sectionIntro} data-home-reveal>
         <div>
           <p className={styles.kicker}>01 / Selected work</p>
-            <h2 id="work-heading">You&apos;ve probably<br /><span>seen our work.</span></h2>
+            <h2 id="work-heading" data-home-title>You&apos;ve probably<br /><span>seen our work.</span></h2>
         </div>
         <p>Real installations from the routes our team works every day.</p>
       </div>
@@ -30,7 +30,7 @@ export function ProjectGallery() {
         {projects.map((project, index) => (
           <Link href={`/portfolio?service=${project.photo.service}`} key={project.id} className={styles.workCard} aria-label={`${project.photo.alt}. Explore all work.`}>
             <figure>
-              <div className={styles.workImage}>
+              <div className={styles.workImage} data-home-image={index === 0 ? 'shutter' : ''}>
                 <Image
                   src={project.photo.src}
                   alt={project.photo.alt}
