@@ -47,9 +47,6 @@ jobs:
   e2e:
     runs-on: ubuntu-latest
     timeout-minutes: 20
-    env:
-      # Serve images as they are: see the note on `images` in next.config.ts.
-      E2E_UNOPTIMIZED_IMAGES: '1'
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4

@@ -1,0 +1,4 @@
+# patch-package applies these to LF files in node_modules. Keep them LF on
+# every checkout, or a Windows clone (core.autocrlf=true) turns them CRLF and
+# the postinstall step can fail to apply them.
+patches/*.patch text eol=lf
