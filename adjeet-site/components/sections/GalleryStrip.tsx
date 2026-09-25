@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import Image from 'next/image'
+import { LoadingImage as Image } from '@/components/ui/LoadingImage'
 import Link from 'next/link'
 import { Lightbox, type LightboxPhoto } from '@/components/ui/Lightbox'
 import type { GalleryPhoto } from '@/content/gallery'

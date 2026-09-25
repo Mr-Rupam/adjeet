@@ -1,11 +1,9 @@
 'use client'
 
-import Image from 'next/image'
-import { useEffect, useRef } from 'react'
-import { ENTRY_INTRO_COMPLETE_EVENT } from '@/lib/entry-intro'
+import { LoadingImage as Image } from '@/components/ui/LoadingImage'
+import { useEffect, useRef, type CSSProperties } from 'react'
+import { ENTRY_INTRO_COMPLETE_EVENT, ENTRY_INTRO_DURATION_MS } from '@/lib/entry-intro'
 import styles from './EntryLoader.module.css'
-
-const INTRO_DURATION_MS = 2050
 
 /** A first-entry workshop shutter: the real wordmark is the only brand artwork. */
 export function EntryLoader() {
@@ -42,14 +40,15 @@ export function EntryLoader() {
     }
 
     const startedAt = Number(html.dataset.entryIntroStartedAt ?? 0)
-    if (motionPreference.matches || (startedAt && Date.now() - startedAt >= INTRO_DURATION_MS)) {
+    const elapsed = startedAt ? Date.now() - startedAt : 0
+    if (motionPreference.matches || elapsed >= ENTRY_INTRO_DURATION_MS) {
       release()
       return
     }
     skipRef.current?.focus({ preventScroll: true })
     window.addEventListener('keydown', onKeyDown)
     motionPreference.addEventListener('change', onMotionChange)
-    const timer = window.setTimeout(release, INTRO_DURATION_MS)
+    const timer = window.setTimeout(release, ENTRY_INTRO_DURATION_MS - elapsed)
     return () => {
       finishRef.current = null
       window.clearTimeout(timer)
@@ -59,7 +58,14 @@ export function EntryLoader() {
   }, [])
 
   return (
-    <div className={styles.intro} role="dialog" aria-modal="true" aria-label="AD JEET opening animation" data-entry-loader>
+    <div
+      className={styles.intro}
+      role="dialog"
+      aria-modal="true"
+      aria-label="AD JEET opening animation"
+      data-entry-loader
+      style={{ '--entry-intro-duration': `${ENTRY_INTRO_DURATION_MS}ms` } as CSSProperties}
+    >
       <div className={styles.backdrop} aria-hidden="true" />
       <div className={styles.drafting} aria-hidden="true" />
 

@@ -65,6 +65,41 @@ button:not(:disabled) {
   cursor: pointer;
 }
 
+/* Each image keeps its own moving placeholder until it has loaded. */
+img[data-image-status="loading"] {
+  background-color: rgb(0 153 208 / 18%);
+  background-image: linear-gradient(
+    105deg,
+    transparent 0%,
+    rgb(255 255 255 / 8%) 25%,
+    rgb(255 255 255 / 48%) 50%,
+    rgb(255 255 255 / 8%) 75%,
+    transparent 100%
+  );
+  background-size: 160px 100%;
+  background-repeat: repeat-x;
+  animation:
+    image-loading-sweep 1.8s linear infinite,
+    image-loading-breathe 1.8s ease-in-out infinite alternate;
+}
+
+@keyframes image-loading-sweep {
+  from { background-position: 0 0; }
+  to { background-position: 160px 0; }
+}
+
+@keyframes image-loading-breathe {
+  from { background-color: rgb(0 153 208 / 12%); }
+  to { background-color: rgb(0 153 208 / 27%); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  img[data-image-status="loading"] {
+    animation: none;
+    background-position: 50% 0;
+  }
+}
+
 :focus-visible {
   outline: 2px solid var(--focus-ring);
   outline-offset: 4px;

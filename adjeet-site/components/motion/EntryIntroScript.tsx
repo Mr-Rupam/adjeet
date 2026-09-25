@@ -1,4 +1,4 @@
-import { ENTRY_INTRO_COMPLETE_EVENT, ENTRY_INTRO_STORAGE_KEY } from '@/lib/entry-intro'
+import { ENTRY_INTRO_COMPLETE_EVENT, ENTRY_INTRO_FALLBACK_MS, ENTRY_INTRO_STORAGE_KEY } from '@/lib/entry-intro'
 
 /** Select the first-visit intro before paint, without hiding content when JS is off. */
 export function EntryIntroScript() {
@@ -15,7 +15,7 @@ export function EntryIntroScript() {
       document.documentElement.removeAttribute('data-entry-intro');
       document.documentElement.removeAttribute('data-entry-intro-started-at');
       window.dispatchEvent(new Event(${JSON.stringify(ENTRY_INTRO_COMPLETE_EVENT)}));
-    }, 3000);
+    }, ${ENTRY_INTRO_FALLBACK_MS});
   } catch (_) {
     // Storage can be disabled. Leave the server-rendered page available.
   }

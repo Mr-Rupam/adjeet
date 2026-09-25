@@ -1,5 +1,5 @@
 import { buildPageMetadata, buildWebPageJsonLd, jsonLdString } from '@/lib/seo'
-import Image from 'next/image'
+import { LoadingImage as Image } from '@/components/ui/LoadingImage'
 import { PageMasthead } from '@/components/street/PageMasthead'
 import { ServicesBoard } from '@/components/street/ServicesBoard'
 import { CommissionCTA } from '@/components/street/CommissionCTA'

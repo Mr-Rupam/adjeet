@@ -1,7 +1,7 @@
 'use client'
 
 import Link from 'next/link'
-import Image from 'next/image'
+import { LoadingImage as Image } from '@/components/ui/LoadingImage'
 import { motion, useReducedMotion } from 'framer-motion'
 import { useState } from 'react'
 import { getFeaturedPhotos } from '@/content/gallery'

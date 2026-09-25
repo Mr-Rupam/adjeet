@@ -17,6 +17,32 @@ test('first entry plays the branded shutter once and can be skipped', async ({ p
   await expect(intro).toBeHidden()
 })
 
+test('the shutter opens gradually before it clears the page', async ({ page }) => {
+  await page.goto('/', { waitUntil: 'domcontentloaded' })
+
+  const motion = await page.locator('[data-entry-loader] [class*="shutterTop"]').evaluate((shutter) => {
+    const animation = shutter.getAnimations()[0]
+    animation.pause()
+    const sample = (time: number) => {
+      animation.currentTime = time
+      return new DOMMatrixReadOnly(getComputedStyle(shutter).transform).m42 / shutter.clientHeight
+    }
+
+    return {
+      duration: Number(animation.effect?.getTiming().duration),
+      closed: sample(500),
+      opening: sample(1800),
+      cleared: sample(3300),
+    }
+  })
+
+  expect(motion.duration).toBe(3300)
+  expect(motion.closed).toBeCloseTo(0, 1)
+  expect(motion.opening).toBeLessThan(-0.1)
+  expect(motion.opening).toBeGreaterThan(-0.5)
+  expect(motion.cleared).toBeLessThan(-1)
+})
+
 test('intro clears itself and leaves the page usable', async ({ page }) => {
   await page.goto('/', { waitUntil: 'domcontentloaded' })
   await expect(page.locator('[data-entry-loader]')).toBeHidden({ timeout: 5000 })
