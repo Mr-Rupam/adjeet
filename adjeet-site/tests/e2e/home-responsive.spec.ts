@@ -33,7 +33,7 @@ for (const width of [320, 390, 430, 768, 1440]) {
   })
 }
 
-test('client logos load and documented work opens its portfolio filter', async ({ page }) => {
+test('client logos load without company-specific links', async ({ page }) => {
   await page.emulateMedia({ reducedMotion: 'reduce' })
   await page.goto('/')
   const logos = page.locator('#client-history img')
@@ -46,8 +46,8 @@ test('client logos load and documented work opens its portfolio filter', async (
     return images.every(image => (image as HTMLImageElement).naturalWidth > 0)
   })
   expect(loaded).toBe(true)
-  await page.getByRole('link', { name: /Airtel project photos/ }).click()
-  await expect(page).toHaveURL(/\/portfolio\?client=airtel$/)
-  await expect(page.getByRole('button', { name: 'Airtel', exact: true })).toHaveAttribute('aria-pressed', 'true')
-  await expect(page.locator('section[aria-label="Project gallery"] button').first()).toContainText('Airtel')
+  await expect(page.locator('#client-history li a')).toHaveCount(0)
+  await page.getByRole('link', { name: /Explore the portfolio/ }).click()
+  await expect(page).toHaveURL('/portfolio')
+  await expect(page.getByRole('group', { name: 'Filter work by brand' })).toHaveCount(0)
 })

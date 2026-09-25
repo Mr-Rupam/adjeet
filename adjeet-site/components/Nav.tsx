@@ -9,7 +9,7 @@ import { QuoteCTA } from '@/components/ui/QuoteCTA'
 
 const NAV_LINKS = [
   { href: '/services', label: 'Services' },
-  { href: '/portfolio', label: 'Work' },
+  { href: '/portfolio', label: 'Portfolio' },
   { href: '/about', label: 'About' },
   { href: '/contact', label: 'Contact' },
 ]

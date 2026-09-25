@@ -23,7 +23,8 @@ test.describe('Home page', () => {
     const clientHistory = page.locator('#client-history')
     await expect(clientHistory.getByRole('heading', { name: /names you know.*work you can see/i })).toBeVisible()
     await expect(clientHistory.getByText(/selected history includes assignments through regional agencies/i)).toBeVisible()
-    await expect(clientHistory.getByRole('link', { name: /Airtel project photos/i })).toBeVisible()
+    await expect(clientHistory.getByText('Airtel', { exact: true })).toBeVisible()
+    await expect(clientHistory.locator('li a')).toHaveCount(0)
   })
 
   test('changes the matched hero scene with the global theme on one stable media surface', async ({ page }) => {

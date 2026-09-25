@@ -23,7 +23,7 @@ for (const width of [390, 1280]) {
   test(`new pages start at the top from the footer at ${width}px`, async ({ page }) => {
     await page.setViewportSize({ width, height: 844 })
     await page.goto('/', { waitUntil: 'domcontentloaded' })
-    for (const [name, path] of [['Our story', '/about'], ['Services', '/services'], ['Selected work', '/portfolio'], ['Start a project', '/contact']]) {
+    for (const [name, path] of [['Our story', '/about'], ['Services', '/services'], ['Portfolio', '/portfolio'], ['Start a project', '/contact']]) {
       const link = page.getByRole('navigation', { name: 'Footer navigation' }).getByRole('link', { name, exact: true })
       await link.scrollIntoViewIfNeeded()
       await expect.poll(() => page.evaluate(() => window.scrollY)).toBeGreaterThan(300)

@@ -7,7 +7,7 @@ vi.mock('next/navigation', () => ({ usePathname: () => '/' }))
 vi.mock('@/components/BrandLogo', () => ({ BrandLogo: () => <Link href="/">AD JEET home</Link> }))
 vi.mock('@/components/ui/QuoteCTA', () => ({ QuoteCTA: () => <Link href="/contact">Start a project</Link> }))
 
-const links = [{ href: '/services', label: 'Services' }, { href: '/portfolio', label: 'Work' }]
+const links = [{ href: '/services', label: 'Services' }, { href: '/portfolio', label: 'Portfolio' }]
 let desktopListener: ((event: MediaQueryListEvent) => void) | undefined
 
 beforeEach(() => {

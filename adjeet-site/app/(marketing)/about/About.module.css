@@ -23,13 +23,9 @@
 .trustCopy p { font-size:1.08rem; }
 .trustCopy a { margin-top:1rem; }
 .clientWork { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:1rem; list-style:none; padding:0; margin:3.5rem 0 0; }
-.clientWork a { display:block; color:inherit; }
 .clientWorkImage { display:block; position:relative; aspect-ratio:4 / 5; overflow:hidden; background:var(--rule); }
-.clientWorkImage img { transition:transform 500ms ease; }
-.clientWork a:hover .clientWorkImage img { transform:scale(1.04); }
 .clientWorkName { display:block; padding-top:.7rem; font:500 1.15rem/1.2 var(--font-heading); }
 @media(max-width:767px) { .clientWork { grid-template-columns:repeat(2,minmax(0,1fr)); gap:1.25rem .75rem; margin-top:2.5rem; } }
-@media(prefers-reduced-motion:reduce) { .clientWorkImage img { transition:none; }.clientWork a:hover .clientWorkImage img { transform:none; } }
 .coverage { align-items:center; }
 .coverage ul { display:grid; grid-template-columns:1fr 1fr; padding:0; margin:2rem 0 0; list-style:none; gap:.5rem 1rem; color:var(--ink-muted); font-size:.95rem; }
 .map { margin:0; min-width:0; }
