@@ -10,9 +10,9 @@ describe('page review dates', () => {
     expect(new Date(SITE_REVIEWED).getTime()).toBeLessThanOrEqual(Date.now() + 24 * 60 * 60 * 1000)
   })
 
-  it('falls back to the site review for a page without its own date', () => {
+  it('uses the site review unless a page has its own date', () => {
     expect(reviewedOn('/services/flex-printing')).toBe(SITE_REVIEWED)
-    expect(reviewedOn('/')).toBe(SITE_REVIEWED)
+    expect(reviewedOn('/')).toBe('2026-09-25')
   })
 
   it('prints the date the way the pages show it, on the same day in every time zone', () => {
