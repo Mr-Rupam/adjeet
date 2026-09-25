@@ -31,6 +31,15 @@ export default function ContactPage() {
           <h2 data-site-reveal="title">A conversation.<br />Then a plan.</h2>
           {METHODS.map(item => <a key={item.method} href={item.href} target={item.external ? '_blank' : undefined} rel={item.external ? 'noopener noreferrer' : undefined} className="contact-method"><span className="spec">{item.method} ↗</span><strong>{item.value}</strong><small>{item.note}</small></a>)}
           <div className="contact-address"><p className="spec">Find us in Siliguri</p><h3>Workshop / {business.workshop}</h3><p>{business.street}, {business.city}, {business.region} {business.postalCode}. Open {business.hours}.</p><h3>Office / {business.office}</h3><p>{business.city}, {business.region} {business.officePostalCode}</p></div>
+          <div className="contact-map">
+            <iframe
+              src={business.mapsEmbedUrl}
+              title="AD JEET workshop in Patiram Jote, Siliguri on Google Maps"
+              loading="lazy"
+              referrerPolicy="strict-origin-when-cross-origin"
+              allowFullScreen
+            />
+          </div>
           <a className="contact-location-link" href={business.mapsUrl} target="_blank" rel="noopener noreferrer">
             <span className="spec">Plan your visit</span><strong>AD JEET, Patiram Jote, Siliguri</strong><span>Open our Google Maps listing ↗</span>
           </a>

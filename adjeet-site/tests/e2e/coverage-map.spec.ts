@@ -61,7 +61,7 @@ test.describe('Coverage map', () => {
   })
 
   test('says how far the reach rings go, so the radius can be read', async ({ page }) => {
-    await expect(page.getByText(/rings mark .* kilometres out/i)).toBeVisible()
+    await expect(page.getByText(/rings mark .* kilometres from our Siliguri workshop/i)).toBeVisible()
   })
 
   test('selecting a place opens its detail and carries the city to the enquiry', async ({ page }) => {

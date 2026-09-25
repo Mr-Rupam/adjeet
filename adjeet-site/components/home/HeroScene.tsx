@@ -16,7 +16,7 @@ function isResolvedTheme(value: unknown): value is ResolvedTheme {
  * workshop films. A visitor-initiated theme change plays the supplied film in
  * the matching direction, then hands back to the matching static frame.
  */
-export function HeroScene() {
+export function HeroScene({ label, eager = false }: { label?: string; eager?: boolean } = {}) {
   const theme = useTheme()
   const [transition, setTransition] = useState<ThemeTransition | null>(null)
   const [filmVisible, setFilmVisible] = useState(false)
@@ -79,14 +79,16 @@ export function HeroScene() {
       data-testid="hero-scene"
       data-time={theme}
       data-transition={transition ?? 'idle'}
-      aria-hidden="true"
+      role={label ? 'img' : undefined}
+      aria-label={label}
+      aria-hidden={label ? undefined : true}
     >
       <picture className="heroSceneLayer" data-testid="hero-day-layer" data-visible={staticTheme === 'light'}>
         {/* The raw frame stays tied directly to the supplied transition film. */}
-        <LoadingRawImage data-testid="hero-background-image" src="/hero/workshop/day.webp" alt="" width={1280} height={720} loading="lazy" />
+        <LoadingRawImage data-testid="hero-background-image" src="/hero/workshop/day.webp" alt="" width={1280} height={720} loading={eager ? 'eager' : 'lazy'} fetchPriority={eager ? 'high' : undefined} />
       </picture>
       <picture className="heroSceneLayer" data-testid="hero-night-layer" data-visible={staticTheme === 'dark'}>
-        <LoadingRawImage data-testid="hero-background-image" src="/hero/workshop/night.webp" alt="" width={1280} height={720} loading="lazy" />
+        <LoadingRawImage data-testid="hero-background-image" src="/hero/workshop/night.webp" alt="" width={1280} height={720} loading={eager ? 'eager' : 'lazy'} fetchPriority={eager ? 'high' : undefined} />
       </picture>
       <video
         ref={dayToNightRef}

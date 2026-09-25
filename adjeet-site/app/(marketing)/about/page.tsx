@@ -8,6 +8,7 @@ import { CoverageMapProvider } from '@/components/coverage/CoverageMapContext'
 import { CoveragePlaceList } from '@/components/coverage/CoveragePlaceList'
 import { CoverageStage } from '@/components/coverage/CoverageStage'
 import { getPhotoById } from '@/content/gallery'
+import { HeroScene } from '@/components/home/HeroScene'
 import styles from './About.module.css'
 
 const PAGE = {
@@ -42,7 +43,7 @@ export default function AboutPage() {
           <a href="#our-story" className={styles.storyLink}>Follow our story <span aria-hidden="true">↓</span></a>
         </div>
         <figure className={styles.workshop} data-site-reveal="media">
-          <div><Image src="/hero/workshop/day.webp" alt="Visualisation of the AD JEET workshop in Siliguri" fill priority sizes="(max-width: 767px) 100vw, 55vw" className="object-cover" /></div>
+          <div><HeroScene label="Visualisation of the AD JEET workshop in Siliguri" eager /></div>
           <figcaption>Workshop visualisation. Siliguri, North Bengal.</figcaption>
         </figure>
       </section>

@@ -121,19 +121,20 @@
   .intro h2 { font-size: clamp(48px, 11.6vw, 68px); }
   .introAside p { font-size: 16px; }
   .boardHeader span:last-child { display: none; }
-  .names { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-  .names li:last-child { grid-column: 1 / -1; }
-  .staticBrand { min-height: 139px; padding: 13px; }
-  .logoFrame { min-height: 76px; }
-  .logo { width: min(100%, 138px); height: 65px; }
-  .names li:last-child .logo { width: min(100%, 180px); }
-  .cardFooter strong { font-size: 12px; }
+  .names { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .staticBrand { min-height: 132px; padding: 10px; }
+  .logoFrame { min-height: 58px; }
+  .logo { width: min(100%, 96px); height: 50px; }
+  .cardFooter { padding-top: 7px; }
+  .cardFooter small { font-size: 9px; }
+  .cardFooter strong { font-size: 11px; line-height: 1.2; }
 }
 
 @media (max-width: 359px) {
-  .staticBrand { padding: 10px; }
-  .logo { width: min(100%, 125px); }
-  .cardFooter small { font-size: 9px; }
+  .staticBrand { padding: 7px; }
+  .logo { width: min(100%, 82px); }
+  .cardFooter small { font-size: 8px; }
+  .cardFooter strong { font-size: 10px; }
 }
 
 @media (prefers-reduced-motion: reduce) {
