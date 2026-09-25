@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useState, useCallback, useRef, useId } from 'react'
-import Image from 'next/image'
+import { LoadingImage as Image } from '@/components/ui/LoadingImage'
 
 export interface LightboxPhoto {
   src: string

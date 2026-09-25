@@ -14,7 +14,7 @@
   display: block;
   pointer-events: auto;
   /* A failed hydration must never leave the site covered. */
-  animation: failSafe 0s 3s forwards;
+  animation: failSafe 0s calc(var(--entry-intro-duration) + 250ms) forwards;
 }
 
 .backdrop,
@@ -27,7 +27,7 @@
 .backdrop {
   z-index: 0;
   background: radial-gradient(ellipse at 50% 53%, #17313e 0%, #0d1b24 55%, #081117 100%);
-  animation: plateFade 2.05s both;
+  animation: plateFade var(--entry-intro-duration) both;
 }
 
 .drafting {
@@ -38,7 +38,7 @@
     linear-gradient(to bottom, rgb(144 214 234 / 13%) 1px, transparent 1px);
   background-size: clamp(42px, 8vw, 96px) clamp(42px, 8vw, 96px);
   mask-image: linear-gradient(to right, transparent, black 18%, black 82%, transparent);
-  animation: plateFade 2.05s both;
+  animation: plateFade var(--entry-intro-duration) both;
 }
 
 .logoStage {
@@ -49,7 +49,7 @@
   width: min(74vw, 610px);
   transform: translate(-50%, -50%);
   text-align: center;
-  animation: logoExit 2.05s both;
+  animation: logoExit var(--entry-intro-duration) both;
 }
 
 .logoLight {
@@ -59,7 +59,7 @@
   background: radial-gradient(ellipse, rgb(0 153 208 / 38%), transparent 68%);
   filter: blur(22px);
   opacity: 0;
-  animation: ignite 2.05s both;
+  animation: ignite var(--entry-intro-duration) both;
 }
 
 .logo {
@@ -68,7 +68,11 @@
   width: 100%;
   height: auto;
   filter: drop-shadow(0 0 0 transparent);
-  animation: logoIgnite 2.05s both;
+  animation: logoIgnite var(--entry-intro-duration) both;
+}
+
+.logo[data-image-status="loading"] {
+  animation: logoIgnite var(--entry-intro-duration) both, image-loading-sweep 1.8s linear infinite, image-loading-breathe 1.8s ease-in-out infinite alternate;
 }
 
 .logoCaption {
@@ -101,13 +105,13 @@
 .shutterTop {
   top: 0;
   border-bottom: 2px solid #67bcd8;
-  animation: shutterTop 2.05s cubic-bezier(0.65, 0, 0.2, 1) both;
+  animation: shutterTop var(--entry-intro-duration) cubic-bezier(0.65, 0, 0.2, 1) both;
 }
 
 .shutterBottom {
   bottom: 0;
   border-top: 2px solid #67bcd8;
-  animation: shutterBottom 2.05s cubic-bezier(0.65, 0, 0.2, 1) both;
+  animation: shutterBottom var(--entry-intro-duration) cubic-bezier(0.65, 0, 0.2, 1) both;
 }
 
 .cutLine {
@@ -120,7 +124,7 @@
   background: linear-gradient(90deg, transparent, #7ed5ef 12%, #e9cf3f 48%, #9bdbea 88%, transparent);
   box-shadow: 0 0 12px #62c8ee, 0 0 30px rgb(98 200 238 / 62%);
   transform-origin: left center;
-  animation: cutLine 2.05s both;
+  animation: cutLine var(--entry-intro-duration) both;
 }
 
 .cutSpark {
@@ -132,7 +136,7 @@
   border-radius: 50%;
   background: #f4df72;
   box-shadow: 0 0 13px 4px #f4df72, 0 0 40px 13px rgb(98 200 238 / 40%);
-  animation: cutSpark 2.05s both;
+  animation: cutSpark var(--entry-intro-duration) both;
 }
 
 .skip,
@@ -152,7 +156,7 @@
   border-bottom: 1px solid rgb(246 240 227 / 70%);
   color: #f6f0e3;
   background: transparent;
-  animation: controlsFade 2.05s both;
+  animation: controlsFade var(--entry-intro-duration) both;
 }
 
 .skip:hover,
@@ -166,18 +170,18 @@
 .footerNote {
   left: max(1.5rem, env(safe-area-inset-left));
   color: #9eb4bb;
-  animation: controlsFade 2.05s both;
+  animation: controlsFade var(--entry-intro-duration) both;
 }
 
 @keyframes shutterTop {
-  0%, 13% { transform: translateY(0); }
-  45%, 68% { transform: translateY(-35%); }
+  0%, 15% { transform: translateY(0); }
+  62%, 69% { transform: translateY(-35%); }
   100% { transform: translateY(-110%); }
 }
 
 @keyframes shutterBottom {
-  0%, 13% { transform: translateY(0); }
-  45%, 68% { transform: translateY(35%); }
+  0%, 15% { transform: translateY(0); }
+  62%, 69% { transform: translateY(35%); }
   100% { transform: translateY(110%); }
 }
 

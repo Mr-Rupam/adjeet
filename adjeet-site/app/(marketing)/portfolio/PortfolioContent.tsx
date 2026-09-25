@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useMemo, useCallback, useTransition, useEffect } from 'react'
-import Image from 'next/image'
+import { LoadingImage as Image } from '@/components/ui/LoadingImage'
 import { useSearchParams, useRouter } from 'next/navigation'
 import { ArrowUpRight, RotateCcw } from 'lucide-react'
 import { photos } from '@/content/gallery'

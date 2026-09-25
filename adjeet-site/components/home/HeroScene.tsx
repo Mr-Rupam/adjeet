@@ -3,6 +3,7 @@
 import { useCallback, useLayoutEffect, useRef, useState } from 'react'
 import { THEME_TOGGLE_EVENT, type ResolvedTheme } from '@/lib/theme'
 import { useTheme } from '@/lib/use-theme'
+import { LoadingRawImage } from '@/components/ui/LoadingImage'
 
 type ThemeTransition = 'day-to-night' | 'night-to-day'
 
@@ -82,10 +83,10 @@ export function HeroScene() {
     >
       <picture className="heroSceneLayer" data-testid="hero-day-layer" data-visible={staticTheme === 'light'}>
         {/* The raw frame stays tied directly to the supplied transition film. */}
-        <img data-testid="hero-background-image" src="/hero/workshop/day.webp" alt="" width="1280" height="720" loading="lazy" />
+        <LoadingRawImage data-testid="hero-background-image" src="/hero/workshop/day.webp" alt="" width={1280} height={720} loading="lazy" />
       </picture>
       <picture className="heroSceneLayer" data-testid="hero-night-layer" data-visible={staticTheme === 'dark'}>
-        <img data-testid="hero-background-image" src="/hero/workshop/night.webp" alt="" width="1280" height="720" loading="lazy" />
+        <LoadingRawImage data-testid="hero-background-image" src="/hero/workshop/night.webp" alt="" width={1280} height={720} loading="lazy" />
       </picture>
       <video
         ref={dayToNightRef}
