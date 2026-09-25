@@ -1,6 +1,6 @@
 # Client logo sources
 
-Downloaded 25 September 2026 for the homepage client history. The images in `public/client-logos/` are local, lossless WebP conversions of the source artwork. They identify brands in AD JEET's existing client list; they do not imply an endorsement. Work attributed to a national brand may have been commissioned through a regional agency. Cards link to the site's project photographs only where those photographs exist.
+Downloaded 25 September 2026 for the homepage client history. The images in `public/client-logos/` are local, lossless WebP conversions of the source artwork. They identify brands in AD JEET's existing client list; they do not imply an endorsement. Work attributed to a national brand may have been commissioned through a regional agency. The logo cards are static; project photographs appear together in the portfolio.
 
 | Brand | Artwork source |
 | --- | --- |

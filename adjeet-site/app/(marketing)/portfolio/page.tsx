@@ -4,7 +4,7 @@ import { PortfolioContent } from './PortfolioContent'
 import { buildBreadcrumbJsonLd, buildWebPageJsonLd, jsonLdString } from '@/lib/seo'
 import { PageMasthead } from '@/components/street/PageMasthead'
 import { CommissionCTA } from '@/components/street/CommissionCTA'
-import { photos, getClients, getFeaturedPhotos } from '@/content/gallery'
+import { photos, getFeaturedPhotos } from '@/content/gallery'
 
 const PAGE = {
   title: "Signage & Vehicle Branding Portfolio",
@@ -34,14 +34,14 @@ export default async function PortfolioPage() {
       />
 
       <PageMasthead
-        meta={['Selected work', getClients().length + ' brands', photos.length + ' project photographs']}
+        meta={['Selected work', photos.length + ' project photographs', 'Made in North Bengal']}
         title={
           <>
             Signage &amp; branding. <br />
             <span className="glow-signal text-signal">Our work in North Bengal.</span>
           </>
         }
-        lead="Shopfronts, walls, vehicles and puja gates, photographed on site. Filter by what was made or by the brand on the sign."
+        lead="Shopfronts, walls, vehicles and puja gates, photographed on site. Browse the work by trade or see every project together."
       />
 
       <PortfolioContent />

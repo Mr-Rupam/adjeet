@@ -7,7 +7,7 @@ import { FOUNDED_YEAR } from '@/lib/coverage'
 import { CoverageMapProvider } from '@/components/coverage/CoverageMapContext'
 import { CoveragePlaceList } from '@/components/coverage/CoveragePlaceList'
 import { CoverageStage } from '@/components/coverage/CoverageStage'
-import { clientSlug, getPhotoById } from '@/content/gallery'
+import { getPhotoById } from '@/content/gallery'
 import styles from './About.module.css'
 
 const PAGE = {
@@ -65,11 +65,9 @@ export default function AboutPage() {
         </div>
         <ul className={styles.clientWork} aria-label="Work for national brands">
           {CLIENT_WORK.map(photo => (
-            <li key={photo.id}>
-              <Link href={'/portfolio?client=' + clientSlug(photo.client)}>
-                <span className={styles.clientWorkImage}><Image src={photo.src} alt={photo.alt} fill sizes="(max-width: 767px) 50vw, 25vw" className="object-cover" /></span>
-                <span className={styles.clientWorkName}>{photo.client}</span>
-              </Link>
+            <li key={photo.id} data-about-client-work>
+              <span className={styles.clientWorkImage}><Image src={photo.src} alt={photo.alt} fill sizes="(max-width: 767px) 50vw, 25vw" className="object-cover" /></span>
+              <span className={styles.clientWorkName}>{photo.client}</span>
             </li>
           ))}
         </ul>

@@ -33,12 +33,13 @@ test.describe('Foundation', () => {
     await expect(page.getByRole('dialog', { name: /consent/i })).not.toBeVisible()
   })
 
-  test('nav has Services, Work, About, Contact links', async ({ page }) => {
+  test('nav has Services, Portfolio, About, Contact links', async ({ page }) => {
     await page.goto('/')
     const nav = page.getByRole('banner')
-    for (const name of ['Services', 'Work', 'About', 'Contact']) {
+    for (const name of ['Services', 'Portfolio', 'About', 'Contact']) {
       await expect(nav.getByRole('link', { name, exact: true })).toBeAttached()
     }
+    await expect(nav.getByRole('link', { name: 'Portfolio', exact: true }).first()).toHaveAttribute('href', '/portfolio')
   })
 
   test('footer contains address text', async ({ page }) => {

@@ -92,21 +92,6 @@ export function SiteMotion() {
           })
         })
 
-        const featuredImage = root.querySelector<HTMLElement>('[data-site-featured-image]')
-        const featuredPhoto = featuredImage?.querySelector<HTMLElement>('img')
-        if (featuredImage && featuredPhoto) {
-          featuredImage.classList.add(styles.mediaSurface)
-          gsap.from(featuredPhoto, {
-            clipPath: 'inset(0 0 100% 0)', scale: 1.1,
-            duration: 1.3, ease: 'power3.inOut',
-            scrollTrigger: { trigger: featuredImage, start: 'top 91%', once: true },
-            onComplete: () => {
-              gsap.set(featuredPhoto, { clearProps: 'clipPath,transform' })
-              featuredImage.classList.add(styles.mediaLit)
-            },
-          })
-        }
-
         // Service rows move in as fabrication stages, with independent mobile
         // triggers so content lower in a tall group does not animate offscreen.
         root.querySelectorAll<HTMLElement>('.service-group').forEach(group => {
@@ -160,7 +145,7 @@ export function SiteMotion() {
         })))
 
         if (pathname === '/about') {
-          const clientPhotos = root.querySelectorAll<HTMLElement>('a[href^="/portfolio?client="]')
+          const clientPhotos = root.querySelectorAll<HTMLElement>('[data-about-client-work]')
           if (clientPhotos.length) gsap.from(clientPhotos, {
             y: 42, opacity: 0.68, duration: 0.84, stagger: 0.09, ease: 'power3.out',
             scrollTrigger: { trigger: clientPhotos[0], start: 'top 87%', once: true },
