@@ -1,5 +1,7 @@
 import { FOUNDED_YEAR } from '@/lib/coverage'
 
+const MAPS_CID = '1175174050283154218'
+
 /** Business identity shared by visible contact details and search surfaces. */
 export const business = {
   name: 'AD JEET',
@@ -24,7 +26,8 @@ export const business = {
   region: 'West Bengal',
   // Map pin and hours from the same Business Profile.
   geo: { latitude: 26.6989425, longitude: 88.4010972 },
-  mapsUrl: 'https://maps.google.com/?cid=1175174050283154218',
+  mapsUrl: `https://maps.google.com/?cid=${MAPS_CID}`,
+  mapsEmbedUrl: `https://maps.google.com/maps?cid=${MAPS_CID}&output=embed`,
   // The owner confirmed on 2026-09-15 that walk-in customers are welcome.
   hours: 'Monday to Saturday, 10 am to 8 pm, walk-ins welcome; closed Sunday',
 } as const

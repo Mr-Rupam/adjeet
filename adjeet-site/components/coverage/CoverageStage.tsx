@@ -116,8 +116,8 @@ function CoverageDetail() {
     <div className={styles.detail} aria-live="polite">
       {!active ? (
         <p className={styles.detailIntro}>
-          Siliguri is the workshop. The rings mark {REACH_RINGS_KM.join(', ')} kilometres out,
-          and every place we name sits inside {outer}.
+          Choose a place above or tap a sign. The rings mark {REACH_RINGS_KM.join(', ')} kilometres
+          from our Siliguri workshop; every named place sits inside {outer}.
         </p>
       ) : (
         <>

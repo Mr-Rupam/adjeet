@@ -6,7 +6,6 @@
 .storyLink { display:inline-flex; min-height:44px; align-items:center; gap:1rem; margin-top:1rem; color:var(--ink); text-decoration:underline; text-underline-offset:6px; }
 .workshop { margin:0; min-width:0; align-self:stretch; }
 .workshop > div { position:relative; height:100%; min-height:310px; }
-.workshop img { object-position:50% 50%; }
 .workshop figcaption, .map figcaption { padding:.8rem 1.25rem; color:var(--ink-muted); font-size:.8rem; }
 .story, .coverage { max-width:1320px; margin:auto; padding:4rem 1.25rem; display:grid; gap:2.5rem; }
 .sectionHeading h2 { font:600 clamp(2.5rem,4.8vw,4.5rem)/1.03 var(--font-heading); margin:1rem 0; letter-spacing:-.02em; }

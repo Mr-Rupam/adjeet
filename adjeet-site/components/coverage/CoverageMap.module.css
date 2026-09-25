@@ -185,9 +185,9 @@
 
 .boardLabel {
   font-family: var(--font-heading), sans-serif;
-  font-size: 15px;
-  font-weight: 600;
-  letter-spacing: 0.01em;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
   pointer-events: none;
 }
 
@@ -252,8 +252,10 @@
 .detail {
   /* Reserved so selecting a place never shifts the page under the cursor. */
   min-height: 132px;
-  padding-top: 14px;
-  border-top: 1px solid var(--rule);
+  padding: 16px 18px;
+  border: 1px solid var(--rule);
+  border-left: 3px solid var(--map-reach);
+  background: var(--paper-elevated);
 }
 
 .detailIntro {
@@ -301,7 +303,7 @@
 /* Responsive ----------------------------------------------------------- */
 
 @media (max-width: 767px) {
-  .surface { aspect-ratio: 1 / 1; max-height: none; }
+  .surface { aspect-ratio: 4 / 5; max-height: none; }
   .placeList { gap: 2px 12px; }
   .detailName { font-size: 26px; }
   .detail { min-height: 0; }

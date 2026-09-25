@@ -50,17 +50,29 @@ const CONTEXT = [
   { label: 'BIHAR', x: 240, y: 560 },
 ]
 
+// Compact wayfinding marks fit the printed boards at phone scale. The place
+// list and the selected detail below the map carry each full name.
+const BOARD_CODES: Record<string, string> = {
+  Siliguri: 'SL',
+  Darjeeling: 'DJ',
+  Jalpaiguri: 'JP',
+  'Cooch Behar': 'CB',
+  Alipurduar: 'AL',
+  Kalimpong: 'KL',
+  Malda: 'ML',
+  'North Dinajpur': 'ND',
+  'South Dinajpur': 'SD',
+  'The Dooars': 'DR',
+  Sikkim: 'SK',
+}
+
 function Signboard({ place }: { place: CoveragePlace }) {
-  const { active, selected, select, setHovered } = useCoverageMap()
+  const { active, select, setHovered } = useCoverageMap()
   const { x, y } = projectFlat(place.lon, place.lat)
 
   const isActive = active?.name === place.name
-  const isSelected = selected?.name === place.name
-
-  // At this scale a board is about 40px wide, so only the workshop and whatever
-  // is under the cursor can carry a legible name; eleven at once collide into
-  // mush. The 3D layer prints every name, because there the boards are bigger
-  // and the camera can come closer.
+  // Full place names cannot fit these small boards, especially on phones.
+  // The detail below the map displays the selected name at reading size.
   const width = place.isBase ? 54 : 40
   const height = place.isBase ? 28 : 22
   // Overlap is far milder looking straight down than it is in the terrain's
@@ -80,6 +92,7 @@ function Signboard({ place }: { place: CoveragePlace }) {
   return (
     <g
       className={className}
+      data-map-place={place.name}
       transform={`translate(${x} ${y})`}
       onPointerEnter={() => setHovered(place.name)}
       onPointerLeave={() => setHovered(null)}
@@ -99,13 +112,11 @@ function Signboard({ place }: { place: CoveragePlace }) {
       {/* Frame, face and keyline: the three parts of a printed board. */}
       <g className={styles.boardPlate}>
         <rect className={styles.boardFrame} x={-width / 2 - 2.2} y={top - 2.2} width={width + 4.4} height={height + 4.4} rx={1.5} />
-        <rect className={styles.boardFace} x={-width / 2} y={top} width={width} height={height} rx={0.5} />
+        <rect className={styles.boardFace} data-board-face x={-width / 2} y={top} width={width} height={height} rx={0.5} />
         <rect className={styles.boardKeyline} x={-width / 2 + 3.5} y={top + 3.5} width={width - 7} height={height - 7} rx={0.5} />
-        {(place.isBase || isActive || isSelected) && (
-          <text className={styles.boardLabel} x={0} y={top + height / 2} textAnchor="middle" dominantBaseline="central">
-            {place.name}
-          </text>
-        )}
+        <text className={styles.boardLabel} x={0} y={top + height / 2} textAnchor="middle" dominantBaseline="central">
+          {BOARD_CODES[place.name] ?? place.name.slice(0, 2).toUpperCase()}
+        </text>
       </g>
     </g>
   )
