@@ -1,8 +1,12 @@
 # AD-JEET design system
 
-Updated 7 September 2026. The former cobalt showroom and detached day/night comparison were rejected and are not a source of design direction.
+Updated 25 September 2026. The former cobalt showroom and detached day/night comparison were rejected and are not a source of design direction.
 
-## The idea
+## Current homepage hero
+
+The homepage opens with the photographed Ambuja Cement ACP and LED installation. On phones and tablets the photo fills the opening surface, with a blended gradient behind concise copy and a WhatsApp action visible in the first screen. Desktop keeps the split layout. The workshop film sits later on the homepage and still responds to the global day/night theme switch. The original AD-JEET mark remains in the header.
+
+## Earlier design direction (7 September)
 
 AD-JEET is an established, hands-on, luminous sign maker. The site opens with the supplied real workshop footage. Light and dark use the first frame from the matching owner-supplied film. A visitor-initiated theme change plays the corresponding day-to-night or night-to-day film, then lands on that target frame. The change belongs to the global theme, not to a slider, a scroll effect, or a second section.
 
