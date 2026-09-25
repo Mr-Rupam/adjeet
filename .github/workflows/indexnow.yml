@@ -36,7 +36,7 @@ jobs:
 
       - uses: actions/setup-node@v7
         with:
-          node-version: 22
+          node-version: 24
 
       # The fallback for a run with no snapshot to compare with (see the next
       # step): pages whose review date is within a week of the previous
