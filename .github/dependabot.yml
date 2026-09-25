@@ -5,3 +5,6 @@ updates:
     schedule: { interval: weekly }
     groups:
       patch-updates: { update-types: [patch] }
+  - package-ecosystem: github-actions
+    directory: /
+    schedule: { interval: weekly }
