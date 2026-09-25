@@ -42,12 +42,12 @@ test('pending portfolio images keep a visible shimmer throughout the wait', asyn
       contrast.push(await centerRowContrast(await image.screenshot()))
       await page.waitForTimeout(300)
     }
-    expect(await image.evaluate(element => element.complete)).toBe(false)
+    expect(await image.evaluate(element => (element as HTMLImageElement).complete)).toBe(false)
     await card.screenshot({ path: testInfo.outputPath('portfolio-pending.png') })
     expect(Math.min(...contrast)).toBeGreaterThan(12)
     release()
     await expect(image).toHaveAttribute('data-image-status', 'loaded')
-    await expect.poll(() => image.evaluate(element => element.naturalWidth)).toBeGreaterThan(0)
+    await expect.poll(() => image.evaluate(element => (element as HTMLImageElement).naturalWidth)).toBeGreaterThan(0)
   } finally {
     release()
   }
