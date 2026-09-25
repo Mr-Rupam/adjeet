@@ -20,10 +20,10 @@ test.describe('Home page', () => {
   })
 
   test('keeps the client history proof section on the landing page', async ({ page }) => {
-    const clientHistory = page.getByRole('heading', { name: /brands we’ve worked with/i })
-    await expect(clientHistory).toBeVisible()
-    await expect(page.getByText(/partial list: national brands via their regional agencies/i)).toBeVisible()
-    await expect(page.getByText('Airtel', { exact: true }).first()).toBeVisible()
+    const clientHistory = page.locator('#client-history')
+    await expect(clientHistory.getByRole('heading', { name: /names you know.*work you can see/i })).toBeVisible()
+    await expect(clientHistory.getByText(/selected history includes assignments through regional agencies/i)).toBeVisible()
+    await expect(clientHistory.getByRole('link', { name: /Airtel project photos/i })).toBeVisible()
   })
 
   test('changes the matched hero scene with the global theme on one stable media surface', async ({ page }) => {
