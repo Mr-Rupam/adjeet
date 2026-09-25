@@ -7,6 +7,7 @@ import styles from './ClientStreet.module.css'
 interface Client {
   name: string
   sector: string
+  logoSrc?: string
 }
 
 const ROW_1: Client[] = [
@@ -16,9 +17,9 @@ const ROW_1: Client[] = [
   { name: 'Star Cement', sector: 'Cement' },
   { name: 'SRMB', sector: 'Steel' },
   { name: 'Shyam Steel', sector: 'Steel' },
-  { name: 'Emami', sector: 'FMCG' },
+  { name: 'Emami', sector: 'FMCG', logoSrc: '/client-logos/emami.png' },
   { name: 'OYO', sector: 'Hospitality' },
-  { name: 'Dalmia Cement', sector: 'Cement' },
+  { name: 'Dalmia Cement', sector: 'Cement', logoSrc: '/client-logos/dalmia-cement.png' },
   { name: 'Jio', sector: 'Telecom' },
 ]
 
@@ -57,7 +58,7 @@ export function ClientStreet() {
               <li key={client.name} data-home-client>
                 <div className={styles.staticBrand}>
                   <span className={styles.logoFrame}>
-                    <Image src={`/client-logos/${clientSlug(client.name)}.webp`} alt="" width={220} height={92} className={styles.logo} />
+                    <Image src={client.logoSrc ?? `/client-logos/${clientSlug(client.name)}.webp`} alt="" width={220} height={92} className={styles.logo} />
                   </span>
                   <span className={styles.cardFooter}>
                     <span><small>{client.sector}</small><strong data-client-name>{client.name}</strong></span>
