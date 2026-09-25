@@ -52,6 +52,14 @@ export function HomeMotion() {
         scrollTrigger: { trigger: facts[0], start: 'top 95%', once: true },
       })
 
+      root.querySelectorAll<HTMLElement>('[data-home-client]').forEach((client, index) => {
+        gsap.from(client, {
+          y: 22, opacity: 0.6, duration: 0.72, delay: (index % 5) * 0.055,
+          ease: 'power3.out', clearProps: 'transform,opacity',
+          scrollTrigger: { trigger: client, start: 'top 94%', once: true },
+        })
+      })
+
       const workCards = root.querySelectorAll<HTMLElement>('[data-home-card]')
       media.add(DESKTOP, () => {
         if (!workCards.length) return

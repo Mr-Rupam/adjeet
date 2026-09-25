@@ -189,7 +189,7 @@ test('both themes keep all client names and heading text inside small viewports'
     await page.goto('/')
     await page.evaluate(() => document.fonts.ready)
     expect(CLIENT_NAMES.length).toBeGreaterThan(0)
-    await expect(page.locator('#client-history li')).toHaveText(CLIENT_NAMES)
+    await expect(page.locator('#client-history [data-client-name]')).toHaveText(CLIENT_NAMES)
     for (const theme of ['light', 'dark']) {
       await page.evaluate(theme => document.documentElement.setAttribute('data-theme', theme), theme)
       const overflow = await page.locator('#hero-section h1, #client-history h2, #client-history li, #client-history p').evaluateAll(elements => elements.flatMap(element => {
