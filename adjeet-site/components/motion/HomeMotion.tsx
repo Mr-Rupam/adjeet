@@ -202,7 +202,7 @@ export function HomeMotion() {
         if (actions) hero.from(actions, { y: 22, duration: 0.72 }, 0.68)
         if (caption) hero.from(caption, { y: 26, duration: 0.7 }, 0.91)
         if (image) {
-          media.add(DESKTOP, () => {
+          media.add('(min-width: 1024px)', () => {
             gsap.from(image, {
               clipPath: 'inset(0 100% 0 0)', scale: 1.16, duration: 1.42,
               ease: 'power3.inOut',
@@ -212,16 +212,10 @@ export function HomeMotion() {
               },
             })
           })
-          media.add(PHONE, () => {
-            gsap.from(image, {
-              clipPath: 'inset(0 0 100% 0)', scale: 1.1, duration: 1.24,
-              ease: 'power3.inOut',
-              scrollTrigger: { trigger: image, start: 'top 94%', once: true },
-              onComplete: () => {
-                gsap.set(image, { clearProps: 'clipPath,transform' })
-                image.closest<HTMLElement>('[data-light-surface]')?.classList.add('is-lit')
-              },
-            })
+          media.add('(max-width: 1023px)', () => {
+            // The project photo is the compact-screen first impression. Keep it
+            // visible from first paint rather than masking it behind a reveal.
+            image.closest<HTMLElement>('[data-light-surface]')?.classList.add('is-lit')
           })
         }
       })

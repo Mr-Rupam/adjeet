@@ -13,7 +13,7 @@ test.describe('Home page', () => {
   // installation (Ambuja Cement); the workshop scene moved to its own section.
   test('uses one clear hero proposition beside a real installation', async ({ page }) => {
     const hero = page.locator('#hero-section')
-    await expect(hero.getByRole('heading', { level: 1, name: /signage & outdoor advertising in siliguri/i })).toBeVisible()
+    await expect(hero.getByRole('heading', { level: 1, name: /sign boards that get you noticed/i })).toBeVisible()
     await expect(page.getByRole('heading', { level: 1 })).toHaveCount(1)
     await expect(hero.getByText(/designed, fabricated and installed from our siliguri workshop/i)).toBeVisible()
     await expect(hero.getByRole('img', { name: /ambuja cement/i })).toBeVisible()

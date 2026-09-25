@@ -51,4 +51,4 @@ WCAG AA contrast for interface text, at least 44px touch targets, visible keyboa
 
 ## Status
 
-The latest user request and this file override conflicting visual guidance in earlier documents. `DESIGN.md` now records the implemented direction and `design/brand-direction-2026-09-07/` retains the detailed visual handoff and source-asset verification.
+On 25 September 2026, the mobile and tablet homepage hero was rebuilt around the documented Ambuja Cement installation, so the work and WhatsApp action appear in the opening screen. The workshop film remains in its later homepage section and retains the global day/night theme behaviour. `DESIGN.md` records the current hero; `design/brand-direction-2026-09-07/` retains the earlier visual exploration and source-asset verification.

@@ -29,22 +29,21 @@ export function HomePageView() {
       <section id="hero-section" className={styles.hero} aria-labelledby="home-heading">
         <div className={styles.heroCopy}>
           <p className={styles.kicker} data-hero-meta><span className={styles.dot} /> Siliguri, North Bengal · Est. {FOUNDED_YEAR}</p>
-          <h1 id="home-heading" data-hero-title>Signage &amp; <br />outdoor advertising <br /><span>in Siliguri.</span></h1>
+          <h1 id="home-heading" data-hero-title>Sign boards{' '}<br />that get you{' '}<br /><span>noticed.</span></h1>
           <div className={styles.heroDescription} data-hero-lead>
-            <p className={styles.heroCategory}>From your shopfront to the streets of North Bengal.</p>
-            <p>Glow sign boards, ACP &amp; 3D LED letters, flex printing and vehicle branding. Designed, fabricated and installed from our Siliguri workshop for North Bengal and Sikkim.</p>
+            <p>Glow signs, ACP &amp; LED letters, print and outdoor branding. Designed, fabricated and installed from our Siliguri workshop.</p>
           </div>
           <div className={styles.heroActions} data-hero-actions>
-            <QuoteCTA source="hero" label="WhatsApp your project" />
-            <a href="#selected-work" className={styles.textLink}>Explore the work <ArrowDown size={18} aria-hidden="true" /></a>
+            <QuoteCTA source="hero" label="WhatsApp your project" tone="yellow" />
+            <a href="#selected-work" className={styles.textLink} aria-label="Explore the work"><span>Explore the work</span><ArrowDown size={18} aria-hidden="true" /></a>
           </div>
-          <p className={styles.heroFoot}>From a shopfront to a street full of possibilities.</p>
         </div>
-        <Link href="/portfolio?service=acp-led-signage" className={styles.heroProject} aria-label="Explore Ambuja Cement ACP and LED signage" data-light-surface>
-          <Image src="/Ambuja_cement_ACP-LED.png" alt="Ambuja Cement illuminated storefront signage by AD JEET" fill preload sizes="(max-width: 767px) 100vw, 54vw" className={styles.coverImage} data-hero-image />
+        <div className={styles.heroProject} data-light-surface>
+          <Image src="/Ambuja_cement_ACP-LED.png" alt="Ambuja Cement illuminated storefront signage by AD JEET" fill preload sizes="(max-width: 1023px) 100vw, 54vw" className={styles.coverImage} data-hero-image />
+          <span className={styles.heroShade} aria-hidden="true" />
           <span className={styles.projectTag}>Out in the world <ArrowUpRight size={19} aria-hidden="true" /></span>
-          <div className={styles.heroProjectCaption} data-hero-caption><span><strong>Ambuja Cement</strong><span>ACP &amp; LED signage</span></span><span className={styles.roundArrow}><ArrowUpRight aria-hidden="true" /></span></div>
-        </Link>
+          <Link href="/portfolio?service=acp-led-signage" className={styles.heroProjectCaption} aria-label="Explore Ambuja Cement ACP and LED signage" data-hero-caption><span><strong>Ambuja Cement</strong><span>ACP &amp; LED signage</span></span><span className={styles.roundArrow}><ArrowUpRight aria-hidden="true" /></span></Link>
+        </div>
       </section>
       <div className={styles.factStrip} aria-label="AD JEET at a glance">
         <span data-home-fact><strong>Since 1990</strong> A signmaking story</span>

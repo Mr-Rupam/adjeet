@@ -16,7 +16,7 @@ test.beforeEach(async ({ page }) => {
 
 test('new homepage keeps real project discovery and every coverage area accessible', async ({ page }) => {
   await page.goto('/')
-  await expect(page.getByRole('heading', { level: 1 })).toHaveText('Signage & outdoor advertising in Siliguri.')
+  await expect(page.getByRole('heading', { level: 1 })).toHaveText('Sign boards that get you noticed.')
   await expect(page.locator('#hero-section').getByRole('link', { name: 'WhatsApp your project' })).toBeVisible()
   await expect(page.getByRole('list', { name: 'Areas we serve' }).getByRole('listitem')).toHaveCount(COVERAGE_AREAS.length)
   await page.getByRole('link', { name: 'Explore Ambuja Cement ACP and LED signage' }).click()
