@@ -2,8 +2,9 @@ import { type CitySlug } from '@/content/cities'
 import { getServiceBySlug } from '@/content/services'
 import { business } from '@/lib/business'
 
-// Gangtok has regional guides but no portfolio photographs yet, so it stays out
-// of the gallery's CitySlug list and therefore out of the portfolio city filter.
+// Gangtok has regional guides but its one portfolio photograph is a shop board,
+// a trade it has no guide for, so it stays out of the gallery's CitySlug list
+// and therefore out of the portfolio city filter.
 export type ProgrammaticCity = CitySlug | 'gangtok'
 export const PROG_SERVICES = ['glow-sign-boards', 'acp-led-signage', 'flex-printing', 'vehicle-branding', 'f-pole-installation'] as const
 export type ProgrammaticService = (typeof PROG_SERVICES)[number]

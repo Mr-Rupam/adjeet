@@ -51,6 +51,7 @@ Semantic values change in dark mode in `design/tokens.css`. Use tokens rather th
 
 - Coverage places and founding year come from `lib/coverage.ts`.
 - The gallery is evidence. Do not add generated work to `content/gallery.ts` or alter publication gates.
+- Project photos are used as photographed. Cropping out a camera watermark is fine; AI-retouched or upscaled copies are not. On 27 September 2026 the Gemini-edited PNGs, including the old hero, were replaced by their original photographs from the updated company deck.
 - Do not claim unverified client counts, response times, site-visit promises, capacities, customer history, or exact locations/dates that the gallery cannot confirm.
 - Preserve existing lead form, WhatsApp, telephone, email, analytics, routing, and structured-data behaviour.
 

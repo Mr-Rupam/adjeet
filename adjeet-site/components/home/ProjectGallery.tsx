@@ -5,7 +5,7 @@ import { getPhotoById } from '@/content/gallery'
 import styles from './Home.module.css'
 
 const SELECTED_WORK = [
-  { id: 'captain-tmt-bar-078', label: 'Wall painting' },
+  { id: 'star-cement-137', label: 'Vehicle branding' },
   { id: 'supreme-pipe-085', label: 'Durga Puja gate' },
   { id: 'acc-102', label: 'Shop boards' },
 ] as const

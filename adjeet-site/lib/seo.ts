@@ -7,7 +7,7 @@ import { business } from '@/lib/business'
 export const siteConfig = {
   name: business.name,
   url: business.url,
-  ogImage: '/Ambuja_cement_ACP-LED.png',
+  ogImage: '/images/share/ambuja-cement-acp.jpg',
   description: 'Sign board makers in Siliguri since 1990: glow sign boards, ACP and 3D LED letters, flex printing and vehicle branding for North Bengal and Sikkim.',
 }
 

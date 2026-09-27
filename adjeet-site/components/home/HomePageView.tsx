@@ -18,9 +18,9 @@ import { getPhotoById } from '@/content/gallery'
 import styles from './Home.module.css'
 
 const GROUPS = [
-  { id: 'storefront', title: 'Your storefront', detail: 'Glow signs · ACP & LED · Window graphics', photo: getPhotoById('havells-015') },
-  { id: 'campaign', title: 'Your next campaign', detail: 'Flex · Vehicle branding · Wall painting · F-poles', photo: getPhotoById('toptech-tmt-047') },
-  { id: 'space-event', title: 'Your space or event', detail: 'In-shop branding · Events · Product displays', photo: getPhotoById('toptech-tmt-040') },
+  { id: 'storefront', title: 'Your storefront', detail: 'Glow signs · ACP & LED · Window graphics', photo: getPhotoById('acc-125') },
+  { id: 'campaign', title: 'Your next campaign', detail: 'Flex · Vehicle branding · Wall painting · F-poles', photo: getPhotoById('sel-tmt-058') },
+  { id: 'space-event', title: 'Your space or event', detail: 'In-shop branding · Events · Product displays', photo: getPhotoById('havells-116') },
 ]
 export function HomePageView() {
   return (
@@ -39,7 +39,7 @@ export function HomePageView() {
           </div>
         </div>
         <div className={styles.heroProject} data-light-surface>
-          <Image src="/Ambuja_cement_ACP-LED.png" alt="Ambuja Cement illuminated storefront signage by AD JEET" fill preload sizes="(max-width: 1023px) 100vw, 54vw" className={styles.coverImage} data-hero-image />
+          <Image src="/images/work/ambuja-cement-acp-126.webp" alt="Ambuja Cement illuminated storefront signage by AD JEET" fill preload sizes="(max-width: 1023px) 100vw, 54vw" className={styles.coverImage} data-hero-image />
           <span className={styles.heroShade} aria-hidden="true" />
           <span className={styles.projectTag}>Out in the world <ArrowUpRight size={19} aria-hidden="true" /></span>
           <Link href="/portfolio?service=acp-led-signage" className={styles.heroProjectCaption} aria-label="Explore Ambuja Cement ACP and LED signage" data-hero-caption><span><strong>Ambuja Cement</strong><span>ACP &amp; LED signage</span></span><span className={styles.roundArrow}><ArrowUpRight aria-hidden="true" /></span></Link>
