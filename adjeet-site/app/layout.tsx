@@ -35,7 +35,7 @@ export const metadata: Metadata = {
     description: siteDescription,
     url: 'https://adjeet.in',
     siteName: 'AD JEET',
-    images: [{ url: siteConfig.ogImage, alt: 'ACC ACP and LED signage by AD JEET' }],
+    images: [{ url: siteConfig.ogImage, alt: 'Ambuja Cement ACP and LED signage by AD JEET' }],
     type: 'website',
     locale: 'en_IN',
   },

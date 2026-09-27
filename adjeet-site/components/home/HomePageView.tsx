@@ -18,14 +18,10 @@ import { getPhotoById } from '@/content/gallery'
 import styles from './Home.module.css'
 
 const GROUPS = [
-  { id: 'storefront', title: 'Your storefront', detail: 'Glow signs · ACP & LED · Window graphics', photo: getPhotoById('ambuja-cement-126') },
+  { id: 'storefront', title: 'Your storefront', detail: 'Glow signs · ACP & LED · Window graphics', photo: getPhotoById('acc-125') },
   { id: 'campaign', title: 'Your next campaign', detail: 'Flex · Vehicle branding · Wall painting · F-poles', photo: getPhotoById('sel-tmt-058') },
   { id: 'space-event', title: 'Your space or event', detail: 'In-shop branding · Events · Product displays', photo: getPhotoById('havells-116') },
 ]
-// Below 1024px the hero is taller than it is wide (at most 700px tall), so the
-// 4:3 photo is cropped to its full height and drawn about 933px wide on any
-// screen up to that width. Asking for 100vw there would fetch a copy too small.
-const HERO_SIZES = '(max-width: 933px) 934px, (max-width: 1023px) 100vw, 54vw'
 export function HomePageView() {
   return (
     <div className={styles.home} data-home-page>
@@ -43,10 +39,10 @@ export function HomePageView() {
           </div>
         </div>
         <div className={styles.heroProject} data-light-surface>
-          <Image src="/images/work/acc-acp-125.webp" alt="ACC illuminated storefront signage by AD JEET" fill preload sizes={HERO_SIZES} className={styles.coverImage} data-hero-image />
+          <Image src="/images/work/ambuja-cement-acp-126.webp" alt="Ambuja Cement illuminated storefront signage by AD JEET" fill preload sizes="(max-width: 1023px) 100vw, 54vw" className={styles.coverImage} data-hero-image />
           <span className={styles.heroShade} aria-hidden="true" />
           <span className={styles.projectTag}>Out in the world <ArrowUpRight size={19} aria-hidden="true" /></span>
-          <Link href="/portfolio?service=acp-led-signage" className={styles.heroProjectCaption} aria-label="Explore ACC ACP and LED signage" data-hero-caption><span><strong>ACC</strong><span>ACP &amp; LED signage</span></span><span className={styles.roundArrow}><ArrowUpRight aria-hidden="true" /></span></Link>
+          <Link href="/portfolio?service=acp-led-signage" className={styles.heroProjectCaption} aria-label="Explore Ambuja Cement ACP and LED signage" data-hero-caption><span><strong>Ambuja Cement</strong><span>ACP &amp; LED signage</span></span><span className={styles.roundArrow}><ArrowUpRight aria-hidden="true" /></span></Link>
         </div>
       </section>
       <div className={styles.factStrip} aria-label="AD JEET at a glance">
