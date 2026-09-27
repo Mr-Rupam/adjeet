@@ -27,7 +27,13 @@ const JOURNEY = [
   { marker: 'Today', title: 'Our own workshop.', body: 'He went on to build his own workshop. AD JEET is still growing, with the same focus on the quality of every job.' },
 ]
 // National brands, photographed where the work went up.
-const CLIENT_WORK = ['airtel-008', 'star-cement-022', 'supreme-pipe-069', 'emami-089'].map(getPhotoById)
+const CLIENT_WORK = ['anchor-by-panasonic-112', 'havells-117', 'astral-pipe-129', 'airtel-008'].map(getPhotoById)
+// Site photographs of the workshop itself, unlike the visualisation in the intro.
+const WORKSHOP_PHOTOS = [
+  { src: '/images/workshop/workshop-gate.webp', alt: 'The AD JEET workshop gate in Siliguri, with the company sign on the front wall' },
+  { src: '/images/workshop/workshop-floor.webp', alt: 'Inside the AD JEET workshop shed, with sign frames and materials on the floor' },
+  { src: '/images/workshop/workshop-entrance-dusk.webp', alt: 'The AD JEET workshop entrance lit up at dusk' },
+]
 
 export default function AboutPage() {
   return (
@@ -55,6 +61,14 @@ export default function AboutPage() {
         <ol className={styles.journey}>
           {JOURNEY.map(step => <li key={step.marker} data-site-reveal><p className="spec text-signal">{step.marker}</p><div><h3>{step.title}</h3><p>{step.body}</p></div></li>)}
         </ol>
+        <figure className={styles.workshopPhotos} data-site-reveal="media">
+          <ul aria-label="Photographs of the AD JEET workshop">
+            {WORKSHOP_PHOTOS.map((photo, index) => (
+              <li key={photo.src}><Image src={photo.src} alt={photo.alt} fill sizes={index === 0 ? '(max-width: 767px) 100vw, 33vw' : '(max-width: 767px) 50vw, 33vw'} className="object-cover" /></li>
+            ))}
+          </ul>
+          <figcaption>The AD JEET workshop, Siliguri. Site photographs.</figcaption>
+        </figure>
       </section>
       <section className={styles.trust} aria-labelledby="trust-heading">
         <p className="spec">What keeps a client coming back</p>

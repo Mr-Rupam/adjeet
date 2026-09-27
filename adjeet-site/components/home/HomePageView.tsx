@@ -7,6 +7,7 @@ import { CoveragePlaceList } from '@/components/coverage/CoveragePlaceList'
 import { CoverageStage } from '@/components/coverage/CoverageStage'
 import { QuoteCTA } from '@/components/ui/QuoteCTA'
 import { HeroScene } from './HeroScene'
+import { HeroSlides, type HeroSlide } from './HeroSlides'
 import { ProjectGallery } from './ProjectGallery'
 import { ProcessStory } from './ProcessStory'
 import { HomeMotion } from '@/components/motion/HomeMotion'
@@ -14,13 +15,22 @@ import { ClientStreet } from '@/components/street/ClientStreet'
 import { CommissionCTA } from '@/components/street/CommissionCTA'
 import { homeFaqs } from '@/content/home-faqs'
 import { services } from '@/content/services'
-import { getPhotoById } from '@/content/gallery'
+import { getPhotoById, type GalleryPhoto } from '@/content/gallery'
 import styles from './Home.module.css'
 
 const GROUPS = [
-  { id: 'storefront', title: 'Your storefront', detail: 'Glow signs · ACP & LED · Window graphics', photo: getPhotoById('havells-015') },
-  { id: 'campaign', title: 'Your next campaign', detail: 'Flex · Vehicle branding · Wall painting · F-poles', photo: getPhotoById('toptech-tmt-047') },
-  { id: 'space-event', title: 'Your space or event', detail: 'In-shop branding · Events · Product displays', photo: getPhotoById('toptech-tmt-040') },
+  { id: 'storefront', title: 'Your storefront', detail: 'Glow signs · ACP & LED · Window graphics', photo: getPhotoById('acc-125') },
+  { id: 'campaign', title: 'Your next campaign', detail: 'Flex · Vehicle branding · Wall painting · F-poles', photo: getPhotoById('sel-tmt-058') },
+  { id: 'space-event', title: 'Your space or event', detail: 'In-shop branding · Events · Product displays', photo: getPhotoById('havells-116') },
+]
+// The hero opens on the Ambuja installation, then rotates through other work.
+// None of these repeat a photo used further down the page.
+const fromGallery = (photo: GalleryPhoto, label: string, phoneFocus?: string): HeroSlide => ({ src: photo.src, alt: photo.alt, client: photo.client, label, href: '/portfolio?service=' + photo.service, phoneFocus })
+const HERO_SLIDES: HeroSlide[] = [
+  { src: '/images/work/ambuja-cement-acp-126.webp', alt: 'Ambuja Cement illuminated storefront signage by AD JEET', client: 'Ambuja Cement', label: 'ACP & LED signage', href: '/portfolio?service=acp-led-signage' },
+  fromGallery(getPhotoById('tanyamakeovers-154'), 'ACP & LED letters, Siliguri', '22%'),
+  fromGallery(getPhotoById('sd-lion-tmt-139'), 'Flex printing'),
+  fromGallery(getPhotoById('havells-120'), 'Product display'),
 ]
 export function HomePageView() {
   return (
@@ -38,12 +48,7 @@ export function HomePageView() {
             <a href="#selected-work" className={styles.textLink} aria-label="Explore the work"><span>Explore the work</span><ArrowDown size={18} aria-hidden="true" /></a>
           </div>
         </div>
-        <div className={styles.heroProject} data-light-surface>
-          <Image src="/Ambuja_cement_ACP-LED.png" alt="Ambuja Cement illuminated storefront signage by AD JEET" fill preload sizes="(max-width: 1023px) 100vw, 54vw" className={styles.coverImage} data-hero-image />
-          <span className={styles.heroShade} aria-hidden="true" />
-          <span className={styles.projectTag}>Out in the world <ArrowUpRight size={19} aria-hidden="true" /></span>
-          <Link href="/portfolio?service=acp-led-signage" className={styles.heroProjectCaption} aria-label="Explore Ambuja Cement ACP and LED signage" data-hero-caption><span><strong>Ambuja Cement</strong><span>ACP &amp; LED signage</span></span><span className={styles.roundArrow}><ArrowUpRight aria-hidden="true" /></span></Link>
-        </div>
+        <HeroSlides slides={HERO_SLIDES} />
       </section>
       <div className={styles.factStrip} aria-label="AD JEET at a glance">
         <span data-home-fact><strong>Since 1990</strong> A signmaking story</span>

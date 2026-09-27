@@ -9,7 +9,8 @@ import { test, expect } from '@playwright/test'
 // window, then ask for each again: every retry must answer. Only a size the
 // server has never resized can wedge, so this catches a regression on a fresh
 // server (as in CI) and passes trivially against a warm one.
-const SOURCE = '/Ambuja_cement_ACP-LED.png'
+// One of the largest local images, and one no other spec gates or waits on.
+const SOURCE = '/images/work/airtel-wall-painting-008.webp'
 const WIDTHS = [256, 384, 640, 750, 828, 1080, 1200, 1920]
 const ABORT_AFTER_MS = [2, 5, 10]
 const ACCEPT = { accept: 'image/webp,*/*' }

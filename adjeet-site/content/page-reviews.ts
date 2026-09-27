@@ -14,10 +14,10 @@
  * To record a change to one page, add its path to `PAGE_REVIEWED`. After a
  * review of the whole site, move `SITE_REVIEWED` and clear the overrides.
  */
-export const SITE_REVIEWED = '2026-09-24'
+export const SITE_REVIEWED = '2026-09-27'
 
 /** Paths reviewed on a different day from the rest of the site, e.g. `'/services/flex-printing': '2026-10-02'`. */
-const PAGE_REVIEWED: Record<string, string> = { '/': '2026-09-26', '/portfolio': '2026-09-25', '/about': '2026-09-25', '/contact': '2026-09-25' }
+const PAGE_REVIEWED: Record<string, string> = { '/contact': '2026-09-25', '/services/one-way-vision': '2026-09-24' }
 
 export function reviewedOn(path: string): string {
   return PAGE_REVIEWED[path] ?? SITE_REVIEWED

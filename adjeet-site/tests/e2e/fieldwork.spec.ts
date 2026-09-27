@@ -15,6 +15,8 @@ test.beforeEach(async ({ page }) => {
 })
 
 test('new homepage keeps real project discovery and every coverage area accessible', async ({ page }) => {
+  // Reduced motion holds the hero slideshow on its first slide, the one clicked below.
+  await page.emulateMedia({ reducedMotion: 'reduce' })
   await page.goto('/')
   await expect(page.getByRole('heading', { level: 1 })).toHaveText('Sign boards that get you noticed.')
   await expect(page.locator('#hero-section').getByRole('link', { name: 'WhatsApp your project' })).toBeVisible()

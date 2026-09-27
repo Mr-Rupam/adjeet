@@ -15,13 +15,24 @@ import {
 import { SERVICE_SLUGS } from '@/content/services'
 import { CITY_SLUGS } from '@/content/cities'
 
-// Thresholds below track the real photo set: the 5 original shipped jobs plus
-// the 104 photographs imported from the AD-JEET-PROFILE company deck.
-// Raise these numbers as real photos are added; don't lower them to match
-// a shrinking set.
+// Thresholds below track the real photo set. In September 2026 the owner asked
+// for low-quality photos to be replaced: 69 were retired (thumbnails under
+// about 0.25 megapixels, smeared or AI-edited copies, and the old product
+// displays) and 47 came in from the updated company deck, leaving 87.
+// Raise these numbers as real photos are added; lower them only when the owner
+// retires photos on purpose, never to match an accidental loss.
 describe('gallery data', () => {
-  it('has at least 109 photos', () => {
-    expect(photos.length).toBeGreaterThanOrEqual(109)
+  it('has at least 87 photos', () => {
+    expect(photos.length).toBeGreaterThanOrEqual(87)
+  })
+
+  // The retired set was mostly phone thumbnails that looked soft at any size.
+  it('every photo is at least about 0.25 megapixels', async () => {
+    const { default: sharp } = await import('sharp')
+    for (const p of photos) {
+      const { width = 0, height = 0 } = await sharp(path.join(process.cwd(), 'public', p.src)).metadata()
+      expect(width * height, `photo ${p.id} is ${width}x${height}`).toBeGreaterThanOrEqual(250_000)
+    }
   })
 
   it('all photo ids are unique', () => {

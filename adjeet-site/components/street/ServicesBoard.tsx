@@ -5,9 +5,9 @@ import { services, type ServiceSlug } from '@/content/services'
 import { getPhotoById, type GalleryPhoto } from '@/content/gallery'
 
 const GROUPS: Array<{ id: string; title: string; note: string; photo: GalleryPhoto; slugs: ServiceSlug[] }> = [
-  { id: 'storefront', title: 'Your storefront', note: 'Make the first impression from the street.', photo: getPhotoById('supreme-pipe-064'), slugs: ['glow-sign-boards', 'acp-led-signage', 'one-way-vision'] },
-  { id: 'campaign', title: 'Your next campaign', note: 'Take a message beyond one address.', photo: getPhotoById('sel-tmt-058'), slugs: ['flex-printing', 'vehicle-branding', 'wall-painting', 'f-pole-installation'] },
-  { id: 'space-event', title: 'Your space or event', note: 'Bring the whole place into the picture.', photo: getPhotoById('toptech-tmt-049'), slugs: ['in-shop-branding', 'events-and-puja', 'product-display'] },
+  { id: 'storefront', title: 'Your storefront', note: 'Make the first impression from the street.', photo: getPhotoById('anchor-by-panasonic-114'), slugs: ['glow-sign-boards', 'acp-led-signage', 'one-way-vision'] },
+  { id: 'campaign', title: 'Your next campaign', note: 'Take a message beyond one address.', photo: getPhotoById('srmb-143'), slugs: ['flex-printing', 'vehicle-branding', 'wall-painting', 'f-pole-installation'] },
+  { id: 'space-event', title: 'Your space or event', note: 'Bring the whole place into the picture.', photo: getPhotoById('anchor-by-panasonic-111'), slugs: ['in-shop-branding', 'events-and-puja', 'product-display'] },
 ]
 
 export function ServicesBoard() {

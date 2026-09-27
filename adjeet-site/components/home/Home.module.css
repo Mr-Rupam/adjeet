@@ -12,6 +12,13 @@
 .heroProject { position: relative; overflow: hidden; min-height: 580px; background: var(--night); color: #fff; }
 .heroShade { display: none; }
 .coverImage { object-fit: cover; transition: transform 650ms cubic-bezier(.22,1,.36,1); }
+/* The hero rotates through installations. The incoming photo fades in on top,
+   and the outgoing one only disappears once it is covered. */
+.heroSlides { position: absolute; inset: 0; isolation: isolate; }
+.heroSlide { opacity: 0; transition: opacity 0s linear 900ms, transform 650ms cubic-bezier(.22,1,.36,1); }
+.heroSlide[data-active] { z-index: 1; opacity: 1; transition: opacity 900ms ease, transform 650ms cubic-bezier(.22,1,.36,1); }
+.heroPause { position: absolute; z-index: 4; top: 24px; left: 24px; display: grid; place-items: center; width: 44px; height: 44px; padding: 0; border: 1px solid rgb(255 255 255 / 60%); background: rgb(9 20 28 / 45%); color: #fff; cursor: pointer; }
+.heroPause:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
 .heroProject:hover .coverImage,.workCard:hover .coverImage,.serviceGroup:hover .coverImage { transform: scale(1.035); }
 .projectTag { position: absolute; top: 24px; right: 24px; display: flex; align-items: center; gap: 16px; padding: 10px 14px; background: var(--cobalt); font-size: 12px; color: #fff; }
 .heroProjectCaption { position: absolute; bottom: 0; left: 0; right: 0; padding: 65px 30px 26px; display: flex; justify-content: space-between; align-items: end; background: linear-gradient(transparent, rgb(0 0 0 / 80%)); color: #fff; text-decoration: none; }
@@ -112,7 +119,7 @@
     min-height: 0;
     aspect-ratio: auto;
   }
-  .heroProject .coverImage { object-position: 50% 28%; }
+  .heroProject .coverImage { object-position: var(--phone-focus, 50%) 28%; }
   .heroShade {
     position: absolute;
     inset: 0;
@@ -178,6 +185,7 @@
   .heroActions a:focus-visible,
   .heroProjectCaption:focus-visible { outline-color: var(--gold); }
   .projectTag { display: none; }
+  .heroPause { top: 14px; left: auto; right: 16px; }
   .heroProjectCaption {
     z-index: 2;
     padding: 12px 22px 16px;
@@ -194,7 +202,7 @@
   .hero h1 { font-size: 72px; }
   .heroDescription { max-width: 36ch; }
 }
-@media(prefers-reduced-motion:reduce) { .coverImage { transition: none; }.heroProject:hover .coverImage,.workCard:hover .coverImage,.serviceGroup:hover .coverImage { transform: none; } }
+@media(prefers-reduced-motion:reduce) { .coverImage,.heroSlide,.heroSlide[data-active] { transition: none; }.heroProject:hover .coverImage,.workCard:hover .coverImage,.serviceGroup:hover .coverImage { transform: none; } }
 
 .serviceLinks { display:flex; flex-wrap:wrap; gap:4px 28px; margin-top:30px; border-top:1px solid var(--rule); padding-top:18px; }
 .serviceLinks a { display:inline-flex; align-items:center; gap:10px; min-height:44px; font-size:14px; text-decoration:underline; text-underline-offset:5px; }

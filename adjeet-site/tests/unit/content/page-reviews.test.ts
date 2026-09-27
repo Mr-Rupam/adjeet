@@ -12,9 +12,9 @@ describe('page review dates', () => {
 
   it('uses the site review unless a page has its own date', () => {
     expect(reviewedOn('/services/flex-printing')).toBe(SITE_REVIEWED)
-    expect(reviewedOn('/')).toBe('2026-09-26')
-    expect(reviewedOn('/portfolio')).toBe('2026-09-25')
-    expect(reviewedOn('/about')).toBe('2026-09-25')
+    expect(reviewedOn('/')).toBe(SITE_REVIEWED)
+    expect(reviewedOn('/contact')).toBe('2026-09-25')
+    expect(reviewedOn('/services/one-way-vision')).toBe('2026-09-24')
   })
 
   it('prints the date the way the pages show it, on the same day in every time zone', () => {

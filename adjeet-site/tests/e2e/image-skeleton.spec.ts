@@ -11,7 +11,7 @@ test('image shimmer keeps moving until a slow image finishes loading', async ({ 
 
   await page.route('**/_next/image?**', async route => {
     const source = new URL(route.request().url()).searchParams.get('url')
-    if (source === '/Ambuja_cement_ACP-LED.png') {
+    if (source === '/images/work/ambuja-cement-acp-126.webp') {
       await imageGate
     }
     await route.continue()

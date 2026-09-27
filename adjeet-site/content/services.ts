@@ -87,7 +87,7 @@ const baseServices: ServiceBase[] = [
       },
     ],
     relatedServices: ['glow-sign-boards', 'in-shop-branding', 'f-pole-installation'],
-    heroImage: '/Ambuja_cement_ACP-LED.png',
+    heroImage: '/images/work/acc-acp-125.webp',
     icon: 'panels',
   },
   {
@@ -141,7 +141,7 @@ const baseServices: ServiceBase[] = [
       },
     ],
     relatedServices: ['flex-printing', 'in-shop-branding', 'one-way-vision'],
-    heroImage: '/images/work/toptech-tmt-vehicle-047.webp',
+    heroImage: '/images/work/srmb-vehicle-143.webp',
     icon: 'truck',
   },
   {
@@ -195,7 +195,7 @@ const baseServices: ServiceBase[] = [
       },
     ],
     relatedServices: ['glow-sign-boards', 'acp-led-signage', 'flex-printing'],
-    heroImage: '/images/work/sel-tmt-f-pole-055.webp',
+    heroImage: '/images/work/captain-tmt-bar-f-pole-148.webp',
     icon: 'flag-pole',
   },
   {
@@ -222,7 +222,7 @@ const baseServices: ServiceBase[] = [
       },
     ],
     relatedServices: ['acp-led-signage', 'glow-sign-boards', 'product-display'],
-    heroImage: '/images/work/toptech-tmt-in-shop-040.webp',
+    heroImage: '/images/work/supreme-pipe-in-shop-110.webp',
     icon: 'store',
   },
   {
@@ -303,7 +303,7 @@ const baseServices: ServiceBase[] = [
       },
     ],
     relatedServices: ['in-shop-branding', 'acp-led-signage', 'flex-printing'],
-    heroImage: '/images/work/havells-display-020.webp',
+    heroImage: '/images/work/havells-display-116.webp',
     icon: 'display',
   },
 ]

@@ -16,6 +16,11 @@
 .journey h3 { font:600 2rem/1.1 var(--font-heading); margin:0 0 .65rem; }
 .journey li p { margin:0; }
 .journey li div p { color:var(--ink-muted); max-width:45ch; }
+.workshopPhotos { margin:0; min-width:0; }
+.workshopPhotos ul { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:.75rem; list-style:none; padding:0; margin:0; }
+.workshopPhotos li { position:relative; aspect-ratio:4 / 3; overflow:hidden; background:var(--rule); }
+.workshopPhotos li:first-child { grid-column:1 / -1; }
+.workshopPhotos figcaption { padding-top:.8rem; color:var(--ink-muted); font-size:12px; }
 .trust { background:var(--signal); color:var(--signal-ink); padding:3.5rem max(1.25rem,calc((100vw - 1256px)/2)); }
 .trust h2 { font:600 clamp(3rem,6.5vw,6rem)/1 var(--font-heading); margin:1.3rem 0 2rem; letter-spacing:-.025em; }
 .trustCopy { max-width:650px; }
@@ -36,6 +41,9 @@
  .workshop > div { min-height:520px; }
  .story, .coverage { padding:6rem 2rem; grid-template-columns:.85fr 1.15fr; gap:4rem; }
  .journey li { grid-template-columns:140px 1fr; gap:1.5rem; padding:2rem 0; }
+ .workshopPhotos { grid-column:1 / -1; }
+ .workshopPhotos ul { grid-template-columns:repeat(3,minmax(0,1fr)); gap:1rem; }
+ .workshopPhotos li:first-child { grid-column:auto; }
  .trust { padding-top:5rem; padding-bottom:5rem; }
  .trustCopy { margin-left:40%; }
 }

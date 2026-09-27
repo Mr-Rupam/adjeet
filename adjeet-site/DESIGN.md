@@ -1,10 +1,10 @@
 # AD-JEET design system
 
-Updated 25 September 2026. The former cobalt showroom and detached day/night comparison were rejected and are not a source of design direction.
+Updated 27 September 2026. The former cobalt showroom and detached day/night comparison were rejected and are not a source of design direction.
 
 ## Current homepage hero
 
-The homepage opens with the photographed Ambuja Cement ACP and LED installation. On phones and tablets the photo fills the opening surface, with a blended gradient behind concise copy and a WhatsApp action visible in the first screen. Desktop keeps the split layout. The workshop film sits later on the homepage and still responds to the global day/night theme switch. The original AD-JEET mark remains in the header.
+The homepage opens with the photographed Ambuja Cement ACP and LED installation, then rotates every six seconds through other installations (a local Siliguri job among them), with the caption following the photo. Rotation pauses on hover, focus or the pause button and stays on the first photo for reduced motion. Slides are chosen so the sign sits in the upper part of the frame, which is all phones show above the headline. On phones and tablets the photo fills the opening surface, with a blended gradient behind concise copy and a WhatsApp action visible in the first screen. Desktop keeps the split layout. The workshop film sits later on the homepage and still responds to the global day/night theme switch. The original AD-JEET mark remains in the header.
 
 ## Earlier design direction (7 September)
 
@@ -51,6 +51,7 @@ Semantic values change in dark mode in `design/tokens.css`. Use tokens rather th
 
 - Coverage places and founding year come from `lib/coverage.ts`.
 - The gallery is evidence. Do not add generated work to `content/gallery.ts` or alter publication gates.
+- Project photos are used as photographed. Cropping out a camera watermark is fine; AI-retouched or upscaled copies are not. On 27 September 2026 the Gemini-edited PNGs, including the old hero, were replaced by their original photographs from the updated company deck.
 - Do not claim unverified client counts, response times, site-visit promises, capacities, customer history, or exact locations/dates that the gallery cannot confirm.
 - Preserve existing lead form, WhatsApp, telephone, email, analytics, routing, and structured-data behaviour.
 
