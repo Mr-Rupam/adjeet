@@ -19,14 +19,27 @@ export interface GalleryPhoto {
 
 // Every photo is a real site photograph, never generated or AI-retouched.
 // Numbers 107 and up come from the updated company profile deck (September
-// 2026), with three product displays supplied alongside it; lower numbers are
-// the AD-JEET-PROFILE.pptx deck image number. Photos under about 0.25
-// megapixels were retired then. City is only set when a GPS stamp or the board
+// 2026), with three product displays supplied alongside it and 154 sent by
+// the owner afterwards; lower numbers are the AD-JEET-PROFILE.pptx deck image
+// number. Photos under about 0.25 megapixels were retired then. City is only set when a GPS stamp or the board
 // itself names the city or one of its nearby areas; location and year come from
 // the stamp, the board or the deck's file record. The newest work leads the
 // list and opens the portfolio: clean frames first, then the photos carrying a
 // GPS camera stamp, then the earlier deck's work.
 export const photos: GalleryPhoto[] = [
+  {
+    // Supplied by the owner in September 2026. The phone's GPS stamp (Siliguri,
+    // 8 April 2026) was cropped out of the bottom edge.
+    id: 'tanyamakeovers-154',
+    src: '/images/work/tanyamakeovers-acp-154.webp',
+    alt: 'Tanyamakeovers lit 3D letters and service panels over a makeup studio in Siliguri at night',
+    client: 'Tanyamakeovers',
+    service: 'acp-led-signage',
+    city: 'siliguri',
+    location: 'Siliguri',
+    year: 2026,
+    featured: true,
+  },
   {
     id: 'acc-125',
     src: '/images/work/acc-acp-125.webp',

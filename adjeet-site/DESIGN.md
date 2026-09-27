@@ -1,10 +1,10 @@
 # AD-JEET design system
 
-Updated 25 September 2026. The former cobalt showroom and detached day/night comparison were rejected and are not a source of design direction.
+Updated 27 September 2026. The former cobalt showroom and detached day/night comparison were rejected and are not a source of design direction.
 
 ## Current homepage hero
 
-The homepage opens with the photographed Ambuja Cement ACP and LED installation. On phones and tablets the photo fills the opening surface, with a blended gradient behind concise copy and a WhatsApp action visible in the first screen. Desktop keeps the split layout. The workshop film sits later on the homepage and still responds to the global day/night theme switch. The original AD-JEET mark remains in the header.
+The homepage opens with the photographed Ambuja Cement ACP and LED installation, then rotates every six seconds through other installations (a local Siliguri job among them), with the caption following the photo. Rotation pauses on hover, focus or the pause button and stays on the first photo for reduced motion. Slides are chosen so the sign sits in the upper part of the frame, which is all phones show above the headline. On phones and tablets the photo fills the opening surface, with a blended gradient behind concise copy and a WhatsApp action visible in the first screen. Desktop keeps the split layout. The workshop film sits later on the homepage and still responds to the global day/night theme switch. The original AD-JEET mark remains in the header.
 
 ## Earlier design direction (7 September)
 
