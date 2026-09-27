@@ -51,4 +51,4 @@ WCAG AA contrast for interface text, at least 44px touch targets, visible keyboa
 
 ## Status
 
-On 25 September 2026, the mobile and tablet homepage hero was rebuilt around the documented Ambuja Cement installation, so the work and WhatsApp action appear in the opening screen. The workshop film remains in its later homepage section and retains the global day/night theme behaviour. `DESIGN.md` records the current hero; `design/brand-direction-2026-09-07/` retains the earlier visual exploration and source-asset verification.
+On 25 September 2026, the mobile and tablet homepage hero was rebuilt around the documented Ambuja Cement installation, so the work and WhatsApp action appear in the opening screen. The workshop film remains in its later homepage section and retains the global day/night theme behaviour. On 27 September 2026 the hero photograph became the ACC installation in Dalkhola, because the original Ambuja photograph is too small to stay sharp at full width. `DESIGN.md` records the current hero; `design/brand-direction-2026-09-07/` retains the earlier visual exploration and source-asset verification.

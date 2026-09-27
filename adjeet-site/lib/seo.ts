@@ -7,7 +7,7 @@ import { business } from '@/lib/business'
 export const siteConfig = {
   name: business.name,
   url: business.url,
-  ogImage: '/images/share/ambuja-cement-acp.jpg',
+  ogImage: '/images/share/acc-acp.jpg',
   description: 'Sign board makers in Siliguri since 1990: glow sign boards, ACP and 3D LED letters, flex printing and vehicle branding for North Bengal and Sikkim.',
 }
 
@@ -37,7 +37,7 @@ export function buildPageMetadata({ title, description, path }: {
     openGraph: {
       title: fullTitle, description, url, siteName: siteConfig.name,
       type: 'website', locale: 'en_IN',
-      images: [{ url: siteConfig.ogImage, alt: 'Ambuja Cement ACP and LED signage by AD JEET' }],
+      images: [{ url: siteConfig.ogImage, alt: 'ACC ACP and LED signage by AD JEET' }],
     },
     twitter: { card: 'summary_large_image', title: fullTitle, description, images: [siteConfig.ogImage] },
   }
