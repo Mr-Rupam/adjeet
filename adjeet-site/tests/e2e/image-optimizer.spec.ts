@@ -2,7 +2,8 @@ import { test, expect } from '@playwright/test'
 
 // Next's image optimizer used to wedge an image size for good when a request
 // for it was aborted while the source file was still streaming in: every later
-// request for that exact URL hung (see patches/next+16.2.6.patch). Tests abort
+// request for that exact URL hung (fixed upstream in 16.4.2; before that it was
+// patched locally, see P3 in TODOS.md). Tests abort
 // such requests all the time, and so do visitors who navigate away.
 //
 // Abort a spread of sizes of the largest local image at points inside that

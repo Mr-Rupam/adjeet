@@ -251,9 +251,13 @@ request for the same key. The patch gives the mocked response no socket.
 Before: 3 of 24 aborted sizes wedged; after: 0 of 24, twice.
 `tests/e2e/image-optimizer.spec.ts` guards it.
 
-Still present in next 16.2.12 and 16.3.6, so upgrading Next means regenerating
-the patch (`patch-package` fails the install if it no longer applies). Worth
-reporting upstream: `npx patch-package next --create-issue` drafts the issue.
+Still present in next 16.2.12 and 16.3.6. **Fixed upstream in 16.4.2**
+(2026-10-20): `fetchInternalImage` now builds the mocked response without the
+client's socket, so `patches/next+16.2.6.patch` was deleted with the upgrade
+(16.3.7 and earlier carry the advisories `npm audit --omit=dev` reported on
+16.2.6). The `patch-package` postinstall stays and finds no patches. If a later
+Next release brings the hang back, `tests/e2e/image-optimizer.spec.ts` fails on
+a fresh production server; regenerate a patch with `npx patch-package next`.
 
 ### [ ] P2: `/api/lead` server checks are no longer covered by e2e
 The e2e lead form specs now answer `/api/lead` themselves (the real route
