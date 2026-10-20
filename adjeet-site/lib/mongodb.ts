@@ -1,49 +1,35 @@
 import { MongoClient, ServerApiVersion } from 'mongodb'
+import { LEAD_DEADLINES } from '@/lib/lead-deadline'
 
-const uri = process.env.MONGODB_URI || ''
+// A cold TLS connection to Atlas can take a few round trips. Give it the
+// lead route's whole Mongo share, and no longer, since Sheets runs alongside.
 const options = {
-  serverApi: {
-    version: ServerApiVersion.v1,
-    strict: true,
-    deprecationErrors: true,
-  },
-  connectTimeoutMS: 5000,
-  serverSelectionTimeoutMS: 5000,
+  serverApi: { version: ServerApiVersion.v1, strict: true, deprecationErrors: true },
+  connectTimeoutMS: LEAD_DEADLINES.mongo,
+  serverSelectionTimeoutMS: LEAD_DEADLINES.mongo,
 }
-
 let clientPromise: Promise<MongoClient> | null = null
 
-/**
- * Returns a lazily-initialised MongoDB client promise.
- *
- * In development, the promise is cached on `globalThis` to survive HMR reloads.
- * In production, it is cached in a module-level variable.
- *
- * Throws at connection time (not module-load time) if MONGODB_URI is missing
- * in production, so `next build` can complete without the env var.
- */
+/** Share connections, but never cache a rejected connection forever. */
 export default function getClientPromise(): Promise<MongoClient> {
   if (clientPromise) return clientPromise
-
-  if (!uri) {
-    if (process.env.NODE_ENV === 'production') {
-      return Promise.reject(new Error('MONGODB_URI must be set in production'))
-    }
-    console.warn('[mongodb] Missing MONGODB_URI, using localhost fallback')
-    const fallback = new MongoClient('mongodb://localhost:27017/fallback', options)
-    clientPromise = fallback.connect()
-    return clientPromise
-  }
-
-  if (process.env.NODE_ENV === 'development') {
-    const g = global as typeof globalThis & { _mongoClientPromise?: Promise<MongoClient> }
-    if (!g._mongoClientPromise) {
-      g._mongoClientPromise = new MongoClient(uri, options).connect()
-    }
+  const uri = process.env.MONGODB_URI
+  if (!uri) return Promise.reject(new Error('MONGODB_URI must be configured'))
+  const g = globalThis as typeof globalThis & { _mongoClientPromise?: Promise<MongoClient> }
+  const development = process.env.NODE_ENV === 'development'
+  if (development && g._mongoClientPromise) {
     clientPromise = g._mongoClientPromise
     return clientPromise
   }
-
-  clientPromise = new MongoClient(uri, options).connect()
-  return clientPromise
+  const client = new MongoClient(uri, options)
+  const pending = client.connect().catch(error => {
+    if (clientPromise === pending) clientPromise = null
+    if (g._mongoClientPromise === pending) delete g._mongoClientPromise
+    // The driver can own sockets even after server selection fails.
+    void client.close?.().catch(() => {})
+    throw error
+  })
+  clientPromise = pending
+  if (development) g._mongoClientPromise = pending
+  return pending
 }
