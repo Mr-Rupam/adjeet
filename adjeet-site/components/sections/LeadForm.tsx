@@ -4,13 +4,39 @@ import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useState, useRef, useEffect, type FormEvent } from 'react'
 import { DeferUntilNear } from '@/components/ui/DeferUntilNear'
-import { leadSchema, type LeadInput, TIMELINE_OPTIONS, COVERAGE_CITIES } from '@/lib/lead-schema'
+import { leadSchema, type LeadInput, TIMELINE_OPTIONS, COVERAGE_CITIES, HELP_CHOOSING } from '@/lib/lead-schema'
 import { Turnstile, type TurnstileInstance } from '@marsidev/react-turnstile'
 import { services, type ServiceSlug } from '@/content/services'
 import { QuoteCTA } from '@/components/ui/QuoteCTA'
 import { WhatsAppLink } from '@/components/ui/WhatsAppLink'
 import { business } from '@/lib/business'
 import { defaultWhatsAppUrl } from '@/lib/whatsapp'
+import { trackLeadSubmit } from '@/lib/analytics'
+import { captureLeadSource } from '@/lib/lead-source'
+import { briefFingerprint, newSubmissionId } from '@/lib/lead-brief'
+
+const UNCONFIRMED = 'We could not confirm that your enquiry reached us. Keep this reference, then retry or send your brief on WhatsApp.'
+const INTERRUPTED = 'The connection was interrupted, so we could not confirm that your enquiry reached us. Your details are still here: retry, or send your brief on WhatsApp.'
+
+/**
+ * POST the brief, giving up after 15 seconds (the server answers well inside
+ * its 10 second limit). A plain timer, because AbortSignal.timeout is missing
+ * before Safari 16.
+ */
+async function postLead(body: unknown) {
+  const controller = new AbortController()
+  const timer = setTimeout(() => controller.abort(), 15_000)
+  try {
+    return await fetch('/api/lead', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body),
+      signal: controller.signal,
+    })
+  } finally {
+    clearTimeout(timer)
+  }
+}
 
 /** "A", "A and B", "A, B and C": the chosen services as they read in a sentence. */
 function listServices(names: string[]): string | undefined {
@@ -36,6 +62,10 @@ export function LeadForm({ defaultCity, defaultService }: LeadFormProps = {}) {
     || (process.env.NODE_ENV !== 'production' ? '1x00000000000000000000AA' : '')
   const [submitted, setSubmitted] = useState(false)
   const [serverError, setServerError] = useState<string | null>(null)
+  const [receiptId, setReceiptId] = useState<string | null>(null)
+  const [unconfirmedReference, setUnconfirmedReference] = useState<string | null>(null)
+  const attempt = useRef<{ fingerprint: string; id: string } | null>(null)
+  const sending = useRef(false)
   const successRef = useRef<HTMLDivElement>(null)
   useEffect(() => { if (submitted) successRef.current?.focus() }, [submitted])
 
@@ -50,7 +80,7 @@ export function LeadForm({ defaultCity, defaultService }: LeadFormProps = {}) {
     mode: 'onBlur',
     defaultValues: {
       serviceInterest: defaultService ? [defaultService] : [],
-      timeline: 'immediate',
+      timeline: 'unspecified',
       cfTurnstileResponse: '',
       ...(defaultCity ? { city: defaultCity } : {}),
     },
@@ -91,30 +121,43 @@ export function LeadForm({ defaultCity, defaultService }: LeadFormProps = {}) {
   }, [])
 
   async function onSubmit(data: LeadInput) {
+    if (sending.current) return
+    sending.current = true
     setServerError(null)
+    setUnconfirmedReference(null)
     try {
-      const res = await fetch('/api/lead', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(data),
-      })
-      if (!res.ok) {
-        const body = await res.json().catch(() => ({}))
-        setServerError(body.error ?? 'Something went wrong. Please try WhatsApp instead.')
-        turnstileRef.current?.reset()
-        setValue('cfTurnstileResponse', '')
+      // One reference per brief: a retry of the same brief (after a lost reply,
+      // with a fresh CAPTCHA token) reuses it, so the server can recognise it.
+      const fingerprint = briefFingerprint(data)
+      if (attempt.current?.fingerprint !== fingerprint) attempt.current = { fingerprint, id: newSubmissionId() }
+      const { id } = attempt.current
+      let res: Response
+      try {
+        res = await postLead({ ...data, submissionId: id, source: captureLeadSource() })
+      } catch {
+        // The enquiry may or may not have arrived. Keep the brief and reference.
+        setUnconfirmedReference(id)
+        setServerError(INTERRUPTED)
         return
       }
-      setSubmitted(true)
-      type GtagFn = (command: string, ...args: unknown[]) => void
-      if (typeof window !== 'undefined' && (window as Window & { gtag?: GtagFn }).gtag) {
-        (window as Window & { gtag?: GtagFn }).gtag!('event', 'lead_submit', {
-          city: data.city,
-          timeline: data.timeline,
-        })
+      const body = await res.json().catch(() => null)
+      if (res.ok && body?.ok === true && body.receiptId === id) {
+        setReceiptId(id)
+        setSubmitted(true)
+        trackLeadSubmit({ city: data.city, timeline: data.timeline })
+        return
       }
+      // The server saw this reference with a different brief: start afresh.
+      if (res.status === 409) attempt.current = null
+      if (res.ok || res.status >= 500) setUnconfirmedReference(id)
+      setServerError(!res.ok && typeof body?.error === 'string' ? body.error : UNCONFIRMED)
     } catch {
-      setServerError('Network error. Please try WhatsApp instead.')
+      setServerError(UNCONFIRMED)
+    } finally {
+      sending.current = false
+      // A token is single use: get a fresh one for any retry.
+      turnstileRef.current?.reset()
+      setValue('cfTurnstileResponse', '')
     }
   }
 
@@ -126,8 +169,9 @@ export function LeadForm({ defaultCity, defaultService }: LeadFormProps = {}) {
         </div>
         <h3 className="display mb-2 text-2xl text-ink">Message received.</h3>
         <p className="mx-auto max-w-sm text-sm text-ink-muted">
-          Our team will review your request and contact you about the next steps.
+          We have your enquiry and will contact you about the next steps.
         </p>
+        <p className="mt-4 break-all text-xs text-ink-muted">Enquiry reference: {receiptId}</p>
       </div>
     )
   }
@@ -252,7 +296,7 @@ export function LeadForm({ defaultCity, defaultService }: LeadFormProps = {}) {
         <fieldset aria-describedby={errors.serviceInterest ? 'lead-services-err' : undefined}>
           <legend className={label}>Services you need *</legend>
           <div className="grid grid-cols-1 min-[360px]:grid-cols-2 gap-2 mt-1">
-            {services.map(s => (
+            {[...services, HELP_CHOOSING].map(s => (
               <label
                 key={s.slug}
                 className="flex min-h-11 cursor-pointer items-center gap-2.5 rounded-xl border border-rule px-3 py-2.5 text-sm text-ink transition-all hover:border-signal has-[:checked]:border-signal has-[:checked]:bg-signal/10"
@@ -296,9 +340,12 @@ export function LeadForm({ defaultCity, defaultService }: LeadFormProps = {}) {
           id="lead-message"
           rows={4}
           placeholder="Tell us about your project: dimensions, location, deadline..."
-          className={`${fieldNormal} resize-none`}
+          className={`${errors.message ? fieldError : fieldNormal} resize-none`}
+          aria-invalid={!!errors.message}
+          aria-describedby={errors.message ? 'lead-message-err' : undefined}
           {...register('message')}
         />
+        {errors.message && <p id="lead-message-err" className={errMsg}>{errors.message.message}</p>}
       </div>
 
       {/* Turnstile: dev test key only outside production. It loads about 1MB, so
@@ -309,7 +356,7 @@ export function LeadForm({ defaultCity, defaultService }: LeadFormProps = {}) {
               ref={turnstileRef}
               siteKey={siteKey}
               onSuccess={(token) => setValue('cfTurnstileResponse', token, { shouldValidate: true })}
-              onError={() => setServerError('CAPTCHA failed. Please try again.')}
+              onError={() => { setValue('cfTurnstileResponse', ''); setServerError('CAPTCHA failed. Please try again.') }}
               onExpire={() => setValue('cfTurnstileResponse', '', { shouldValidate: true })}
               options={{ theme: widgetTheme, size: 'compact' }}
             />
@@ -327,6 +374,7 @@ export function LeadForm({ defaultCity, defaultService }: LeadFormProps = {}) {
           <span className="mt-0.5">⚠</span>
           <div>
             <p>{serverError}</p>
+            {unconfirmedReference && <p className="mt-2 break-all text-xs">Enquiry reference: {unconfirmedReference}</p>}
             <WhatsAppLink href={recoveryWhatsAppUrl()} source="lead-form-error" className="field-link">
               WhatsApp your brief ↗
             </WhatsAppLink>
