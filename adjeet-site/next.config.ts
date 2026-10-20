@@ -1,4 +1,6 @@
 import type { NextConfig } from "next";
+// Relative, not "@/": the config is loaded before the app's path aliases.
+import { LEGACY_REGIONAL_REDIRECTS } from "./content/legacy-regional";
 
 const isDev = process.env.NODE_ENV === 'development';
 
@@ -52,6 +54,12 @@ const securityHeaders = [
 ];
 
 const nextConfig: NextConfig = {
+  // The retired regional pages answer 308 to the page that absorbed them, so
+  // their links and the little ranking they had carry over. Redirects run
+  // before the filesystem, and any query string is passed through.
+  async redirects() {
+    return LEGACY_REGIONAL_REDIRECTS.map(({ source, destination }) => ({ source, destination, permanent: true }));
+  },
   async headers() {
     return [
       {

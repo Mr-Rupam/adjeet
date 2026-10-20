@@ -81,11 +81,11 @@ test.describe('Lead Form', () => {
   });
 });
 
-// The 27 regional pages pass the city and trade they are about into LeadForm,
-// so the visitor never picks either again. This one is Glow Sign Boards in
-// Siliguri.
-test.describe('Lead Form on a regional service-area page', () => {
-  const regionalPath = '/glow-sign-board-in-siliguri';
+// Service pages pass their trade and Siliguri into LeadForm, so the visitor
+// never picks either again. This one is Glow Sign Boards, which absorbed the
+// old Siliguri glow sign page.
+test.describe('Lead Form on a service page', () => {
+  const regionalPath = '/services/glow-sign-boards';
   const serverError = 'Something went wrong. Please try WhatsApp instead.';
 
   // The page has a second form and its own submit button, so scope to the lead form.

@@ -2,7 +2,7 @@ import { business } from '@/lib/business'
 import { COVERAGE_AREAS } from '@/lib/coverage'
 import { services } from '@/content/services'
 import { homeFaqs } from '@/content/home-faqs'
-import { programmaticPages, CITY_LABELS } from '@/content/programmatic'
+import { TOWNS, townPath } from '@/content/areas'
 import { SITE_REVIEWED, formatReviewDate } from '@/content/page-reviews'
 import { COMPARED_BOARDS, COMPARISON_COLUMNS, COMPARISON_HEADING, COMPARISON_NOTE } from '@/content/sign-comparison'
 
@@ -31,7 +31,7 @@ export function GET() {
     `- Google Maps: ${business.mapsUrl}`,
     `- Founded: ${business.foundingYear}, by ${business.founder}`,
     `- Service areas: ${COVERAGE_AREAS.map(area => area.name).join(', ')}`,
-    '- Site visits, installation schedules, prices, material specifications and warranty terms are confirmed for each project. Regional service pages do not represent separate offices.',
+    '- Site visits, installation schedules, prices, material specifications and warranty terms are confirmed for each project. Town pages do not represent separate offices.',
     '',
     '## Services',
     ...services.map(service => `- [${service.name}](${business.url}/services/${service.slug}): ${service.answer} Also called: ${service.alternateNames.join(', ')}. Planning lead time: ${service.turnaround}.`),
@@ -40,8 +40,9 @@ export function GET() {
     ...COMPARED_BOARDS.map(board => `- [${board.name}](${business.url}/services/${board.slug}): ${board.cells.map((cell, index) => `${COMPARISON_COLUMNS[index]}: ${cell}`).join('. ')}.`),
     `- ${COMPARISON_NOTE}`,
     '',
-    '## Regional service guides',
-    ...programmaticPages.map(page => `- [${page.searchPhrase} in ${CITY_LABELS[page.city]}](${business.url}/${page.slug})`),
+    '## Areas we cover',
+    `- [Areas we cover](${business.url}/areas): Every coverage place with its distance from the Siliguri workshop and how a job there is planned. Everything is made in Siliguri and installed on site.`,
+    ...TOWNS.filter(town => town.indexable).map(town => `- [${town.name}](${business.url}${townPath(town)}): ${town.metaDescription}`),
     '',
     '## Common questions',
     ...homeFaqs.flatMap(faq => [`### ${faq.q}`, faq.a, '']),

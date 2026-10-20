@@ -27,10 +27,6 @@ export function trackServicePageView(service: string) {
   gtag('event', 'service_page_view', { service })
 }
 
-export function trackProgrammaticView(params: { service: string; city: string }) {
-  gtag('event', 'programmatic_view', params)
-}
-
 export function trackThemeToggle(theme: string) {
   gtag('event', 'theme_toggle', { theme })
 }

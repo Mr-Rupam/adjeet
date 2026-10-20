@@ -1,6 +1,6 @@
 import type { MetadataRoute } from 'next'
-import { SERVICE_SLUGS, type ServiceSlug } from '@/content/services'
-import { programmaticPages } from '@/content/programmatic'
+import { SERVICE_SLUGS } from '@/content/services'
+import { TOWNS, townPath } from '@/content/areas'
 import { getPhotosByService, photos, type GalleryPhoto } from '@/content/gallery'
 import { reviewedOn } from '@/content/page-reviews'
 import { siteConfig } from '@/lib/seo'
@@ -11,20 +11,17 @@ import { siteConfig } from '@/lib/seo'
  * photo to its page. The portfolio shows every photo, so the home page, whose
  * six are picked in its components, needs no list of its own.
  *
- * A regional page lists only the photos taken in its own town. When it has
- * none it shows the trade's work from elsewhere, and listing those again under
- * 27 town pages would tie each photo to places it was not taken.
+ * A town page shows only photographs recorded in that town, so the same list
+ * is the honest one to give it here.
  */
-function photosTakenIn(service: ServiceSlug, city: string): GalleryPhoto[] {
-  return getPhotosByService(service).filter(photo => photo.city === city)
-}
-
 function imageUrls(list: GalleryPhoto[]): string[] {
   return [...new Set(list.map(photo => siteConfig.url + photo.src))]
 }
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  // Privacy is deliberately noindex and must not be advertised in the sitemap.
+  // Only indexable canonical URLs. Privacy is noindex, the retired regional
+  // URLs redirect, and a town page below its quality gate is noindex until it
+  // qualifies, so none of them are advertised here.
   const pages: { path: string; images?: string[] }[] = [
     { path: '' },
     { path: '/services' },
@@ -32,7 +29,8 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { path: '/about' },
     { path: '/contact' },
     ...SERVICE_SLUGS.map(slug => ({ path: `/services/${slug}`, images: imageUrls(getPhotosByService(slug)) })),
-    ...programmaticPages.map(page => ({ path: `/${page.slug}`, images: imageUrls(photosTakenIn(page.service, page.city)) })),
+    { path: '/areas' },
+    ...TOWNS.filter(town => town.indexable).map(town => ({ path: townPath(town), images: imageUrls(town.photos) })),
   ]
   return pages.map(({ path, images }) => ({
     url: siteConfig.url + path,

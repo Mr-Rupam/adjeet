@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest'
 import { renderToStaticMarkup } from 'react-dom/server'
 import { createElement } from 'react'
 import { services } from '@/content/services'
-import { programmaticPages, CITY_LABELS } from '@/content/programmatic'
+import { TOWNS, townPath } from '@/content/areas'
 import { business } from '@/lib/business'
 import { ADJEET_SYSTEM_PROMPT } from '@/lib/chatbot-prompt'
 import { generateServiceMetadata, buildServiceJsonLd, buildLocalBusinessJsonLd, jsonLdString } from '@/lib/seo'
@@ -24,18 +24,34 @@ describe('search and answer consistency', () => {
     }
   })
 
-  it('connects regional services to the same real business rather than creating local branches', () => {
+  it('connects town services to the same real business rather than creating local branches', () => {
     const provider = buildLocalBusinessJsonLd()
-    for (const page of programmaticPages) {
-      const service = services.find(service => service.slug === page.service)!
-      const schema = buildServiceJsonLd(service, { city: CITY_LABELS[page.city], path: '/' + page.slug, description: page.localBrief })
-      expect(schema.provider['@id']).toBe(provider['@id'])
-      expect(schema.areaServed).toEqual([CITY_LABELS[page.city]])
-      expect(schema.url).toBe(business.url + '/' + page.slug)
-      expect(schema.description).toBe(page.localBrief)
-      expect(page.localBrief).toBeTruthy()
+    for (const town of TOWNS) {
+      const ids = new Set<string>()
+      for (const trade of town.trades) {
+        const service = services.find(candidate => candidate.slug === trade.service)!
+        const schema = buildServiceJsonLd(service, { town: { name: town.name, state: town.state }, path: townPath(town), description: trade.brief })
+        expect(schema.provider['@id']).toBe(provider['@id'])
+        expect(schema.areaServed).toEqual([{ '@type': 'City', name: town.name, containedInPlace: { '@type': 'State', name: town.state } }])
+        expect(schema.url).toBe(business.url + townPath(town))
+        expect(schema.description).toBe(trade.brief)
+        ids.add(schema['@id'])
+      }
+      // One page, several trades: each node needs its own @id.
+      expect(ids.size, town.slug).toBe(town.trades.length)
     }
-    expect(new Set(programmaticPages.map(page => page.localBrief)).size).toBe(programmaticPages.length)
+    const briefs = TOWNS.flatMap(town => town.trades.map(trade => trade.brief))
+    expect(new Set(briefs).size).toBe(briefs.length)
+  })
+
+  it('describes the business in its languages, at its second address, and only with live profiles', () => {
+    const provider = buildLocalBusinessJsonLd()
+    expect(provider.knowsLanguage.map(language => language.name)).toEqual(['English', 'Bengali', 'Hindi'])
+    expect(provider.location.address.streetAddress).toBe(business.office)
+    expect(provider.location.address.postalCode).toBe(business.officePostalCode)
+    // The Maps listing is the only profile recorded in the repository today.
+    expect(provider.sameAs).toEqual([business.mapsUrl])
+    expect(provider.image.length).toBeGreaterThan(1)
   })
 
   it('serves real FAQ answers in initial HTML before hydration', () => {
@@ -55,6 +71,10 @@ describe('search and answer consistency', () => {
     }
     expect(text + ADJEET_SYSTEM_PROMPT).not.toMatch(/info@adjeet|Jeet Kumar Sarkar|500\+ installations|most trusted/i)
     for (const service of services) expect(text).toContain(`${business.url}/services/${service.slug}`)
+    // The regional list is now the areas page plus the indexed town pages.
+    expect(text).toContain(`(${business.url}/areas)`)
+    for (const town of TOWNS) expect(text.includes(`(${business.url}${townPath(town)})`), town.slug).toBe(town.indexable)
+    expect(text).not.toMatch(/-in-(siliguri|jalpaiguri|cooch-behar|darjeeling|malda|gangtok)\b/)
   })
 
   it('gives the AI reading aid a review date, the disambiguating facts and the same comparison as the pages', async () => {

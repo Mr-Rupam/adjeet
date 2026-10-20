@@ -1,5 +1,5 @@
 import { test, expect, type Page } from '@playwright/test'
-import { programmaticPages } from '../../content/programmatic'
+import { TOWNS, townPath } from '../../content/areas'
 import { SERVICE_SLUGS } from '../../content/services'
 import { COVERAGE_AREAS } from '../../lib/coverage'
 import { photos } from '../../content/gallery'
@@ -26,16 +26,17 @@ test('new homepage keeps real project discovery and every coverage area accessib
   await expect(page.getByRole('button', { name: /^View:/ })).toHaveCount(acpCount)
 })
 
-test('all service and regional routes resolve, with regional links matching the content records', async ({ page, request }) => {
+test('all service and area routes resolve, with town links matching the content records', async ({ page, request }) => {
   test.setTimeout(180000)
-  for (const slug of [...SERVICE_SLUGS.map(s => 'services/' + s), ...programmaticPages.map(p => p.slug)]) {
-    expect((await request.get('/' + slug)).status(), slug).toBe(200)
+  for (const path of [...SERVICE_SLUGS.map(s => '/services/' + s), '/areas', ...TOWNS.map(townPath)]) {
+    expect((await request.get(path)).status(), path).toBe(200)
   }
-  await page.goto('/glow-sign-board-in-siliguri')
-  const cityLinks = page.locator('a').filter({ hasText: /^Glow Sign Boards in / })
-  for (const link of await cityLinks.all()) {
+  await page.goto('/services/glow-sign-boards')
+  const townLinks = page.getByRole('list', { name: 'Town pages' }).getByRole('link')
+  await expect(townLinks).toHaveCount(TOWNS.length)
+  for (const link of await townLinks.all()) {
     const href = await link.getAttribute('href')
-    expect(programmaticPages.some(p => '/' + p.slug === href)).toBe(true)
+    expect(TOWNS.some(town => townPath(town) === href), href ?? '').toBe(true)
   }
 })
 
@@ -206,8 +207,8 @@ test('the enquiry button stays a readable light pill on the cerulean band in bot
   // `.cta` fades its background, so without reduced motion the colours read
   // straight after a theme switch are still the previous theme's.
   await page.emulateMedia({ reducedMotion: 'reduce' })
-  // Home renders CommissionCTA; the regional pages write their own band.
-  for (const route of ['/', '/glow-sign-board-in-siliguri']) {
+  // Home renders CommissionCTA; the town pages write their own band.
+  for (const route of ['/', '/areas/cooch-behar']) {
     await page.goto(route)
     const button = page.locator('.commission-actions > .cta')
     for (const theme of ['light', 'dark']) {

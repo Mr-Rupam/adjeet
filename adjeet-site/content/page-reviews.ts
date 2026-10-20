@@ -17,7 +17,28 @@
 export const SITE_REVIEWED = '2026-09-27'
 
 /** Paths reviewed on a different day from the rest of the site, e.g. `'/services/flex-printing': '2026-10-02'`. */
-const PAGE_REVIEWED: Record<string, string> = { '/contact': '2026-09-25', '/services/one-way-vision': '2026-09-24' }
+const PAGE_REVIEWED: Record<string, string> = {
+  '/contact': '2026-09-25',
+  // 20 October 2026: the regional pages folded into the service pages and
+  // /areas; wall painting renamed "Wall Painting Advertising" in every list.
+  '/': '2026-10-20',
+  '/services': '2026-10-20',
+  '/portfolio': '2026-10-20',
+  '/services/glow-sign-boards': '2026-10-20',
+  '/services/acp-led-signage': '2026-10-20',
+  '/services/flex-printing': '2026-10-20',
+  '/services/vehicle-branding': '2026-10-20',
+  '/services/wall-painting': '2026-10-20',
+  '/services/f-pole-installation': '2026-10-20',
+  '/services/in-shop-branding': '2026-10-20',
+  '/services/events-and-puja': '2026-10-20',
+  '/services/one-way-vision': '2026-10-20',
+  '/services/product-display': '2026-10-20',
+  '/areas': '2026-10-20',
+  '/areas/cooch-behar': '2026-10-20',
+  '/areas/jalpaiguri': '2026-10-20',
+  '/areas/gangtok': '2026-10-20',
+}
 
 export function reviewedOn(path: string): string {
   return PAGE_REVIEWED[path] ?? SITE_REVIEWED

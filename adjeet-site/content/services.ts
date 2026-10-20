@@ -146,7 +146,9 @@ const baseServices: ServiceBase[] = [
   },
   {
     slug: 'wall-painting',
-    name: 'Wall Painting',
+    // "Advertising" is part of the name: searches for house painting were
+    // landing on this page, and it is brand advertising, not decorating.
+    name: 'Wall Painting Advertising',
     tagline: 'Durable outdoor advertising on any wall',
     description:
       'Hand-painted and stencil-painted wall advertising for rural markets, highways, and peri-urban areas where flex and backlit signs are impractical. Our painters use exterior-grade enamel and weather-shield paints that withstand monsoon rain and humidity. The wall location, surface condition, owner permission and any applicable local requirements should be checked before a campaign is scheduled.',
