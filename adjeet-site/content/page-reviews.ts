@@ -18,7 +18,8 @@ export const SITE_REVIEWED = '2026-09-27'
 
 /** Paths reviewed on a different day from the rest of the site, e.g. `'/services/flex-printing': '2026-10-02'`. */
 const PAGE_REVIEWED: Record<string, string> = {
-  '/contact': '2026-09-25',
+  // 20 October 2026: the lead form's receipt and recovery wording changed.
+  '/contact': '2026-10-20',
   // 20 October 2026: the regional pages folded into the service pages and
   // /areas; wall painting renamed "Wall Painting Advertising" in every list.
   '/': '2026-10-20',

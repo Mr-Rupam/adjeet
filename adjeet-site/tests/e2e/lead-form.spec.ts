@@ -16,7 +16,8 @@ async function routeLeadApi(page: Page, replies: LeadReply[]) {
   const posted: Record<string, unknown>[] = [];
   await page.route('/api/lead', async (route) => {
     posted.push(route.request().postDataJSON());
-    await route.fulfill(replies[Math.min(posted.length, replies.length) - 1]);
+    const reply = replies[Math.min(posted.length, replies.length) - 1];
+    await route.fulfill({ ...reply, json: { ...reply.json, ...(reply.json.ok === true ? { receiptId: posted.at(-1)?.submissionId } : {}) } });
   });
   return posted;
 }
@@ -37,7 +38,7 @@ test.describe('Lead Form', () => {
 
   test('Happy path submission', async ({ page }) => {
     await page.route('/api/lead', async (route) => {
-      await route.fulfill({ json: { ok: true } });
+      await route.fulfill({ json: { ok: true, receiptId: route.request().postDataJSON().submissionId } });
     });
 
     await page.fill('#lead-name', 'Test User');
@@ -163,6 +164,7 @@ test.describe('Lead Form on a service page', () => {
     await expect(received(page)).toBeVisible();
     await expect(alert).toHaveCount(0);
     expect(posted).toHaveLength(2);
+    expect(posted[1].submissionId).toBe(posted[0].submissionId);
     expect(posted[1]).toMatchObject({
       name: 'Test User',
       city: 'Siliguri',
