@@ -9,6 +9,25 @@ export const TIMELINE_OPTIONS = [
   { value: 'exploring', label: 'Just exploring' },
 ] as const
 
+/**
+ * When the visitor would like to be called. A request, never a booking: the
+ * site names no hours and promises no call time. The form leaves it unselected
+ * and then sends nothing, so an absent value means the visitor chose nothing.
+ */
+export const CALL_TIME_OPTIONS = [
+  { value: 'morning', label: 'Morning' },
+  { value: 'afternoon', label: 'Afternoon' },
+  { value: 'evening', label: 'Evening' },
+  { value: 'any_time', label: 'Any time' },
+] as const
+
+export type CallTime = (typeof CALL_TIME_OPTIONS)[number]['value']
+
+/** The words the owner reads in the Sheet and in notifications. */
+export function callTimeLabel(value: CallTime): string {
+  return CALL_TIME_OPTIONS.find(option => option.value === value)?.label ?? value
+}
+
 export const COVERAGE_CITIES = [
   'Siliguri', 'Jalpaiguri', 'Cooch Behar', 'Darjeeling', 'Malda',
   'Alipurduar', 'Kalimpong', 'Gangtok', 'Other',
@@ -54,6 +73,7 @@ export const leadSchema = z.object({
     .min(1, 'Please select at least one service so we can route your request'),
 
   timeline: z.enum(['unspecified', 'immediate', 'one_month', 'three_months', 'exploring']),
+  bestTimeToCall: z.enum(['morning', 'afternoon', 'evening', 'any_time']).optional(),
   submissionId: z.string().uuid().optional(),
   source: z.unknown().optional(),
 

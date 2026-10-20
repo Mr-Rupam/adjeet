@@ -9,6 +9,8 @@ const fakes = vi.hoisted(() => ({
 vi.mock('@/lib/mongodb', () => ({ default: async () => ({ db: () => ({ collection: () => ({ insertOne: fakes.insert, findOne: fakes.find }) }) }) }))
 vi.mock('@/lib/google-sheets', () => ({ openLeadSheet: fakes.open }))
 vi.mock('resend', () => ({ Resend: class { emails = { send: fakes.email } } }))
+// Only the real Sheets writer uses it, in the "best time to call" tests below.
+vi.mock('google-auth-library', () => ({ JWT: class { async getAccessToken() { return { token: 'test-token' } } } }))
 // Each limiter is told apart by its prefix: 'lead' per IP, 'lead-notify' per phone.
 vi.mock('@upstash/ratelimit', () => ({
   Ratelimit: class {
@@ -289,6 +291,95 @@ describe('deadline', () => {
     await vi.advanceTimersByTimeAsync(LEAD_DEADLINES.response)
     expect(settled).toBe(true)
     expect((await pending).status).toBe(200)
+  })
+})
+
+describe('best time to call', () => {
+  const LEGACY_HEADER = ['Date', 'Name', 'Phone', 'City', 'Services', 'Timeline', 'Message', 'Enquiry ID', 'Landing page', 'Source', 'Medium', 'Campaign', 'Status']
+  const json = (body: unknown, status = 200) => new Response(JSON.stringify(body), { status })
+
+  /** Run the real Sheets writer against a Sheet whose header is `header`, recording what it is asked to write. */
+  function realSheet(header: string[]) {
+    const writes: { url: string; method?: string; body?: string }[] = []
+    fakes.open.mockImplementation(async (signal?: AbortSignal) =>
+      (await vi.importActual<typeof import('@/lib/google-sheets')>('@/lib/google-sheets')).openLeadSheet(signal))
+    for (const [name, value] of Object.entries({ GOOGLE_SERVICE_ACCOUNT_EMAIL: 'test@example.test', GOOGLE_PRIVATE_KEY: 'test-key', GOOGLE_SHEET_ID: 'test-sheet' })) {
+      vi.stubEnv(name, value)
+    }
+    vi.stubGlobal('fetch', vi.fn(async (input: string | URL | Request, init?: RequestInit) => {
+      const url = decodeURIComponent(String(input))
+      if (url.includes('challenges.cloudflare.com')) return json({ success: true, hostname: 'adjeet.in' })
+      writes.push({ url, method: init?.method, body: typeof init?.body === 'string' ? init.body : undefined })
+      if (url.includes(':append')) return json({ updates: { updatedRows: 1 } })
+      if (url.includes('!1:1')) return json({ values: [header] })
+      if (url.includes('?fields=')) return json({ sheets: [{ properties: { title: 'Sheet1', index: 0 } }] })
+      return json({ updatedCells: 1 })
+    }))
+    return {
+      headerWrite: () => writes.find(write => write.method === 'PUT'),
+      appended: () => JSON.parse(writes.find(write => write.url.includes(':append'))!.body!).values[0] as string[],
+    }
+  }
+  const text = () => String(fakes.email.mock.calls[0][0].text)
+
+  it('lands in the Mongo record, the Sheet row (with its header added) and the owner notification', async () => {
+    vi.stubEnv('RESEND_API_KEY', 'test-key')
+    const sheet = realSheet(LEGACY_HEADER)
+    const response = await submit({ ...brief, bestTimeToCall: 'evening' })
+    expect(response.status).toBe(200)
+    expect(fakes.insert.mock.calls[0][0]).toMatchObject({ bestTimeToCall: 'evening' })
+    expect(JSON.parse(sheet.headerWrite()!.body!).values).toEqual([['Best time to call']])
+    expect(sheet.appended().at(-1)).toBe('Evening')
+    expect(logged()).toMatch(/sheets=saved ms=/)
+    await notificationsSettled()
+    expect(text()).toContain('Best time to call: Evening (a request, not a booked slot)')
+  })
+
+  it('leaves no trace when the visitor chose nothing, and the Sheet row is still a complete brief', async () => {
+    vi.stubEnv('RESEND_API_KEY', 'test-key')
+    const sheet = realSheet(LEGACY_HEADER)
+    const response = await submit()
+    expect(response.status).toBe(200)
+    const stored = fakes.insert.mock.calls[0][0]
+    expect(stored).not.toHaveProperty('bestTimeToCall')
+    expect(sheet.headerWrite()).toBeUndefined()
+    expect(sheet.appended()).toHaveLength(LEGACY_HEADER.length)
+    expect(sheet.appended()).not.toContain('Evening')
+    // saved, not partial, and no column reported missing
+    expect(logged()).toMatch(/sheets=saved ms=/)
+    // The stored brief hashes exactly as it did before the field existed.
+    const { createHash } = await import('node:crypto')
+    const before = { name: stored.name, phone: stored.phone, city: stored.city, serviceInterest: stored.serviceInterest, timeline: stored.timeline, message: stored.message }
+    expect(stored.payloadHash).toBe(createHash('sha256').update(JSON.stringify(before)).digest('hex'))
+    await notificationsSettled()
+    expect(text()).toContain('Best time to call: (not given)')
+  })
+
+  it('still receipts the enquiry when the new column cannot be added to the Sheet', async () => {
+    realSheet(LEGACY_HEADER)
+    fakes.insert.mockRejectedValue(new Error('database offline'))
+    const original = globalThis.fetch
+    vi.stubGlobal('fetch', vi.fn(async (input: string | URL | Request, init?: RequestInit) =>
+      (init?.method === 'PUT' ? json({}, 403) : original(input, init))))
+    const response = await submit({ ...brief, bestTimeToCall: 'morning' })
+    expect(response.status).toBe(200)
+    expect(logged()).toMatch(/sheets=saved\(no column: Best time to call\)/)
+  })
+
+  it('treats a change of choice under the same reference as a different brief', async () => {
+    await submit({ ...brief, bestTimeToCall: 'evening' })
+    const stored = fakes.insert.mock.calls[0][0]
+    fakes.insert.mockRejectedValue({ code: 11000 })
+    fakes.find.mockResolvedValue(stored)
+    expect((await submit({ ...brief, bestTimeToCall: 'evening', cfTurnstileResponse: 'fresh-token' })).status).toBe(200)
+    expect((await submit({ ...brief, bestTimeToCall: 'morning' })).status).toBe(409)
+    expect((await submit()).status).toBe(409)
+  })
+
+  it.each(['night', '', null, 7])('rejects %j before any write', async value => {
+    expect((await submit({ ...brief, bestTimeToCall: value })).status).toBe(422)
+    expect(fakes.insert).not.toHaveBeenCalled()
+    expect(fakes.open).not.toHaveBeenCalled()
   })
 })
 

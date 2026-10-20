@@ -18,9 +18,16 @@ A form success screen is a receipt, not a confirmed job. A WhatsApp click is int
 - Values go under the header of the same name, ignoring case and extra spaces, so columns can be moved and owner columns added anywhere.
 - The previous code filled `Date`, `Name`, `Phone`, `City`, `Services`, `Timeline` and `Message`. These still fill as before. The website now also fills `Enquiry ID`, `Landing page`, `Source`, `Medium`, `Campaign` and `Status`.
 - One-time change, automatic: on the first enquiry after this release, any of those headers that the tab lacks are written into row 1 after the last existing header cell. Nothing else in the Sheet is changed. If that write fails, the row still goes into the existing columns and the deploy log names the columns it could not fill. To make the change yourself instead, add those six headers to row 1 before the release, in any position.
+- `Best time to call` is an optional column, filled only when the visitor chose Morning, Afternoon, Evening or Any time. The first time an enquiry carries it, the website adds the header after the last existing header cell, the same way. Enquiries that leave it unselected leave the cell empty. To add it yourself instead, put a `Best time to call` header in row 1, in any position.
 - A tab without a `Phone` header is never written to.
-- The Sheet counts as a receipt only when every part of the brief (`Name`, `Phone`, `City`, `Services`, `Timeline`, `Message`) has a column.
+- The Sheet counts as a receipt only when every part of the brief (`Name`, `Phone`, `City`, `Services`, `Timeline`, `Message`) has a column. `Best time to call` is not part of that test: a row without it, or without its column, is still a complete brief.
 - Values are stored as plain text. Any cell that begins with `=`, `+`, `-`, `@`, `|`, `%` or a tab gets a leading apostrophe, so an export opened in Excel cannot run it as a formula. The apostrophe is visible in the Sheet; it is not part of what the visitor typed.
+
+### Best time to call
+
+- The form offers an optional "Best time to call" choice: Morning, Afternoon, Evening or Any time, with a blank default. It is the visitor's request, not a booking. The site names no hours and promises no call time, so keep it that way in anything you say to a visitor.
+- In MongoDB the field is `bestTimeToCall` (`morning`, `afternoon`, `evening` or `any_time`), and it is absent when the visitor chose nothing. In the Sheet and in the email and WhatsApp notification the column and line read `Best time to call`, with the words Morning, Afternoon, Evening or Any time. The notification shows `(not given)` when nothing was chosen.
+- It is not sent to analytics, and it is not part of the source labels.
 
 ### Notifications
 
@@ -46,7 +53,7 @@ The owner (not an automated test) sends one enquiry:
 
 1. On a phone, open https://adjeet.in/contact and send a brief from your own number, name "Owner test", message "Controlled test, please ignore".
 2. Note the enquiry reference on the success screen.
-3. MongoDB Atlas, database `adjeet`, collection `leads`: find `{ _id: "web:<reference>" }`. Check the name, phone, city, services, timeline, message, `source` and `stage: "received"`.
+3. MongoDB Atlas, database `adjeet`, collection `leads`: find `{ _id: "web:<reference>" }`. Check the name, phone, city, services, timeline, message, `source` and `stage: "received"`. On the first check after the "Best time to call" release, pick a time in the form too, and check `bestTimeToCall` here, the new Sheet column and the notification line.
 4. The Sheet: search for the reference. Check the row and, on the first enquiry after this release, the added headers.
 5. Check the email and WhatsApp notification arrived.
 6. Vercel, function logs for `/api/lead`: the line `[lead:<reference>] mongo=saved sheets=saved ms=...`. Any other outcome names the store and a short error category.
@@ -71,7 +78,7 @@ Logs never contain names, phone numbers or messages.
 
 1. Find the reference first. Reconcile Sheet rows with the same reference as one enquiry, keeping the first received date. Do not delete a different brief only because the phone number matches.
 2. Set Owner, Next action and Next action date. The website sets Status to `received`.
-3. Confirm the shop location, the kind of sign (or that they need advice: `help-choosing`), approximate size and site constraints, and the target date. Timeline `unspecified` means the visitor gave no date. It does not mean urgent.
+3. Confirm the shop location, the kind of sign (or that they need advice: `help-choosing`), approximate size and site constraints, and the target date. Timeline `unspecified` means the visitor gave no date. It does not mean urgent. When the visitor asked for a time to call, try to call then, and treat it as a preference rather than an appointment.
 4. Use one set of statuses: `received`, `contacted`, `qualified`, `quoted`, `won`, `lost`, `spam`. Record the reason for `lost` and `spam`.
 5. Record first response, quote reference and date, and the confirmed job when there is one. Mark `won` only after the business confirms the job.
 6. Leave a next action on every open enquiry and check overdue ones at the start and end of each working day.
