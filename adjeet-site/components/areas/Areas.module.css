@@ -1,0 +1,224 @@
+/*
+ * The areas page, the town pages under it, and the local sections the service
+ * pages gained when the Siliguri pages folded into them. Tokens only, so light
+ * and dark follow design/tokens.css. Kept out of globals.css and design/*.css
+ * on purpose: those are shared and reworked separately.
+ */
+
+/* ── Shared rhythm ─────────────────────────────────────────────────────── */
+
+.section { padding-block: 44px; border-bottom: 1px solid var(--rule); }
+.sectionTight { padding-bottom: 8px; border-bottom: 0; }
+.sectionElevated { background: var(--paper-elevated); }
+
+.heading {
+  margin: 12px 0 0;
+  font: 500 clamp(30px, 3.4vw, 46px)/1.06 var(--font-heading);
+  letter-spacing: -.01em;
+  color: var(--ink);
+}
+
+.intro { margin: 14px 0 0; max-width: 62ch; font-size: 16px; line-height: 1.7; color: var(--ink-muted); }
+
+.lead { margin: 18px 0 0; max-width: 62ch; font-size: 18px; line-height: 1.7; color: var(--ink); }
+
+.prose { display: grid; gap: 16px; }
+.prose p { margin: 0; max-width: 65ch; font-size: 16px; line-height: 1.75; color: var(--ink-muted); }
+
+.reviewed { margin: 22px 0 0; font-size: 12px; line-height: 1.45; letter-spacing: .055em; color: var(--ink-muted); }
+
+.textLink {
+  display: inline-flex;
+  min-height: 44px;
+  align-items: center;
+  gap: 8px;
+  text-decoration: underline;
+  text-underline-offset: 5px;
+  text-decoration-thickness: 1px;
+  font-size: 15px;
+  font-weight: 500;
+  color: var(--ink);
+}
+.textLink:hover { color: var(--signal-text); }
+
+.breadcrumb {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding-top: 28px;
+  font-size: 12px;
+  color: var(--ink-muted);
+}
+.breadcrumb a { display: inline-flex; align-items: center; min-height: 24px; }
+.breadcrumb a:hover { color: var(--signal-text); }
+
+/* ── Brief and "send us" (service and town pages) ─────────────────────── */
+
+.brief { display: grid; gap: 28px; margin-top: 22px; }
+.briefText { margin: 0; max-width: 62ch; font-size: 18px; line-height: 1.7; color: var(--ink); }
+
+.sendUs {
+  border-top: 3px solid var(--signal);
+  background: var(--paper-elevated);
+  padding: 20px 22px 22px;
+}
+.sendUs ul { display: grid; gap: 10px; margin: 12px 0 0; padding: 0; list-style: none; }
+.sendUs li { display: grid; grid-template-columns: 10px minmax(0, 1fr); gap: 12px; font-size: 16px; line-height: 1.5; color: var(--ink); }
+/* A fixing rivet rather than a bullet. */
+.sendUs li::before { content: ''; width: 8px; height: 8px; margin-top: 8px; background: var(--signal); }
+.sendUsNote { margin: 16px 0 0; font-size: 14px; line-height: 1.6; color: var(--ink-muted); }
+
+/* ── Distance plate (town pages) ──────────────────────────────────────── */
+
+.tripGrid { display: grid; gap: 28px; margin-top: 22px; }
+
+.plate {
+  display: grid;
+  align-content: start;
+  gap: 10px;
+  padding: 22px 22px 24px;
+  border-top: 3px solid var(--signal);
+  background: var(--paper-elevated);
+}
+.plateFigure {
+  margin: 0;
+  font: 500 clamp(64px, 8vw, 96px)/.9 var(--font-heading);
+  letter-spacing: -.02em;
+  color: var(--ink);
+  font-variant-numeric: tabular-nums;
+}
+.plateUnit { margin-left: 6px; font-size: .38em; letter-spacing: .02em; color: var(--signal-text); }
+.plateLabel { margin: 0; max-width: 30ch; font-size: 14px; line-height: 1.55; color: var(--ink-muted); }
+.plateNearby { margin: 8px 0 0; padding-top: 14px; border-top: 1px solid var(--rule); font-size: 14px; line-height: 1.6; color: var(--ink-muted); }
+.plateNearby strong { display: block; margin-bottom: 4px; font-weight: 500; color: var(--ink); }
+
+/* ── Per-trade briefs (town pages) ────────────────────────────────────── */
+
+.trades { display: grid; margin: 26px 0 0; padding: 0; list-style: none; border-top: 2px solid var(--ink); }
+.trades li { padding: 22px 0 24px; border-bottom: 1px solid var(--rule); }
+.trades p { margin: 6px 0 0; max-width: 62ch; font-size: 16px; line-height: 1.7; color: var(--ink-muted); }
+.tradeLink {
+  display: inline-flex;
+  min-height: 44px;
+  align-items: center;
+  gap: 10px;
+  font: 500 26px/1.1 var(--font-heading);
+  color: var(--ink);
+}
+.tradeLink:hover { color: var(--signal-text); }
+.tradeLink span { font-size: 18px; color: var(--signal-text); transition: transform .2s; }
+.tradeLink:hover span { transform: translate(2px, -2px); }
+
+/* ── Mileage boards (areas page) ──────────────────────────────────────── */
+
+.groups { margin-top: 26px; border-top: 2px solid var(--ink); }
+.group { display: grid; gap: 22px; padding: 30px 0 34px; border-bottom: 1px solid var(--rule); }
+.groupTitle { margin: 0; font: 500 30px/1.1 var(--font-heading); color: var(--ink); }
+
+/* Every place gets the same board: a name and its distance, nothing else. */
+.mileage { display: grid; gap: 8px; margin: 16px 0 0; padding: 0; list-style: none; }
+.mileage li {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 16px;
+  min-height: 48px;
+  padding: 12px 16px;
+  border: 1px solid var(--night-rule);
+  border-radius: 2px;
+  background: var(--night);
+  color: var(--night-ink);
+}
+.mileageName { font: 500 21px/1.1 var(--font-heading); letter-spacing: .01em; }
+.mileageKm { font-size: 14px; white-space: nowrap; font-variant-numeric: tabular-nums; color: var(--gold); }
+
+.guidance { display: grid; align-content: start; gap: 14px; }
+.guidance p { margin: 0; max-width: 64ch; font-size: 16px; line-height: 1.75; color: var(--ink-muted); }
+.tradeLinks { display: flex; flex-wrap: wrap; gap: 0 24px; margin: 0; padding: 0; list-style: none; }
+
+/* ── Steps (areas page) ───────────────────────────────────────────────── */
+
+.steps { display: grid; margin: 26px 0 0; padding: 0; list-style: none; counter-reset: step; }
+.steps li { padding: 18px 0 20px; border-top: 1px solid var(--rule); counter-increment: step; }
+.steps li::before {
+  content: '0' counter(step);
+  display: block;
+  font-size: 12px;
+  letter-spacing: .055em;
+  color: var(--signal-text);
+}
+.steps h3 { margin: 8px 0 6px; font: 500 24px/1.15 var(--font-heading); color: var(--ink); }
+.steps p { margin: 0; max-width: 40ch; font-size: 15px; line-height: 1.65; color: var(--ink-muted); }
+
+/* ── Town page links (areas page) ─────────────────────────────────────── */
+
+.towns { margin: 26px 0 0; padding: 0; list-style: none; border-top: 2px solid var(--ink); }
+.towns a {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 16px;
+  padding: 20px 8px;
+  border-bottom: 1px solid var(--rule);
+  transition: background-color .2s;
+}
+.towns a:hover { background: var(--paper-elevated); }
+.townName { display: block; font: 500 clamp(32px, 3.8vw, 46px)/1 var(--font-heading); color: var(--ink); }
+.townNote { display: block; margin-top: 8px; font-size: 14px; color: var(--ink-muted); }
+.townArrow { font-size: 22px; color: var(--signal-text); transition: transform .2s; }
+.towns a:hover .townArrow { transform: translate(3px, -3px); }
+
+/* ── Coverage map (areas page) ────────────────────────────────────────── */
+
+.mapGrid { display: grid; gap: 30px; align-items: center; }
+.mapCopy > p:last-of-type { max-width: 40ch; }
+.map { min-width: 0; margin: 0; }
+
+/* ── Questions ────────────────────────────────────────────────────────── */
+
+.faqGrid { display: grid; gap: 20px; }
+
+/* ── "Working outside Siliguri?" (service pages) ──────────────────────── */
+
+.outside { display: grid; gap: 18px; }
+.outsideLinks { display: flex; flex-wrap: wrap; gap: 0 26px; margin: 4px 0 0; padding: 0; list-style: none; }
+
+/* ── Brief form ───────────────────────────────────────────────────────── */
+
+.formSection { padding-block: 48px 56px; border-top: 1px solid var(--rule); background: var(--paper-elevated); }
+.formGrid { display: grid; gap: 26px; }
+.formNote { margin: 12px 0 14px; max-width: 46ch; font-size: 16px; line-height: 1.65; color: var(--ink-muted); }
+.formPanel { min-width: 0; max-width: 720px; }
+
+/* ── Tablet and up ────────────────────────────────────────────────────── */
+
+@media (min-width: 768px) {
+  .section { padding-block: 60px; }
+  .sectionTight { padding-bottom: 8px; }
+  .trades { grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: 48px; }
+  .steps { grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: 32px; }
+  .mileage { grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); }
+}
+
+@media (min-width: 1024px) {
+  .section { padding-block: 76px; }
+  .sectionTight { padding-bottom: 8px; }
+  .lead { font-size: 20px; line-height: 1.75; }
+  .brief { grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr); gap: 70px; align-items: start; }
+  .briefText { font-size: 20px; line-height: 1.75; }
+  .tripGrid { grid-template-columns: minmax(0, 1.55fr) minmax(280px, 1fr); gap: 70px; align-items: start; }
+  .group { grid-template-columns: minmax(0, .85fr) minmax(0, 1.15fr); gap: 60px; padding-block: 38px 42px; }
+  .mileage { grid-template-columns: 1fr; }
+  .steps { grid-template-columns: repeat(4, minmax(0, 1fr)); column-gap: 28px; }
+  .steps li { border-top: 3px solid var(--signal); padding-top: 18px; }
+  .mapGrid { grid-template-columns: minmax(0, .8fr) minmax(0, 1.2fr); gap: 56px; }
+  .faqGrid { grid-template-columns: minmax(0, 1fr) minmax(0, 2fr); gap: 64px; }
+  .outside { grid-template-columns: minmax(0, 1fr) auto; align-items: end; gap: 40px; }
+  .formGrid { grid-template-columns: minmax(0, .8fr) minmax(0, 1.2fr); gap: 64px; align-items: start; }
+  /* The heading stays beside the form while a long form scrolls past it. */
+  .formGrid > div:first-child { position: sticky; top: 120px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tradeLink span, .townArrow, .towns a { transition: none; }
+}

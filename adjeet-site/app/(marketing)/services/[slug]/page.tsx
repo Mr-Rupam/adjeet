@@ -21,12 +21,16 @@ import { ServicePageTracker } from '@/components/PageViewTracker'
 import { Accordion } from '@/components/ui/Accordion'
 import { CommissionCTA } from '@/components/street/CommissionCTA'
 import { WhatsAppLink } from '@/components/ui/WhatsAppLink'
-import { programmaticPages, CITY_LABELS } from '@/content/programmatic'
 import { getPhotosByService, getServiceCover } from '@/content/gallery'
 import { formatReviewDate, reviewedOn } from '@/content/page-reviews'
 import { COMPARED_SLUGS } from '@/content/sign-comparison'
+import { SILIGURI_BRIEFS, SILIGURI_NEARBY } from '@/content/service-local'
+import { TOWNS, townPath } from '@/content/areas'
+import { shareImageFor } from '@/content/photo-places'
 import { GalleryStrip } from '@/components/sections/GalleryStrip'
 import { SignComparison } from '@/components/sections/SignComparison'
+import { BriefForm } from '@/components/areas/BriefForm'
+import areaStyles from '@/components/areas/Areas.module.css'
 
 type Params = { slug: string }
 
@@ -42,7 +46,9 @@ export async function generateMetadata({
   const { slug } = await params
   const service = getServiceBySlug(slug as ServiceSlug)
   if (!service) return {}
-  return generateServiceMetadata(service)
+  // The page's own lead photograph is its link preview, where it has one.
+  const cover = getServiceCover(service.slug as ServiceSlug)
+  return generateServiceMetadata(service, cover ? shareImageFor(cover) : undefined)
 }
 
 export default async function ServiceDetailPage({
@@ -63,6 +69,7 @@ export default async function ServiceDetailPage({
     .filter((s): s is NonNullable<typeof s> => Boolean(s))
   const workPhoto = getServiceCover(service.slug as ServiceSlug)
   const servicePhotos = getPhotosByService(service.slug as ServiceSlug)
+  const siliguri = SILIGURI_BRIEFS[service.slug as ServiceSlug]
 
   const path = `/services/${service.slug}`
   const reviewed = reviewedOn(path)
@@ -133,6 +140,28 @@ export default async function ServiceDetailPage({
         <p className="spec">Page reviewed <time dateTime={reviewed}>{formatReviewDate(reviewed)}</time></p>
       </section>
 
+      {/*
+        The Siliguri brief, moved here when /<trade>-in-siliguri started
+        redirecting to this page. It is written for the workshop's own town;
+        other towns are on /areas.
+      */}
+      {siliguri && (
+        <section className={areaStyles.section} aria-labelledby="service-siliguri-heading">
+          <div className="field-container">
+            <p className="spec text-signal">Siliguri brief</p>
+            <h2 id="service-siliguri-heading" className={areaStyles.heading}>Planning {siliguri.work} in Siliguri</h2>
+            <div className={areaStyles.brief}>
+              <p className={areaStyles.briefText}>{siliguri.brief}</p>
+              <div className={areaStyles.sendUs}>
+                <p className="spec text-signal">Send us</p>
+                <ul>{siliguri.sendUs.map(item => <li key={item}>{item}</li>)}</ul>
+                <p className={areaStyles.sendUsNote}>Also for nearby {SILIGURI_NEARBY.slice(0, -1).join(', ')} and {SILIGURI_NEARBY.at(-1)}.</p>
+              </div>
+            </div>
+          </div>
+        </section>
+      )}
+
       {/* Each compared board's page carries the comparison with the other two. */}
       {COMPARED_SLUGS.includes(service.slug as ServiceSlug) && <SignComparison current={service.slug as ServiceSlug} />}
 
@@ -185,7 +214,8 @@ export default async function ServiceDetailPage({
             <div className="grid gap-10 lg:grid-cols-[1fr_2fr] lg:gap-16">
               <div>
                 <h2 className="display mt-3 text-ink" style={{ fontSize: 'var(--text-display-2)' }}>
-                  Your {service.name.toLowerCase()} questions.
+                  {/* Not `name.toLowerCase()`, which printed "acp & led signage". */}
+                  Your questions about {service.name}.
                 </h2>
               </div>
               <Accordion items={service.faqs} />
@@ -194,13 +224,26 @@ export default async function ServiceDetailPage({
         </section>
       )}
 
-      {programmaticPages.some(page => page.service === service.slug) && (
-        <section className="field-container service-locations" aria-labelledby="service-locations-heading">
-          <h2 id="service-locations-heading">Plan your project by location</h2>
-          <p>Our workshop is in Siliguri. Find the site details to include for work across North Bengal.</p>
-          <nav aria-label="Regional service guides">{programmaticPages.filter(page => page.service === service.slug).map(page => <Link key={page.slug} href={'/' + page.slug}>{service.name} in {CITY_LABELS[page.city]} ↗</Link>)}</nav>
-        </section>
-      )}
+      <section className={areaStyles.section} aria-labelledby="service-outside-heading">
+        <div className={`field-container ${areaStyles.outside}`}>
+          <div>
+            <p className="spec text-signal">Beyond the workshop town</p>
+            <h2 id="service-outside-heading" className={areaStyles.heading}>Working outside Siliguri?</h2>
+            <p className={areaStyles.intro}>Everything is made at the Siliguri workshop and installed on site across North Bengal and Sikkim. The areas page has the distance to every place we cover and what helps us plan a job there.</p>
+            <ul className={areaStyles.outsideLinks} aria-label="Town pages">
+              {TOWNS.map(town => (
+                <li key={town.slug}>
+                  <Link href={townPath(town)} className={areaStyles.textLink}>
+                    {/* Name the trade only where the town page has a brief for it. */}
+                    {town.trades.some(trade => trade.service === service.slug) ? `${service.name} in ${town.name}` : town.name}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </div>
+          <Link href="/areas" className="field-link">Areas we cover ↗</Link>
+        </div>
+      </section>
 
       {/* Related trades */}
       {related.length > 0 && (
@@ -234,6 +277,20 @@ export default async function ServiceDetailPage({
       )}
 
       <CommissionCTA />
+
+      {/*
+        The trade is known, and Siliguri is the workshop town the H1 names, so
+        both are filled in. LeadForm keeps that city even when the URL carries
+        a different `?city=`, which old links to the Siliguri pages still can.
+      */}
+      <BriefForm
+        heading="Or send the brief here."
+        note={`${service.name} and Siliguri are filled in already. Change the town if your site is elsewhere.`}
+        whatsAppUrl={defaultWhatsAppUrl({ service: service.name, city: 'Siliguri' })}
+        source={'service-form:' + service.slug}
+        defaultCity="Siliguri"
+        defaultService={service.slug as ServiceSlug}
+      />
     </>
   )
 }

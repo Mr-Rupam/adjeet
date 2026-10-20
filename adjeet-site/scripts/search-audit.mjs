@@ -24,7 +24,8 @@ async function checkAccessibility(page, route, theme, width) {
 async function crawl() {
   const sitemap = await fetch(base + '/sitemap.xml').then(response => response.text())
   const urls = [...sitemap.matchAll(/<loc>(.*?)<\/loc>/g)].map(match => match[1])
-  assert.equal(urls.length, 42)
+  // 5 core pages, 10 services, /areas and the town pages past their quality gate.
+  assert.equal(urls.length, 18)
   portfolioPhotos = (sitemap.match(/<loc>https:\/\/adjeet\.in\/portfolio<\/loc>([\s\S]*?)<\/url>/)?.[1].match(/<image:loc>/g) || []).length
   assert(portfolioPhotos > 0, 'sitemap lists no portfolio photos')
   assert.equal(new Set(urls).size, urls.length)
@@ -85,7 +86,7 @@ async function crawl() {
   for (const url of urls) assert(visited.has(new URL(url).pathname), url + ' orphan page')
   report.reachableIndexablePages = urls.length
   for (const agent of ['Googlebot', 'bingbot', 'OAI-SearchBot']) {
-    for (const route of ['/', '/flex-printing-in-darjeeling']) {
+    for (const route of ['/', '/areas/cooch-behar']) {
       const response = await fetch(base + route, { headers: { 'User-Agent': agent } })
       const html = await response.text()
       assert.equal(response.status, 200)
@@ -100,9 +101,17 @@ async function crawl() {
   const llms = await fetch(base + '/llms.txt').then(response => response.text())
   assert(llms.includes('Ranjit Das') && llms.includes('ranjitadjeet@gmail.com'))
   assert(!/info@adjeet|Jeet Kumar Sarkar/.test(llms))
+  // The retired regional URLs redirect permanently to the page that absorbed them.
+  for (const [from, to] of [['/glow-sign-board-in-siliguri', '/services/glow-sign-boards'], ['/flex-printing-in-cooch-behar', '/areas/cooch-behar'], ['/vehicle-branding-in-malda', '/areas']]) {
+    const moved = await fetch(base + from, { redirect: 'manual' })
+    assert.equal(moved.status, 308, from)
+    assert.equal(new URL(moved.headers.get('location'), base).pathname, to, from)
+  }
+  const held = await fetch(base + '/areas/gangtok').then(response => response.text())
+  assert(/<meta name="robots" content="noindex, follow"/.test(held), '/areas/gangtok should be noindex until it passes its gate')
   const missing = await fetch(base + '/not-a-real-service')
   assert.equal(missing.status, 404)
-  console.log('Crawl: ' + urls.length + ' canonical pages, matching metadata and FAQ text, all reachable from home; 6 bot-agent responses passed.')
+  console.log('Crawl: ' + urls.length + ' canonical pages, matching metadata and FAQ text, all reachable from home; 6 bot-agent responses and 3 redirects passed.')
 }
 
 async function visual() {
@@ -139,7 +148,7 @@ async function visual() {
         if ([320, 1440].includes(width)) await checkAccessibility(page, '/', theme, width)
         report.viewports.push({ route: '/', theme, width, overflow, transparentFooter: true, faqOperable: true })
       }
-      for (const route of ['/services', '/services/flex-printing', '/f-pole-installation-in-darjeeling', '/contact', '/about', '/portfolio']) {
+      for (const route of ['/services', '/services/flex-printing', '/areas', '/areas/cooch-behar', '/contact', '/about', '/portfolio']) {
         for (const width of [390, 1440]) {
           await page.setViewportSize({ width, height: 900 })
           await page.goto(base + route, { waitUntil: 'networkidle' })
@@ -170,7 +179,7 @@ async function visual() {
     await page.locator('details summary').first().click()
     assert(await page.locator('details p').first().isVisible())
     report.noJavaScriptHomeFAQ = true
-    for (const route of ['/services/flex-printing', '/glow-sign-board-in-siliguri']) {
+    for (const route of ['/services/flex-printing', '/areas/jalpaiguri']) {
       await page.goto(base + route)
       assert(await page.locator('main h1').isVisible(), route + ' no-JS heading')
       const details = page.locator('main details').first()
@@ -185,7 +194,7 @@ async function visual() {
     await noJS.close()
   } finally { await browser.close() }
   assert.deepEqual(report.errors, [])
-  console.log('Visual checks: 34 route/theme/width combinations, transparent footer, working FAQs and no horizontal overflow or page errors.')
+  console.log('Visual checks: 38 route/theme/width combinations, transparent footer, working FAQs and no horizontal overflow or page errors.')
 }
 
 await fs.mkdir(out, { recursive: true })

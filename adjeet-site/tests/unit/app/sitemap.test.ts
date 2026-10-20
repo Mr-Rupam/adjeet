@@ -1,7 +1,8 @@
 import { describe, it, expect } from 'vitest'
 import sitemap from '@/app/sitemap'
 import { SERVICE_SLUGS } from '@/content/services'
-import { getProgrammaticSlugs, programmaticPages } from '@/content/programmatic'
+import { TOWNS, townPath } from '@/content/areas'
+import { LEGACY_REGIONAL_REDIRECTS } from '@/content/legacy-regional'
 import { getPhotosByService, photos } from '@/content/gallery'
 import { reviewedOn } from '@/content/page-reviews'
 import { siteConfig } from '@/lib/seo'
@@ -16,8 +17,16 @@ describe('sitemap', () => {
       expect(urls).toContain(`${siteConfig.url}/services/${slug}`)
     }
   })
-  it('includes the reviewed regional guides', () => {
-    for (const slug of getProgrammaticSlugs()) expect(urls).toContain(`${siteConfig.url}/${slug}`)
+  it('includes the areas page and only the town pages that passed their quality gate', () => {
+    expect(urls).toContain(`${siteConfig.url}/areas`)
+    for (const town of TOWNS) {
+      expect(urls.includes(siteConfig.url + townPath(town)), town.slug).toBe(town.indexable)
+    }
+    // Gangtok has one documented job, below the plan's two, so it waits.
+    expect(urls).not.toContain(`${siteConfig.url}/areas/gangtok`)
+  })
+  it('never lists a retired regional URL, which now redirects', () => {
+    for (const { source } of LEGACY_REGIONAL_REDIRECTS) expect(urls).not.toContain(siteConfig.url + source)
   })
   it('includes the core marketing pages', () => {
     for (const path of ['', '/services', '/portfolio', '/about', '/contact']) expect(urls).toContain(siteConfig.url + path)
@@ -31,7 +40,9 @@ describe('sitemap', () => {
     for (const url of urls) expect(new URL(url).origin).toBe(siteConfig.url)
   })
   it('scales with the content inventory', () => {
-    expect(entries).toHaveLength(5 + SERVICE_SLUGS.length + getProgrammaticSlugs().length)
+    expect(entries).toHaveLength(5 + SERVICE_SLUGS.length + 1 + TOWNS.filter(town => town.indexable).length)
+    // 18 today; scripts/search-audit.mjs asserts the same count against a build.
+    expect(entries).toHaveLength(18)
   })
   // The IndexNow job submits the pages whose lastmod moved, so it must be each
   // page's own review date, never the build or deployment date.
@@ -56,14 +67,16 @@ describe('sitemap', () => {
       }
     })
 
-    // A regional page without local photos shows the trade's work from other
-    // towns; listing those under it would tie them to a town they were not taken in.
-    it('lists under a regional page only the photos taken in that town', () => {
-      for (const page of programmaticPages) {
-        const here = getPhotosByService(page.service).filter(photo => photo.city === page.city).map(photo => siteConfig.url + photo.src)
-        expect(entryFor('/' + page.slug).images ?? [], page.slug).toEqual([...new Set(here)])
+    // A town page shows only the photos recorded in that town, so its entry
+    // lists exactly those, never the trade's work from elsewhere.
+    it('lists under a town page only the photos recorded in that town', () => {
+      for (const town of TOWNS.filter(candidate => candidate.indexable)) {
+        const images = entryFor(townPath(town)).images ?? []
+        expect(images.length, town.slug).toBeGreaterThan(0)
+        expect(images, town.slug).toEqual([...new Set(town.photos.map(photo => siteConfig.url + photo.src))])
+        for (const photo of town.photos) expect(photo.city, photo.id).toBe(town.slug)
       }
-      expect(programmaticPages.some(page => (entryFor('/' + page.slug).images ?? []).length > 0)).toBe(true)
+      expect(entryFor('/areas').images).toBeUndefined()
     })
 
     it('uses absolute image URLs on the canonical host', () => {

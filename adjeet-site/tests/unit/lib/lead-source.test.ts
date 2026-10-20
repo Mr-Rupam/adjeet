@@ -2,9 +2,12 @@ import { describe, expect, it } from 'vitest'
 import { readLeadSource, normalizeLeadSource } from '@/lib/lead-source'
 describe('non-personal enquiry source labels', () => {
   it('keeps an allowed landing page and recognised Google Business Profile tags', () => {
-    expect(readLeadSource('/glow-sign-board-in-siliguri', '?utm_source=google&utm_medium=organic&utm_campaign=gbp')).toEqual({
-      landingPage: '/glow-sign-board-in-siliguri', source: 'google', medium: 'organic', campaign: 'gbp',
+    expect(readLeadSource('/services/glow-sign-boards', '?utm_source=google&utm_medium=organic&utm_campaign=gbp')).toEqual({
+      landingPage: '/services/glow-sign-boards', source: 'google', medium: 'organic', campaign: 'gbp',
     })
+  })
+  it('no longer records the retired regional paths, which now redirect', () => {
+    expect(readLeadSource('/glow-sign-board-in-siliguri', '').landingPage).toBe('unknown')
   })
   it('drops arbitrary source values and all query strings from the landing page', () => {
     expect(normalizeLeadSource({ landingPage: '/contact?phone=9876543210', source: 'Buyer Name', medium: 'email@example.com', campaign: 'my private message' })).toEqual({
@@ -25,5 +28,10 @@ describe('allowlist upkeep', () => {
   it('accepts the page of every service the site offers', async () => {
     const { SERVICE_SLUGS } = await import('@/content/services')
     for (const slug of SERVICE_SLUGS) expect(readLeadSource(`/services/${slug}`, '').landingPage).toBe(`/services/${slug}`)
+  })
+  it('accepts /areas and every town page', async () => {
+    const { TOWN_SLUGS } = await import('@/content/areas')
+    expect(readLeadSource('/areas', '').landingPage).toBe('/areas')
+    for (const slug of TOWN_SLUGS) expect(readLeadSource(`/areas/${slug}`, '').landingPage).toBe(`/areas/${slug}`)
   })
 })

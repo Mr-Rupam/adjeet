@@ -6,7 +6,7 @@ import path from 'node:path'
 const baseURL = process.argv[2] || 'http://localhost:3100'
 const run = process.argv[3] || 'review'
 const out = path.resolve('..', 'output', 'fieldwork', run)
-const routes = ['/', '/services', '/portfolio', '/about', '/contact', '/services/glow-sign-boards', '/services/flex-printing', '/glow-sign-board-in-siliguri', '/privacy']
+const routes = ['/', '/services', '/portfolio', '/about', '/contact', '/services/glow-sign-boards', '/services/flex-printing', '/areas', '/areas/cooch-behar', '/privacy']
 
 async function main() {
   await fs.mkdir(out, { recursive: true })
