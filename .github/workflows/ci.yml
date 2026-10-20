@@ -1,5 +1,11 @@
 name: CI
 on: [push, pull_request]
+
+# Nothing here writes to the repository or needs a secret. Declaring the
+# token's scope keeps a changed repository default from widening it.
+permissions:
+  contents: read
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -13,24 +19,17 @@ jobs:
           cache: 'npm'
           cache-dependency-path: adjeet-site/package-lock.json
 
-      # `npm install`, not `npm ci`, on purpose.
-      #
-      # This project is developed on Windows and built on Linux. Several
-      # dependencies pull in optional, platform-gated native and wasm packages
-      # (@rolldown/binding-wasm32-wasi, @tailwindcss/oxide-wasm32-wasi,
-      # @img/sharp-*), and npm only resolves an optional package's own
-      # dependencies on a platform where that package installs. A lockfile
-      # generated on Windows therefore never records the transitive deps that
-      # Linux needs, and `npm ci`, which validates the whole tree including
-      # optional entries, refuses to install. That is what broke CI here from
-      # May 2026 onward: every run failed at the install step, so lint, build
-      # and tests had not actually run on any commit since.
-      #
-      # `npm install` resolves per-platform and succeeds. The tradeoff is that
-      # CI no longer enforces the lockfile byte-for-byte. The proper fix is to
-      # generate package-lock.json on Linux (in Docker or CI) and commit that,
-      # at which point this can go back to `npm ci`.
-      - run: npm install --no-audit --no-fund
+      # `npm ci`, so CI tests exactly the tree the lockfile records, which is
+      # the tree Vercel builds. It used to be `npm install` because a lockfile
+      # written on Windows can lack the transitive deps of platform-gated
+      # optional packages (@emnapi/runtime for @img/sharp-wasm32, @emnapi/core
+      # for the wasm32-wasi bindings), and `npm ci` refuses a lockfile with
+      # such gaps. The lockfile now records them. If `npm ci` fails here with
+      # "Missing: ... from lock file" after a dependency change, regenerate
+      # the lockfile with the current npm 11 (`npm install`), and check that
+      # every dependency edge in it resolves, instead of going back to
+      # `npm install` in CI.
+      - run: npm ci --no-audit --no-fund
         working-directory: adjeet-site
 
       - run: npm run lint
@@ -57,8 +56,7 @@ jobs:
           cache: 'npm'
           cache-dependency-path: adjeet-site/package-lock.json
 
-      # `npm install`, not `npm ci`, for the lockfile reason given in the build job.
-      - run: npm install --no-audit --no-fund
+      - run: npm ci --no-audit --no-fund
         working-directory: adjeet-site
       - run: npx playwright install --with-deps chromium
         working-directory: adjeet-site
