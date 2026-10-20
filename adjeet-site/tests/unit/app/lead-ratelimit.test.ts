@@ -13,7 +13,7 @@ vi.mock('@upstash/ratelimit', () => {
   }
   return { Ratelimit }
 })
-vi.mock('@upstash/redis', () => ({ Redis: { fromEnv: () => ({}) } }))
+vi.mock('@upstash/redis', () => ({ Redis: class {} }))
 
 async function post() {
   vi.resetModules()

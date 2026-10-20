@@ -132,7 +132,11 @@ test('brief exposes invalid fields, pending delivery and successful completion',
   await mockCaptcha(page)
   let release: () => void = () => {}
   const gate = new Promise<void>(resolve => { release = resolve })
-  await page.route('**/api/lead', async route => { await gate; await route.fulfill({ json: { ok: true } }) })
+  await page.route('**/api/lead', async route => {
+    await gate
+    // The form shows success only for a receipt that echoes its own reference.
+    await route.fulfill({ json: { ok: true, receiptId: route.request().postDataJSON().submissionId } })
+  })
   await page.goto('/contact')
   const submit = page.getByRole('button', { name: 'Send the brief →' })
   await submit.click()
