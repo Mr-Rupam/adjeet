@@ -483,9 +483,8 @@ section[id] {
   min-height: 100dvh;
   flex-direction: column;
   overflow: auto;
-  background:
-    radial-gradient(circle at 88% 7%, rgb(0 153 208 / 18%), transparent 26rem),
-    var(--paper);
+  border-top: 3px solid var(--gold);
+  background: var(--paper);
   color: var(--ink);
   padding: max(1.25rem, env(safe-area-inset-top, 0px)) 1.25rem max(1.5rem, env(safe-area-inset-bottom, 0px));
 }
@@ -509,8 +508,8 @@ section[id] {
 
 .mobile-nav-link {
   display: grid;
-  grid-template-columns: 2.5rem minmax(0, 1fr);
-  align-items: baseline;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
   gap: 0.5rem;
   min-height: 68px;
   border-bottom: 1px solid var(--rule);
@@ -524,13 +523,13 @@ section[id] {
   padding-block: 0.8rem;
 }
 
-.mobile-nav-link .spec {
+.mobile-nav-link svg {
   color: var(--ink-subtle);
-  font-size: 0.72rem;
 }
 
-.mobile-nav-link--active {
-  color: var(--signal);
+.mobile-nav-link--active,
+.mobile-nav-link--active svg {
+  color: var(--signal-text);
 }
 
 .mobile-nav-drawer__cta {
@@ -605,4 +604,168 @@ section[id] {
   .quote-dock__cta {
     width: auto;
   }
+}
+
+/* Photo viewer. A dark room for the photograph, its caption, and one action:
+   ask about a sign like the one on screen. */
+.lightbox {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow-y: auto;
+  padding: 64px 16px 20px;
+  background: rgb(10 18 22);
+  color: var(--night-ink);
+}
+
+.lightbox__control {
+  display: inline-flex;
+  width: 44px;
+  height: 44px;
+  flex: 0 0 auto;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid rgb(242 235 221 / 28%);
+  border-radius: var(--radius-button);
+  background: transparent;
+  color: var(--night-ink);
+  transition: border-color 180ms ease, color 180ms ease;
+}
+
+.lightbox__control:hover {
+  border-color: var(--glow);
+  color: var(--glow);
+}
+
+.lightbox :focus-visible {
+  outline: 2px solid var(--gold);
+  outline-offset: 3px;
+}
+
+.lightbox__close {
+  position: fixed;
+  top: 12px;
+  right: 12px;
+  z-index: 1;
+}
+
+.lightbox__figure {
+  display: flex;
+  width: min(100%, 1024px);
+  flex-direction: column;
+  margin: auto 0;
+}
+
+.lightbox__frame {
+  display: flex;
+  max-height: 68dvh;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  background: rgb(0 0 0 / 30%);
+}
+
+.lightbox__image {
+  width: 100%;
+  max-height: 68dvh;
+  object-fit: contain;
+}
+
+.lightbox__caption {
+  display: grid;
+  gap: 14px;
+  padding-top: 14px;
+  border-top: 3px solid var(--gold);
+  margin-top: 0;
+}
+
+.lightbox__client {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 4px 12px;
+  margin: 0;
+  font-family: var(--font-heading);
+  font-size: 24px;
+  font-weight: 600;
+  line-height: 1.1;
+  letter-spacing: .01em;
+  text-transform: uppercase;
+}
+
+.lightbox__client span {
+  color: var(--night-ink-muted);
+  font-family: var(--font-hind-siliguri), system-ui, sans-serif;
+  font-size: 14px;
+  font-weight: 400;
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+.lightbox__alt {
+  max-width: 62ch;
+  margin: 4px 0 0;
+  color: var(--night-ink-muted);
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.lightbox__actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px 20px;
+}
+
+.lightbox__stepper {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.lightbox__count {
+  min-width: 4.5em;
+  margin: 0;
+  color: var(--night-ink-muted);
+  font-size: 13px;
+  font-variant-numeric: tabular-nums;
+  text-align: center;
+}
+
+.lightbox__ask {
+  display: inline-flex;
+  min-height: 48px;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 0 18px;
+  border: 1px solid var(--gold);
+  border-radius: var(--radius-button);
+  background: var(--gold);
+  color: var(--signal-hot-ink);
+  font-size: 15px;
+  font-weight: 500;
+  line-height: 1.2;
+  text-decoration: none;
+  transition: filter 180ms ease;
+}
+
+.lightbox__ask:hover {
+  filter: brightness(1.08);
+}
+
+@media (max-width: 479px) {
+  .lightbox__ask { width: 100%; }
+  .lightbox__stepper { width: 100%; justify-content: space-between; }
+}
+
+@media (min-width: 768px) {
+  .lightbox { padding: 72px 64px 32px; }
+  .lightbox__close { top: 20px; right: 20px; }
+  .lightbox__caption { grid-template-columns: minmax(0, 1fr) auto; align-items: start; gap: 18px 32px; }
+  .lightbox__actions { flex-direction: column; align-items: flex-end; }
 }

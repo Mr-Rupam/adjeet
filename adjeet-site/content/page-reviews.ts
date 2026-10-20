@@ -20,6 +20,8 @@ export const SITE_REVIEWED = '2026-09-27'
 const PAGE_REVIEWED: Record<string, string> = {
   // 20 October 2026: the lead form's receipt and recovery wording changed.
   '/contact': '2026-10-20',
+  // 20 October 2026: the storefront-led homepage and the restyled about page.
+  '/about': '2026-10-20',
   // 20 October 2026: the regional pages folded into the service pages and
   // /areas; wall painting renamed "Wall Painting Advertising" in every list.
   '/': '2026-10-20',

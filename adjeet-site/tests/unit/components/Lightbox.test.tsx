@@ -1,6 +1,7 @@
 import { describe, it, expect, vi } from 'vitest'
 import { render, screen, fireEvent } from '@testing-library/react'
 import { Lightbox } from '@/components/ui/Lightbox'
+import { defaultWhatsAppUrl } from '@/lib/whatsapp'
 
 const photos = [
   { src: '/a.jpg', alt: 'Photo A' },
@@ -77,5 +78,47 @@ describe('Lightbox', () => {
     render(<Lightbox photos={photos} initialIndex={0} onClose={vi.fn()} />)
     fireEvent.keyDown(document, { key: 'ArrowLeft' })
     expect(screen.getByAltText('Photo C')).toBeTruthy()
+  })
+
+  describe('Ask about a sign like this', () => {
+    const referenced = [
+      { src: '/a.jpg', alt: 'Photo A', reference: { id: 'acc-125', client: 'ACC', label: 'ACP & LED Signage, Dalkhola' } },
+      { src: '/b.jpg', alt: 'Photo B', reference: { id: 'tanyamakeovers-154', client: 'Tanyamakeovers', label: 'ACP & LED Signage, Siliguri' } },
+      { src: '/c.jpg', alt: 'Photo C' },
+    ]
+    const ask = () => screen.getByRole('link', { name: /ask about a sign like this/i })
+    const text = () => new URL(ask().getAttribute('href')!).searchParams.get('text')
+
+    it('sits under the caption and names the photo on screen', () => {
+      render(<Lightbox photos={referenced} initialIndex={0} onClose={vi.fn()} />)
+      expect(text()).toBe('Hi AD JEET, I am interested in a sign like this example: ACC, ACP & LED Signage, Dalkhola (acc-125). My shop is in ___. Can you help me choose?')
+      expect(ask()).toHaveAttribute('target', '_blank')
+      expect(ask()).toHaveAttribute('rel', 'noopener noreferrer')
+    })
+
+    it('follows next and previous', () => {
+      render(<Lightbox photos={referenced} initialIndex={0} onClose={vi.fn()} />)
+      fireEvent.click(screen.getByRole('button', { name: 'Next photo' }))
+      expect(text()).toContain('(tanyamakeovers-154)')
+      fireEvent.keyDown(document, { key: 'ArrowLeft' })
+      expect(text()).toContain('(acc-125)')
+    })
+
+    it('falls back to the general enquiry for a photo with no reference', () => {
+      render(<Lightbox photos={referenced} initialIndex={2} onClose={vi.fn()} />)
+      expect(ask()).toHaveAttribute('href', defaultWhatsAppUrl())
+    })
+
+    it('keeps keyboard focus inside the viewer, link included', () => {
+      render(<Lightbox photos={referenced} initialIndex={0} onClose={vi.fn()} />)
+      const close = screen.getByRole('button', { name: /close/i })
+      expect(document.activeElement).toBe(close)
+      // Shift+Tab from the first control wraps to the last one, which is the link.
+      fireEvent.keyDown(document, { key: 'Tab', shiftKey: true })
+      expect(document.activeElement).toBe(ask())
+      // Tab from the link wraps back to the close button.
+      fireEvent.keyDown(document, { key: 'Tab' })
+      expect(document.activeElement).toBe(close)
+    })
   })
 })

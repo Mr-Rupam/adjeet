@@ -1,81 +1,36 @@
 # AD-JEET Site: Design TODOs
 
-Tracked from /plan-design-review session (2026-05-01). See DESIGN.md for the design system rules.
+See DESIGN.md for the design system rules. DESIGN.md wins wherever this file
+and it disagree.
 
----
+## Storefront homepage (2026-10-20)
 
-## Critical (blocks shipping)
+### [x] May 2026 entries pruned
+**Done 2026-10-20.** Everything this file tracked from the May 2026
+plan-design-review (Hero.sandbox, HeroSandbox, ClientShowcase, SectionLabel,
+SelectedWork, amber accents, Khand, Fraunces and JetBrains Mono) described a
+design that was replaced on 7 September 2026 and no longer exists in the code.
+Those entries are deleted rather than kept as open items; git history before
+this date still has them. Two were still open and are closed as obsolete: the
+HeroSandbox integration (the component is gone) and the next/font check in a
+`'use client'` component (the site loads its fonts from `app/fonts`).
 
-### [x] Write CSS for Hero.sandbox.tsx
-**Done 2026-05-02.** Hero.sandbox.module.css created with full OKLCH dark editorial styling, three material themes (glowsign/acpled/wallpaint), all class names implemented.
+### [ ] Owner: the workshop film left the homepage
+**Decided 2026-10-20, reversible.** The storefront homepage shows the workshop
+through the real site photograph of the gate, not the day/night visualisation
+film, which stays on /about and still follows the theme switch there. If the
+owner wants the film back on the homepage, it belongs inside the process
+section, labelled as a visualisation.
 
----
+### [ ] /areas link depends on the areas pull request
+The homepage's "Every area we serve" link points at /areas, which a separate
+pull request creates. Until it merges, that link returns the 404 page.
 
-## High priority
-
-### [x] Create DESIGN.md
-**Done 2026-05-02.** DESIGN.md created at adjeet-site/DESIGN.md with font pairing, CSS approach matrix, token colors, corner radius, animation, accessibility, Hero CTA hierarchy, SectionLabel spec, and section transition rules.
-
-### [x] Redesign ClientShowcase to match editorial system
-**Done 2026-05-02 (v2).** Sharp rectangular plates (no rounded corners), amber 3px left-border for national brands (Airtel, Jio, Havells, Vivo, OYO, Emami, Adani), rule-color left-border for regional brands. Fraunces for brand name, JetBrains Mono for sector tag. Ink-fill primary button replacing blue rounded button. Sector-color mapping removed.
-
-### [ ] Integrate HeroSandbox into page.tsx as second section
-**Deferred 2026-05-02** (removed from homepage per /plan-eng-review). HeroSandbox kept in repo as untracked files. B2B signage buyers convert via WhatsApp, not interactive demos. The three "Before shipping HeroSandbox" issues must be resolved before it can ship anywhere.
-
----
-
-## From 2026-05-02 plan-design-review
-
-### [x] Redesign Hero (clean slate)
-**Done 2026-05-02.** Full rewrite of Hero.tsx + Hero.module.css. Single decorative element: 4px amber left bar (::before). Photo as texture at brightness(0.18). Large Khand heading "North / Bengal's / sign maker." Districts paragraph. Amber-fill WhatsApp primary CTA, outlined secondary, text tertiary. metaBar / copyStack / processBar three-row grid. No blueprint grid, signal field, specimen box, or competing effects.
-
-### [x] SelectedWork: empty state (0 photos)
-**Done 2026-05-02.** Added `if (featured.length === 0)` early return with warm copy "Photographing recent projects, see our work in person." and a WhatsApp link.
-
-### [ ] SelectedWork: partial state (1–3 photos)
-**Low priority.** The current layout already shows PlaceholderBox for empty supporting cells, so the grid does not have "empty" cells, it has placeholder boxes. This is acceptable. Address if visually insufficient after real photos are added.
-
-### [x] Extract SectionLabel component
-**Done 2026-05-02.** Created `adjeet-site/components/ui/SectionLabel.tsx` + `SectionLabel.module.css`. Replaced inline style objects in ServicesIndex, TheStandard, SelectedWork, and ByTheNumbers.
-
-### [x] Fix Lightbox counter text contrast
-**Done 2026-05-02.** Changed `text-ink-muted` to `text-white/60` on the `{idx + 1} / {total}` counter `<p>` in Lightbox.tsx.
-
----
-
-## Standard
-
-### [x] Add blurDataURL to Hero Image
-**Done 2026-05-02.** Added `placeholder="blur"` and a 1×1 dark blue-grey base64 blurDataURL to the full-viewport `<Image>` in Hero.tsx.
-
-### [x] Add character counter to HeroSandbox input
-**Done 2026-05-02.** Counter `{text.length} / {MAX_CHARS}` implemented in Hero.sandbox.tsx with `.counter` / `.counterWarn` CSS classes in Hero.sandbox.module.css. Color shifts to amber (sb-accent) at ≥10 chars.
-
-### [x] Add prefers-reduced-motion to ClientShowcase animations
-**Done 2026-05-02.** `@media (prefers-reduced-motion: reduce)` block added to ClientShowcase.module.css. Also added pause-on-hover and pause-on-focus-within via `.carouselWrap:hover` / `:focus-within` selectors.
-
-### [x] Write mobile responsive CSS for HeroSandbox
-**Done 2026-05-02.** `@media (max-width: 640px)` block added to Hero.sandbox.module.css: single-column stage, full-width sign, horizontal-scroll material picker row, full-width CTA buttons.
-
-### [x] Audit hidden-input accessibility in HeroSandbox
-**Done 2026-05-02.** `.hiddenInput` uses the visually-hidden pattern (position: absolute; width: 1px; height: 1px; clip; etc.), not display:none.
-
----
-
-## Before shipping HeroSandbox
-
-HeroSandbox is built but not on the homepage (removed 2026-05-02 per /plan-eng-review). These issues must be resolved before it ships anywhere.
-
-### [x] Fix AnimatePresence key scheme: mid-string edit re-animation bug
-**Done 2026-05-02.** Replaced `key={`${i}-${char}`}` (position-based) with `key={entry.id}` (stable UUID per character). State changed from `string` to `CharEntry[] = { id: string; char: string }[]`. Added `getUpdatedChars()` using longest-common-prefix/suffix diffing to preserve IDs for unchanged characters on edit.
-
-### [x] Fix mobile spec card height on HeroSandbox at 375px
-**Done 2026-05-02.** Added `max-height: 280px; overflow-y: auto` to `.specCard` inside the `@media (max-width: 640px)` block in Hero.sandbox.module.css.
-
-### [ ] Verify next/font/google in 'use client' component on Next.js 16
-**Pending.** Confirm in `next build` output that Khand and Anek Latin declared in Hero.sandbox.tsx ('use client') produce correct preload `<link>` tags. Reference: Hero.tsx (server component) loads the same fonts correctly.
-
-**Depends on:** TypeScript build passing.
+### [ ] Owner: confirm the three shopfront examples
+The homepage shows tanyamakeovers-154, acc-125 and anchor-by-panasonic-112
+(recorded in DESIGN.md). Swap them in `components/home/ShopfrontExamples.tsx`
+when newer finished shopfronts are photographed, and claim a place only when
+the gallery records one.
 
 ---
 
@@ -84,13 +39,15 @@ HeroSandbox is built but not on the homepage (removed 2026-05-02 per /plan-eng-r
 Plan: `design/regional-pages-2026-09-20.md`. Scope is the 27 programmatic
 service-area pages at `app/(programmatic)/[slug]/page.tsx`.
 
-### [ ] Doc rot: this file contradicts DESIGN.md
+### [x] Doc rot: this file contradicts DESIGN.md
+**Done 2026-10-20:** the May entries are pruned (see the top of this file).
 **Flagged 2026-09-20.** Everything above dated May 2026 describes amber accents,
 Khand headings, Fraunces and JetBrains Mono. `DESIGN.md` (7 September 2026)
 supersedes all of it with Cesura display, Hind Siliguri body and the
 cyan/yellow `--signal` pair. DESIGN.md wins. Prune or date-stamp the May entries.
 
-### [ ] DESIGN.md calls `--radius-button` a "pill radius"
+### [x] DESIGN.md calls `--radius-button` a "pill radius"
+**Done 2026-10-20:** DESIGN.md now gives the 2px value and says buttons, chips and icon buttons share it.
 **Flagged 2026-09-20.** The token is `2px` (`design/tokens.css:3`). The wording
 sets the wrong expectation for anyone implementing chips. Fix the sentence, not
 the token.
@@ -199,6 +156,7 @@ refresh; the 20-navigation matrix then lands at the top at 390px and 1280px.
 checks the top still holds after the refresh window.
 
 ### [ ] P3: DESIGN.md and design-loop.md describe the pre-redesign homepage
+**DESIGN.md done 2026-10-20:** it now describes the storefront homepage. design-loop.md still says 19 clients.
 `DESIGN.md:42` still gives the section order from before 1612d04 and calls the
 workshop scene "Workshop illustration" (the site says "visualisation");
 `design-loop.md:28` still says 19 clients. DESIGN.md is the design authority,

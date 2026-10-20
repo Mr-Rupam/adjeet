@@ -39,3 +39,32 @@ export function defaultWhatsAppUrl(context?: { service?: string; city?: string }
   const message = `${opening} Could you send me a quote?`
   return buildWhatsAppUrl(ADJEET_WHATSAPP, message)
 }
+
+/**
+ * A public pointer to one photographed job: the gallery photo id, the brand on
+ * the sign and a short description. Only facts the gallery records belong in
+ * it, because the buyer sends it to the workshop word for word.
+ */
+export interface ProjectReference {
+  id: string
+  client: string
+  label: string
+}
+
+/**
+ * "Ask about a sign like this": the buyer names a finished example instead of
+ * the material, and the workshop can see exactly which photo they mean. The
+ * blank is for the buyer to fill in WhatsApp before sending.
+ */
+export function projectEnquiryMessage(reference: ProjectReference): string {
+  const client = reference.client.trim()
+  const label = reference.label.trim()
+  const example = [client, label].filter(Boolean).join(', ')
+  return `Hi AD JEET, I am interested in a sign like this example: ${example} (${reference.id.trim()}). My shop is in ___. Can you help me choose?`
+}
+
+/** The example-specific enquiry, or the general one when no example is known. */
+export function projectWhatsAppUrl(reference?: ProjectReference | null): string {
+  if (!reference?.id.trim()) return defaultWhatsAppUrl()
+  return buildWhatsAppUrl(ADJEET_WHATSAPP, projectEnquiryMessage(reference))
+}

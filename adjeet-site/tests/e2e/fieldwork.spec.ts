@@ -21,7 +21,7 @@ test('new homepage keeps real project discovery and every coverage area accessib
   await expect(page.getByRole('heading', { level: 1 })).toHaveText('Sign boards that get you noticed.')
   await expect(page.locator('#hero-section').getByRole('link', { name: 'WhatsApp your project' })).toBeVisible()
   await expect(page.getByRole('list', { name: 'Areas we serve' }).getByRole('listitem')).toHaveCount(COVERAGE_AREAS.length)
-  await page.getByRole('link', { name: 'Explore Ambuja Cement ACP and LED signage' }).click()
+  await page.getByRole('link', { name: 'Explore Ambuja Cement ACP and LED Signage, Kushmandi' }).click()
   await expect(page).toHaveURL(/service=acp-led-signage/)
   await expect(page.getByRole('button', { name: /^View:/ })).toHaveCount(acpCount)
 })
@@ -244,7 +244,8 @@ test('the enquiry button stays a readable light pill on the cerulean band in bot
 
 test('reduced motion switches workshop stills without playing the films', async ({ page }) => {
   await page.emulateMedia({ reducedMotion: 'reduce' })
-  await page.goto('/')
+  // The workshop film lives on About since the storefront homepage (2026-10-20).
+  await page.goto('/about')
   await page.getByRole('button', { name: 'Switch to dark mode' }).click()
   await expect(page.getByTestId('hero-scene')).toHaveAttribute('data-time', 'dark')
   await expect(page.getByTestId('hero-scene')).toHaveAttribute('data-transition', 'idle')

@@ -1,6 +1,7 @@
 import { buildPageMetadata } from '@/lib/seo'
 import { LoadingImage as Image } from '@/components/ui/LoadingImage'
 import Link from 'next/link'
+import { ArrowDown, ArrowUpRight } from 'lucide-react'
 import { buildBreadcrumbJsonLd, buildFounderJsonLd, buildWebPageJsonLd, jsonLdString } from '@/lib/seo'
 import { CommissionCTA } from '@/components/street/CommissionCTA'
 import { FOUNDED_YEAR } from '@/lib/coverage'
@@ -43,10 +44,9 @@ export default function AboutPage() {
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLdString(breadcrumb) }} />
       <section className={styles.intro} aria-labelledby="about-heading">
         <div className={styles.introCopy}>
-          <p className="spec text-signal">Siliguri · Since {FOUNDED_YEAR}</p>
-          <h1 id="about-heading" data-site-reveal="title">AD JEET. <br />A Siliguri workshop, <br /><span>since 1990.</span></h1>
+          <h1 id="about-heading" data-site-reveal="title">AD JEET. <br />A Siliguri workshop, <br /><span>since {FOUNDED_YEAR}.</span></h1>
           <p>Ranjit Das was 20 when he started AD JEET. More than 35 years later, the space has changed. The belief in doing good work has stayed.</p>
-          <a href="#our-story" className={styles.storyLink}>Follow our story <span aria-hidden="true">↓</span></a>
+          <a href="#our-story" className={styles.storyLink}>Follow our story <ArrowDown size={18} aria-hidden="true" /></a>
         </div>
         <figure className={styles.workshop} data-site-reveal="media">
           <div><HeroScene label="Visualisation of the AD JEET workshop in Siliguri" eager /></div>
@@ -55,28 +55,35 @@ export default function AboutPage() {
       </section>
       <section id="our-story" className={styles.story} aria-labelledby="story-heading">
         <div className={styles.sectionHeading}>
-          <p className="spec text-signal">Built over 35+ years</p>
-          <h2 id="story-heading" data-site-reveal="title">A little more room.<br />The same ambition.</h2>
+          <h2 id="story-heading" data-site-reveal="title">A little more room.<br /><span>The same ambition.</span></h2>
+          <p>Built over more than 35 years, one move at a time.</p>
         </div>
         <ol className={styles.journey}>
-          {JOURNEY.map(step => <li key={step.marker} data-site-reveal><p className="spec text-signal">{step.marker}</p><div><h3>{step.title}</h3><p>{step.body}</p></div></li>)}
+          {JOURNEY.map(step => <li key={step.marker} data-site-reveal><p className={styles.marker}>{step.marker}</p><div><h3>{step.title}</h3><p>{step.body}</p></div></li>)}
         </ol>
+      </section>
+      <section className={styles.workshopBand} aria-labelledby="workshop-heading">
+        <div className={styles.workshopBandHead}>
+          <h2 id="workshop-heading" data-site-reveal="title">The workshop,<br /><span>photographed.</span></h2>
+          <p>Where the frames are built, the faces fitted and the letters wired before a sign goes to site.</p>
+        </div>
         <figure className={styles.workshopPhotos} data-site-reveal="media">
           <ul aria-label="Photographs of the AD JEET workshop">
             {WORKSHOP_PHOTOS.map((photo, index) => (
-              <li key={photo.src}><Image src={photo.src} alt={photo.alt} fill sizes={index === 0 ? '(max-width: 767px) 100vw, 33vw' : '(max-width: 767px) 50vw, 33vw'} className="object-cover" /></li>
+              <li key={photo.src}><Image src={photo.src} alt={photo.alt} fill sizes={index === 0 ? '(max-width: 767px) 100vw, 58vw' : '(max-width: 767px) 50vw, 30vw'} className="object-cover" /></li>
             ))}
           </ul>
           <figcaption>The AD JEET workshop, Siliguri. Site photographs.</figcaption>
         </figure>
       </section>
       <section className={styles.trust} aria-labelledby="trust-heading">
-        <p className="spec">What keeps a client coming back</p>
-        <h2 id="trust-heading" data-site-reveal="title">Quality, every time.<br />Trust, over time.</h2>
-        <div className={styles.trustCopy}>
-          <p>Our client history includes Fortune 500 companies. What matters most to us is the trust that continues beyond the first project.</p>
-          <p>That trust rests on the quality of the work and the consistency we bring to it. It is how we have grown, and how we intend to keep growing.</p>
-          <Link href="/portfolio" className="cta cta--md cta--yellow">See our work <span aria-hidden="true">↗</span></Link>
+        <div className={styles.trustHead}>
+          <h2 id="trust-heading" data-site-reveal="title">Quality, every time.<br /><span>Trust, over time.</span></h2>
+          <div className={styles.trustCopy}>
+            <p>Our client history includes Fortune 500 companies. What matters most to us is the trust that continues beyond the first project.</p>
+            <p>That trust rests on the quality of the work and the consistency we bring to it. It is how we have grown, and how we intend to keep growing.</p>
+            <Link href="/portfolio" className="cta cta--md cta--yellow">See our work <ArrowUpRight size={18} aria-hidden="true" /></Link>
+          </div>
         </div>
         <ul className={styles.clientWork} aria-label="Work for national brands">
           {CLIENT_WORK.map(photo => (
@@ -90,8 +97,7 @@ export default function AboutPage() {
       <section className={styles.coverage} aria-labelledby="coverage-heading">
         <CoverageMapProvider>
           <div className={styles.sectionHeading}>
-            <p className="spec text-signal">Where we work</p>
-            <h2 id="coverage-heading" data-site-reveal="title">Rooted in Siliguri.<br />Across North Bengal.</h2>
+            <h2 id="coverage-heading" data-site-reveal="title">Rooted in Siliguri.<br /><span>Across North Bengal.</span></h2>
             <p>From the hills to the Dooars and south to Malda, our work reaches businesses across the region. Pick your town to see how far we travel to reach it.</p>
             <CoveragePlaceList />
           </div>

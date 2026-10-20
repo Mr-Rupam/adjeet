@@ -8,6 +8,7 @@ import { photos } from '@/content/gallery'
 import { services } from '@/content/services'
 import { Lightbox, type LightboxPhoto } from '@/components/ui/Lightbox'
 import { trackPortfolioFilter } from '@/lib/analytics'
+import { photoReference } from '@/lib/project-reference'
 import styles from './Portfolio.module.css'
 
 export function PortfolioContent() {
@@ -65,7 +66,7 @@ export function PortfolioContent() {
       <section className={styles.gallery} aria-label="Project gallery" aria-busy={pending}>
         <div className="field-container">
           {filtered.length === 0 ? <div className={styles.empty}><p className="spec">Try a wider view</p><h2>No projects match<br />the current filters.</h2><p>Reset the filters to see every photographed project, or contact us about your own.</p><button type="button" onClick={clearFilters} className="cta cta--md">Reset filters</button></div> :
-          <div className={styles.grid}>{filtered.map((photo, idx) => <button type="button" key={photo.id} onClick={() => setViewer({ index: idx, photos: filtered.map(p => ({ src: p.src, alt: p.alt })) })} className={styles.project} aria-label={'View: ' + photo.alt}>
+          <div className={styles.grid}>{filtered.map((photo, idx) => <button type="button" key={photo.id} onClick={() => setViewer({ index: idx, photos: filtered.map(p => ({ src: p.src, alt: p.alt, reference: photoReference(p) })) })} className={styles.project} aria-label={'View: ' + photo.alt}>
             <span className={styles.image}><Image src={photo.src} alt={photo.alt} fill sizes="(max-width: 767px) 50vw, (max-width: 1023px) 45vw, 30vw" className="object-cover" /><span className={styles.open}><ArrowUpRight size={22} aria-hidden="true" /></span></span>
             <span className={styles.caption}><span><strong>{photo.client}</strong><small>{services.find(s => s.slug === photo.service)?.name}</small></span>{(photo.location || photo.year) && <span className={styles.location}>{photo.location}{photo.location && photo.year && <br />}{photo.year}</span>}</span>
           </button>)}</div>}
