@@ -5,7 +5,8 @@
 const pages = new Set(['/', '/about', '/contact', '/services', '/portfolio', '/privacy', '/terms', '/coverage'])
 const services ='glow-sign-boards|acp-led-signage|flex-printing|vehicle-branding|wall-painting|f-pole-installation|in-shop-branding|events-and-puja|one-way-vision|product-display'
 const servicePage = new RegExp(`^/services/(${services})$`)
-const regionalPage = /^\/(glow-sign-board|acp-led-signage|flex-printing|vehicle-branding|f-pole-installation)-in-(siliguri|jalpaiguri|cooch-behar|darjeeling|malda|gangtok)$/
+// The 27 old regional URLs redirect to these, so a visitor lands on the destination.
+const areaPage = /^\/areas(\/(cooch-behar|jalpaiguri|gangtok))?$/
 const sources = ['google', 'bing', 'facebook', 'instagram', 'referral', 'whatsapp']
 const media = ['organic', 'cpc', 'social', 'referral']
 const campaigns = ['gbp', 'local-shopfronts']
@@ -17,7 +18,7 @@ export function normalizeLeadSource(input: unknown): LeadSource {
   const data = input && typeof input === 'object' ? input as Record<string, unknown> : {}
   const path = typeof data.landingPage === 'string' ? data.landingPage.split(/[?#]/)[0] : ''
   return {
-    landingPage: pages.has(path) || servicePage.test(path) || regionalPage.test(path) ? path : 'unknown',
+    landingPage: pages.has(path) || servicePage.test(path) || areaPage.test(path) ? path : 'unknown',
     source: label(data.source, sources), medium: label(data.medium, media), campaign: label(data.campaign, campaigns),
   }
 }
