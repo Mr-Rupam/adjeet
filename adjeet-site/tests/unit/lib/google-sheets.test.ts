@@ -89,6 +89,51 @@ describe('the existing production Sheet, with no new settings', () => {
   })
 })
 
+describe('best time to call column', () => {
+  const asked = { ...row, 'Best time to call': 'Evening' }
+
+  it('adds the header after the last one the first time a visitor chooses a time, and fills it', async () => {
+    const fetch = vi.fn().mockResolvedValueOnce(tabs('Sheet1')).mockResolvedValueOnce(header(FULL))
+      .mockResolvedValueOnce(headerWritten()).mockResolvedValueOnce(appended())
+    vi.stubGlobal('fetch', fetch)
+    const { appendToSheet } = await import('@/lib/google-sheets')
+    expect(await appendToSheet(asked)).toEqual({ status: 'saved', missing: [] })
+    const [headerUrl, headerInit] = calls(fetch)[2]
+    expect(decodeURIComponent(headerUrl)).toContain("'Sheet1'!N1:N1")
+    expect(JSON.parse(headerInit!.body!).values).toEqual([['Best time to call']])
+    expect(appendedValues(fetch)).toHaveLength(FULL.length + 1)
+    expect(appendedValues(fetch).at(-1)).toBe('Evening')
+  })
+
+  it('fills the column wherever the owner put it', async () => {
+    const fetch = vi.fn().mockResolvedValueOnce(tabs('Sheet1'))
+      .mockResolvedValueOnce(header(['Best time to call', ...FULL])).mockResolvedValueOnce(appended())
+    vi.stubGlobal('fetch', fetch)
+    const { appendToSheet } = await import('@/lib/google-sheets')
+    expect(await appendToSheet(asked)).toEqual({ status: 'saved', missing: [] })
+    expect(appendedValues(fetch)[0]).toBe('Evening')
+    expect(calls(fetch)).toHaveLength(3)
+  })
+
+  it('leaves a row without it a complete brief, and does not add the header for it', async () => {
+    const fetch = vi.fn().mockResolvedValueOnce(tabs('Sheet1')).mockResolvedValueOnce(header(FULL)).mockResolvedValueOnce(appended())
+    vi.stubGlobal('fetch', fetch)
+    const { appendToSheet } = await import('@/lib/google-sheets')
+    expect(await appendToSheet(row)).toEqual({ status: 'saved', missing: [] })
+    expect(calls(fetch)).toHaveLength(3)
+    expect(appendedValues(fetch)).toHaveLength(FULL.length)
+  })
+
+  it('still counts the row as a receipt when the header cannot be added: it is not part of the brief', async () => {
+    const fetch = vi.fn().mockResolvedValueOnce(tabs('Sheet1')).mockResolvedValueOnce(header(FULL))
+      .mockResolvedValueOnce(json({}, 403)).mockResolvedValueOnce(appended())
+    vi.stubGlobal('fetch', fetch)
+    const { appendToSheet } = await import('@/lib/google-sheets')
+    expect(await appendToSheet(asked)).toEqual({ status: 'saved', missing: ['Best time to call'] })
+    expect(appendedValues(fetch)).toHaveLength(FULL.length)
+  })
+})
+
 describe('receipt rules', () => {
   it('appends but does not count as a receipt when part of the brief has no column and none can be added', async () => {
     const fetch = vi.fn().mockResolvedValueOnce(tabs('Sheet1')).mockResolvedValueOnce(header(['Date', 'Name', 'Phone']))

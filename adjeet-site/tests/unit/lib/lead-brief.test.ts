@@ -23,6 +23,17 @@ describe('the brief shared by the form and the server', () => {
   it('changes when the brief changes', () => {
     expect(briefFingerprint({ ...lead, message: 'Different' })).not.toBe(briefFingerprint(lead))
   })
+
+  it('keeps a requested time to call in the brief, and leaves no key when none was chosen', () => {
+    expect(leadBrief({ ...lead, bestTimeToCall: 'evening' })).toMatchObject({ bestTimeToCall: 'evening' })
+    expect(leadBrief(lead)).not.toHaveProperty('bestTimeToCall')
+    expect(leadBrief({ ...lead, bestTimeToCall: undefined })).not.toHaveProperty('bestTimeToCall')
+    // A retry after the visitor changed the choice is a different enquiry.
+    expect(briefFingerprint({ ...lead, bestTimeToCall: 'evening' })).not.toBe(briefFingerprint(lead))
+    expect(briefFingerprint({ ...lead, bestTimeToCall: 'evening' })).not.toBe(briefFingerprint({ ...lead, bestTimeToCall: 'morning' }))
+    // A brief that never had the field keeps the fingerprint it had before the field existed.
+    expect(briefFingerprint({ ...lead, bestTimeToCall: undefined })).toBe(briefFingerprint(lead))
+  })
 })
 
 describe('submission reference', () => {

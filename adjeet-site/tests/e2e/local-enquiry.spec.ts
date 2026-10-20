@@ -24,6 +24,11 @@ test('invalid success and a lost response preserve the brief and reference; an e
   })
   await page.goto('/contact')
   await fillBrief(page)
+  // Optional, a request rather than a booking, and described by its help text.
+  const callTime = page.getByLabel('Best time to call (optional)')
+  await expect(callTime).toHaveValue('')
+  await expect(callTime).toHaveAccessibleDescription('We will try to call in the time you prefer.')
+  await callTime.selectOption({ label: 'Evening' })
   const send = page.getByRole('button', { name: /send the brief/i })
   const alert = page.locator('form').getByRole('alert')
   await send.click()
@@ -40,7 +45,8 @@ test('invalid success and a lost response preserve the brief and reference; an e
   await send.click()
   await expect(page.getByText('Message received.')).toBeVisible()
   expect(posted[2].submissionId).not.toBe(posted[1].submissionId)
-  expect(posted[2]).toMatchObject({ name: 'রূপম দাস', timeline: 'unspecified', serviceInterest: ['help-choosing'] })
+  expect(posted[2]).toMatchObject({ name: 'রূপম দাস', timeline: 'unspecified', serviceInterest: ['help-choosing'], bestTimeToCall: 'evening' })
+  expect(posted[0].bestTimeToCall).toBe('evening')
   await expect(page.getByRole('status').filter({ hasText: 'Message received.' })).toBeFocused()
 })
 
@@ -59,6 +65,8 @@ test('carries only approved source labels from the landing page through internal
   await page.getByRole('button', { name: /send the brief/i }).click()
   await expect(page.getByText('Message received.')).toBeVisible()
   expect(submitted?.source).toEqual({ landingPage: '/', source: 'google', medium: 'organic', campaign: 'gbp' })
+  // The best-time-to-call choice was left alone, so nothing about it is sent.
+  expect(submitted).not.toHaveProperty('bestTimeToCall')
 })
 
 for (const width of [320, 390, 768, 1440]) {
@@ -76,6 +84,18 @@ for (const width of [320, 390, 768, 1440]) {
     await expect(page.locator('#lead-phone')).toBeFocused()
     await page.getByRole('checkbox', { name: /help choosing/i }).scrollIntoViewIfNeeded()
     await expect(page.getByRole('checkbox', { name: /help choosing/i })).toBeVisible()
+    // The optional call-time choice sits between Timeline and Message, inside the viewport, in reading order.
+    const callTime = page.getByLabel('Best time to call (optional)')
+    await callTime.scrollIntoViewIfNeeded()
+    await expect(callTime).toBeVisible()
+    const box = await callTime.boundingBox()
+    expect(box!.x).toBeGreaterThanOrEqual(0)
+    expect(box!.x + box!.width).toBeLessThanOrEqual(width)
+    await page.locator('#lead-timeline').focus()
+    await page.keyboard.press('Tab')
+    await expect(callTime).toBeFocused()
+    await page.keyboard.press('Tab')
+    await expect(page.locator('#lead-message')).toBeFocused()
     await page.getByRole('button', { name: /send the brief/i }).scrollIntoViewIfNeeded()
     await expect(page.getByRole('button', { name: /send the brief/i })).toBeVisible()
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth + 1)).toBe(true)

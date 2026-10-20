@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it, vi } from 'vitest'
-import { cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react'
+import { cleanup, fireEvent, render, screen, waitFor, within } from '@testing-library/react'
 import { LeadForm } from '@/components/sections/LeadForm'
 const reset = vi.hoisted(() => vi.fn())
 vi.mock('@/components/ui/DeferUntilNear', () => ({ DeferUntilNear: ({ children }: { children: React.ReactNode }) => children }))
@@ -119,6 +119,82 @@ describe('honest client receipt', () => {
     expect(gtag).toHaveBeenCalledWith('event', 'lead_submit', { city: 'Siliguri', timeline: 'unspecified' })
     const sent = JSON.stringify(gtag.mock.calls)
     for (const value of ['রূপম', '9876543210', 'Hill Cart Road']) expect(sent).not.toContain(value)
+  })
+})
+
+describe('best time to call', () => {
+  it('is optional, labelled as a request, described by its help text, and unselected by default', () => {
+    render(<LeadForm />)
+    const select = screen.getByLabelText('Best time to call (optional)')
+    expect(select).toHaveValue('')
+    expect(select).not.toBeRequired()
+    expect(select).toHaveAccessibleDescription('We will try to call in the time you prefer.')
+    expect(within(select).getAllByRole('option').map(option => option.textContent))
+      .toEqual(['Select a time', 'Morning', 'Afternoon', 'Evening', 'Any time'])
+    // The page makes no promise about when a call will happen.
+    expect(document.body.textContent).not.toMatch(/\b(book|booked|booking|appointment|guarantee)/i)
+  })
+
+  it('sends the chosen time and nothing else about it', async () => {
+    vi.stubGlobal('fetch', echoReceipt)
+    renderRegional()
+    fireEvent.change(screen.getByLabelText('Best time to call (optional)'), { target: { value: 'evening' } })
+    complete()
+    await screen.findByText('Message received.')
+    expect(bodies(echoReceipt)[0].bestTimeToCall).toBe('evening')
+  })
+
+  it.each(['morning', 'afternoon', 'any_time'])('sends %s as chosen', async value => {
+    vi.stubGlobal('fetch', echoReceipt)
+    renderRegional()
+    fireEvent.change(screen.getByLabelText('Best time to call (optional)'), { target: { value } })
+    complete()
+    await screen.findByText('Message received.')
+    expect(bodies(echoReceipt)[0].bestTimeToCall).toBe(value)
+  })
+
+  it('sends nothing when left unselected, or when chosen and then cleared', async () => {
+    vi.stubGlobal('fetch', echoReceipt)
+    renderRegional()
+    complete()
+    await screen.findByText('Message received.')
+    expect(bodies(echoReceipt)[0]).not.toHaveProperty('bestTimeToCall')
+    cleanup()
+    echoReceipt.mockClear()
+
+    renderRegional()
+    const select = screen.getByLabelText('Best time to call (optional)')
+    fireEvent.change(select, { target: { value: 'morning' } })
+    fireEvent.change(select, { target: { value: '' } })
+    complete()
+    await screen.findByText('Message received.')
+    expect(bodies(echoReceipt)[0]).not.toHaveProperty('bestTimeToCall')
+  })
+
+  it('is a different brief once the choice changes, so a retry does not reuse the reference', async () => {
+    const fetch = vi.fn().mockRejectedValueOnce(new Error('lost reply')).mockImplementation(echoReceipt)
+    vi.stubGlobal('fetch', fetch)
+    renderRegional()
+    complete()
+    await screen.findByRole('alert')
+    fireEvent.change(screen.getByLabelText('Best time to call (optional)'), { target: { value: 'afternoon' } })
+    complete()
+    await screen.findByText('Message received.')
+    const [first, second] = bodies(fetch)
+    expect(second.submissionId).not.toBe(first.submissionId)
+    expect(second.bestTimeToCall).toBe('afternoon')
+  })
+
+  it('keeps the choice out of analytics', async () => {
+    const gtag = vi.fn()
+    vi.stubGlobal('gtag', gtag)
+    vi.stubGlobal('fetch', echoReceipt)
+    renderRegional()
+    fireEvent.change(screen.getByLabelText('Best time to call (optional)'), { target: { value: 'evening' } })
+    complete()
+    await screen.findByText('Message received.')
+    expect(gtag).toHaveBeenCalledWith('event', 'lead_submit', { city: 'Siliguri', timeline: 'unspecified' })
+    expect(JSON.stringify(gtag.mock.calls)).not.toMatch(/evening|best_time|bestTime/i)
   })
 })
 

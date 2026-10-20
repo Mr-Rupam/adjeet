@@ -1,6 +1,6 @@
 import { createHash, randomUUID } from 'node:crypto'
 import { after, NextRequest, NextResponse } from 'next/server'
-import { leadSchema } from '@/lib/lead-schema'
+import { callTimeLabel, leadSchema } from '@/lib/lead-schema'
 import { leadBrief, type LeadBrief } from '@/lib/lead-brief'
 import { normalizeLeadSource, type LeadSource } from '@/lib/lead-source'
 import { bounded, deadlineIn, LEAD_DEADLINES } from '@/lib/lead-deadline'
@@ -201,6 +201,9 @@ function sheetRow(record: LeadRecord): SheetRow {
     Services: record.serviceInterest.join(', '),
     Timeline: record.timeline,
     Message: record.message,
+    // Left out when the visitor chose nothing, so the Sheet gains this column
+    // only once someone uses it, and a row without it is still a complete brief.
+    ...(record.bestTimeToCall ? { 'Best time to call': callTimeLabel(record.bestTimeToCall) } : {}),
     'Landing page': record.source.landingPage,
     Source: record.source.source,
     Medium: record.source.medium,
@@ -233,6 +236,7 @@ async function notifyOwner(record: LeadRecord, confirmed: boolean) {
     `City: ${record.city}`,
     `Services: ${record.serviceInterest.join(', ')}`,
     `Timeline: ${record.timeline}`,
+    `Best time to call: ${record.bestTimeToCall ? `${callTimeLabel(record.bestTimeToCall)} (a request, not a booked slot)` : '(not given)'}`,
     `Message: ${record.message || '(none)'}`,
   ].join('\n')
   const tasks: { channel: string; send: Promise<unknown> }[] = []

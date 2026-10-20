@@ -4,7 +4,7 @@ import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useState, useRef, useEffect, type FormEvent } from 'react'
 import { DeferUntilNear } from '@/components/ui/DeferUntilNear'
-import { leadSchema, type LeadInput, TIMELINE_OPTIONS, COVERAGE_CITIES, HELP_CHOOSING } from '@/lib/lead-schema'
+import { leadSchema, type LeadInput, TIMELINE_OPTIONS, CALL_TIME_OPTIONS, COVERAGE_CITIES, HELP_CHOOSING } from '@/lib/lead-schema'
 import { Turnstile, type TurnstileInstance } from '@marsidev/react-turnstile'
 import { services, type ServiceSlug } from '@/content/services'
 import { QuoteCTA } from '@/components/ui/QuoteCTA'
@@ -319,16 +319,39 @@ export function LeadForm({ defaultCity, defaultService }: LeadFormProps = {}) {
         )}
       </div>
 
-      {/* Timeline */}
-      <div>
-        <label htmlFor="lead-timeline" className={label}>Timeline</label>
-        <select
-          id="lead-timeline"
-          className={fieldNormal}
-          {...register('timeline')}
-        >
-          {TIMELINE_OPTIONS.map(t => <option key={t.value} value={t.value}>{t.label}</option>)}
-        </select>
+      {/* Timeline + best time to call */}
+      <div className="grid items-start gap-4 sm:grid-cols-2">
+        <div>
+          <label htmlFor="lead-timeline" className={label}>Timeline</label>
+          <select
+            id="lead-timeline"
+            className={fieldNormal}
+            {...register('timeline')}
+          >
+            {TIMELINE_OPTIONS.map(t => <option key={t.value} value={t.value}>{t.label}</option>)}
+          </select>
+        </div>
+
+        {/* A request, not a booking. Left unselected it is not sent at all:
+            `setValueAs` turns the empty option into undefined, which neither
+            the schema nor JSON.stringify carries. */}
+        <div>
+          <label htmlFor="lead-call-time" className={label}>
+            Best time to call <span className="text-ink-subtle font-normal">(optional)</span>
+          </label>
+          <select
+            id="lead-call-time"
+            className={fieldNormal}
+            aria-describedby="lead-call-time-hint"
+            {...register('bestTimeToCall', { setValueAs: (value: string) => value || undefined })}
+          >
+            <option value="">Select a time</option>
+            {CALL_TIME_OPTIONS.map(t => <option key={t.value} value={t.value}>{t.label}</option>)}
+          </select>
+          <p id="lead-call-time-hint" className="mt-1.5 text-xs text-ink-muted">
+            We will try to call in the time you prefer.
+          </p>
+        </div>
       </div>
 
       {/* Message */}
