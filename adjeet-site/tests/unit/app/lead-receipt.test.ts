@@ -182,7 +182,7 @@ describe('rate limiter dependency (fails open: Turnstile still gates every enqui
   })
 
   it('keeps accepting enquiries when the limiter throws, and logs only a category', async () => {
-    fakes.limit.mockRejectedValue(new Error('fetch failed https://default:SECRET-TOKEN@example.upstash.io'))
+    fakes.limit.mockRejectedValue(new Error('Upstash rejected token SECRET-TOKEN for example.upstash.io'))
     const response = await submit()
     expect(response.status).toBe(200)
     expect(fakes.insert).toHaveBeenCalledTimes(1)
