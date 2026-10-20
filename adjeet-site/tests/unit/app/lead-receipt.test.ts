@@ -223,6 +223,33 @@ describe('rate limiter dependency (fails open: Turnstile still gates every enqui
     expect((await pending).status).toBe(200)
   })
 
+  it('counts every address in one IPv6 /64 as one visitor, and sends the CAPTCHA check the address itself', async () => {
+    const { POST } = await import('@/app/api/lead/route')
+    for (const address of ['2401:4900:1c2a:5b3d:1:2:3:4', '2401:4900:1c2a:5b3d:ffff:eeee:dddd:cccc']) {
+      const req = new NextRequest('https://adjeet.in/api/lead', {
+        method: 'POST',
+        headers: { origin: 'https://adjeet.in', 'content-type': 'application/json', 'x-forwarded-for': address },
+        body: JSON.stringify(brief),
+      })
+      expect((await POST(req)).status).toBe(200)
+    }
+    const visitorKeys = fakes.limit.mock.calls.filter(([prefix]) => prefix === 'lead').map(([, key]) => key)
+    expect(visitorKeys).toEqual(['2401:4900:1c2a:5b3d::/64', '2401:4900:1c2a:5b3d::/64'])
+    const sent = vi.mocked(fetch).mock.calls.map(([, init]) => String((init as RequestInit).body))
+    expect(sent[0]).toContain('remoteip=2401%3A4900%3A1c2a%3A5b3d%3A1%3A2%3A3%3A4')
+  })
+
+  it('keeps an IPv4 visitor under the address itself', async () => {
+    const { POST } = await import('@/app/api/lead/route')
+    const req = new NextRequest('https://adjeet.in/api/lead', {
+      method: 'POST',
+      headers: { origin: 'https://adjeet.in', 'content-type': 'application/json', 'x-forwarded-for': '203.0.113.7, 10.0.0.1' },
+      body: JSON.stringify(brief),
+    })
+    expect((await POST(req)).status).toBe(200)
+    expect(fakes.limit.mock.calls.find(([prefix]) => prefix === 'lead')?.[1]).toBe('203.0.113.7')
+  })
+
   it('keeps accepting enquiries when production has no limiter configured, as before', async () => {
     vi.stubEnv('UPSTASH_REDIS_REST_URL', '')
     vi.stubEnv('UPSTASH_REDIS_REST_TOKEN', '')

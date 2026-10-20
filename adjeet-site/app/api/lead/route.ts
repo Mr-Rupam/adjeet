@@ -4,6 +4,8 @@ import { callTimeLabel, leadSchema } from '@/lib/lead-schema'
 import { leadBrief, type LeadBrief } from '@/lib/lead-brief'
 import { normalizeLeadSource, type LeadSource } from '@/lib/lead-source'
 import { bounded, deadlineIn, LEAD_DEADLINES } from '@/lib/lead-deadline'
+import { clientIp, rateKey } from '@/lib/client-ip'
+import { BodyTooLarge, readJsonBody } from '@/lib/request-body'
 import getClientPromise from '@/lib/mongodb'
 import { openLeadSheet, type SheetOutcome, type SheetRow } from '@/lib/google-sheets'
 
@@ -101,31 +103,6 @@ async function withinLimit(pick: (l: { perIp: Limiter; perPhone: Limiter }) => L
   } catch (error) {
     console.warn(`[lead] ${label} rate limiter unavailable, allowing: ${category(error)}`)
     return true
-  }
-}
-
-class BodyTooLarge extends Error {}
-
-/** Enforce the size limit on the bytes actually sent, not on a header a client controls. */
-async function readBody(req: NextRequest, ms: number) {
-  const reader = req.body?.getReader()
-  if (!reader) throw new Error('Empty body')
-  const chunks: Uint8Array[] = []
-  let bytes = 0
-  try {
-    return await bounded(async signal => {
-      signal.addEventListener('abort', () => { void reader.cancel().catch(() => {}) }, { once: true })
-      while (true) {
-        const { done, value } = await reader.read()
-        if (done) break
-        bytes += value.byteLength
-        if (bytes > MAX_BODY_SIZE) { void reader.cancel().catch(() => {}); throw new BodyTooLarge() }
-        chunks.push(value)
-      }
-      return JSON.parse(Buffer.concat(chunks).toString('utf8')) as unknown
-    }, ms)
-  } finally {
-    try { reader.releaseLock() } catch {}
   }
 }
 
@@ -283,8 +260,9 @@ export async function POST(req: NextRequest) {
   const started = Date.now()
   const clock = deadlineIn(LEAD_DEADLINES.response)
 
-  // Origin / CSRF check: browsers always send Origin on this POST, so direct
-  // hits from curl and scrapers without it are refused.
+  // Origin / CSRF check: a browser sets Origin itself on this POST, so a page
+  // on another site cannot post here. A script can send any Origin it likes,
+  // so Turnstile and the rate limits, not this, are what stop scripted traffic.
   if (!ALLOWED_ORIGINS.includes(req.headers.get('origin') ?? '')) {
     return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
   }
@@ -292,14 +270,17 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'Request too large.' }, { status: 413 })
   }
 
-  const ip = req.headers.get('x-forwarded-for')?.split(',')[0].trim() || 'unknown'
-  if (!(await withinLimit(l => l.perIp, ip, clock.left(LEAD_DEADLINES.limiter), 'Per-IP'))) {
+  // The address itself goes to Turnstile. The limiter counts an IPv6 visitor by
+  // /64, so rotating through addresses in one connection's range gains nothing.
+  const ip = clientIp(req.headers) ?? 'unknown'
+  const limitKey = rateKey(ip) ?? ip
+  if (!(await withinLimit(l => l.perIp, limitKey, clock.left(LEAD_DEADLINES.limiter), 'Per-IP'))) {
     return NextResponse.json({ error: 'Too many requests. Please try again later.' }, { status: 429 })
   }
 
   let body: unknown
   try {
-    body = await readBody(req, clock.left(LEAD_DEADLINES.body))
+    body = await readJsonBody(req, MAX_BODY_SIZE, clock.left(LEAD_DEADLINES.body))
   } catch (error) {
     return error instanceof BodyTooLarge
       ? NextResponse.json({ error: 'Request too large.' }, { status: 413 })

@@ -2,6 +2,7 @@
 
 import { useState, useRef, useEffect, useCallback, type FormEvent, type KeyboardEvent } from 'react'
 import { ADJEET_GREETING } from '@/lib/chatbot-prompt'
+import { CHAT_LIMITS } from '@/lib/chatbot-input'
 import { Hammer, UserRound } from 'lucide-react'
 import './Chatbot.css'
 
@@ -95,10 +96,12 @@ export function Chatbot() {
     setIsLoading(true)
     setHasInteracted(true)
 
-    // Build messages array for API (exclude greeting)
+    // Build messages array for API (exclude greeting). The server reads only
+    // the latest few, so a long chat does not send what it would discard.
     const apiMessages = [...messages, userMsg]
       .filter((m) => m.id !== 'greeting')
       .map((m) => ({ role: m.role, content: m.content }))
+      .slice(-CHAT_LIMITS.messages)
 
     try {
       const res = await fetch('/api/chatbot', {

@@ -15,19 +15,20 @@ AD-JEET is a marketing website for a North Bengal signage company. The entire pr
 | `MONGODB_URI` | Lead storage (primary) |
 | `RESEND_API_KEY` | Email notification on each lead |
 | `GOOGLE_*` | Google Sheets backup of leads |
-| `UPSTASH_*` | Rate limiting on `/api/lead` and `/api/chatbot` |
+| `UPSTASH_*` | Rate limiting on `/api/lead` and `/api/chatbot`. The lead form still accepts enquiries if it is down; the chat does not (it fails closed and points to WhatsApp) |
 | `OPENAI_API_KEY` | AI chatbot responses |
+| `CHATBOT_DAILY_BUDGET` | Optional: chat replies across all visitors per UTC day (default 500) |
 | `TURNSTILE_SECRET_KEY` | CAPTCHA verification (has dev test key fallback) |
 | `TWILIO_*` | WhatsApp notification to Rupam on each lead |
 
 ## Key Files
 
 - `app/api/lead/route.ts` is the lead form submission pipeline
-- `app/api/chatbot/route.ts` is the chatbot response handler
+- `app/api/chatbot/route.ts` is the chatbot response handler. Its input rules are in `lib/chatbot-input.ts` and its per-visitor and daily limits in `lib/chatbot-guard.ts`; both routes key their limiters through `lib/client-ip.ts` (an IPv6 visitor counts by /64)
 - `components/sections/LeadForm.tsx` is the lead form UI, on `/contact`, every service page, `/areas` and the town pages under it (through `components/areas/BriefForm.tsx`). It takes optional `defaultCity` / `defaultService` props to prefill, and still reads `?city=` from the URL when they are absent
 - `design/tokens.css` holds all design tokens (colours, spacing, type scale)
 - `lib/lead-schema.ts` is the Zod schema for lead form validation (add cities/services here)
-- `lib/env.ts` gives validated env var access via `@t3-oss/env-nextjs`
+- Env vars are read straight from `process.env` where they are used, and a missing one is handled there (see Env Setup). There is no central env module
 
 ## Common Tasks
 
