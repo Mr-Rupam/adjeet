@@ -5,6 +5,7 @@ import { LoadingImage as Image } from '@/components/ui/LoadingImage'
 import Link from 'next/link'
 import { Lightbox, type LightboxPhoto } from '@/components/ui/Lightbox'
 import type { GalleryPhoto } from '@/content/gallery'
+import { photoReference } from '@/lib/project-reference'
 
 interface GalleryStripProps {
   photos: GalleryPhoto[]
@@ -21,7 +22,7 @@ interface GalleryStripProps {
 }
 
 export function GalleryStrip({ photos, title = 'Project gallery', link, note }: GalleryStripProps) {
-  const lightboxPhotos: LightboxPhoto[] = photos.map(p => ({ src: p.src, alt: p.alt }))
+  const lightboxPhotos: LightboxPhoto[] = photos.map(p => ({ src: p.src, alt: p.alt, reference: photoReference(p) }))
   const [isOpen, setIsOpen] = useState(false)
   const [initialIndex, setInitialIndex] = useState(0)
 

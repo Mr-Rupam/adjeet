@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { Menu, X } from 'lucide-react'
+import { ArrowUpRight, Menu, X } from 'lucide-react'
 import { BrandLogo } from '@/components/BrandLogo'
 import { QuoteCTA } from '@/components/ui/QuoteCTA'
 
@@ -86,7 +86,7 @@ export function MobileNav({ links }: { links: NavLink[] }) {
             </button>
           </div>
           <nav className="mobile-nav-drawer__links" aria-label="Mobile navigation">
-            {links.map((link, index) => {
+            {links.map(link => {
               const isActive = pathname === link.href || pathname.startsWith(`${link.href}/`)
               return (
                 <Link
@@ -96,8 +96,8 @@ export function MobileNav({ links }: { links: NavLink[] }) {
                   className={isActive ? 'mobile-nav-link mobile-nav-link--active' : 'mobile-nav-link'}
                   onClick={() => setOpenPath(null)}
                 >
-                  <span className="spec" aria-hidden="true">{String(index + 1).padStart(2, '0')}</span>
                   <span>{link.label}</span>
+                  <ArrowUpRight size={26} aria-hidden="true" />
                 </Link>
               )
             })}

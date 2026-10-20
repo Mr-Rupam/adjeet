@@ -1,70 +1,114 @@
-.intro { display:grid; background:var(--paper); }
-.introCopy { padding:3rem 1.25rem 2.5rem; }
-.intro h1 { margin:1.3rem 0; font:600 clamp(3.4rem,7vw,7rem)/.98 var(--font-heading); letter-spacing:-.025em; }
-.intro h1 span { color:var(--signal-text); }
-.introCopy > p:not(:first-child) { max-width:39ch; color:var(--ink-muted); font-size:1.05rem; }
-.storyLink { display:inline-flex; min-height:44px; align-items:center; gap:1rem; margin-top:1rem; color:var(--ink); text-decoration:underline; text-underline-offset:6px; }
-.workshop { margin:0; min-width:0; align-self:stretch; }
-.workshop > div { position:relative; height:100%; min-height:310px; }
-.workshop figcaption, .map figcaption { padding:.8rem 1.25rem; color:var(--ink-muted); font-size:.8rem; }
-.story, .coverage { max-width:1320px; margin:auto; padding:4rem 1.25rem; display:grid; gap:2.5rem; }
-.sectionHeading h2 { font:600 clamp(2.5rem,4.8vw,4.5rem)/1.03 var(--font-heading); margin:1rem 0; letter-spacing:-.02em; }
-.sectionHeading > p:last-of-type { color:var(--ink-muted); max-width:38ch; }
-.journey { margin:0; padding:0; list-style:none; }
-.journey li { display:grid; gap:.6rem; padding:1.6rem 0; border-top:1px solid var(--rule); }
-.journey li:last-child { border-bottom:1px solid var(--rule); }
-.journey h3 { font:600 2rem/1.1 var(--font-heading); margin:0 0 .65rem; }
-.journey li p { margin:0; }
-.journey li div p { color:var(--ink-muted); max-width:45ch; }
-.workshopPhotos { margin:0; min-width:0; }
-.workshopPhotos ul { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:.75rem; list-style:none; padding:0; margin:0; }
-.workshopPhotos li { position:relative; aspect-ratio:4 / 3; overflow:hidden; background:var(--rule); }
-.workshopPhotos li:first-child { grid-column:1 / -1; }
-.workshopPhotos figcaption { padding-top:.8rem; color:var(--ink-muted); font-size:12px; }
-.trust { background:var(--signal); color:var(--signal-ink); padding:3.5rem max(1.25rem,calc((100vw - 1256px)/2)); }
-.trust h2 { font:600 clamp(3rem,6.5vw,6rem)/1 var(--font-heading); margin:1.3rem 0 2rem; letter-spacing:-.025em; }
-.trustCopy { max-width:650px; }
-.trustCopy p { font-size:1.08rem; }
-.trustCopy a { margin-top:1rem; }
-.clientWork { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:1rem; list-style:none; padding:0; margin:3.5rem 0 0; }
-.clientWorkImage { display:block; position:relative; aspect-ratio:4 / 5; overflow:hidden; background:var(--rule); }
-.clientWorkName { display:block; padding-top:.7rem; font:500 1.15rem/1.2 var(--font-heading); }
-@media(max-width:767px) { .clientWork { grid-template-columns:repeat(2,minmax(0,1fr)); gap:1.25rem .75rem; margin-top:2.5rem; } }
-.coverage { align-items:center; }
-.coverage ul { display:grid; grid-template-columns:1fr 1fr; padding:0; margin:2rem 0 0; list-style:none; gap:.5rem 1rem; color:var(--ink-muted); font-size:.95rem; }
-.map { margin:0; min-width:0; }
-.map img { display:block; width:100%; height:auto; }
-.map figcaption { padding-left:0; }
-@media(min-width:768px) {
- .intro { grid-template-columns:1fr 1.1fr; padding-bottom:2rem; }
- .introCopy { padding:5rem 2rem 4rem max(2rem,calc((100vw - 1256px)/2)); }
- .workshop > div { min-height:520px; }
- .story, .coverage { padding:6rem 2rem; grid-template-columns:.85fr 1.15fr; gap:4rem; }
- .journey li { grid-template-columns:140px 1fr; gap:1.5rem; padding:2rem 0; }
- .workshopPhotos { grid-column:1 / -1; }
- .workshopPhotos ul { grid-template-columns:repeat(3,minmax(0,1fr)); gap:1rem; }
- .workshopPhotos li:first-child { grid-column:auto; }
- .trust { padding-top:5rem; padding-bottom:5rem; }
- .trustCopy { margin-left:40%; }
+/* About: the founder's story, then the workshop as it is photographed, then
+   the brands. Mobile first; the fascia plate is the homepage's caption device. */
+
+.intro { display: grid; border-bottom: 1px solid var(--rule); background: var(--paper); }
+.introCopy { display: flex; flex-direction: column; justify-content: flex-end; padding: 44px var(--page-gutter) 36px; }
+.intro h1 {
+  margin: 0 0 24px;
+  font-family: var(--font-heading);
+  font-size: clamp(54px, 13vw, 96px);
+  font-weight: 500;
+  line-height: .92;
+  letter-spacing: -.025em;
+  text-transform: uppercase;
+}
+.intro h1 span { color: var(--signal-text); }
+.introCopy > p { max-width: 36ch; color: var(--ink-muted); font-size: 18px; line-height: 1.6; }
+.storyLink {
+  display: inline-flex;
+  width: fit-content;
+  min-height: 44px;
+  align-items: center;
+  gap: 14px;
+  margin-top: 18px;
+  border-bottom: 1px solid currentColor;
+  color: var(--ink);
+  font-size: 15px;
+  font-weight: 500;
+  text-decoration: none;
+}
+.storyLink:hover { color: var(--signal-text); }
+.workshop { min-width: 0; align-self: stretch; margin: 0; }
+.workshop > div { position: relative; aspect-ratio: 1.5; }
+.workshop figcaption { min-height: 44px; padding: 12px var(--page-gutter); background: var(--paper-elevated); color: var(--ink-muted); font-size: 12px; }
+
+.sectionHeading h2,
+.workshopBandHead h2,
+.trustHead h2 {
+  margin: 0;
+  font-family: var(--font-heading);
+  font-size: clamp(44px, 5.4vw, 80px);
+  font-weight: 500;
+  line-height: .98;
+  letter-spacing: -.02em;
+}
+.sectionHeading h2 span,
+.workshopBandHead h2 span { color: var(--signal-text); }
+.sectionHeading > p { max-width: 38ch; margin-top: 18px; color: var(--ink-muted); font-size: 17px; line-height: 1.65; }
+
+.story,
+.coverage { display: grid; max-width: 1320px; gap: 2.5rem; margin: auto; padding: clamp(56px, 8vw, 112px) var(--page-gutter); }
+.journey { margin: 0; padding: 0; border-top: 2px solid var(--ink); list-style: none; }
+.journey li { display: grid; grid-template-columns: 96px minmax(0, 1fr); gap: 20px; padding: 26px 0; border-bottom: 1px solid var(--rule); }
+.marker { margin: 0; padding-top: 4px; color: var(--signal-text); font-size: 13px; font-weight: 500; line-height: 1.35; }
+.journey li:first-child .marker { padding-top: 0; font-family: var(--font-heading); font-size: 34px; font-weight: 600; line-height: 1; }
+.journey h3 { margin: 0 0 8px; font-family: var(--font-heading); font-size: 28px; font-weight: 500; line-height: 1.08; }
+.journey li div p { max-width: 45ch; margin: 0; color: var(--ink-muted); font-size: 16px; }
+
+/* The real workshop gets the width of the page. */
+.workshopBand { padding: clamp(56px, 8vw, 112px) var(--page-gutter); border-block: 1px solid var(--rule); background: var(--paper-elevated); }
+.workshopBandHead { display: grid; max-width: 1240px; gap: 16px; margin: 0 auto clamp(28px, 4vw, 48px); }
+.workshopBandHead p { max-width: 40ch; color: var(--ink-muted); font-size: 17px; line-height: 1.65; }
+.workshopPhotos { max-width: 1240px; margin: 0 auto; }
+.workshopPhotos ul { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; margin: 0; padding: 0; list-style: none; }
+.workshopPhotos li { position: relative; overflow: hidden; aspect-ratio: 4 / 3; background: var(--rule); }
+.workshopPhotos li:first-child { grid-column: 1 / -1; }
+.workshopPhotos figcaption { padding-top: 12px; color: var(--ink-muted); font-size: 13px; }
+
+.trust { padding: clamp(56px, 8vw, 112px) var(--page-gutter); background: var(--night); color: var(--night-ink); }
+.trustHead { display: grid; max-width: 1240px; gap: 24px; margin: 0 auto; }
+.trustHead h2 span { color: var(--glow); }
+.trustCopy p { max-width: 52ch; margin-bottom: 16px; color: var(--night-ink-muted); font-size: 17px; line-height: 1.65; }
+.trustCopy a { margin-top: 8px; }
+.clientWork { display: grid; max-width: 1240px; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 20px 12px; margin: 40px auto 0; padding: 0; list-style: none; }
+.clientWorkImage { position: relative; display: block; overflow: hidden; aspect-ratio: 4 / 5; background: var(--night-elevated); }
+/* The brand on a fascia plate: cerulean, cream lettering, the gold sweep. */
+.clientWorkName {
+  display: block;
+  padding: 10px 12px 12px;
+  border-top: 3px solid var(--gold);
+  background: var(--cerulean-deep);
+  color: var(--night-ink);
+  font-family: var(--font-heading);
+  font-size: 19px;
+  font-weight: 600;
+  line-height: 1.1;
+  letter-spacing: .01em;
+  text-transform: uppercase;
 }
 
-/* Fieldwork: preserve the founder's story, open up the page rhythm. */
-.intro { border-bottom: 1px solid var(--rule); }
-.intro h1 { font-weight: 500; font-size: clamp(64px,8vw,115px); text-transform: uppercase; line-height: .92; margin-block: 28px; }
-.introCopy { padding-left: var(--page-gutter); }
-.intro .workshop > div { height: calc(100% - 48px); }
-.workshop figcaption { min-height: 48px; background: var(--paper-elevated); font-size: 12px; }
-.sectionHeading h2 { font-weight: 500; }
-.journey li > p { color: var(--signal-text); }
-.journey h3 { font-weight: 500; font-size: 34px; }
-.trust { background: var(--night); color: var(--night-ink); }
-.trust > p { color: var(--signal-hot); }
-.trust h2 { font-weight: 500; }
-.trustCopy p { color: var(--night-ink-muted); margin-bottom: 18px; }
-.map img { background: var(--map-paper); }
-@media(max-width:767px) {
-.intro h1 { font-size: clamp(57px,13vw,87px); }
-.intro .workshop > div { min-height: 0; height: auto; aspect-ratio: 1.5; }
-.journey li { grid-template-columns: 100px 1fr; gap: 20px; }
-.journey h3 { font-size: 28px; }.journey li div p { font-size: 15px; }
+.coverage { align-items: center; }
+.coverage ul { display: grid; grid-template-columns: 1fr 1fr; gap: .5rem 1rem; margin: 2rem 0 0; padding: 0; color: var(--ink-muted); font-size: .95rem; list-style: none; }
+.map { min-width: 0; margin: 0; }
+.map img { display: block; width: 100%; height: auto; background: var(--map-paper); }
+.map figcaption { padding: .8rem 0; color: var(--ink-muted); font-size: .8rem; }
+
+@media (min-width: 768px) {
+  .intro { grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr); }
+  .introCopy { padding: 72px 40px 64px max(var(--page-gutter), calc((100vw - 1256px) / 2)); }
+  .intro h1 { font-size: clamp(64px, 7.6vw, 104px); }
+  .workshop > div { height: calc(100% - 44px); min-height: 520px; aspect-ratio: auto; }
+  .workshop figcaption { padding-inline: 20px; }
+  .story,
+  .coverage { grid-template-columns: .85fr 1.15fr; gap: 4rem; }
+  .journey li { grid-template-columns: 150px minmax(0, 1fr); gap: 28px; padding: 30px 0; }
+  .journey li:first-child .marker { font-size: 44px; }
+  .journey h3 { font-size: 34px; }
+  .workshopBandHead { grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr); align-items: end; gap: 48px; }
+  .workshopPhotos ul { grid-template-columns: minmax(0, 2fr) minmax(0, 1fr); grid-template-rows: repeat(2, minmax(0, 1fr)); gap: 14px; }
+  .workshopPhotos li { aspect-ratio: auto; }
+  .workshopPhotos li:first-child { grid-row: 1 / -1; grid-column: 1; aspect-ratio: 4 / 3; }
+  .trustHead { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); align-items: end; gap: 48px; }
+  .clientWork { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 18px; margin-top: 56px; }
+  .clientWorkName { font-size: 22px; }
 }

@@ -5,6 +5,7 @@ import { gsap } from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { useReducedMotion } from './ReducedMotionWrapper'
 import { createMaskedLineReveal, refreshScrollTriggersAfterLayout } from './motion-system'
+import { ENTRY_INTRO_COMPLETE_EVENT, ENTRY_INTRO_FALLBACK_MS } from '@/lib/entry-intro'
 
 if (typeof window !== 'undefined') gsap.registerPlugin(ScrollTrigger)
 
@@ -12,8 +13,10 @@ const DESKTOP = '(min-width: 768px)'
 const PHONE = '(max-width: 767px)'
 
 /**
- * Shutters, light passes and pieces arriving in place echo physical signmaking.
- * Server-rendered content stays visible until animation starts.
+ * Shutters rolling up, light passing over lit work and pieces arriving in
+ * place echo physical signmaking. The hero is never hidden: its photo is the
+ * page's largest paint and must not wait for any animation, so the hero only
+ * moves (never fades) once the optional entry shutter has cleared.
  */
 export function HomeMotion() {
   const prefersReducedMotion = useReducedMotion()
@@ -39,17 +42,12 @@ export function HomeMotion() {
         }))
       })
 
-      // A bright rail marks the beginning of each main chapter.
+      // A bright rail marks the beginning of each paper chapter.
       root.querySelectorAll<HTMLElement>('[data-home-section]').forEach(section => {
         ScrollTrigger.create({
           trigger: section, start: 'top 82%', once: true,
           onEnter: () => section.classList.add('is-traced'),
         })
-      })
-      const facts = root.querySelectorAll<HTMLElement>('[data-home-fact]')
-      if (facts.length) gsap.from(facts, {
-        y: 24, opacity: 0.56, duration: 0.76, stagger: 0.12, ease: 'power3.out',
-        scrollTrigger: { trigger: facts[0], start: 'top 95%', once: true },
       })
 
       root.querySelectorAll<HTMLElement>('[data-home-client]').forEach((client, index) => {
@@ -60,70 +58,26 @@ export function HomeMotion() {
         })
       })
 
-      const workCards = root.querySelectorAll<HTMLElement>('[data-home-card]')
-      media.add(DESKTOP, () => {
-        if (!workCards.length) return
-        gsap.from(workCards, {
-          y: 68, rotate: index => index % 2 === 0 ? -1.2 : 1.2,
-          opacity: 0.8, duration: 1.05, stagger: 0.18, ease: 'power4.out',
-          clearProps: 'transform,opacity',
-          scrollTrigger: { trigger: workCards[0], start: 'top 86%', once: true },
-        })
-      })
-      media.add(PHONE, () => {
-        workCards.forEach(card => gsap.from(card, {
-          y: 42, opacity: 0.82, duration: 0.84, ease: 'power3.out',
-          clearProps: 'transform,opacity',
-          scrollTrigger: { trigger: card, start: 'top 88%', once: true },
-        }))
-      })
+      // Finished shopfronts arrive one at a time, like walking past them.
+      root.querySelectorAll<HTMLElement>('[data-home-card]').forEach(card => gsap.from(card, {
+        y: 48, duration: 0.95, ease: 'power3.out', clearProps: 'transform',
+        scrollTrigger: { trigger: card, start: 'top 88%', once: true },
+      }))
 
-      const serviceCards = root.querySelectorAll<HTMLElement>('[data-home-service]')
-      media.add(DESKTOP, () => {
-        if (!serviceCards.length) return
-        gsap.from(serviceCards, {
-          y: 62, opacity: 0.68, duration: 0.95, stagger: 0.13, ease: 'power4.out',
-          clearProps: 'transform,opacity',
-          scrollTrigger: { trigger: serviceCards[0], start: 'top 87%', once: true },
-        })
-      })
-      media.add(PHONE, () => {
-        serviceCards.forEach(card => gsap.from(card, {
-          y: 38, opacity: 0.76, duration: 0.78, ease: 'power3.out',
-          clearProps: 'transform,opacity',
-          scrollTrigger: { trigger: card, start: 'top 88%', once: true },
-        }))
-      })
-
+      // Each photographed job opens like a shop shutter rolling up.
       root.querySelectorAll<HTMLElement>('[data-home-image]').forEach(frame => {
-        const image = frame.matches('img') ? frame : frame.querySelector<HTMLElement>('img')
+        const image = frame.querySelector<HTMLElement>('img')
         if (!image) return
         gsap.from(image, {
-          clipPath: frame.dataset.homeImage === 'shutter' ? 'inset(100% 0 0 0)' : 'inset(0 100% 0 0)',
-          scale: 1.13, duration: 1.12, ease: 'power3.inOut',
+          clipPath: 'inset(100% 0 0 0)', scale: 1.1, duration: 1.12, ease: 'power3.inOut',
           scrollTrigger: { trigger: frame, start: 'top 87%', once: true },
           onComplete: () => gsap.set(image, { clearProps: 'clipPath,transform' }),
         })
         if (frame.hasAttribute('data-light-surface')) ScrollTrigger.create({
-          trigger: frame, start: 'top 83%', once: true,
+          trigger: frame, start: 'top 70%', once: true,
           onEnter: () => frame.classList.add('is-lit'),
         })
       })
-
-      const workshopMedia = root.querySelector<HTMLElement>('[data-home-workshop-media]')
-      if (workshopMedia) gsap.from(workshopMedia, {
-        clipPath: 'inset(0 100% 0 0)', duration: 1.32, ease: 'power3.inOut',
-        scrollTrigger: { trigger: workshopMedia, start: 'top 86%', once: true },
-        onComplete: () => gsap.set(workshopMedia, { clearProps: 'clipPath' }),
-      })
-      const workshopCopy = root.querySelector<HTMLElement>('[data-home-workshop-copy]')
-      if (workshopCopy) {
-        const supportingCopy = Array.from(workshopCopy.children).filter(node => node.tagName !== 'H2')
-        gsap.from(supportingCopy, {
-          y: 25, opacity: 0.72, duration: 0.78, stagger: 0.12, ease: 'power3.out',
-          scrollTrigger: { trigger: workshopCopy, start: 'top 78%', once: true },
-        })
-      }
 
       const process = root.querySelector<HTMLElement>('[data-home-process]')
       const steps = process?.querySelectorAll<HTMLElement>('[data-home-step]')
@@ -178,57 +132,29 @@ export function HomeMotion() {
       })
     }
 
-    // Start the first reveal after the optional entry sequence has cleared.
+    // The hero settles into place once the entry shutter, if any, has cleared.
+    // Transform only: the text and photo are painted, and stay painted.
     let heroStarted = false
     const startHero = () => {
       if (heroStarted) return
       heroStarted = true
       context.add(() => {
-        const title = root.querySelector<HTMLElement>('[data-hero-title]')
-        const meta = root.querySelector<HTMLElement>('[data-hero-meta]')
-        const lead = root.querySelector<HTMLElement>('[data-hero-lead]')
-        const actions = root.querySelector<HTMLElement>('[data-hero-actions]')
-        const caption = root.querySelector<HTMLElement>('[data-hero-caption]')
-        const image = root.querySelector<HTMLElement>('[data-hero-image]')
-        if (title) {
-          media.add(DESKTOP, () => createMaskedLineReveal(title, { delay: 0.12 }))
-          media.add(PHONE, () => {
-            gsap.from(title, { y: 28, opacity: 0.68, duration: 0.88, ease: 'power4.out' })
-          })
-        }
-        const hero = gsap.timeline({ defaults: { ease: 'power3.out' } })
-        if (meta) hero.from(meta, { x: -24, opacity: 0.55, duration: 0.62 }, 0.04)
-        if (lead) hero.from(lead, { y: 28, opacity: 0.7, duration: 0.78 }, 0.42)
-        if (actions) hero.from(actions, { y: 22, duration: 0.72 }, 0.68)
-        if (caption) hero.from(caption, { y: 26, duration: 0.7 }, 0.91)
-        if (image) {
-          media.add('(min-width: 1024px)', () => {
-            gsap.from(image, {
-              clipPath: 'inset(0 100% 0 0)', scale: 1.16, duration: 1.42,
-              ease: 'power3.inOut',
-              onComplete: () => {
-                gsap.set(image, { clearProps: 'clipPath,transform' })
-                image.closest<HTMLElement>('[data-light-surface]')?.classList.add('is-lit')
-              },
-            })
-          })
-          media.add('(max-width: 1023px)', () => {
-            // The project photo is the compact-screen first impression. Keep it
-            // visible from first paint rather than masking it behind a reveal.
-            image.closest<HTMLElement>('[data-light-surface]')?.classList.add('is-lit')
-          })
-        }
+        const parts = ['[data-hero-lead]', '[data-hero-actions]', '[data-hero-caption]']
+          .map(selector => root.querySelector<HTMLElement>(selector))
+          .filter((part): part is HTMLElement => part !== null)
+        if (parts.length) gsap.from(parts, { y: 18, duration: 0.8, stagger: 0.12, ease: 'power3.out', clearProps: 'transform' })
+        root.querySelector<HTMLElement>('[data-hero-image]')?.closest<HTMLElement>('[data-light-surface]')?.classList.add('is-lit')
       })
     }
 
     const cancelRefresh = refreshScrollTriggersAfterLayout()
     const waitingForLoader = document.documentElement.dataset.entryIntro === 'playing'
-    if (waitingForLoader) window.addEventListener('adjeet:loader-complete', startHero, { once: true })
+    if (waitingForLoader) window.addEventListener(ENTRY_INTRO_COMPLETE_EVENT, startHero, { once: true })
     else startHero()
-    const fallback = waitingForLoader ? window.setTimeout(startHero, 3500) : 0
+    const fallback = waitingForLoader ? window.setTimeout(startHero, ENTRY_INTRO_FALLBACK_MS) : 0
     return () => {
       if (fallback) window.clearTimeout(fallback)
-      window.removeEventListener('adjeet:loader-complete', startHero)
+      window.removeEventListener(ENTRY_INTRO_COMPLETE_EVENT, startHero)
       pointerCleanups.forEach(cleanup => cleanup())
       cancelRefresh()
       media.revert()

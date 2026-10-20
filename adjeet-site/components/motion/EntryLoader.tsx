@@ -5,7 +5,12 @@ import { useEffect, useRef, type CSSProperties } from 'react'
 import { ENTRY_INTRO_COMPLETE_EVENT, ENTRY_INTRO_DURATION_MS } from '@/lib/entry-intro'
 import styles from './EntryLoader.module.css'
 
-/** A first-entry workshop shutter: the real wordmark is the only brand artwork. */
+/**
+ * The entry workshop shutter, shown only on a direct homepage landing (see
+ * EntryIntroScript). The real wordmark is the only brand artwork. It is an
+ * overlay and never holds back the page under it: the logo here loads lazily
+ * at low priority, so it cannot compete with the hero photo for bandwidth.
+ */
 export function EntryLoader() {
   const skipRef = useRef<HTMLButtonElement>(null)
   const finishRef = useRef<(() => void) | null>(null)
@@ -76,7 +81,8 @@ export function EntryLoader() {
           alt="AD JEET, since 1990"
           width={586}
           height={175}
-          priority
+          sizes="(max-width: 480px) 84vw, min(74vw, 610px)"
+          fetchPriority="low"
           className={styles.logo}
         />
         <div className={styles.logoCaption} aria-hidden="true">

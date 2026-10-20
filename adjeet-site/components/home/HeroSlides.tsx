@@ -11,8 +11,10 @@ export type HeroSlide = {
   src: string
   alt: string
   client: string
-  /** Trade line under the client name, e.g. "ACP & LED signage". */
+  /** Trade line under the client name, e.g. "ACP & LED Signage". */
   label: string
+  /** The place the gallery records for this photo, when it records one. */
+  location?: string
   href: string
   /** Where to centre the crop across the photo on phones, which show a narrow strip. Defaults to 50%. */
   phoneFocus?: string
@@ -24,14 +26,15 @@ const SLIDE_MS = 6000
 // landscape or square photo is cropped to its full height and drawn up to about
 // 933px wide on any screen up to that width. Asking for 100vw there would fetch
 // a copy too small for the crop.
-const SIZES = '(max-width: 933px) 934px, (max-width: 1023px) 100vw, 54vw'
+const SIZES = '(max-width: 933px) 934px, (max-width: 1023px) 100vw, 56vw'
 
 /**
- * The hero photo, rotating through a few installations. The first slide is the
- * page's main image and the only one loaded up front; each later slide loads
- * while the one before it is showing, and the rotation waits for it. Rotation
- * stops for reduced motion, pauses while the photo is hovered or focused, and
- * has a pause button.
+ * The hero photo, rotating through shopfronts. The first slide is the page's
+ * main image: it is preloaded at high priority and painted at once, whether or
+ * not the entry shutter is playing over it. Each later slide loads while the
+ * one before it is showing, and the rotation waits for it. Rotation stops for
+ * reduced motion, pauses while the photo is hovered or focused, and has a
+ * pause button.
  */
 export function HeroSlides({ slides }: { slides: HeroSlide[] }) {
   const reducedMotion = useReducedMotion()
@@ -57,6 +60,7 @@ export function HeroSlides({ slides }: { slides: HeroSlide[] }) {
 
   const slide = slides[active]
   const markLoaded = (index: number) => setLoaded(current => new Set(current).add(index))
+  const place = slide.location ? `, ${slide.location}` : ''
 
   return (
     <div
@@ -75,6 +79,7 @@ export function HeroSlides({ slides }: { slides: HeroSlide[] }) {
             alt={item.alt}
             fill
             preload={index === 0}
+            fetchPriority={index === 0 ? 'high' : 'low'}
             sizes={SIZES}
             className={`${styles.coverImage} ${styles.heroSlide}`}
             style={item.phoneFocus ? { '--phone-focus': item.phoneFocus } as CSSProperties : undefined}
@@ -86,7 +91,6 @@ export function HeroSlides({ slides }: { slides: HeroSlide[] }) {
         ))}
       </div>
       <span className={styles.heroShade} aria-hidden="true" />
-      <span className={styles.projectTag}>Out in the world <ArrowUpRight size={19} aria-hidden="true" /></span>
       {rotating && (
         <button
           type="button"
@@ -98,8 +102,8 @@ export function HeroSlides({ slides }: { slides: HeroSlide[] }) {
           {paused ? <Play size={18} aria-hidden="true" /> : <Pause size={18} aria-hidden="true" />}
         </button>
       )}
-      <Link href={slide.href} className={styles.heroProjectCaption} aria-label={`Explore ${slide.client} ${slide.label.replace('&', 'and')}`} data-hero-caption>
-        <span><strong>{slide.client}</strong><span>{slide.label}</span></span>
+      <Link href={slide.href} className={styles.heroProjectCaption} aria-label={`Explore ${slide.client} ${slide.label.replace('&', 'and')}${place}`} data-hero-caption>
+        <span><strong>{slide.client}</strong><span>{slide.label}{slide.location && <> · {slide.location}</>}</span></span>
         <span className={styles.roundArrow}><ArrowUpRight aria-hidden="true" /></span>
       </Link>
     </div>

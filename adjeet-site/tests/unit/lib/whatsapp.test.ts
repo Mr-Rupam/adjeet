@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { buildWhatsAppUrl, defaultWhatsAppUrl } from '@/lib/whatsapp'
+import { buildWhatsAppUrl, defaultWhatsAppUrl, projectEnquiryMessage, projectWhatsAppUrl } from '@/lib/whatsapp'
 
 describe('buildWhatsAppUrl', () => {
   it('produces a wa.me URL with the given phone number', () => {
@@ -66,5 +66,40 @@ describe('defaultWhatsAppUrl', () => {
   it('ignores blank context rather than emitting an empty clause', () => {
     const text = message(defaultWhatsAppUrl({ service: '  ', city: '' }))
     expect(text).toBe('Hi AD JEET, I found you on your website. Could you send me a quote?')
+  })
+})
+
+describe('projectWhatsAppUrl', () => {
+  function message(url: string) {
+    return new URL(url).searchParams.get('text') ?? ''
+  }
+  const tanya = { id: 'tanyamakeovers-154', client: 'Tanyamakeovers', label: 'Lit studio lettering, Siliguri' }
+
+  it('names the example the buyer was looking at, by its public reference', () => {
+    expect(projectEnquiryMessage(tanya)).toBe(
+      'Hi AD JEET, I am interested in a sign like this example: Tanyamakeovers, Lit studio lettering, Siliguri (tanyamakeovers-154). My shop is in ___. Can you help me choose?',
+    )
+    expect(message(projectWhatsAppUrl(tanya))).toBe(projectEnquiryMessage(tanya))
+  })
+
+  it('encodes the message so the reference survives the URL', () => {
+    const url = projectWhatsAppUrl({ id: 'acc-125', client: 'ACC', label: 'ACP & LED Signage, Dalkhola' })
+    expect(url).toMatch(/^https:\/\/wa\.me\/\d+\?text=/)
+    expect(url).not.toContain(' ')
+    expect(url).toContain(encodeURIComponent('ACP & LED Signage'))
+    expect(message(url)).toContain('(acc-125)')
+  })
+
+  it('falls back to the general enquiry without a reference', () => {
+    for (const reference of [undefined, null, { id: '  ', client: 'ACC', label: '' }]) {
+      expect(projectWhatsAppUrl(reference)).toBe(defaultWhatsAppUrl())
+    }
+  })
+
+  it('never strands punctuation when the label is empty', () => {
+    const text = projectEnquiryMessage({ id: 'x-1', client: 'ACC', label: '' })
+    expect(text).toContain('example: ACC (x-1).')
+    expect(text).not.toMatch(/\s[.,!?]/)
+    expect(text).not.toMatch(/,\s*\(/)
   })
 })

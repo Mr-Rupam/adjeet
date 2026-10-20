@@ -1,11 +1,21 @@
 'use client'
 
 import { useEffect, useState, useCallback, useRef, useId } from 'react'
+import { ArrowLeft, ArrowRight, X } from 'lucide-react'
 import { LoadingImage as Image } from '@/components/ui/LoadingImage'
+import { WhatsAppLink } from '@/components/ui/WhatsAppLink'
+import { WhatsAppIcon } from '@/components/ui/WhatsAppIcon'
+import { projectWhatsAppUrl, type ProjectReference } from '@/lib/whatsapp'
 
 export interface LightboxPhoto {
   src: string
   alt: string
+  /**
+   * The public reference of the photographed job, carried into the enquiry so
+   * the workshop knows which example the buyer means. Without one, the action
+   * falls back to the general enquiry.
+   */
+  reference?: ProjectReference
 }
 
 interface LightboxProps {
@@ -13,6 +23,9 @@ interface LightboxProps {
   initialIndex: number
   onClose: () => void
 }
+
+/** Everything a keyboard user can reach inside the viewer, in DOM order. */
+const FOCUSABLE = 'a[href], button:not([disabled])'
 
 export function Lightbox({ photos, initialIndex, onClose }: LightboxProps) {
   const [idx, setIdx] = useState(() =>
@@ -46,22 +59,19 @@ export function Lightbox({ photos, initialIndex, onClose }: LightboxProps) {
       if (e.key === 'ArrowLeft') { prev(); return }
 
       if (e.key === 'Tab') {
-        const focusable = Array.from(
-          dialogRef.current?.querySelectorAll<HTMLElement>('button:not([disabled])') ?? []
-        )
+        const focusable = Array.from(dialogRef.current?.querySelectorAll<HTMLElement>(FOCUSABLE) ?? [])
         if (focusable.length === 0) return
         const first = focusable[0]
         const last = focusable[focusable.length - 1]
+        const inside = dialogRef.current?.contains(document.activeElement) ?? false
         if (e.shiftKey) {
-          if (document.activeElement === first) {
+          if (document.activeElement === first || !inside) {
             e.preventDefault()
             last.focus()
           }
-        } else {
-          if (document.activeElement === last) {
-            e.preventDefault()
-            first.focus()
-          }
+        } else if (document.activeElement === last || !inside) {
+          e.preventDefault()
+          first.focus()
         }
       }
     }
@@ -70,6 +80,7 @@ export function Lightbox({ photos, initialIndex, onClose }: LightboxProps) {
   }, [onClose, next, prev])
 
   const photo = photos[idx]
+  const reference = photo.reference
 
   return (
     <div
@@ -78,60 +89,53 @@ export function Lightbox({ photos, initialIndex, onClose }: LightboxProps) {
       aria-modal="true"
       aria-label="Photo viewer"
       aria-describedby={captionId}
-      className="fixed inset-0 z-[100] flex items-center justify-center bg-night/95 px-4 py-6 backdrop-blur-md"
+      className="lightbox"
+      data-photo-id={reference?.id}
     >
-      {/* Close */}
-      <button
-        ref={closeRef}
-        onClick={onClose}
-        aria-label="Close photo viewer"
-        className="absolute right-3 top-3 z-10 inline-flex h-11 w-11 items-center justify-center button-shape border border-night-rule bg-night/60 text-night-ink backdrop-blur-sm transition-colors hover:border-signal hover:text-signal focus-visible:outline-night-ink"
-      >
-        ✕
+      <button ref={closeRef} type="button" onClick={onClose} aria-label="Close photo viewer" className="lightbox__control lightbox__close">
+        <X size={22} aria-hidden="true" />
       </button>
 
-      {/* Prev */}
-      {total > 1 && (
-        <button
-          onClick={prev}
-          aria-label="Previous photo"
-          className="absolute left-2 top-1/2 z-10 inline-flex h-11 w-11 -translate-y-1/2 items-center justify-center button-shape border border-night-rule bg-night/60 text-lg text-night-ink backdrop-blur-sm transition-colors hover:border-signal hover:text-signal focus-visible:outline-night-ink"
-        >
-          ←
-        </button>
-      )}
-
-      {/* Image */}
-      <div className="relative flex w-[calc(100vw-2rem)] max-w-5xl flex-col items-center sm:w-[calc(100vw-8rem)]">
-        <div className="flex max-h-[72dvh] w-full items-center justify-center overflow-hidden border border-night-rule bg-black/20 shadow-[0_24px_80px_rgb(0_0_0_/_35%)]">
+      <figure className="lightbox__figure">
+        <div className="lightbox__frame">
           <Image
             src={photo.src}
             alt={photo.alt}
             width={1200}
             height={800}
             sizes="(max-width: 640px) calc(100vw - 2rem), (max-width: 1024px) calc(100vw - 8rem), 1024px"
-            className="max-h-[72dvh] w-full object-contain"
-            priority
+            className="lightbox__image"
+            preload
           />
         </div>
-        <p id={captionId} className="mt-3 max-w-[52ch] text-center text-sm text-night-ink-muted">{photo.alt}</p>
-      </div>
-
-      {/* Next */}
-      {total > 1 && (
-        <button
-          onClick={next}
-          aria-label="Next photo"
-          className="absolute right-2 top-1/2 z-10 inline-flex h-11 w-11 -translate-y-1/2 items-center justify-center button-shape border border-night-rule bg-night/60 text-lg text-night-ink backdrop-blur-sm transition-colors hover:border-signal hover:text-signal focus-visible:outline-night-ink"
-        >
-          →
-        </button>
-      )}
-
-      {/* Counter */}
-      <p className="absolute bottom-4 text-xs text-night-ink-muted">
-        {idx + 1} / {total}
-      </p>
+        <figcaption className="lightbox__caption">
+          <div className="lightbox__text">
+            {reference && <p className="lightbox__client">{reference.client}<span>{reference.label}</span></p>}
+            <p id={captionId} className="lightbox__alt">{photo.alt}</p>
+          </div>
+          <div className="lightbox__actions">
+            {total > 1 && (
+              <div className="lightbox__stepper">
+                <button type="button" onClick={prev} aria-label="Previous photo" className="lightbox__control">
+                  <ArrowLeft size={20} aria-hidden="true" />
+                </button>
+                <p className="lightbox__count" aria-live="polite">{idx + 1} / {total}</p>
+                <button type="button" onClick={next} aria-label="Next photo" className="lightbox__control">
+                  <ArrowRight size={20} aria-hidden="true" />
+                </button>
+              </div>
+            )}
+            <WhatsAppLink
+              href={projectWhatsAppUrl(reference)}
+              source={reference ? `photo-viewer:${reference.id}` : 'photo-viewer'}
+              className="lightbox__ask"
+            >
+              <WhatsAppIcon />
+              <span>Ask about a sign like this</span>
+            </WhatsAppLink>
+          </div>
+        </figcaption>
+      </figure>
     </div>
   )
 }

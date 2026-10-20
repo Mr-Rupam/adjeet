@@ -43,7 +43,6 @@ export function ClientStreet() {
       <div className={styles.inner}>
         <div className={styles.intro}>
           <div>
-            <p className={styles.kicker}>02 / Client history</p>
             <h2 id="client-history-heading" data-home-title>Names you know.<br /><span>Work you can&nbsp;see.</span></h2>
           </div>
           <div className={styles.introAside}>

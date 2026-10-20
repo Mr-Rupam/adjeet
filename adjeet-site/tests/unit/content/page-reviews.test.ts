@@ -12,8 +12,8 @@ describe('page review dates', () => {
 
   it('uses the site review unless a page has its own date', () => {
     expect(reviewedOn('/services/flex-printing')).toBe(SITE_REVIEWED)
-    expect(reviewedOn('/')).toBe(SITE_REVIEWED)
-    expect(reviewedOn('/contact')).toBe('2026-09-25')
+    expect(reviewedOn('/')).toBe('2026-10-20')
+    expect(reviewedOn('/contact')).toBe('2026-10-20')
     expect(reviewedOn('/services/one-way-vision')).toBe('2026-09-24')
   })
 
