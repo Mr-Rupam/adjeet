@@ -6,6 +6,14 @@ import { WhatsAppLink } from '@/components/ui/WhatsAppLink'
 const WHATSAPP_DISPLAY = business.phoneDisplay
 const WHATSAPP_HREF = `https://wa.me/${business.phone.replace('+', '')}`
 
+/** Plain descriptive names, as people search for them. */
+const MAIN_TRADES = [
+  { href: '/services/glow-sign-boards', label: 'Glow sign boards' },
+  { href: '/services/acp-led-signage', label: 'ACP and 3D LED letters' },
+  { href: '/services/flex-printing', label: 'Flex printing' },
+  { href: '/services/vehicle-branding', label: 'Vehicle branding' },
+]
+
 export function Footer() {
   return (
     <footer className="site-footer section-inverse mt-auto overflow-hidden text-night-ink">
@@ -20,8 +28,10 @@ export function Footer() {
 
         <div>
           <p className="spec mb-3 text-signal-hot">Find your way</p>
+          {/* Room here for the pages still to come, such as /for-brands. */}
           <nav aria-label="Footer navigation" className="grid md:gap-2.5">
             <Link href="/services" className="footer-link">Services</Link>
+            <Link href="/areas" className="footer-link">Areas we cover</Link>
             <Link href="/portfolio" className="footer-link">Portfolio</Link>
             <Link href="/about" className="footer-link">Our story</Link>
             <Link href="/contact" className="footer-link">Start a project</Link>
@@ -42,6 +52,16 @@ export function Footer() {
             <a href={"tel:" + business.phone} className="footer-link" aria-label={`Call ${WHATSAPP_DISPLAY}`}>Call</a>
           </div>
           <a href={"mailto:" + business.email} className="footer-link max-w-full break-all text-sm">{business.email}</a>
+        </div>
+
+        {/* The four trades most people search for, on every page, so each one is a link away. */}
+        <div className="col-span-2 border-t border-night-rule pt-6 md:col-span-3">
+          <p className="spec mb-2 text-signal-hot">What we make</p>
+          <nav aria-label="Main trades" className="grid grid-cols-2 gap-x-5 text-sm md:flex md:flex-wrap md:gap-x-10">
+            {MAIN_TRADES.map(trade => (
+              <Link key={trade.href} href={trade.href} className="footer-link">{trade.label}</Link>
+            ))}
+          </nav>
         </div>
       </div>
 

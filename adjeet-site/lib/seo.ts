@@ -18,28 +18,50 @@ export const BUSINESS_ID = `${siteConfig.url}/#business`
 export const WEBSITE_ID = `${siteConfig.url}/#website`
 export const FOUNDER_ID = `${siteConfig.url}/about#founder`
 
+/** The workshop gate, photographed; the About page shows the same image. */
+const WORKSHOP_PHOTO = '/images/workshop/workshop-gate.webp'
+
+/** The languages enquiries are handled in, as BCP 47 codes with their names. */
+const KNOWS_LANGUAGE = [
+  { '@type': 'Language', name: 'English', alternateName: 'en' },
+  { '@type': 'Language', name: 'Bengali', alternateName: 'bn' },
+  { '@type': 'Language', name: 'Hindi', alternateName: 'hi' },
+]
+
 /** The canonical URL for a site path, matching `alternates.canonical`. */
 function canonicalUrl(path: string): string {
   return path === '/' ? siteConfig.url : siteConfig.url + path
 }
 
-export function buildPageMetadata({ title, description, path }: {
+/** The site-wide link preview, used by any page without a project photo of its own. */
+const DEFAULT_SHARE_IMAGE = { url: siteConfig.ogImage, alt: 'Ambuja Cement ACP and LED signage by AD JEET' }
+
+export function buildPageMetadata({ title, description, path, image, indexable = true }: {
   title: string
   description: string
   path: string
+  /** The page's own project photo for link previews, as a JPEG under /images/share. */
+  image?: { url: string; alt: string }
+  /**
+   * False for a page that is live for visitors but not yet worth indexing,
+   * such as a town page below its quality gate. Links on it are still followed.
+   */
+  indexable?: boolean
 }): Metadata {
   const fullTitle = `${title} | ${siteConfig.name}`
   const url = canonicalUrl(path)
+  const share = image ?? DEFAULT_SHARE_IMAGE
   return {
     title: { absolute: fullTitle },
     description,
     alternates: { canonical: url },
+    ...(indexable ? {} : { robots: { index: false, follow: true } }),
     openGraph: {
       title: fullTitle, description, url, siteName: siteConfig.name,
       type: 'website', locale: 'en_IN',
-      images: [{ url: siteConfig.ogImage, alt: 'Ambuja Cement ACP and LED signage by AD JEET' }],
+      images: [share],
     },
-    twitter: { card: 'summary_large_image', title: fullTitle, description, images: [siteConfig.ogImage] },
+    twitter: { card: 'summary_large_image', title: fullTitle, description, images: [share.url] },
   }
 }
 
@@ -50,11 +72,12 @@ export function jsonLdString(schema: unknown): string {
   return JSON.stringify(schema).replace(/</g, '\\u003c')
 }
 
-export function generateServiceMetadata(service: Service): Metadata {
+export function generateServiceMetadata(service: Service, image?: { url: string; alt: string }): Metadata {
   return buildPageMetadata({
     title: service.seoTitle,
     description: service.metaDescription,
     path: `/services/${service.slug}`,
+    image,
   })
 }
 
@@ -93,7 +116,8 @@ export function buildLocalBusinessJsonLd() {
     telephone: business.phone,
     email: business.email,
     logo: siteConfig.url + business.logo,
-    image: siteConfig.url + siteConfig.ogImage,
+    // A finished installation and the workshop itself, both photographed.
+    image: [siteConfig.url + siteConfig.ogImage, siteConfig.url + WORKSHOP_PHOTO],
     foundingDate: String(business.foundingYear),
     founder: { '@type': 'Person', '@id': FOUNDER_ID, name: business.founder },
     // Matches the Google Business Profile listing, including its verified pin.
@@ -106,8 +130,24 @@ export function buildLocalBusinessJsonLd() {
       addressCountry: 'IN',
     },
     geo: { '@type': 'GeoCoordinates', ...business.geo },
+    // The second address, as printed in the footer and on the contact page.
+    location: {
+      '@type': 'Place',
+      name: `${siteConfig.name} office`,
+      address: {
+        '@type': 'PostalAddress',
+        streetAddress: business.office,
+        addressLocality: business.city,
+        addressRegion: business.region,
+        postalCode: business.officePostalCode,
+        addressCountry: 'IN',
+      },
+    },
     hasMap: business.mapsUrl,
+    // Only profiles that are live and recorded in this repository. Add each
+    // directory listing here once it exists (see local-listing-kit.md).
     sameAs: [business.mapsUrl],
+    knowsLanguage: KNOWS_LANGUAGE,
     openingHoursSpecification: {
       '@type': 'OpeningHoursSpecification',
       dayOfWeek: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'],
@@ -127,18 +167,37 @@ export function buildLocalBusinessJsonLd() {
   }
 }
 
-export function buildServiceJsonLd(service: Service, location?: { city: string; path: string; description: string }) {
-  const url = siteConfig.url + (location?.path ?? `/services/${service.slug}`)
+/** A town a page serves, as schema.org reads it: the town and the state it is in. */
+export interface ServedTown {
+  name: string
+  state: string
+}
+
+export function buildCityJsonLd(town: ServedTown) {
+  return {
+    '@type': 'City',
+    name: town.name,
+    containedInPlace: { '@type': 'State', name: town.state },
+  }
+}
+
+/**
+ * A trade, either across the whole coverage list (its service page) or for one
+ * town (a town page, which carries one node per trade it describes). Town nodes
+ * get their own `@id` per trade, because one page can describe several.
+ */
+export function buildServiceJsonLd(service: Service, local?: { town: ServedTown; path: string; description: string }) {
+  const url = siteConfig.url + (local?.path ?? `/services/${service.slug}`)
   return {
     '@context': 'https://schema.org',
     '@type': 'Service',
-    '@id': `${url}#service`,
+    '@id': local ? `${url}#service-${service.slug}` : `${url}#service`,
     url,
-    name: location ? `${service.name} in ${location.city}` : service.name,
+    name: local ? `${service.name} in ${local.town.name}` : service.name,
     alternateName: service.alternateNames,
-    description: location?.description ?? service.answer,
+    description: local?.description ?? service.answer,
     provider: { '@id': BUSINESS_ID },
-    areaServed: location ? [location.city] : COVERAGE_AREAS.map(a => a.name),
+    areaServed: local ? [buildCityJsonLd(local.town)] : COVERAGE_AREAS.map(a => a.name),
     serviceType: service.name,
   }
 }

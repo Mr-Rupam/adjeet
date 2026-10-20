@@ -24,15 +24,16 @@ AD-JEET is a marketing website for a North Bengal signage company. The entire pr
 
 - `app/api/lead/route.ts` is the lead form submission pipeline
 - `app/api/chatbot/route.ts` is the chatbot response handler
-- `components/sections/LeadForm.tsx` is the lead form UI, on `/contact` and on the 27 regional pages. It takes optional `defaultCity` / `defaultService` props to prefill, and still reads `?city=` from the URL when they are absent
+- `components/sections/LeadForm.tsx` is the lead form UI, on `/contact`, every service page, `/areas` and the town pages under it (through `components/areas/BriefForm.tsx`). It takes optional `defaultCity` / `defaultService` props to prefill, and still reads `?city=` from the URL when they are absent
 - `design/tokens.css` holds all design tokens (colours, spacing, type scale)
 - `lib/lead-schema.ts` is the Zod schema for lead form validation (add cities/services here)
 - `lib/env.ts` gives validated env var access via `@t3-oss/env-nextjs`
 
 ## Common Tasks
 
-- **Add a city to the lead form:** edit `lib/lead-schema.ts` → `city` enum. If the city also gets regional pages, add the same label to `CITY_LABELS` in `content/programmatic.ts`. The two lists are maintained separately, and a label missing from the enum silently drops the regional page's prefill (it degrades to an empty dropdown rather than failing)
-- **Add a regional service-area page:** add a brief to `briefs` in `content/programmatic.ts`. `localBrief` is the only per-page content and it leads the page, so write it for that town specifically; the rest of the page is shared
+- **Add a city to the lead form:** edit `lib/lead-schema.ts` → `city` enum. A town page's `leadCity` in `content/areas.ts` must be one of those values, and the tests fail if it is not
+- **Add a town page:** add it to `TOWNS` in `content/areas.ts`, with only photographs whose place `content/gallery.ts` records. It is indexed (sitemap, llms.txt, no `noindex`) only when `indexable` is true, which the SEO plan's gate decides: two or more documented local jobs, 600+ words and 60%+ text of its own, measured by `tests/unit/app/areas-pages.test.tsx`. `/areas` lists every coverage place the same way: never add counts, grades or evidence badges per place
+- **The old regional URLs** (`/glow-sign-board-in-siliguri` and the other 26) are permanent redirects listed in `content/legacy-regional.ts` and applied in `next.config.ts`. Never reuse one of those paths for a page
 - **Add a service:** edit `content/services.ts`
 - **Change design tokens:** edit `design/tokens.css`
 - **Update email recipient:** edit `from`/`to` in `app/api/lead/route.ts`
