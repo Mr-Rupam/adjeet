@@ -16,7 +16,7 @@ Production delivery has not been verified with a real enquiry. Every automated t
 - Limiter: 5 per hour per IP and 3 owner notifications per day per phone (hashed), both on the existing Upstash database, both failing open with a sanitised warning.
 - Turnstile: verified within 2 seconds; with a live secret the solved hostname must be one of the allowed origins.
 - Names: letters and marks in any script, plus space, dot, hyphen, apostrophe and the Bengali joiners. No digits, links or control characters (CR, LF, tab).
-- Form: unspecified urgency by default, a "help choosing" option, a draft kept on any failure, a fresh CAPTCHA token for each retry, the reference shown when receipt is uncertain, and only city and timeline sent to analytics on a confirmed receipt.
+- Form: unspecified urgency by default, a "help choosing" option, an optional "Best time to call" request (Morning, Afternoon, Evening, Any time; unselected sends nothing; stored and shown to the owner, never sent to analytics), a draft kept on any failure, a fresh CAPTCHA token for each retry, the reference shown when receipt is uncertain, and only city and timeline sent to analytics on a confirmed receipt.
 - Source labels: allowlisted landing page and UTM labels held in page memory only, stored with the enquiry, never free text.
 - MongoDB: a rejected first connection is not cached.
 

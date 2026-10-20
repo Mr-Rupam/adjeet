@@ -1,6 +1,6 @@
 import type { LeadInput } from '@/lib/lead-schema'
 
-type BriefFields = Pick<LeadInput, 'name' | 'phone' | 'city' | 'serviceInterest' | 'timeline' | 'message'>
+type BriefFields = Pick<LeadInput, 'name' | 'phone' | 'city' | 'serviceInterest' | 'timeline' | 'message' | 'bestTimeToCall'>
 
 /**
  * The visitor's brief, normalised. The form uses it to decide whether a retry
@@ -8,6 +8,10 @@ type BriefFields = Pick<LeadInput, 'name' | 'phone' | 'city' | 'serviceInterest'
  * check and the stored record, so the two can never disagree. A new form
  * field goes here once, then into the Sheet row and notification text in
  * app/api/lead/route.ts.
+ *
+ * An optional choice the visitor left alone has no key at all, rather than an
+ * empty one, so a brief without it hashes and compares exactly as it did
+ * before the field existed.
  */
 export function leadBrief(lead: BriefFields) {
   return {
@@ -17,6 +21,7 @@ export function leadBrief(lead: BriefFields) {
     serviceInterest: [...new Set(lead.serviceInterest)].sort(),
     timeline: lead.timeline,
     message: lead.message?.trim() ?? '',
+    ...(lead.bestTimeToCall ? { bestTimeToCall: lead.bestTimeToCall } : {}),
   }
 }
 export type LeadBrief = ReturnType<typeof leadBrief>
