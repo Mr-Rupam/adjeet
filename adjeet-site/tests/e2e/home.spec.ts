@@ -9,13 +9,14 @@ test.describe('Home page', () => {
     await page.reload()
   })
 
-  // Since the 1612d04 redesign the hero pairs the proposition with a real
-  // installation (Ambuja Cement); the workshop scene moved to its own section.
-  test('uses one clear hero proposition beside a real installation', async ({ page }) => {
+  // The storefront homepage (2026-10-20) keeps the strong H1 and names the
+  // trade and the town straight under it, beside a photographed shopfront.
+  test('uses one clear hero proposition beside a real shopfront', async ({ page }) => {
     const hero = page.locator('#hero-section')
     await expect(hero.getByRole('heading', { level: 1, name: /sign boards that get you noticed/i })).toBeVisible()
     await expect(page.getByRole('heading', { level: 1 })).toHaveCount(1)
-    await expect(hero.getByText(/designed, fabricated and installed from our siliguri workshop/i)).toBeVisible()
+    await expect(hero.getByText(/sign board makers in siliguri, since 1990/i)).toBeVisible()
+    await expect(hero.getByText(/send a photo of your shop to start/i)).toBeVisible()
     await expect(hero.getByRole('img', { name: /ambuja cement/i })).toBeVisible()
   })
 
@@ -27,7 +28,10 @@ test.describe('Home page', () => {
     await expect(clientHistory.locator('li a')).toHaveCount(0)
   })
 
-  test('changes the matched hero scene with the global theme on one stable media surface', async ({ page }) => {
+  // The workshop film left the homepage on 2026-10-20 (the storefront page
+  // shows the real workshop photograph instead) and leads the About page.
+  test('changes the matched workshop scene with the global theme on one stable media surface', async ({ page }) => {
+    await page.goto('/about')
     const scene = page.getByTestId('hero-scene')
     await expect(scene).toHaveAttribute('data-time', 'light')
     await expect(page.getByTestId('hero-day-layer')).toHaveAttribute('data-visible', 'true')
@@ -73,11 +77,11 @@ test.describe('Home page', () => {
     const waLink = page.getByRole('link', { name: /whatsapp your project/i }).first()
     await expect(waLink).toBeVisible()
     expect(await waLink.getAttribute('href')).toMatch(/^https:\/\/wa\.me\//)
-    await expect(page.locator('#hero-section').getByRole('link', { name: /explore the work/i })).toHaveAttribute('href', '#selected-work')
+    await expect(page.locator('#hero-section').getByRole('link', { name: /see finished shopfronts/i })).toHaveAttribute('href', '#selected-work')
   })
 
   test('keeps real work separate from generated visual direction', async ({ page }) => {
-    await expect(page.getByRole('heading', { name: /you've probably seen our work/i })).toBeVisible()
+    await expect(page.getByRole('heading', { name: /finished shopfronts.*real jobs/i })).toBeVisible()
     await expect(page.getByRole('img', { name: /ambuja cement/i })).toBeVisible()
     // The selected work changes with the gallery (068759d), so check that every
     // image in it is a documented project photo rather than naming particular ones.
@@ -87,16 +91,34 @@ test.describe('Home page', () => {
     for (const alt of await workImages.evaluateAll(images => images.map(image => image.getAttribute('alt')))) {
       expect(galleryAlts.has(alt ?? ''), `${alt} is a gallery project photo`).toBe(true)
     }
-    // The generated workshop scene carries a visualisation label (1612d04).
-    await expect(page.getByText(/workshop visualisation/i)).toBeVisible()
+    // The homepage shows the workshop as photographed; no generated image is on it.
+    await expect(page.getByText('The AD JEET workshop, Siliguri. Site photograph.')).toBeVisible()
+    await expect(page.getByText(/visualisation/i)).toHaveCount(0)
   })
 
-  test('organises services into three paths and preserves the all-services route', async ({ page }) => {
-    await expect(page.getByRole('heading', { name: /signage, print & branding/i })).toBeVisible()
-    await expect(page.getByRole('link', { name: /your storefront/i })).toHaveAttribute('href', '/services#storefront')
-    await expect(page.getByRole('link', { name: /your next campaign/i })).toHaveAttribute('href', '/services#campaign')
-    await expect(page.getByRole('link', { name: /your space or event/i })).toHaveAttribute('href', '/services#space-event')
-    await expect(page.getByRole('link', { name: /all 10 services/i })).toHaveAttribute('href', '/services')
+  test('compares the two main sign choices and links the main trades', async ({ page }) => {
+    const choices = page.locator('#services')
+    await expect(choices.getByRole('heading', { level: 2, name: /glow sign board.*or led letters/i })).toBeVisible()
+    await expect(choices.getByRole('heading', { level: 3, name: 'Glow sign board' })).toBeVisible()
+    await expect(choices.getByRole('heading', { level: 3, name: 'ACP board with 3D LED letters' })).toBeVisible()
+    for (const slug of ['glow-sign-boards', 'acp-led-signage', 'flex-printing', 'vehicle-branding']) {
+      await expect(page.locator(`#services a[href="/services/${slug}"]`)).toHaveCount(1)
+    }
+    await expect(choices.getByRole('link', { name: /every shopfront option/i })).toHaveAttribute('href', '/services#storefront')
+    await expect(choices.getByRole('link', { name: /all 10 services/i })).toHaveAttribute('href', '/services')
+    await expect(page.locator('#areas').getByRole('link', { name: /every area we serve/i })).toHaveAttribute('href', '/areas')
+  })
+
+  test('each finished shopfront asks about a sign like it, by its gallery reference', async ({ page }) => {
+    const examples = page.locator('#selected-work li')
+    await expect(examples).toHaveCount(3)
+    const ids = ['tanyamakeovers-154', 'acc-125', 'anchor-by-panasonic-112']
+    for (const [index, id] of ids.entries()) {
+      const ask = examples.nth(index).getByRole('link', { name: /ask about a sign like this/i })
+      const text = new URL((await ask.getAttribute('href'))!).searchParams.get('text')
+      expect(text).toContain(`(${id})`)
+      expect(text).toMatch(/^Hi AD JEET, I am interested in a sign like this example: /)
+    }
   })
 
   test('shows the named coverage places without claiming a false administrative grouping', async ({ page }) => {

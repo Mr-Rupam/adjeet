@@ -13,7 +13,7 @@ test('the hero opens on Ambuja, rotates to other work and can be paused', async 
   test.setTimeout(60000)
   await page.setViewportSize({ width: 1440, height: 900 })
   await page.goto('/')
-  await expect(caption(page)).toHaveAccessibleName('Explore Ambuja Cement ACP and LED signage')
+  await expect(caption(page)).toHaveAccessibleName('Explore Ambuja Cement ACP and LED Signage, Kushmandi')
   await expect(page.locator('#hero-section [data-hero-image]')).toHaveCount(1)
 
   // Keep the pointer and focus off the photo, which would hold the rotation.
@@ -41,5 +41,5 @@ test('reduced motion keeps the first photo and loads no others', async ({ page }
   await page.waitForTimeout(1000)
   await expect(page.locator('#hero-section [data-hero-slide]')).toHaveCount(1)
   await expect(page.getByRole('button', { name: /photo slideshow/ })).toHaveCount(0)
-  await expect(caption(page)).toHaveAccessibleName('Explore Ambuja Cement ACP and LED signage')
+  await expect(caption(page)).toHaveAccessibleName('Explore Ambuja Cement ACP and LED Signage, Kushmandi')
 })
