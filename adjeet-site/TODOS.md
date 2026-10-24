@@ -22,9 +22,9 @@ film, which stays on /about and still follows the theme switch there. If the
 owner wants the film back on the homepage, it belongs inside the process
 section, labelled as a visualisation.
 
-### [ ] /areas link depends on the areas pull request
-The homepage's "Every area we serve" link points at /areas, which a separate
-pull request creates. Until it merges, that link returns the 404 page.
+### [x] /areas link depends on the areas pull request
+**Verified 2026-10-24.** The areas change is merged (#37) and `/areas` returns
+HTTP 200 on the live site. The homepage link resolves.
 
 ### [ ] Owner: confirm the three shopfront examples
 The homepage shows tanyamakeovers-154, acc-125 and anchor-by-panasonic-112
@@ -217,7 +217,11 @@ client's socket, so `patches/next+16.2.6.patch` was deleted with the upgrade
 Next release brings the hang back, `tests/e2e/image-optimizer.spec.ts` fails on
 a fresh production server; regenerate a patch with `npx patch-package next`.
 
-### [ ] P2: `/api/lead` server checks are no longer covered by e2e
+### [x] P2: `/api/lead` server checks are no longer covered by e2e
+**Covered 2026-10-24.** `lead-origin.test.ts` and `lead-receipt.test.ts`
+exercise the real route with isolated providers: origin, validation, CAPTCHA
+hostname, durable acknowledgement, retries and deadlines. Browser tests
+remain intercepted so they cannot create real customer records.
 The e2e lead form specs now answer `/api/lead` themselves (the real route
 verifies the token with Cloudflare from Node, and with `.env.local` loaded it
 would store a real lead and send notifications). The route's origin check,

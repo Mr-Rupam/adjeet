@@ -42,7 +42,7 @@ type LeadRecord = LeadBrief & {
   stage: 'received'
   createdAt: Date
 }
-type MongoOutcome = { status: 'saved' | 'replay' | 'conflict' } | { status: 'failed'; reason: string }
+type MongoOutcome = { status: 'saved' | 'replay' | 'conflict' } | { status: 'failed' | 'reference-unverified'; reason: string }
 type BackupOutcome = SheetOutcome | { status: 'skipped' }
 
 const RECOVERY = 'Please retry, or send your brief on WhatsApp.'
@@ -152,6 +152,7 @@ async function verifyCaptcha(token: string, ip: string, secret: string, ms: numb
 async function saveToMongo(record: LeadRecord, ms: number): Promise<MongoOutcome> {
   if (!process.env.MONGODB_URI) return { status: 'failed', reason: 'unconfigured' }
   const stage = deadlineIn(ms)
+  let duplicateObserved = false
   try {
     return await bounded<MongoOutcome>(async () => {
       const client = await getClientPromise()
@@ -162,13 +163,16 @@ async function saveToMongo(record: LeadRecord, ms: number): Promise<MongoOutcome
       } catch (error) {
         // The reference is the _id, so a retry of a saved enquiry lands here.
         if ((error as { code?: unknown } | null)?.code !== 11000) throw error
+        duplicateObserved = true
         const previous = await leads.findOne({ _id: record._id }, { timeoutMS: stage.left() })
         if (!previous) throw error
         return { status: previous.payloadHash === record.payloadHash ? 'replay' : 'conflict' }
       }
     }, ms)
   } catch (error) {
-    return { status: 'failed', reason: category(error) }
+    // Keep this state outside the bounded task: a failed or timed-out lookup
+    // must not let a different brief reach the fallback with an existing ID.
+    return { status: duplicateObserved ? 'reference-unverified' : 'failed', reason: category(error) }
   }
 }
 
@@ -183,7 +187,7 @@ async function saveToSheet(row: SheetRow, mongo: Promise<MongoOutcome>, ms: numb
     return await bounded<BackupOutcome>(async signal => {
       const sheet = await openLeadSheet(signal)
       const stored = await mongo
-      if (stored.status === 'replay' || stored.status === 'conflict') return { status: 'skipped' }
+      if (stored.status === 'replay' || stored.status === 'conflict' || stored.status === 'reference-unverified') return { status: 'skipped' }
       return sheet.ready ? sheet.append(row, signal) : sheet.outcome
     }, ms)
   } catch (error) {
@@ -347,6 +351,13 @@ export async function POST(req: NextRequest) {
   if (stored.status === 'conflict') {
     console.warn(`${summary} (reference reused for a different brief)`)
     return NextResponse.json({ error: 'This reference was already used for a different brief. Please send the brief again.', receiptId }, { status: 409 })
+  }
+  if (stored.status === 'reference-unverified') {
+    console.warn(`${summary} (existing reference could not be compared)`)
+    return NextResponse.json({
+      error: `We could not confirm the details saved under this reference. Keep this reference. ${RECOVERY}`,
+      receiptId,
+    }, { status: 503 })
   }
 
   const confirmed = stored.status === 'saved' || backup.status === 'saved'

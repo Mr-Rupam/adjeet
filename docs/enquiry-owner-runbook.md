@@ -11,6 +11,7 @@ A form success screen is a receipt, not a confirmed job. A WhatsApp click is int
 - Every enquiry has a reference, shown to the visitor on the success screen (and on the failure message when the outcome is uncertain). In MongoDB the document `_id` is `web:` followed by the reference, and the `receiptId` field holds the reference itself. In the Sheet it is the `Enquiry ID` column.
 - A retry of the same brief (for example after a lost connection) reuses the reference. MongoDB recognises it, so the retry does not create a second record, a second Sheet row or a second notification. If MongoDB is down during both attempts, the Sheet can hold two rows with the same reference: treat them as one enquiry.
 - An edited brief gets a new reference. The earlier, uncertain attempt stays distinguishable.
+- If the website finds an existing reference but cannot read its saved details, it asks the visitor to retry with that reference. It does not append or notify a potentially different brief under the same reference. Search the original record before changing its details manually.
 
 ### The Google Sheet
 
