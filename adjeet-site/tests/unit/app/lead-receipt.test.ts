@@ -164,6 +164,25 @@ describe('durable lead receipt', () => {
     expect(fakes.insert).not.toHaveBeenCalled()
   })
 
+  it.each(['rejects', 'missing', 'times out'])('does not append or notify when an existing reference comparison %s', async failure => {
+    vi.stubEnv('RESEND_API_KEY', 'test-key')
+    fakes.insert.mockRejectedValue({ code: 11000 })
+    fakes.sheet.mockResolvedValue(saved)
+    if (failure === 'rejects') fakes.find.mockRejectedValue(new Error('lookup unavailable'))
+    else if (failure === 'missing') fakes.find.mockResolvedValue(null)
+    else fakes.find.mockImplementation(() => new Promise(() => {}))
+    const { POST } = await import('@/app/api/lead/route')
+    vi.useFakeTimers()
+    const pending = POST(request({ ...brief, message: 'Possibly a changed brief' }))
+    await vi.advanceTimersByTimeAsync(6500)
+    const response = await pending
+    expect(response.status).toBe(503)
+    expect(await response.json()).toMatchObject({ receiptId: brief.submissionId })
+    await notificationsSettled()
+    expect(fakes.sheet).not.toHaveBeenCalled()
+    expect(fakes.email).not.toHaveBeenCalled()
+  })
+
   it('rejects an invalid brief before any write', async () => {
     expect((await submit({ ...brief, phone: '123' })).status).toBe(422)
     expect(fakes.insert).not.toHaveBeenCalled()
