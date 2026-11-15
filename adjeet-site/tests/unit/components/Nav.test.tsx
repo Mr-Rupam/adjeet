@@ -23,6 +23,34 @@ describe('site header', () => {
     expect(element.querySelector('noscript')?.innerHTML).toContain('.site-header--over-hero{position:absolute}')
   })
 
+  function desktopLinks() {
+    const list = header().querySelector('ul')!
+    return [...list.querySelectorAll('a')].map(a => ({
+      label: a.textContent,
+      href: a.getAttribute('href'),
+      current: a.getAttribute('aria-current'),
+    }))
+  }
+
+  it('lists Home, Services and For Brands ahead of Portfolio, About and Contact', () => {
+    const labels = desktopLinks().map(l => l.label)
+    expect(labels.slice(0, 3)).toEqual(['Home', 'Services', 'For Brands'])
+    expect(labels.slice(-3)).toEqual(['Portfolio', 'About', 'Contact'])
+    expect(desktopLinks().find(l => l.label === 'For Brands')?.href).toBe('/for-brands')
+    expect(desktopLinks().find(l => l.label === 'Home')?.href).toBe('/')
+  })
+
+  it('marks Home as the current page only on the exact home route', () => {
+    expect(desktopLinks().filter(l => l.current).map(l => l.label)).toEqual(['Home'])
+    pathname = '/services/glow-sign-boards'
+    expect(desktopLinks().filter(l => l.current).map(l => l.label)).toEqual(['Services'])
+  })
+
+  it('marks For Brands as current on its own page', () => {
+    pathname = '/for-brands'
+    expect(desktopLinks().filter(l => l.current).map(l => l.label)).toEqual(['For Brands'])
+  })
+
   it('keeps the usual header on every other route', () => {
     for (const path of ['/about', '/services', '/services/glow-sign-boards', '/contact']) {
       pathname = path
