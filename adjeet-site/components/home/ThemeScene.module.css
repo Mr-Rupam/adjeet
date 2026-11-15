@@ -1,0 +1,30 @@
+/* ThemeScene: a day and a night scene of one place, stacked in one box.
+   The box is positioned and sized by the band that uses it.
+
+   Only the scene showing is laid out until ThemeScene lays out both (when the
+   page is idle or the theme toggle is reached for); the other is
+   display: none, so its lazy image is not fetched. Before any script the
+   scene follows `data-theme` on <html>; once ThemeScene runs it follows
+   `data-light` on the box, which moves only when the incoming scene has
+   decoded. The incoming scene fades in on top and the outgoing one goes only
+   once it is covered. */
+.scene img { position: absolute; inset: 0; display: block; width: 100%; max-width: none; height: 100%; object-fit: cover; }
+
+/* Positioned, so the incoming layer's z-index really puts it on top. Without
+   this the night layer (later in the DOM) stayed painted over the day layer
+   fading in under it, then dropped out in one step. */
+.layer { position: absolute; inset: 0; opacity: 0; transition: opacity 0s linear 700ms; }
+.night { display: none; }
+.day { z-index: 1; opacity: 1; transition: opacity 700ms ease; }
+
+.scene[data-light="night"] .day,
+:global(:root[data-theme="dark"]) .scene:not([data-light]) .day { z-index: auto; display: none; opacity: 0; transition: opacity 0s linear 700ms; }
+.scene[data-light="night"] .night,
+:global(:root[data-theme="dark"]) .scene:not([data-light]) .night { z-index: 1; display: block; opacity: 1; transition: opacity 700ms ease; }
+.scene[data-both-scenes] .layer { display: block !important; }
+/* Decoration laid over the artwork (the band positions it) stays above both layers. */
+.scene > :not(.layer) { z-index: 2; }
+
+@media (prefers-reduced-motion: reduce) {
+  .layer, .day, .night { transition: none !important; }
+}

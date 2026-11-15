@@ -1,12 +1,12 @@
 import Link from 'next/link'
-import { getImageProps } from 'next/image'
 import { preload } from 'react-dom'
 import { ArrowDown } from 'lucide-react'
 import { outfit } from '@/app/fonts'
 import { FOUNDED_YEAR } from '@/lib/coverage'
 import { QuoteCTA } from '@/components/ui/QuoteCTA'
 import { getServiceBySlug } from '@/content/services'
-import { HeroArt, type HeroArtLayer, type HeroLight } from './HeroArt'
+import { ThemeScene } from './ThemeScene'
+import { buildSceneLayers, type SceneLayer as HeroArtLayer, type SceneLight as HeroLight } from './theme-scene-layers'
 import styles from './Home.module.css'
 
 /** The four trades most enquiries are about, named and linked from the hero (desktop). */
@@ -23,33 +23,40 @@ const WIDE_SCREEN = '(min-width: 1024px) and (min-aspect-ratio: 5/4)'
 const TALL_SIZES = '100vw'
 const WIDE_SIZES = '178vh'
 
-const SCENES: Record<HeroLight, { tall: string; wide: string; alt: string }> = {
+// The night scene asks for 85 to keep its dark sky's long gradient smooth
+// (next.config.ts); the misty day scene needs no more than the default 75,
+// which makes it about 30% lighter. With AVIF (next.config.ts) the tall cuts
+// a phone gets are about 74 KB by day and 56 KB at night.
+const SCENES = {
   day: {
     tall: '/hero/day-street-tall.webp',
     wide: '/hero/day-street-wide.webp',
     alt: 'Visualisation: a small market street on a misty morning after rain. One shop has a lit, blank sign board over its open front, and two people have stopped to look at it',
+    quality: 75,
   },
   night: {
     tall: '/hero/night-street-tall.webp',
     wide: '/hero/night-street-wide.webp',
     alt: 'Visualisation: a small market street at night after rain. Every shop is shut and dark except one, whose blank sign board is lit, and two people have stopped to look at it',
+    quality: 85,
   },
 }
 
-function layer(scene: HeroLight): HeroArtLayer {
-  const { tall, wide, alt } = SCENES[scene]
-  // Lazy, so the browser only fetches the scene that is laid out (the other is
-  // display: none). The one for the visitor's theme is preloaded below.
-  // The night scene asks for 85 to keep its dark sky's long gradient smooth
-  // (next.config.ts); the misty day scene needs no more than the default 75,
-  // which makes it about 30% lighter. With AVIF (next.config.ts) the tall cuts
-  // a phone gets are about 74 KB by day and 56 KB at night.
-  const quality = scene === 'night' ? 85 : 75
-  const common = { alt, quality, loading: 'lazy', fetchPriority: 'high' } as const
-  const { props: { srcSet: wideSrcSet } } = getImageProps({ ...common, src: wide, width: 1672, height: 941, sizes: WIDE_SIZES })
-  const { props: tallProps } = getImageProps({ ...common, src: tall, width: 941, height: 1672, sizes: TALL_SIZES })
-  return { tall: tallProps, wideSrcSet: wideSrcSet ?? '', alt }
-}
+/**
+ * Lazy, so the browser only fetches the scene that is laid out (the other is
+ * display: none), at high priority, because the scene is the page's largest
+ * paint. The one for the visitor's theme is preloaded below.
+ */
+const sceneLayers = () => buildSceneLayers({
+  scenes: SCENES,
+  tallWidth: 941,
+  tallHeight: 1672,
+  wideWidth: 1672,
+  wideHeight: 941,
+  tallSizes: TALL_SIZES,
+  wideSizes: WIDE_SIZES,
+  highPriority: true,
+})
 
 /**
  * Preload the one image a visitor on the system theme will see, from <head>:
@@ -108,19 +115,31 @@ document.head.appendChild(link);
  * The home page hero, chosen by the owner's side on 15 November 2026: a market
  * street where one shop's sign board is the thing you notice, by day in the
  * light theme and at night after rain in the dark theme, changing light in the
- * same place when the theme changes. The artwork is a labelled visualisation
- * (DESIGN.md), never presented as a client job; real photographs start in the
- * next section. The board in the artwork is blank: "Your shop name" is
- * decorative HTML placed on the board's own rectangle (HeroArt).
+ * same place when the theme changes. The artwork is a visualisation: since
+ * 16 November 2026 it carries no visible label, its alt text begins
+ * "Visualisation:" and it is never presented as a client job (DESIGN.md); real
+ * photographs start in the next section. The board in the artwork is blank: "Your shop name" is
+ * decorative HTML placed on the board's own rectangle (ThemeScene).
  */
 export function HomeHero() {
-  const layers = { day: layer('day'), night: layer('night') }
+  const layers = sceneLayers()
   preloadScenes(layers)
 
   return (
     <section id="hero-section" className={`${styles.hero} ${outfit.variable}`} aria-labelledby="home-heading">
       <script dangerouslySetInnerHTML={{ __html: preloadScript(layers) }} />
-      <HeroArt layers={layers} wideScreen={WIDE_SCREEN} wideSizes={WIDE_SIZES} />
+      <ThemeScene
+        layers={layers}
+        wideScreen={WIDE_SCREEN}
+        wideSizes={WIDE_SIZES}
+        wideWidth={1672}
+        wideHeight={941}
+        className={styles.heroArt}
+        imageAttribute="data-hero-image"
+        rootAttribute="data-hero-light"
+      >
+        <span className={styles.heroBoard} aria-hidden="true" data-hero-board>Your shop name</span>
+      </ThemeScene>
 
       <div className={styles.heroCopy}>
         <h1 id="home-heading" data-hero-title>Sign boards{' '}<br />that get you{' '}<br /><em>noticed.</em></h1>
@@ -139,7 +158,6 @@ export function HomeHero() {
           <Link key={slug} href={'/services/' + slug}>{getServiceBySlug(slug)?.name}</Link>
         ))}
       </nav>
-      <p className={styles.heroLabel} data-hero-label>Visualisation</p>
     </section>
   )
 }
