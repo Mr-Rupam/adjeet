@@ -278,6 +278,10 @@
 .closeAction :global(.action-quiet:hover) { color: var(--glow); }
 .closeAction :global(.cta:focus-visible),
 .closeAction :global(.action-quiet:focus-visible) { outline-color: var(--gold); }
+.closeReach { margin: 20px 0 0; color: var(--night-ink-muted); font-size: 16px; }
+.closeReach a { color: var(--night-ink); text-decoration: underline; text-underline-offset: 3px; }
+.closeReach a:hover { color: var(--glow); }
+.closeReach a:focus-visible { outline-color: var(--gold); }
 .reviewed { margin: 28px 0 0; color: var(--night-ink-muted); font-size: 13px; }
 
 @media (min-width: 768px) {

@@ -164,6 +164,8 @@ export default function ForBrandsPage() {
           <div className={styles.closeAction}>
             <p className={styles.closeLine}>Start with the company profile.</p>
             <Actions source="brands-profile-close" />
+            {/* Not every brand team writes on WhatsApp from a work laptop. */}
+            <p className={styles.closeReach}>For a call or an email, see <Link href="/contact">how to reach us</Link>.</p>
             <p className={styles.reviewed}>Page reviewed <time dateTime={reviewed}>{formatReviewDate(reviewed)}</time></p>
           </div>
         </div>

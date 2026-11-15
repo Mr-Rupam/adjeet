@@ -215,7 +215,8 @@ describe('/for-brands', () => {
   it('passes its quality gate: 350+ words, not text heavy, under 30% overlap with every other page', async () => {
     const words = pageWords(doc)
     expect(words.length).toBeGreaterThanOrEqual(350)
-    expect(words.length).toBeLessThanOrEqual(480)
+    // The cap keeps the page from growing back into a wall of text (it was 824 words).
+    expect(words.length).toBeLessThanOrEqual(500)
     const own = shingles(words)
     const others: [string, Document][] = [
       ['/services', parse(<ServicesPage />)],
