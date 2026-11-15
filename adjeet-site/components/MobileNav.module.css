@@ -5,15 +5,17 @@
  */
 .group { display: contents; }
 
-/* The trades, small and two to a row, under the Services row. */
+/* The trades, small and two to a row, under the Services row, with a short
+   gold rule at their head so they read as part of Services. */
 .children {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 0 16px;
   margin: 0;
-  padding: 6px 0 10px;
+  padding: 4px 0 8px 14px;
   list-style: none;
   border-bottom: 1px solid var(--rule);
+  background: linear-gradient(var(--gold), var(--gold)) 0 14px / 3px calc(100% - 28px) no-repeat;
 }
 
 .childLink {
@@ -28,18 +30,25 @@
 .childLink:hover,
 .childLink[aria-current='page'] { color: var(--signal-text); }
 
+/* Call and WhatsApp side by side, equal, WhatsApp first and in gold. */
 .actions {
-  display: flex;
+  display: grid;
+  grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr);
   gap: 10px;
 }
 
-.actions .whatsapp { flex: 1 1 auto; justify-content: center; }
+/* Below 360px the two would squeeze the WhatsApp label, so they stack. */
+@media (max-width: 359px) {
+  .actions { grid-template-columns: minmax(0, 1fr); }
+}
+
+.actions .whatsapp { width: 100%; justify-content: center; padding-inline: 14px; }
 
 .actions .call {
-  flex: 0 0 auto;
+  width: 100%;
   justify-content: center;
   gap: 8px;
-  border: 1px solid color-mix(in srgb, var(--ink) 30%, transparent);
+  border: 1px solid color-mix(in srgb, var(--ink) 34%, transparent);
   background: transparent;
   color: var(--ink);
 }

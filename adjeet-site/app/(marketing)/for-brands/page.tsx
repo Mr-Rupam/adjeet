@@ -24,6 +24,8 @@ import {
 import { buildWhatsAppUrl } from '@/lib/whatsapp'
 import { PageMasthead } from '@/components/street/PageMasthead'
 import { WhatsAppLink } from '@/components/ui/WhatsAppLink'
+import { WhatsAppIcon } from '@/components/ui/WhatsAppIcon'
+import { ArrowDown } from 'lucide-react'
 import { Accordion } from '@/components/ui/Accordion'
 import { GalleryStrip } from '@/components/sections/GalleryStrip'
 import { BriefForm } from '@/components/areas/BriefForm'
@@ -47,11 +49,11 @@ export default function ForBrandsPage() {
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLdString(breadcrumb) }} />
 
       <PageMasthead
-        meta={['For brands', 'North Bengal', 'Sikkim']}
         title={<>Dealer boards for brands.<br /><span className="text-signal">An outdoor advertising agency in Siliguri.</span></>}
         lead={FOR_BRANDS_LEAD}
       >
-        <WhatsAppLink href={waUrl} source="for-brands" className="cta cta--md">Send your outlet list ↗</WhatsAppLink>
+        <WhatsAppLink href={waUrl} source="for-brands" className="cta cta--md cta--yellow"><WhatsAppIcon />Send your outlet list</WhatsAppLink>
+        <a href="#send-brief" className="action-quiet">Or send the brief <ArrowDown size={17} aria-hidden="true" /></a>
       </PageMasthead>
 
       <section className={areaStyles.section} aria-labelledby="brands-who-heading">

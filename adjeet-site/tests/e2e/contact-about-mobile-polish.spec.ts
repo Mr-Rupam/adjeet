@@ -65,7 +65,9 @@ test('phone client cards and reach signs contain their text', async ({ page }) =
     await expect(cards).toHaveCount(21)
     const columns = await page.locator('#client-history ul[aria-label="Brands in our work history"]')
       .evaluate(element => getComputedStyle(element).gridTemplateColumns.split(' ').map(parseFloat))
-    expect(columns).toHaveLength(3)
+    // Three to a row, except under 360px, where two keep the 12px type floor
+    // without breaking a trade word such as "Electricals".
+    expect(columns).toHaveLength(width < 360 ? 2 : 3)
     expect(Math.max(...columns) - Math.min(...columns)).toBeLessThan(1)
 
     const signs = page.locator('svg[aria-hidden="true"] [data-map-place]')

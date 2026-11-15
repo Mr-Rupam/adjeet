@@ -16,11 +16,10 @@ const h2 = 'display text-xl text-ink mb-3'
 export default function PrivacyPage() {
   return (
     <section className="mx-auto max-w-3xl px-5 py-16 md:px-8 md:py-24">
-      <p className="spec text-signal">AD JEET</p>
-      <h1 className="display mt-3 text-ink" style={{ fontSize: 'var(--text-display-2)' }}>
+      <h1 className="display text-ink" style={{ fontSize: 'var(--text-display-2)' }}>
         Privacy Policy
       </h1>
-      <p className="spec mb-12 mt-3 text-ink-subtle">Last updated: 15 November 2026</p>
+      <p className="mb-12 mt-3 text-sm text-ink-muted">Last updated: 15 November 2026</p>
 
       <div className="prose prose-sm max-w-2xl space-y-8 text-ink-muted">
         <section>

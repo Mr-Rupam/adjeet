@@ -1,6 +1,6 @@
 # AD-JEET design system
 
-Updated 20 October 2026. The former cobalt showroom, the detached day/night comparison slider or animation, and childish map pins were rejected and are not a source of design direction.
+Updated 15 November 2026 (inner pages brought to the homepage's standard). The former cobalt showroom, the detached day/night comparison slider or animation, and childish map pins were rejected and are not a source of design direction.
 
 ## The world
 
@@ -40,12 +40,25 @@ The supplied day/night workshop films (`public/hero/workshop/`) are a visualisat
 
 The workshop shutter intro plays once per browser session, and only when that session's first page is the homepage (`components/motion/EntryIntroScript.tsx`). Other pages never show it, and reaching the homepage later from another page does not either. It is a fixed overlay, so it causes no layout shift, and it never holds back the page under it: the first hero slide is preloaded at high fetch priority and painted at once beneath the shutter, the intro's own logo loads lazily at low priority, and the hero only moves (never fades or clips) once the shutter has cleared. Reduced motion skips it.
 
+## Inner pages (15 November 2026)
+
+Services, each service page, Areas, the town pages, Contact, About, Portfolio and For brands follow the homepage's standard, so a visitor moving off the homepage sees one design.
+
+- **Masthead** (`components/street/PageMasthead.tsx`). The H1, a lead, then the actions. Nothing above the heading: the old "AD JEET /" meta row is gone. A fact it carried is kept in words: the portfolio lead opens with the true photo count, and each town page has a short line under the lead, "About N km from the workshop, in North Bengal." A town page passes its cover photograph as `media`: on phones it sits after the lead and before the actions; from 768px it takes its own column, capped at 600px.
+- **Service page opening.** Breadcrumb, then the H1 with "in Siliguri & North Bengal", a one-line lead (the trade's tagline in sentence case), the photographed job on its fascia plate, the actions, and only then the longer description. That order puts the photograph inside the first screen at 390 x 844 and 360 x 640. From 768px the photo is a column of its own, at most 640px wide, 4:3.
+- **Actions.** The first screen of every service, areas, town, contact, about, portfolio, services and for-brands page has one filled button: the gold WhatsApp button with the WhatsApp mark (`QuoteCTA tone="yellow"` or `WhatsAppLink` with `cta cta--yellow`), keeping each page's own tracked source. Beside it, the quiet second link (`.action-quiet`): "Or send the brief" to the page's own form (`#send-brief`), or "Or send a project brief" to /contact where the page has no form. About keeps "Follow our story" as its second link. The header's "Start a project" is outlined (`.cta--quiet`) so it never competes. No blue filled primary buttons.
+- **Captions.** Every photograph of a finished job is captioned on the fascia plate (`components/street/FasciaCaption.tsx`, global `.fascia-plate`): the client in display capitals, then the trade and only the place and year `content/gallery.ts` records. Service and town openings, the photo strips, the portfolio grid, the services catalogue groups and About's brand work all use it. A visualisation keeps a plain label (`.visual-label`) and never gets the plate.
+- **Photo strips** (`components/sections/GalleryStrip.tsx`) sit on the night surface, at most 288px per photo, each on its plate, with the heading in the display face.
+- **Section headings** speak for themselves: no eyebrow labels anywhere on the inner pages. A short heading over a list ("Send us", "Every enquiry needs", "What to send") is an `h3` in the display face, not an upper-case label. Numbers stay only where they are a sequence (the four steps on /services and /areas, the rollout steps).
+- **Photographs at honest sizes.** The gallery is phone photography of about 800 to 1600px. No photo is drawn much larger than it was taken: service and town openings are capped as above, strips at 288px, and the homepage's wide lead example (1600 x 800) is drawn at its own 2:1 shape across two thirds of the row from 1024px, about 830px, with its plate standing beside it.
+- **Breadcrumbs** (`.page-breadcrumb`): one quiet line, each link a 44 x 44px target.
+
 ## Signature devices
 
-- **Fascia plate.** The caption for a finished job is lettered on a plate the way a shop's name is: `--cerulean-deep` in both themes, cream lettering (`--night-ink`), the brand in display capitals, and a 3px gold (`--gold`) rule along the top edge, the logo's sweep. Used for the homepage examples and hero caption (desktop), the About page's client work, the photo viewer caption rule, and the WhatsApp method on Contact. Gold never carries text; text on gold uses `--signal-hot-ink`.
+- **Fascia plate.** The caption for a finished job is lettered on a plate the way a shop's name is: `--cerulean-deep` in both themes, cream lettering (`--night-ink`), the brand in display capitals, and a 3px gold (`--gold`) rule along the top edge, the logo's sweep. Used for the homepage examples and hero caption (desktop), every finished-job photograph on the inner pages (see "Inner pages"), the photo viewer caption rule, and the WhatsApp method on Contact. Gold never carries text; text on gold uses `--signal-hot-ink`.
 - **Shutter reveal.** Photographed jobs open like a shop shutter rolling up (`clip-path` from the bottom), once, as they enter the viewport. A light pass crosses lit work. Both are skipped for reduced motion.
 - **Night street and paper.** Sections alternate between the paper and the night surface so the page reads as a street from day into evening. Lit photographs sit on the night surface.
-- **No kickers.** Headings speak for themselves: no eyebrow labels and no numbered section labels above them. Numbers appear only where they carry a sequence (the three process steps).
+- **No kickers.** Headings speak for themselves: no eyebrow labels and no numbered section labels above them, on the homepage or any inner page. Numbers appear only where they carry a sequence (the process steps).
 
 ## Photo viewer
 
@@ -77,9 +90,12 @@ Never `#2446CC`, `#A4B5FF`, violet-leaning blues or pure white page backgrounds.
 
 - Design at 390px first; protect 320px widths, safe areas and 44px targets.
 - Header: 80px on phones, 88px from tablet up, with the original logo, theme control and navigation. Do not add a second phone WhatsApp icon there.
-- The full navigation and the menu button switch at the same 1024px breakpoint. The mobile drawer is portalled outside the fixed header, contains keyboard focus, closes on Escape and when the desktop layout takes over. Its links are plain names with an arrow, no numbers.
+- The full navigation and the menu button switch at the same 1024px breakpoint. The mobile drawer is portalled outside the fixed header, contains keyboard focus, closes on Escape and when the desktop layout takes over. It reads as a short directory: page names in the display face at about 30px with an arrow, no numbers; the four main trades two to a row under Services with a short gold rule at their head; Areas we cover, For brands, Portfolio, About and Contact; then WhatsApp (gold) and Call side by side at the foot (stacked below 360px).
 - The mobile enquiry dock appears after the home hero, hides while any in-page enquiry button is on screen, and is absent on Contact.
 - Chat stays a desktop option so it does not compete with the dock on phones.
+- **Consent banner.** On phones the message is held to two lines with a "More" control that opens the rest (keyboard focus on the policy link opens it too), and Decline and Accept share one row. From 768px the whole message sits beside the buttons. The banner publishes its height as `--consent-h`; the dock, the chat bubble and, on a short phone, the home hero copy clear it with a transform or `translate`, never by changing `bottom` or padding, so its arrival is not a layout shift. The hero's WhatsApp action stays above it at 390 x 844 and 360 x 640.
+- **Touch and type floors.** Every non-inline link and control is at least 44 x 44px on phones (breadcrumbs, footer Call, the comparison table's links, the enquiry form's tick boxes, which are drawn at 18px inside a 44px control). No visible text under 12px.
+- **Landmarks.** Only `main`, the header and footer navigation and the breadcrumbs are landmarks; side blocks inside a page section are plain `div`s, never a nested `aside`.
 - One strong primary action per section.
 - Radius: every action button, filter chip and icon button uses `--radius-button`, which is **2px**: a nearly square corner, not a pill and not a circle. Photos are square-cornered.
 - Sections must not become equal-sized card grids, icon-in-circle feature rows, gradient blobs or glass panels.

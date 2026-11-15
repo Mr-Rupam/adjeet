@@ -101,7 +101,7 @@ export function MobileNav({ links }: { links: NavLink[] }) {
                     onClick={() => setOpenPath(null)}
                   >
                     <span>{link.label}</span>
-                    <ArrowUpRight size={26} aria-hidden="true" />
+                    <ArrowUpRight size={22} aria-hidden="true" />
                   </Link>
                   {link.children && (
                     <ul className={styles.children} aria-label={link.label}>
@@ -126,7 +126,7 @@ export function MobileNav({ links }: { links: NavLink[] }) {
           <div className="mobile-nav-drawer__cta">
             <p>Have a site, a size, or a photo? Start there.</p>
             <div className={styles.actions}>
-              <QuoteCTA source="mobile-drawer" label="Talk on WhatsApp" className={styles.whatsapp} />
+              <QuoteCTA source="mobile-drawer" label="Talk on WhatsApp" tone="yellow" className={styles.whatsapp} />
               <a href={'tel:' + business.phone} className={`cta cta--md ${styles.call}`} aria-label={`Call ${business.phoneDisplay}`}>
                 <Phone size={18} aria-hidden="true" />
                 Call

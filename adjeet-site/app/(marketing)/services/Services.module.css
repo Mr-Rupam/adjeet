@@ -41,22 +41,10 @@
   object-position: 61% 51%;
 }
 
-.imageNote {
-  position: absolute;
-  left: 22px;
-  bottom: 22px;
-  padding: 9px 12px;
-  background: rgb(10 34 42 / 78%);
-  color: var(--night-ink);
-  font-size: 12px;
-  letter-spacing: .07em;
-  text-transform: uppercase;
-}
-
 .materialFigure figcaption {
   padding-top: 10px;
   color: var(--ink-muted);
-  font-size: 12px;
+  font-size: 13px;
   line-height: 1.5;
 }
 
@@ -84,12 +72,5 @@
 
   .materialImage {
     height: clamp(260px, 78vw, 400px);
-  }
-
-  .imageNote {
-    left: 12px;
-    bottom: 12px;
-    max-width: calc(100% - 24px);
-    font-size: 10px;
   }
 }

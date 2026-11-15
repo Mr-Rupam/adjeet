@@ -1,6 +1,9 @@
 import { buildBreadcrumbJsonLd, buildPageMetadata, buildWebPageJsonLd, jsonLdString } from '@/lib/seo'
 import { LoadingImage as Image } from '@/components/ui/LoadingImage'
+import Link from 'next/link'
+import { ArrowUpRight } from 'lucide-react'
 import { PageMasthead } from '@/components/street/PageMasthead'
+import { QuoteCTA } from '@/components/ui/QuoteCTA'
 import { ServicesBoard } from '@/components/street/ServicesBoard'
 import { CommissionCTA } from '@/components/street/CommissionCTA'
 import { SignComparison } from '@/components/sections/SignComparison'
@@ -48,7 +51,6 @@ export default function ServicesPage() {
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLdString(webPage) }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLdString(breadcrumb) }} />
       <PageMasthead
-        meta={['10 services', 'Siliguri', 'Since 1990']}
         title={
           <>
             Signage & printing.
@@ -57,7 +59,10 @@ export default function ServicesPage() {
           </>
         }
         lead="Ten ways to put your business in view. From a single shopfront to a campaign across North Bengal."
-      />
+      >
+        <QuoteCTA source="services" label="WhatsApp your project" tone="yellow" />
+        <Link href="/contact" className="action-quiet">Or send a project brief <ArrowUpRight size={17} aria-hidden="true" /></Link>
+      </PageMasthead>
 
       <ServicesBoard />
 
@@ -69,8 +74,7 @@ export default function ServicesPage() {
       <section className="service-process">
         <div className="mx-auto max-w-content px-5 py-16 md:px-8 md:py-24">
           <div className={styles.processIntro}>
-            <p className="spec text-signal">The making / From brief to site</p>
-            <h2 className="display mt-3 text-ink" style={{ fontSize: 'var(--text-display-2)' }} data-site-reveal="title">
+            <h2 className="display text-ink" style={{ fontSize: 'var(--text-display-2)' }} data-site-reveal="title">
               From place to presence.
             </h2>
             <p>Materials, print and finish meet at the bench before a sign reaches its site.</p>
@@ -83,9 +87,7 @@ export default function ServicesPage() {
                 alt="Material visualisation of two workers applying printed vinyl to an aluminium composite panel"
                 fill
                 sizes="(max-width: 767px) calc(100vw - 40px), (max-width: 1280px) calc(100vw - 64px), 1216px"
-              />
-              <span className={styles.imageNote} aria-hidden="true">Print / vinyl / ACP</span>
-            </div>
+              />            </div>
             <figcaption>Material visualisation. Illustrative fabrication scene, not a documented AD JEET project.</figcaption>
           </figure>
 

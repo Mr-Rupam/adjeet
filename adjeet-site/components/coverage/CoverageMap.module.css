@@ -196,7 +196,7 @@
 .caption {
   margin: 0;
   color: var(--ink-subtle);
-  font-size: 11px;
+  font-size: 12px;
   line-height: 1.5;
 }
 
@@ -245,7 +245,7 @@
 
 /* The distance is the only fact each row gives now, so it reads at 12px. */
 .placeDistance { color: var(--ink-subtle); font-size: 12px; font-variant-numeric: tabular-nums; }
-.placeTag { color: var(--signal-hot-ink); background: var(--gold); padding: 2px 6px; font-size: 11px; }
+.placeTag { color: var(--signal-hot-ink); background: var(--gold); padding: 2px 6px; font-size: 12px; }
 
 /* The detail card ------------------------------------------------------ */
 

@@ -186,9 +186,10 @@ describe('service pages', () => {
 
   it('caption each project photo with the place and year only where recorded', async () => {
     const doc = await serviceDoc('glow-sign-boards')
-    const captions = [...doc.querySelectorAll('li p')].map(node => node.textContent)
-    expect(captions).toContain('Havells · Jalpaiguri · 2021')
-    expect(captions).toContain('Astral Pipe · Khagrabari, Cooch Behar · 2026')
+    // Each caption is a fascia plate: the brand, then the trade, place and year.
+    const captions = [...doc.querySelectorAll('li .fascia-plate')].map(node => [...node.children].map(part => part.textContent).join(' | '))
+    expect(captions).toContain('Havells | Glow Sign Boards · Jalpaiguri · 2021')
+    expect(captions).toContain('Astral Pipe | Glow Sign Boards · Khagrabari, Cooch Behar · 2026')
   })
 })
 

@@ -67,7 +67,7 @@
   padding: 13px 0;
   color: var(--ink-muted);
   border-top: 1px solid var(--rule);
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 600;
   letter-spacing: .09em;
   line-height: 1.4;
@@ -98,7 +98,7 @@
 .logo { display: block; width: min(100%, 156px); height: 80px; object-fit: contain; }
 
 .cardFooter { display: flex; min-width: 0; align-items: end; justify-content: space-between; gap: 6px; padding-top: 10px; border-top: 1px solid #e2e0d9; }
-.cardFooter small { display: block; color: #5d6668; font-size: 10px; font-weight: 600; letter-spacing: .08em; line-height: 1.2; text-transform: uppercase; }
+.cardFooter small { display: block; color: #5d6668; font-size: 12px; font-weight: 600; letter-spacing: .04em; line-height: 1.2; text-transform: uppercase; }
 .cardFooter strong { display: block; margin-top: 4px; font-size: 13px; font-weight: 600; line-height: 1.3; overflow-wrap: anywhere; }
 .note { margin: 15px 0 0; color: var(--ink-muted); font-size: 12px; line-height: 1.55; }
 
@@ -118,15 +118,14 @@
   .logoFrame { min-height: 58px; }
   .logo { width: min(100%, 96px); height: 50px; }
   .cardFooter { padding-top: 7px; }
-  .cardFooter small { font-size: 9px; }
-  .cardFooter strong { font-size: 11px; line-height: 1.2; }
+  .cardFooter small { font-size: 12px; letter-spacing: .02em; overflow-wrap: anywhere; }
+  .cardFooter strong { font-size: 12px; line-height: 1.2; }
 }
 
 @media (max-width: 359px) {
   .staticBrand { padding: 7px; }
   .logo { width: min(100%, 82px); }
-  .cardFooter small { font-size: 8px; }
-  .cardFooter strong { font-size: 10px; }
+  .names { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
 
 @media (prefers-reduced-motion: reduce) {

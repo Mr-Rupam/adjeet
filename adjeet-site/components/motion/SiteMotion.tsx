@@ -55,13 +55,7 @@ export function SiteMotion() {
       const masthead = root.querySelector<HTMLElement>('.page-masthead')
       if (masthead) {
         const title = masthead.querySelector<HTMLElement>('h1')
-        const meta = masthead.querySelectorAll<HTMLElement>('.field-meta span')
         const aside = masthead.querySelector<HTMLElement>('.field-masthead-aside')
-        meta.forEach((span, index) => {
-          const reveal = holdFrom(span, { from: { transform: 'translateX(-18px)', opacity: 0.55 }, duration: 0.58, delay: index * 0.1 })
-          reveals.push(reveal)
-          reveal.play()
-        })
         if (title) {
           if (desktop) cleanups.push(maskedLineReveal(watcher, title, { delay: 0.08 }))
           else {
