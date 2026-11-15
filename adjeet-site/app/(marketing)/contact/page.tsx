@@ -6,10 +6,13 @@ import { PageMasthead } from '@/components/street/PageMasthead'
 import { QuoteCTA } from '@/components/ui/QuoteCTA'
 import { WhatsAppLink } from '@/components/ui/WhatsAppLink'
 import { ArrowUpRight } from 'lucide-react'
+import { CONTACT_SEND_US, LANGUAGES_LINE } from '@/content/enquiry'
+import areaStyles from '@/components/areas/Areas.module.css'
+import styles from './Contact.module.css'
 
 const PAGE = {
   title: "Contact Our Siliguri Team for a Signage Quote",
-  description: "Call or WhatsApp +91 98320 11524 for signage, printing and outdoor advertising in North Bengal. AD JEET office: Platinum Square, Station Feeder Road, Siliguri.",
+  description: "Call or WhatsApp +91 98320 11524 for signage and outdoor advertising in North Bengal. AD JEET office: Platinum Square, Station Feeder Road, Siliguri.",
   path: "/contact",
 }
 export const metadata = buildPageMetadata(PAGE)
@@ -38,6 +41,12 @@ export default function ContactPage() {
               ? <WhatsAppLink key={item.method} href={item.href} source="contact-method" className="contact-method contact-method--primary">{content}</WhatsAppLink>
               : <a key={item.method} href={item.href} className="contact-method">{content}</a>
           })}
+          {/* What to send (content audit C10) and the languages enquiries are handled in (C13). */}
+          <div className={`${areaStyles.sendUs} ${styles.checklist}`}>
+            <h3 className={styles.checklistHeading}>What to send</h3>
+            <ul>{CONTACT_SEND_US.map(item => <li key={item}>{item}</li>)}</ul>
+            <p className={areaStyles.sendUsNote}>{LANGUAGES_LINE}</p>
+          </div>
           <div className="contact-address"><p className="spec">Find us in Siliguri</p><h3>Workshop / {business.workshop}</h3><p>{business.street}, {business.city}, {business.region} {business.postalCode}. Open {business.hours}.</p><h3>Office / {business.office}</h3><p>{business.city}, {business.region} {business.officePostalCode}</p></div>
           <div className="contact-map">
             <iframe

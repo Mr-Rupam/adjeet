@@ -14,37 +14,23 @@
  * To record a change to one page, add its path to `PAGE_REVIEWED`. After a
  * review of the whole site, move `SITE_REVIEWED` and clear the overrides.
  */
-export const SITE_REVIEWED = '2026-09-27'
+// 15 November 2026: a review of the whole site. Every page's text changed: the
+// footer (all ten services, the areas and for-brands links, the languages
+// line) is on every page, the new /for-brands page went up, the FAQs, service
+// copy, titles and descriptions were rewritten, and the privacy policy was
+// redone on the same day.
+export const SITE_REVIEWED = '2026-11-15'
 
 /** Paths reviewed on a different day from the rest of the site, e.g. `'/services/flex-printing': '2026-10-02'`. */
-const PAGE_REVIEWED: Record<string, string> = {
-  // 20 October 2026: the lead form's receipt and recovery wording changed.
-  '/contact': '2026-10-20',
-  // 20 October 2026: the storefront-led homepage and the restyled about page.
-  '/about': '2026-10-20',
-  // 20 October 2026: the regional pages folded into the service pages and
-  // /areas; wall painting renamed "Wall Painting Advertising" in every list.
-  '/': '2026-10-20',
-  '/services': '2026-10-20',
-  '/portfolio': '2026-10-20',
-  '/services/glow-sign-boards': '2026-10-20',
-  '/services/acp-led-signage': '2026-10-20',
-  '/services/flex-printing': '2026-10-20',
-  '/services/vehicle-branding': '2026-10-20',
-  '/services/wall-painting': '2026-10-20',
-  '/services/f-pole-installation': '2026-10-20',
-  '/services/in-shop-branding': '2026-10-20',
-  '/services/events-and-puja': '2026-10-20',
-  '/services/one-way-vision': '2026-10-20',
-  '/services/product-display': '2026-10-20',
-  '/areas': '2026-10-20',
-  '/areas/cooch-behar': '2026-10-20',
-  '/areas/jalpaiguri': '2026-10-20',
-  '/areas/gangtok': '2026-10-20',
-}
+const PAGE_REVIEWED: Record<string, string> = {}
 
 export function reviewedOn(path: string): string {
   return PAGE_REVIEWED[path] ?? SITE_REVIEWED
+}
+
+/** The most recent review date on the site, for summaries such as llms.txt. */
+export function newestReview(): string {
+  return [SITE_REVIEWED, ...Object.values(PAGE_REVIEWED)].sort().at(-1)!
 }
 
 /** "24 September 2026". Fixed to UTC so the server and browser print the same day. */
