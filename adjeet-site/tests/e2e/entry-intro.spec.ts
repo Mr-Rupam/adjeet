@@ -33,15 +33,16 @@ test('the shutter never plays on other pages, nor on the homepage reached from o
   await expect(page.locator('html')).not.toHaveAttribute('data-entry-intro', 'playing')
 })
 
-test('the hero photo loads first and paints under the shutter', async ({ page }) => {
+test('the hero artwork loads first and paints under the shutter', async ({ page }) => {
   await page.setViewportSize({ width: 1440, height: 900 })
   await page.goto('/', { waitUntil: 'domcontentloaded' })
   await expect(page.locator('html')).toHaveAttribute('data-entry-intro', 'playing')
 
-  // The first slide is preloaded at high priority from the document head.
+  // One image is preloaded at high priority: the scene for the theme already
+  // on the page (light, so day), in the wide cut on this screen.
   const preload = page.locator('link[rel="preload"][as="image"][fetchpriority="high"]')
   await expect(preload).toHaveCount(1)
-  expect(await preload.getAttribute('imagesrcset')).toContain('ambuja-cement-acp-126.webp')
+  expect(await preload.getAttribute('imagesrcset')).toContain('day-street-wide.webp')
   // The intro's own logo never competes for that bandwidth.
   await expect(page.locator('link[rel="preload"][imagesrcset*="adjeet-original.png"][fetchpriority="high"]')).toHaveCount(0)
   const introLogo = page.locator('[data-entry-loader] img')
@@ -50,7 +51,7 @@ test('the hero photo loads first and paints under the shutter', async ({ page })
 
   // While the shutter is still closed, the hero image has loaded and is fully
   // painted beneath it: not faded, not clipped, not waiting for the intro.
-  const hero = page.locator('[data-hero-image]')
+  const hero = page.locator('[data-hero-image="day"]')
   await expect(hero).toHaveAttribute('data-image-status', 'loaded', { timeout: 3000 })
   await expect(page.locator('html')).toHaveAttribute('data-entry-intro', 'playing')
   const painted = await hero.evaluate(image => {
@@ -59,15 +60,18 @@ test('the hero photo loads first and paints under the shutter', async ({ page })
   })
   expect(painted).toEqual({ opacity: '1', clipPath: 'none', visibility: 'visible' })
 
-  // The largest paint is the hero photo, and it lands before the 3.3 s shutter ends.
-  const lcp = await page.evaluate(() => new Promise<{ src: string; time: number }>(resolve => {
+  // The largest paint is in the hero, and it lands before the 3.3 s shutter
+  // ends. On desktop the wide artwork fills the whole window, which Chrome
+  // treats as a background and leaves out of the measure, so the headline is
+  // the largest paint there; on phones it is the artwork (home-hero.spec.ts).
+  const lcp = await page.evaluate(() => new Promise<{ inHero: boolean; tag: string; time: number }>(resolve => {
     new PerformanceObserver(list => {
-      const entries = list.getEntries() as Array<PerformanceEntry & { element?: Element; url?: string; renderTime?: number; loadTime?: number }>
+      const entries = list.getEntries() as Array<PerformanceEntry & { element?: Element }>
       const last = entries[entries.length - 1]
-      resolve({ src: last.url ?? (last.element as HTMLImageElement | undefined)?.currentSrc ?? '', time: last.startTime })
+      resolve({ inHero: !!last.element?.closest('#hero-section'), tag: last.element?.tagName ?? '', time: last.startTime })
     }).observe({ type: 'largest-contentful-paint', buffered: true })
   }))
-  expect(decodeURIComponent(lcp.src)).toContain('ambuja-cement-acp-126.webp')
+  expect(lcp.inHero, `largest paint: ${lcp.tag}`).toBe(true)
   expect(lcp.time).toBeLessThan(3300)
 })
 

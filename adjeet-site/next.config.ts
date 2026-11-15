@@ -59,6 +59,11 @@ const securityHeaders = [
 ];
 
 const nextConfig: NextConfig = {
+  images: {
+    // 75 is the default for every photograph. The home hero's night artwork
+    // asks for 85, to keep the long gradient of its dark sky smooth.
+    qualities: [75, 85],
+  },
   // The retired regional pages answer 308 to the page that absorbed them, so
   // their links and the little ranking they had carry over. Redirects run
   // before the filesystem, and any query string is passed through.

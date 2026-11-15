@@ -1,11 +1,9 @@
 import Link from 'next/link'
-import { ArrowDown, ArrowUpRight } from 'lucide-react'
-import { FOUNDED_YEAR } from '@/lib/coverage'
+import { ArrowUpRight } from 'lucide-react'
 import { CoverageMapProvider } from '@/components/coverage/CoverageMapContext'
 import { CoveragePlaceList } from '@/components/coverage/CoveragePlaceList'
 import { CoverageStage } from '@/components/coverage/CoverageStage'
-import { QuoteCTA } from '@/components/ui/QuoteCTA'
-import { HeroSlides, type HeroSlide } from './HeroSlides'
+import { HomeHero } from './HomeHero'
 import { ShopfrontExamples } from './ShopfrontExamples'
 import { SignChoices } from './SignChoices'
 import { ProcessStory } from './ProcessStory'
@@ -14,59 +12,13 @@ import { ClientStreet } from '@/components/street/ClientStreet'
 import { CommissionCTA } from '@/components/street/CommissionCTA'
 import { BrandTeamsLink } from '@/components/sections/BrandTeamsLink'
 import { homeFaqs } from '@/content/home-faqs'
-import { getPhotoById } from '@/content/gallery'
-import { getServiceBySlug } from '@/content/services'
 import styles from './Home.module.css'
-
-/** The four trades most enquiries are about, named and linked from the hero. */
-const MAIN_TRADES = ['glow-sign-boards', 'acp-led-signage', 'flex-printing', 'vehicle-branding'] as const
-
-// Every slide is a shopfront, and none repeats a photo used further down the
-// page. The place shown is only ever the one the gallery records.
-const heroSlide = (id: string, phoneFocus?: string): HeroSlide => {
-  const photo = getPhotoById(id)
-  return {
-    src: photo.src,
-    alt: photo.alt,
-    client: photo.client,
-    label: getServiceBySlug(photo.service)?.name ?? '',
-    location: photo.location,
-    href: '/portfolio?service=' + photo.service,
-    phoneFocus,
-  }
-}
-// phoneFocus pans each photo sideways on phones so the brand's name on the
-// board reads in the clear band above the headline (checked at 390 and 360px).
-const HERO_SLIDES: HeroSlide[] = [
-  heroSlide('ambuja-cement-126'),
-  heroSlide('astral-pipe-129', '12%'),
-  heroSlide('sd-lion-tmt-139', '44%'),
-  heroSlide('acc-124', '64%'),
-]
 
 export function HomePageView() {
   return (
     <div className={styles.home} data-home-page>
       <HomeMotion />
-      <section id="hero-section" className={styles.hero} aria-labelledby="home-heading">
-        <div className={styles.heroCopy}>
-          <h1 id="home-heading" data-hero-title>Sign boards{' '}<br />that get you{' '}<br /><span>noticed.</span></h1>
-          <p className={styles.heroLead} data-hero-lead>
-            <strong>Sign board makers in Siliguri, since {FOUNDED_YEAR}.</strong>{' '}
-            Shopfront signs designed, made and installed from our own workshop. Send a photo of your shop to start.
-          </p>
-          <div className={styles.heroActions} data-hero-actions>
-            <QuoteCTA source="hero" label="WhatsApp your project" tone="yellow" />
-            <a href="#selected-work" className={styles.textLink} aria-label="See finished shopfronts"><span>See finished shopfronts</span><ArrowDown size={18} aria-hidden="true" /></a>
-          </div>
-          <nav className={styles.heroTrades} aria-label="Main trades">
-            {MAIN_TRADES.map(slug => (
-              <Link key={slug} href={'/services/' + slug}>{getServiceBySlug(slug)?.name}</Link>
-            ))}
-          </nav>
-        </div>
-        <HeroSlides slides={HERO_SLIDES} />
-      </section>
+      <HomeHero />
       <ShopfrontExamples />
       <ClientStreet />
       <BrandTeamsLink />

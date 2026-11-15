@@ -10,6 +10,21 @@
 .site-header .brand-logo { width: 168px; }
 .nav-link { color: var(--ink)!important; font-size: 14px; }
 .theme-toggle,.mobile-nav-trigger,.mobile-nav-close { border-radius: 2px; background: transparent!important; }
+/* Home page, while the header is over the hero: no cream bar, the original
+   logo, the links and the buttons straight on the artwork, in marine ink on
+   the day scene and in the night ink on the night scene. It changes with the
+   hero (data-hero-light, set by HeroArt; data-theme before that), over the
+   same 700ms. Past the hero it is the header above again. */
+.site-header.site-header--over-hero { --hero-ink: var(--day-ink); --focus-ring: var(--cerulean-deep); background: transparent; border-bottom-color: transparent; color: var(--hero-ink); transition: --hero-ink 700ms ease, background-color 320ms ease, border-color 320ms ease; }
+:root[data-hero-light="night"] .site-header.site-header--over-hero,
+:root[data-theme="dark"]:not([data-hero-light]) .site-header.site-header--over-hero { --hero-ink: var(--night-ink); --focus-ring: var(--gold); }
+.site-header--over-hero .nav-link { color: var(--hero-ink)!important; }
+.site-header--over-hero .nav-link::after { background: currentColor; }
+.site-header--over-hero :is(.theme-toggle,.mobile-nav-trigger),
+.site-header--over-hero .cta.cta--quiet { border-color: color-mix(in srgb, var(--hero-ink) 34%, transparent); color: var(--hero-ink); }
+.site-header--over-hero :is(.theme-toggle,.mobile-nav-trigger):hover,
+.site-header--over-hero .cta.cta--quiet:hover { border-color: var(--hero-ink); }
+@media (prefers-reduced-motion: reduce) { .site-header.site-header--over-hero { transition: none; } }
 .cta { border-radius: 2px; font-size: 14px; font-weight: 500; }
 .cta:hover,.cta--yellow:hover { box-shadow: none; filter: brightness(1.12); transform: translateY(-1px); }
 .cta:focus-visible { outline-color: var(--focus-ring); outline-offset: 5px; }

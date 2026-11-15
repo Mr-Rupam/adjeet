@@ -10,7 +10,7 @@ import { ENTRY_INTRO_COMPLETE_EVENT, ENTRY_INTRO_FALLBACK_MS } from '@/lib/entry
 
 /**
  * Shutters rolling up, light passing over lit work and pieces arriving in
- * place echo physical signmaking. The hero is never hidden: its photo is the
+ * place echo physical signmaking. The hero is never hidden: its artwork is the
  * page's largest paint and must not wait for any animation, so the hero only
  * moves (never fades) once the optional entry shutter has cleared.
  *
@@ -108,12 +108,13 @@ export function HomeMotion() {
     }
 
     // The hero settles into place once the entry shutter, if any, has cleared.
-    // Transform only: the text and photo are painted, and stay painted.
+    // Transform only: the text and the artwork are painted, and stay painted.
+    // Any part that is missing is skipped.
     let heroStarted = false
     const startHero = () => {
       if (heroStarted) return
       heroStarted = true
-      const parts = ['[data-hero-lead]', '[data-hero-actions]', '[data-hero-caption]']
+      const parts = ['[data-hero-lead]', '[data-hero-actions]']
         .map(selector => root.querySelector<HTMLElement>(selector))
         .filter((part): part is HTMLElement => part !== null)
       parts.forEach((part, index) => {
@@ -121,7 +122,6 @@ export function HomeMotion() {
         reveals.push(reveal)
         reveal.play()
       })
-      root.querySelector<HTMLElement>('[data-hero-image]')?.closest<HTMLElement>('[data-light-surface]')?.classList.add('is-lit')
     }
 
     const waitingForLoader = document.documentElement.dataset.entryIntro === 'playing'
