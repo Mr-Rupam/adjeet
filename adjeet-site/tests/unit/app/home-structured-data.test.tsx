@@ -2,6 +2,9 @@ import { describe, expect, it, vi } from 'vitest'
 import { renderToStaticMarkup } from 'react-dom/server'
 import HomePage from '@/app/(marketing)/page'
 import { reviewedOn } from '@/content/page-reviews'
+import { buildWebSiteJsonLd } from '@/lib/seo'
+import fs from 'node:fs'
+import path from 'node:path'
 
 // The view is the whole interactive homepage; only the structured data the
 // route renders around it is under test here.
@@ -13,11 +16,14 @@ function structuredData(html: string) {
 }
 
 describe('home page structured data', () => {
-  // Google reads the site name from the home page only, and wants one WebSite node there.
-  it('gives Google exactly one site name', () => {
+  // Google reads the site name from the home page and wants one WebSite node
+  // there. The root layout emits it on every page, so the route adds none.
+  it('leaves the site name to the root layout, so home carries exactly one', () => {
     const sites = structuredData(renderToStaticMarkup(<HomePage />)).filter(schema => schema['@type'] === 'WebSite')
-    expect(sites).toHaveLength(1)
-    expect(sites[0]).toMatchObject({ name: 'AD JEET', url: 'https://adjeet.in/' })
+    expect(sites).toHaveLength(0)
+    const layout = fs.readFileSync(path.resolve('app/layout.tsx'), 'utf8')
+    expect(layout.match(/buildWebSiteJsonLd\(\)/g)).toHaveLength(1)
+    expect(buildWebSiteJsonLd()).toMatchObject({ name: 'AD JEET', url: 'https://adjeet.in/' })
   })
 
   it('describes the home page itself: part of the site, about the business, dated from the review record', () => {

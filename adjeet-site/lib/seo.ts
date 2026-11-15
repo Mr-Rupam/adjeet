@@ -3,11 +3,12 @@ import { services, type Service } from '@/content/services'
 import { reviewedOn } from '@/content/page-reviews'
 import { COVERAGE_AREAS } from '@/lib/coverage'
 import { business } from '@/lib/business'
+import { DEFAULT_PAGE_SHARE, pageShareFor } from '@/content/page-share'
 
 export const siteConfig = {
   name: business.name,
   url: business.url,
-  ogImage: '/images/share/ambuja-cement-acp.jpg',
+  ogImage: DEFAULT_PAGE_SHARE.url,
   description: 'Sign board makers in Siliguri since 1990: glow sign boards, ACP and 3D LED letters, flex printing and vehicle branding for North Bengal and Sikkim.',
 }
 
@@ -33,15 +34,27 @@ function canonicalUrl(path: string): string {
   return path === '/' ? siteConfig.url : siteConfig.url + path
 }
 
-/** The site-wide link preview, used by any page without a project photo of its own. */
-const DEFAULT_SHARE_IMAGE = { url: siteConfig.ogImage, alt: 'Ambuja Cement ACP and LED signage by AD JEET' }
+/** A link preview image. Width and height are given where the file's size is fixed. */
+export interface ShareImage {
+  url: string
+  alt: string
+  width?: number
+  height?: number
+}
+
+/** The site-wide 1200 x 630 link preview, used by any page without a photo of its own. */
+export const DEFAULT_SHARE_IMAGE: ShareImage = DEFAULT_PAGE_SHARE
 
 export function buildPageMetadata({ title, description, path, image, indexable = true }: {
   title: string
   description: string
   path: string
-  /** The page's own project photo for link previews, as a JPEG under /images/share. */
-  image?: { url: string; alt: string }
+  /**
+   * The page's own project photo for link previews, as a JPEG under
+   * /images/share. Without it, a site page uses its card from
+   * `content/page-share.ts`, and any other page the default.
+   */
+  image?: ShareImage
   /**
    * False for a page that is live for visitors but not yet worth indexing,
    * such as a town page below its quality gate. Links on it are still followed.
@@ -50,7 +63,7 @@ export function buildPageMetadata({ title, description, path, image, indexable =
 }): Metadata {
   const fullTitle = `${title} | ${siteConfig.name}`
   const url = canonicalUrl(path)
-  const share = image ?? DEFAULT_SHARE_IMAGE
+  const share = image ?? pageShareFor(path) ?? DEFAULT_SHARE_IMAGE
   return {
     title: { absolute: fullTitle },
     description,
@@ -82,7 +95,8 @@ export function generateServiceMetadata(service: Service, image?: { url: string;
 }
 
 // Google prints the site name above each result from this schema on the home
-// page; without it, results fall back to the bare domain.
+// page; without it, results fall back to the bare domain. The root layout
+// emits it once on every page, so each page's `isPartOf` reference resolves.
 export function buildWebSiteJsonLd() {
   return {
     '@context': 'https://schema.org',
