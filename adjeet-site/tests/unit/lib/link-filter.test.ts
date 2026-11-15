@@ -60,7 +60,7 @@ describe('containsLink: what it leaves alone', () => {
     ['a version of a sentence run together', 'We need a board.In Siliguri'],
     ['a word that merely starts like a domain ending', 'a sign.India'],
     ['a word that merely starts like a domain ending, upper case', 'SIGN.INDIA'],
-    ['an email address', 'Reply to rupam@gmail.com please'],
+    ['an email address', 'Reply to name@example.com please'],
     ['an email address on a .in domain', 'write to owner@shop.co.in'],
     ['an email whose name looks like a domain', 'john.com@example.org'],
     ['a phone number', 'call 98765 43210 or +91 98765-43210'],
