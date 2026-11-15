@@ -70,8 +70,9 @@
 
 /* Breadcrumbs: each link is a full 44px target, the trail stays one quiet line. */
 .page-breadcrumb { display: flex; flex-wrap: wrap; align-items: center; gap: 0 6px; font-size: 13px; color: var(--ink-muted); }
-.page-breadcrumb a { display: inline-flex; min-width: 44px; min-height: 44px; align-items: center; justify-content: center; }
-.page-breadcrumb > a:first-child { justify-content: flex-start; }
+/* The 44px touch width comes from padding that a negative margin cancels, so
+   short words such as "Home" keep even spacing in the trail. */
+.page-breadcrumb a { display: inline-flex; min-height: 44px; align-items: center; padding-inline: 8px; margin-inline: -8px; }
 .page-breadcrumb a:hover { color: var(--signal-text); }
 .page-breadcrumb [aria-current] { display: inline-flex; min-height: 44px; align-items: center; color: var(--ink); }
 .commission { background: var(--cerulean-deep); color: #fff; }
