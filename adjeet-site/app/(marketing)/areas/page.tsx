@@ -29,8 +29,8 @@ import { BriefForm } from '@/components/areas/BriefForm'
 import styles from '@/components/areas/Areas.module.css'
 
 const PAGE = {
-  title: 'Areas We Cover: Signage Across North Bengal & Sikkim',
-  description: 'AD JEET makes signs at its Siliguri workshop and installs them across North Bengal and Sikkim: the hills, the Dooars, Cooch Behar, Malda and more. Distances and how each job is planned.',
+  title: 'Areas We Cover from Siliguri: North Bengal and Sikkim',
+  description: 'Signs made in Siliguri by AD JEET and installed across North Bengal and Sikkim: the hills, the Dooars, Cooch Behar and Malda. How each job is planned.',
   path: '/areas',
 }
 

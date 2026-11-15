@@ -142,7 +142,7 @@ describe('town pages', () => {
 })
 
 describe('service pages', () => {
-  it('carry the Siliguri brief and send-us list on the five trades that absorbed a Siliguri page', async () => {
+  it('carry the Siliguri brief and send-us list on every trade', async () => {
     for (const slug of SERVICE_SLUGS) {
       const doc = await serviceDoc(slug)
       const brief = SILIGURI_BRIEFS[slug as ServiceSlug]
@@ -156,7 +156,9 @@ describe('service pages', () => {
       expect(text, slug).toContain(brief.brief)
       for (const item of brief.sendUs) expect(text, slug).toContain(item)
     }
-    expect(Object.keys(SILIGURI_BRIEFS).sort()).toEqual(['acp-led-signage', 'f-pole-installation', 'flex-printing', 'glow-sign-boards', 'vehicle-branding'])
+    // The five that absorbed a Siliguri page, plus the five added from the
+    // content audit (C6) on 15 November 2026.
+    expect(Object.keys(SILIGURI_BRIEFS).sort()).toEqual([...SERVICE_SLUGS].sort())
   })
 
   // LeadForm keeps a page's own city over `?city=`; the page has to pass it.

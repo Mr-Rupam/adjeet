@@ -7,9 +7,9 @@ import { PageMasthead } from '@/components/street/PageMasthead'
 import { CommissionCTA } from '@/components/street/CommissionCTA'
 
 const PAGE = {
-  title: "Signage & Vehicle Branding Portfolio",
+  title: "Sign Board and Branding Portfolio, Siliguri",
   // The count is read from the gallery, and every brand named here has photos in it.
-  description: `${photos.length} AD JEET project photographs: glow signs, ACP facades, wall paintings, vehicle wraps and puja gates for Airtel, Havells, Supreme Pipe, Star Cement and more.`,
+  description: `${photos.length} AD JEET project photos: glow signs, ACP fronts, wall paintings, vehicle wraps and puja gates for Airtel, Havells, Supreme Pipe and Star Cement.`,
   path: "/portfolio",
 }
 

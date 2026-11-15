@@ -1,0 +1,27 @@
+/* "Who you will deal with", added 15 November 2026 under the timeline. */
+.dealWith {
+  min-width: 0;
+}
+
+.dealWith h3 {
+  margin: 0 0 10px;
+  font-family: var(--font-heading);
+  font-size: 28px;
+  font-weight: 500;
+  line-height: 1.08;
+  color: var(--ink);
+}
+
+.dealWith p {
+  max-width: 58ch;
+  margin: 0;
+  color: var(--ink-muted);
+  font-size: 16px;
+  line-height: 1.7;
+}
+
+@media (min-width: 768px) {
+  /* Under the timeline, in the story's second column. */
+  .dealWith { grid-column: 2; }
+  .dealWith h3 { font-size: 34px; }
+}

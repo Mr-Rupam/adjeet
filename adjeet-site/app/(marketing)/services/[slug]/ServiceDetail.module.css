@@ -1,0 +1,58 @@
+/*
+ * Blocks the service pages gained on 15 November 2026: the Bengali "what to
+ * send" list and the "Why AD JEET" facts. Tokens only, so light and dark
+ * follow design/tokens.css.
+ */
+
+/*
+ * The self-hosted Hind Siliguri files are a Latin-only subset, so Bengali text
+ * uses the reader's own Bengali font rather than falling into empty boxes.
+ */
+.bengali {
+  font-family: 'Noto Sans Bengali', 'Nirmala UI', 'Vrinda', 'Shonar Bangla', 'Kohinoor Bangla', 'Bangla MN', sans-serif;
+}
+
+.bengaliHeading {
+  margin: 0;
+  font-family: inherit;
+  font-size: 15px;
+  font-weight: 600;
+  line-height: 1.5;
+  color: var(--signal-text);
+}
+
+.why {
+  display: grid;
+  gap: 0;
+  margin: 22px 0 0;
+  padding: 0;
+  list-style: none;
+  border-top: 2px solid var(--ink);
+}
+
+.why li {
+  padding: 16px 0;
+  border-bottom: 1px solid var(--rule);
+  max-width: 62ch;
+  font-size: 18px;
+  line-height: 1.6;
+  color: var(--ink);
+}
+
+.whyLink {
+  padding-block: 10px;
+  text-decoration: underline;
+  text-underline-offset: 5px;
+  text-decoration-thickness: 1px;
+  font-weight: 500;
+  color: var(--ink);
+}
+.whyLink:hover { color: var(--signal-text); }
+
+/* The English send-us list and, where there is one, the Bengali list under it. */
+.sendColumn {
+  display: grid;
+  gap: 20px;
+  align-content: start;
+  min-width: 0;
+}

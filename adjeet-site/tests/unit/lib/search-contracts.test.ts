@@ -8,7 +8,8 @@ import { ADJEET_SYSTEM_PROMPT } from '@/lib/chatbot-prompt'
 import { generateServiceMetadata, buildServiceJsonLd, buildLocalBusinessJsonLd, jsonLdString } from '@/lib/seo'
 import { Accordion } from '@/components/ui/Accordion'
 import { GET } from '@/app/llms.txt/route'
-import { SITE_REVIEWED, formatReviewDate } from '@/content/page-reviews'
+import { formatReviewDate, newestReview } from '@/content/page-reviews'
+import { FOR_BRANDS_FAQS, FOR_BRANDS_PATH } from '@/content/for-brands'
 import { COMPARED_BOARDS, COMPARISON_HEADING } from '@/content/sign-comparison'
 
 describe('search and answer consistency', () => {
@@ -79,7 +80,11 @@ describe('search and answer consistency', () => {
 
   it('gives the AI reading aid a review date, the disambiguating facts and the same comparison as the pages', async () => {
     const text = await GET().text()
-    expect(text).toContain(`Last reviewed: ${formatReviewDate(SITE_REVIEWED)}.`)
+    // The newest page date, so the file never says less than the pages do.
+    expect(text).toContain(`Last reviewed: ${formatReviewDate(newestReview())}.`)
+    expect(text).toContain(`(${business.url}${FOR_BRANDS_PATH})`)
+    for (const faq of FOR_BRANDS_FAQS) expect(text).toContain(faq.a)
+    expect(text).toContain('English, Bengali or Hindi')
     expect(text).toMatch(/workshop and office are both in Siliguri, and it was founded in 1990 by Ranjit Das/)
     expect(text).toContain(`## ${COMPARISON_HEADING}`)
     for (const board of COMPARED_BOARDS) {

@@ -2,17 +2,15 @@ import { business } from '@/lib/business'
 import Link from 'next/link'
 import { BrandLogo } from '@/components/BrandLogo'
 import { WhatsAppLink } from '@/components/ui/WhatsAppLink'
+import { SERVICE_SLUGS } from '@/content/services'
+import { SERVICE_LINK_LABELS } from '@/content/site-links'
+import { LANGUAGES_LINE } from '@/content/enquiry'
 
 const WHATSAPP_DISPLAY = business.phoneDisplay
 const WHATSAPP_HREF = `https://wa.me/${business.phone.replace('+', '')}`
 
-/** Plain descriptive names, as people search for them. */
-const MAIN_TRADES = [
-  { href: '/services/glow-sign-boards', label: 'Glow sign boards' },
-  { href: '/services/acp-led-signage', label: 'ACP and 3D LED letters' },
-  { href: '/services/flex-printing', label: 'Flex printing' },
-  { href: '/services/vehicle-branding', label: 'Vehicle branding' },
-]
+/** Every service, in catalogue order, under plain descriptive names. */
+const ALL_TRADES = SERVICE_SLUGS.map(slug => ({ href: `/services/${slug}`, label: SERVICE_LINK_LABELS[slug] }))
 
 export function Footer() {
   return (
@@ -28,10 +26,10 @@ export function Footer() {
 
         <div>
           <p className="spec mb-3 text-signal-hot">Find your way</p>
-          {/* Room here for the pages still to come, such as /for-brands. */}
           <nav aria-label="Footer navigation" className="grid md:gap-2.5">
             <Link href="/services" className="footer-link">Services</Link>
             <Link href="/areas" className="footer-link">Areas we cover</Link>
+            <Link href="/for-brands" className="footer-link">For brands</Link>
             <Link href="/portfolio" className="footer-link">Portfolio</Link>
             <Link href="/about" className="footer-link">Our story</Link>
             <Link href="/contact" className="footer-link">Start a project</Link>
@@ -52,13 +50,14 @@ export function Footer() {
             <a href={"tel:" + business.phone} className="footer-link" aria-label={`Call ${WHATSAPP_DISPLAY}`}>Call</a>
           </div>
           <a href={"mailto:" + business.email} className="footer-link max-w-full break-all text-sm">{business.email}</a>
+          <p className="mt-3 text-sm leading-relaxed text-night-ink-muted">{LANGUAGES_LINE}</p>
         </div>
 
-        {/* The four trades most people search for, on every page, so each one is a link away. */}
+        {/* Every trade on every page, so each service page is a link away from anywhere. */}
         <div className="col-span-2 border-t border-night-rule pt-6 md:col-span-3">
           <p className="spec mb-2 text-signal-hot">What we make</p>
-          <nav aria-label="Main trades" className="grid grid-cols-2 gap-x-5 text-sm md:flex md:flex-wrap md:gap-x-10">
-            {MAIN_TRADES.map(trade => (
+          <nav aria-label="All services" className="grid grid-cols-2 gap-x-5 text-sm md:flex md:flex-wrap md:gap-x-10">
+            {ALL_TRADES.map(trade => (
               <Link key={trade.href} href={trade.href} className="footer-link">{trade.label}</Link>
             ))}
           </nav>

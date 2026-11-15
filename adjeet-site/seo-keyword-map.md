@@ -22,21 +22,27 @@ Buyers search for the **object** ("sign board", "glow sign board", "LED board", 
 
 ## Keyword to page map
 
+Current URLs, 15 November 2026. The 27 regional pages (`/<service>-in-<city>`) and the two Gangtok guides are permanent redirects since 20 October 2026 (`content/legacy-regional.ts`) and are no longer targets. The sitemap lists 19 URLs: the 5 core pages, 10 services, `/areas`, the indexed town pages and `/for-brands`.
+
 | Priority | Search terms | Page |
 | --- | --- | --- |
-| 1 | sign board makers in Siliguri, signage company Siliguri, sign board shop Siliguri | Home `/` |
+| 1 | sign board makers in Siliguri, who makes sign boards in Siliguri, signage company Siliguri, sign board shop Siliguri | Home `/` |
 | 1 | glow sign board Siliguri, LED sign board Siliguri, glow sign board price, shop name board | `/services/glow-sign-boards` |
 | 1 | ACP sign board Siliguri, 3D LED letter board, acrylic 3D letters, ACP elevation | `/services/acp-led-signage` |
 | 1 | flex printing Siliguri, flex banner printing, hoarding printing Siliguri, star flex | `/services/flex-printing` |
+| 1 | outdoor advertising agency in Siliguri, advertising agency Siliguri, dealer boards, dealer board and wall painting vendor North Bengal | `/for-brands` |
 | 2 | vehicle branding Siliguri, van wrap, e-rickshaw / auto branding | `/services/vehicle-branding` |
-| 2 | glow sign board / ACP sign board in Jalpaiguri, Cooch Behar, Darjeeling, Malda | Regional guides `/<service>-in-<city>` |
-| 2 | sign board Gangtok, ACP signage Gangtok (few competitors rank) | `/glow-sign-board-in-gangtok`, `/acp-led-signage-in-gangtok` |
+| 2 | sign board / glow sign board in Cooch Behar, Jalpaiguri | `/areas/cooch-behar`, `/areas/jalpaiguri` |
+| 2 | sign board Darjeeling, Kalimpong, Malda, Alipurduar, the Dooars, Dinajpur | `/areas` (every place treated the same way) |
+| 2 | sign board Gangtok, ACP signage Gangtok | `/areas/gangtok` (live but `noindex` until it has two documented local jobs) |
 | 2 | Durga Puja gate branding, pandal branding Siliguri | `/services/events-and-puja` |
+| 2 | sign board portfolio Siliguri, sign board photos North Bengal | `/portfolio` |
 | 3 | wall painting advertising North Bengal, wall writing | `/services/wall-painting` |
 | 3 | F-pole sign, pole sign board | `/services/f-pole-installation` |
 | 3 | retail / dealer outlet branding, in-shop branding | `/services/in-shop-branding` |
 | 3 | one way vision sticker Siliguri, glass film branding | `/services/one-way-vision` |
 | 3 | POP display, standee, shelf talker Siliguri | `/services/product-display` |
+| 3 | AD JEET Siliguri, Ranjit Das, sign board workshop Siliguri | `/about`, `/contact` |
 
 Not targeted: "hoarding advertising Siliguri" (media-space rental, sold by Media Ant and OOH agencies, not fabrication), "LED board repair" and "neon sign" (not documented AD JEET services). Add pages only if the owner confirms the service.
 
@@ -57,6 +63,14 @@ Not targeted: "hoarding advertising Siliguri" (media-space rental, sold by Media
 - **Connected entity.** Every page now has a WebPage node (AboutPage, ContactPage or CollectionPage where it fits) that points to the site, the business and, on service and regional pages, its own Service node. The founder is one Person node on the About page, linked from the business. The business carries a `disambiguatingDescription` (Siliguri, 1990, Ranjit Das) to separate it from the Kolkata business with a similar name.
 - **Comparison table.** "Glow sign board, ACP board or flex?" is a real HTML table on the services page and on the three compared service pages, and is repeated in llms.txt. Every cell restates facts the site already published; lead times are read from the service records. Source: `content/sign-comparison.ts`.
 - **Mobile speed.** Fonts are Latin-only WOFF2 subsets (76KB for all four instead of 729KB). The Turnstile CAPTCHA, about 1MB that keeps polling, now loads only when a visitor nears the form, so most visitors to the 27 regional pages never download it. Google Analytics loads once the page is idle.
+
+### 15 November 2026: brand buyers, quotable answers, links
+
+- **`/for-brands`** for regional, zonal and trade marketing teams: dealer boards, in-shop branding, wall painting, vehicle graphics and Puja gates, how a rollout is sent in, what a brand team can ask for, brand work photographed on site and four FAQs. Title and H1 target "outdoor advertising agency in Siliguri" and "dealer boards". WebPage, FAQPage and BreadcrumbList. Linked from the footer, the phone menu, the home page (under the client board) and `/services`. Source: `content/for-brands.ts`.
+- **Home FAQs** open with "Who makes sign boards in Siliguri?", and every answer is 40 to 170 words and names AD JEET and Siliguri, so it can be quoted on its own. The site-visit wording is gone.
+- **Every service page** now has a "Planning ... in Siliguri" brief and send-us list, a "Why AD JEET" block, and (glow and ACP) the list in Bengali. Four H1s carry the buyer's term: ACP Sign Boards and 3D LED Letters, Durga Puja and Event Branding, POP Displays and Standees, F-Pole Sign Boards.
+- **Footer** links all ten services, `/areas` and `/for-brands`, and says enquiries are handled in English, Bengali or Hindi, as `knowsLanguage` records.
+- **Technical.** The WebSite node is emitted once on every page from the root layout, so every `isPartOf` resolves. `/services` has a BreadcrumbList. The 404 page has its own title. `app/manifest.ts` is the web manifest. Seven site pages have their own 1200 x 630 share card cropped from a gallery photo (`content/page-share.ts`). llms.txt prints the newest review date. Every title is 60 characters or fewer before " | AD JEET" and every description 150 or fewer.
 
 ## Needs the owner (not code)
 

@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { SITE_REVIEWED, formatReviewDate, reviewedOn } from '@/content/page-reviews'
+import { SITE_REVIEWED, formatReviewDate, newestReview, reviewedOn } from '@/content/page-reviews'
 
 describe('page review dates', () => {
   it('is a real ISO date that is not in the future', () => {
@@ -10,13 +10,16 @@ describe('page review dates', () => {
     expect(new Date(SITE_REVIEWED).getTime()).toBeLessThanOrEqual(Date.now() + 24 * 60 * 60 * 1000)
   })
 
-  it('uses the site review unless a page has its own date', () => {
-    expect(reviewedOn('/privacy')).toBe(SITE_REVIEWED)
-    expect(reviewedOn('/')).toBe('2026-10-20')
-    expect(reviewedOn('/about')).toBe('2026-10-20')
-    expect(reviewedOn('/contact')).toBe('2026-10-20')
-    expect(reviewedOn('/services/flex-printing')).toBe('2026-10-20')
-    expect(reviewedOn('/areas/cooch-behar')).toBe('2026-10-20')
+  // 15 November 2026 was a review of the whole site, privacy policy included.
+  it('dates every page from the 15 November 2026 site review', () => {
+    expect(SITE_REVIEWED).toBe('2026-11-15')
+    for (const path of ['/', '/about', '/contact', '/privacy', '/for-brands', '/services/flex-printing', '/areas/cooch-behar']) {
+      expect(reviewedOn(path), path).toBe('2026-11-15')
+    }
+  })
+
+  it('gives summaries the newest review on the site', () => {
+    expect(newestReview()).toBe('2026-11-15')
   })
 
   it('prints the date the way the pages show it, on the same day in every time zone', () => {

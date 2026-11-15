@@ -11,6 +11,9 @@ import { CoverageStage } from '@/components/coverage/CoverageStage'
 import { getPhotoById } from '@/content/gallery'
 import { HeroScene } from '@/components/home/HeroScene'
 import styles from './About.module.css'
+import extras from './AboutExtras.module.css'
+import { business } from '@/lib/business'
+import { LANGUAGES_LINE } from '@/content/enquiry'
 
 const PAGE = {
   title: "About Our Siliguri Signage Workshop",
@@ -61,6 +64,11 @@ export default function AboutPage() {
         <ol className={styles.journey}>
           {JOURNEY.map(step => <li key={step.marker} data-site-reveal><p className={styles.marker}>{step.marker}</p><div><h3>{step.title}</h3><p>{step.body}</p></div></li>)}
         </ol>
+        {/* Recorded facts only (content audit C4): no team names until the owner supplies them. */}
+        <div className={extras.dealWith}>
+          <h3>Who you will deal with</h3>
+          <p>AD JEET was founded in {FOUNDED_YEAR} by {business.founder}. He started it at 20 in a small room in his own flat. Today the work is made at our own workshop in {business.city}, at {business.workshop}. Walk-ins are welcome {business.hours.replace(', walk-ins welcome', '')}. {LANGUAGES_LINE}</p>
+        </div>
       </section>
       <section className={styles.workshopBand} aria-labelledby="workshop-heading">
         <div className={styles.workshopBandHead}>
@@ -80,7 +88,7 @@ export default function AboutPage() {
         <div className={styles.trustHead}>
           <h2 id="trust-heading" data-site-reveal="title">Quality, every time.<br /><span>Trust, over time.</span></h2>
           <div className={styles.trustCopy}>
-            <p>Our client history includes Fortune 500 companies. What matters most to us is the trust that continues beyond the first project.</p>
+            <p>Our client history includes national brands such as Airtel, Havells, Supreme Pipe and Star Cement. Their work is photographed on the portfolio page. What matters most to us is the trust that continues beyond the first project.</p>
             <p>That trust rests on the quality of the work and the consistency we bring to it. It is how we have grown, and how we intend to keep growing.</p>
             <Link href="/portfolio" className="cta cta--md cta--yellow">See our work <ArrowUpRight size={18} aria-hidden="true" /></Link>
           </div>

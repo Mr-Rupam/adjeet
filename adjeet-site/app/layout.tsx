@@ -15,7 +15,7 @@ import { ReducedMotionWrapper } from '@/components/motion/ReducedMotionWrapper'
 import { SiteMotion } from '@/components/motion/SiteMotion'
 import { EntryIntroScript } from '@/components/motion/EntryIntroScript'
 import { EntryLoader } from '@/components/motion/EntryLoader'
-import { buildLocalBusinessJsonLd, jsonLdString, siteConfig } from '@/lib/seo'
+import { DEFAULT_SHARE_IMAGE, buildLocalBusinessJsonLd, buildWebSiteJsonLd, jsonLdString, siteConfig } from '@/lib/seo'
 import './globals.css'
 import '@/design/fieldwork.css'
 
@@ -36,7 +36,7 @@ export const metadata: Metadata = {
     description: siteDescription,
     url: 'https://adjeet.in',
     siteName: 'AD JEET',
-    images: [{ url: siteConfig.ogImage, alt: 'Ambuja Cement ACP and LED signage by AD JEET' }],
+    images: [DEFAULT_SHARE_IMAGE],
     type: 'website',
     locale: 'en_IN',
   },
@@ -66,6 +66,12 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: jsonLdString(buildLocalBusinessJsonLd()) }}
+        />
+        {/* The site node every page's WebPage points at (`isPartOf`), once per
+            page, so that reference resolves everywhere and not only on home. */}
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: jsonLdString(buildWebSiteJsonLd()) }}
         />
       </head>
       <body className="min-h-screen flex flex-col bg-paper text-ink">

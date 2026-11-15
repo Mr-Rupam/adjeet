@@ -24,7 +24,10 @@ import { WhatsAppLink } from '@/components/ui/WhatsAppLink'
 import { getPhotosByService, getServiceCover } from '@/content/gallery'
 import { formatReviewDate, reviewedOn } from '@/content/page-reviews'
 import { COMPARED_SLUGS } from '@/content/sign-comparison'
-import { SILIGURI_BRIEFS, SILIGURI_NEARBY } from '@/content/service-local'
+import { SILIGURI_BRIEFS, SILIGURI_NEARBY, SILIGURI_SEND_US_BN } from '@/content/service-local'
+import { FOUNDED_YEAR } from '@/lib/coverage'
+import { business } from '@/lib/business'
+import detailStyles from './ServiceDetail.module.css'
 import { TOWNS, townPath } from '@/content/areas'
 import { shareImageFor } from '@/content/photo-places'
 import { GalleryStrip } from '@/components/sections/GalleryStrip'
@@ -70,6 +73,7 @@ export default async function ServiceDetailPage({
   const workPhoto = getServiceCover(service.slug as ServiceSlug)
   const servicePhotos = getPhotosByService(service.slug as ServiceSlug)
   const siliguri = SILIGURI_BRIEFS[service.slug as ServiceSlug]
+  const siliguriBn = SILIGURI_SEND_US_BN[service.slug as ServiceSlug]
 
   const path = `/services/${service.slug}`
   const reviewed = reviewedOn(path)
@@ -115,7 +119,7 @@ export default async function ServiceDetailPage({
         <div className="service-detail-grid">
           <div>
             <p className="spec text-signal">Service {indexStr} / {totalStr}</p>
-            <h1>{service.name} <span className="service-location">in Siliguri &amp; North Bengal</span></h1>
+            <h1>{service.h1 ?? service.name} <span className="service-location">in Siliguri &amp; North Bengal</span></h1>
             <p className="spec text-signal mb-5">{service.tagline}</p>
             <p className="service-description">{service.description}</p>
             <div className="mt-7 flex flex-wrap items-center gap-5">
@@ -152,10 +156,21 @@ export default async function ServiceDetailPage({
             <h2 id="service-siliguri-heading" className={areaStyles.heading}>Planning {siliguri.work} in Siliguri</h2>
             <div className={areaStyles.brief}>
               <p className={areaStyles.briefText}>{siliguri.brief}</p>
-              <div className={areaStyles.sendUs}>
-                <p className="spec text-signal">Send us</p>
-                <ul>{siliguri.sendUs.map(item => <li key={item}>{item}</li>)}</ul>
-                <p className={areaStyles.sendUsNote}>Also for nearby {SILIGURI_NEARBY.slice(0, -1).join(', ')} and {SILIGURI_NEARBY.at(-1)}.</p>
+              <div className={detailStyles.sendColumn}>
+                <div className={areaStyles.sendUs}>
+                  <p className="spec text-signal">Send us</p>
+                  <ul>{siliguri.sendUs.map(item => <li key={item}>{item}</li>)}</ul>
+                  <p className={areaStyles.sendUsNote}>Also for nearby {SILIGURI_NEARBY.slice(0, -1).join(', ')} and {SILIGURI_NEARBY.at(-1)}.</p>
+                </div>
+                {/* The same list in Bengali. Its font stack is the system Bengali
+                    font, because the self-hosted Hind Siliguri subset is Latin only. */}
+                {siliguriBn && (
+                  <div lang="bn" className={`${areaStyles.sendUs} ${detailStyles.bengali}`}>
+                    <h3 className={detailStyles.bengaliHeading}>{siliguriBn.heading}</h3>
+                    <ul>{siliguriBn.sendUs.map(item => <li key={item}>{item}</li>)}</ul>
+                    <p className={areaStyles.sendUsNote}>{siliguriBn.note}</p>
+                  </div>
+                )}
               </div>
             </div>
           </div>
@@ -275,6 +290,18 @@ export default async function ServiceDetailPage({
           </div>
         </section>
       )}
+
+      {/* Three facts the site already shows elsewhere, gathered before the closing action. */}
+      <section className={areaStyles.section} aria-labelledby="service-why-heading">
+        <div className="field-container">
+          <h2 id="service-why-heading" className={areaStyles.heading}>Why AD JEET</h2>
+          <ul className={detailStyles.why}>
+            <li>Working in Siliguri since {FOUNDED_YEAR}.</li>
+            <li>Our own workshop is in Siliguri, at {business.workshop}.</li>
+            <li>Finished jobs are photographed on site, many with the place and year, on the <Link href="/portfolio" className={detailStyles.whyLink}>portfolio</Link>.</li>
+          </ul>
+        </div>
+      </section>
 
       <CommissionCTA />
 
