@@ -37,7 +37,7 @@ export function ServicesBoard() {
       </section>)}
       {/* Done, with no page or photographs yet: named, with one honest line and a WhatsApp action each. */}
       <section id="also-done" className="service-group" aria-labelledby="also-done-title">
-        <div className="service-group-heading"><h2 id="also-done-title">Also done</h2><p>Part of the work, with no page or photographs here yet. Send the details on WhatsApp.</p></div>
+        <div className="service-group-heading"><h2 id="also-done-title">Also from AD JEET</h2><p>Outdoor media and on-ground work for campaigns and events. Send the details on WhatsApp.</p></div>
         <ol>{ALSO_SERVICES.map(name => (
           <li key={name}><WhatsAppLink href={defaultWhatsAppUrl({ service: name.toLowerCase() })} source="services:also-done" className="service-row"><span><strong>{name}</strong><small>{ALSO_LINES[name]}</small></span><ArrowUpRight size={22} aria-hidden="true" /></WhatsAppLink></li>
         ))}</ol>

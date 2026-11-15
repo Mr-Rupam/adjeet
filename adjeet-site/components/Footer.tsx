@@ -30,7 +30,7 @@ export function Footer() {
           <nav aria-label="Footer navigation" className="grid md:gap-2.5">
             <Link href="/services" className="footer-link">Services</Link>
             <Link href="/areas" className="footer-link">Areas we cover</Link>
-            <Link href="/for-brands" className="footer-link">For brands</Link>
+            <Link href="/for-brands" className="footer-link">For Brands</Link>
             <Link href="/portfolio" className="footer-link">Portfolio</Link>
             <Link href="/about" className="footer-link">Our story</Link>
             <Link href="/contact" className="footer-link">Start a project</Link>

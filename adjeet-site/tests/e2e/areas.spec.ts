@@ -85,7 +85,7 @@ test('the footer links every service, the areas page and the brand page', async 
   const footer = page.getByRole('contentinfo')
   const pages = footer.getByRole('navigation', { name: 'Footer navigation' })
   await expect(pages.getByRole('link', { name: 'Areas we cover', exact: true })).toHaveAttribute('href', '/areas')
-  await expect(pages.getByRole('link', { name: 'For brands', exact: true })).toHaveAttribute('href', '/for-brands')
+  await expect(pages.getByRole('link', { name: 'For Brands', exact: true })).toHaveAttribute('href', '/for-brands')
   const trades = footer.getByRole('navigation', { name: 'All services' }).getByRole('link')
   await expect(trades).toHaveText([
     'Glow sign boards', 'ACP and 3D LED letters', 'Flex printing', 'Vehicle branding', 'Wall painting advertising',

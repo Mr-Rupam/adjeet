@@ -40,10 +40,9 @@ const OLD_CATEGORY = /sign[- ]?boards? makers? in siliguri|sign[- ]?board makers
 
 /**
  * Service-level search terms may keep the trade phrase; they name a product,
- * not the business. The privacy page belongs to another track tonight and is
- * rewritten there (16 November 2026); remove it from this list once merged.
+ * not the business.
  */
-const TRADE_TERM_FILES = new Set([path.join('content', 'service-search.ts'), path.join('app', '(marketing)', 'privacy', 'page.tsx')])
+const TRADE_TERM_FILES = new Set([path.join('content', 'service-search.ts')])
 const isComment = (line: string) => /^\s*(\/\/|\*|\/\*\*|\{\/\*)/.test(line)
 
 const BANNED_WORDS = /\b(solutions?|end-to-end|seamless(ly)?|unforgettable|elevate[sd]?|cutting-edge|one-stop|we believe|passionate)\b|24\/7|brand experience/i

@@ -44,7 +44,7 @@ export function GET() {
     '',
     '## Services',
     ...services.map(service => `- [${service.name}](${business.url}/services/${service.slug}): ${service.answer} Also called: ${service.alternateNames.join(', ')}. ${jobDaysLabel(service.slug as ServiceSlug) ? `Job time: ${service.turnaround}. ${JOB_DAYS_CAPTION}` : `Planning lead time: ${service.turnaround}.`}`),
-    `- Also done, with no page on the site yet: ${ALSO_SERVICES.join(', ')}. Ask with the town and the dates.`,
+    `- Also offered by AD JEET: ${ALSO_SERVICES.join(', ')}. Ask with the town and the dates.`,
     '',
     `## ${COMPARISON_HEADING}`,
     ...COMPARED_BOARDS.map(board => `- [${board.name}](${business.url}/services/${board.slug}): ${board.cells.map((cell, index) => `${COMPARISON_COLUMNS[index]}: ${cell}`).join('. ')}.`),
