@@ -60,7 +60,7 @@ describe('reveals without the Web Animations API', () => {
     maskedLineReveal(createEnterWatcher(), target)
     expect(target.innerHTML).toBe(original)
     expect(target.hasAttribute('aria-label')).toBe(false)
-    expect(target.style.visibility).toBe('')
+    expect(target.style.opacity).toBe('')
   })
 })
 

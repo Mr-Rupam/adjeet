@@ -257,16 +257,16 @@ export function maskedLineReveal(watcher: EnterWatcher, target: HTMLElement, opt
   let active = true
   let animations: Animation[] = []
   let restore: (() => void) | null = null
-  const previousVisibility = target.style.visibility
+  const previousOpacity = target.style.opacity
   const previousAriaLabel = target.getAttribute('aria-label')
-  target.style.visibility = 'hidden'
+  target.style.opacity = '0'
 
   const finish = () => {
     restore?.()
     restore = null
     if (previousAriaLabel === null) target.removeAttribute('aria-label')
     else target.setAttribute('aria-label', previousAriaLabel)
-    target.style.visibility = previousVisibility
+    target.style.opacity = previousOpacity
   }
 
   const play = () => {
@@ -275,12 +275,12 @@ export function maskedLineReveal(watcher: EnterWatcher, target: HTMLElement, opt
     if (previousAriaLabel === null && accessibleName) target.setAttribute('aria-label', accessibleName)
     const { lines, revert } = splitLines(target)
     restore = revert
-    target.style.visibility = previousVisibility
+    target.style.opacity = previousOpacity
     if (!lines.length) { finish(); return }
     const stagger = lines.length > 1 ? MOTION.headingStagger : 0
     try {
       animations = lines.map((line, index) => line.animate(
-        [{ transform: 'translateY(105%)', opacity: 0, visibility: 'hidden', offset: 0 }, { transform: 'translateY(0)', opacity: 1, visibility: 'visible' }],
+        [{ transform: 'translateY(105%)', opacity: 0, offset: 0 }, { transform: 'translateY(0)', opacity: 1 }],
         { duration: MOTION.headingDuration * 1000, delay: ((options.delay ?? 0) + index * stagger) * 1000, easing: EASE.out3, fill: 'backwards' },
       ))
     } catch {
