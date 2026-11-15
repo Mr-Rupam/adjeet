@@ -48,7 +48,7 @@ export function WhatsAppFAB() {
   if (!visible) return null
 
   return (
-    <div className="quote-dock" style={{ bottom: 'calc(0.85rem + var(--consent-h, 0px))' }}>
+    <div className="quote-dock">
       <QuoteCTA source="mobile-dock" tone="yellow" label="WhatsApp your project" className="quote-dock__cta" />
     </div>
   )

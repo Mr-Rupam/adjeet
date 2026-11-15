@@ -18,6 +18,12 @@ vi.mock('@/components/sections/LeadForm', () => ({
     <div data-testid="lead-form" data-default-city={defaultCity ?? ''} data-default-service={defaultService ?? ''} />
   ),
 }))
+// The pages load the form when it nears the viewport; the wrapper hands the
+// same prefill through, so render it as the form itself here.
+vi.mock('@/components/areas/DeferredLeadForm', async () => {
+  const { LeadForm } = await import('@/components/sections/LeadForm')
+  return { DeferredLeadForm: LeadForm }
+})
 vi.mock('@/components/PageViewTracker', () => ({ ServicePageTracker: () => null }))
 vi.mock('@/components/coverage/CoverageStage', () => ({ CoverageStage: () => null }))
 vi.mock('@/components/coverage/CoveragePlaceList', () => ({ CoveragePlaceList: () => null }))

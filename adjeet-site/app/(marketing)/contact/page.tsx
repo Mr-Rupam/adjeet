@@ -1,6 +1,7 @@
 import { business } from '@/lib/business'
 import { buildPageMetadata } from '@/lib/seo'
 import { LeadForm } from '@/components/sections/LeadForm'
+import { ContactMap } from '@/components/contact/ContactMap'
 import { buildBreadcrumbJsonLd, buildWebPageJsonLd, jsonLdString } from '@/lib/seo'
 import { PageMasthead } from '@/components/street/PageMasthead'
 import { QuoteCTA } from '@/components/ui/QuoteCTA'
@@ -48,15 +49,12 @@ export default function ContactPage() {
             <p className={areaStyles.sendUsNote}>{LANGUAGES_LINE}</p>
           </div>
           <div className="contact-address"><p className="spec">Find us in Siliguri</p><h3>Workshop / {business.workshop}</h3><p>{business.street}, {business.city}, {business.region} {business.postalCode}. Open {business.hours}.</p><h3>Office / {business.office}</h3><p>{business.city}, {business.region} {business.officePostalCode}</p></div>
-          <div className="contact-map">
-            <iframe
-              src={business.mapsEmbedUrl}
-              title="AD JEET workshop in Patiram Jote, Siliguri on Google Maps"
-              loading="lazy"
-              referrerPolicy="strict-origin-when-cross-origin"
-              allowFullScreen
-            />
-          </div>
+          <ContactMap
+            embedUrl={business.mapsEmbedUrl}
+            mapsUrl={business.mapsUrl}
+            title="AD JEET workshop in Patiram Jote, Siliguri on Google Maps"
+            address={`AD JEET workshop, ${business.workshop}, ${business.city} ${business.postalCode}`}
+          />
           <a className="contact-location-link" href={business.mapsUrl} target="_blank" rel="noopener noreferrer">
             <span className="spec">Plan your visit</span><strong>AD JEET, Patiram Jote, Siliguri</strong><span>Open our Google Maps listing ↗</span>
           </a>

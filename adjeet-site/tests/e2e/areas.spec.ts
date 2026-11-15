@@ -25,34 +25,40 @@ test('every retired regional URL answers 308 with its new home and keeps the que
   }
 })
 
-/** The lead form's city select, once hydration has applied any prefill. */
-const leadCity = (page: Page) => page.locator('form').filter({ has: page.locator('#lead-name') }).locator('#lead-city')
+/**
+ * The lead form's city select, once hydration has applied any prefill. These
+ * pages load the form only as it nears the viewport, so scroll to its place.
+ */
+async function leadCity(page: Page) {
+  await page.locator('[data-lead-form-slot]').scrollIntoViewIfNeeded()
+  return page.locator('form').filter({ has: page.locator('#lead-name') }).locator('#lead-city')
+}
 
 test.describe('the page\'s own town wins over ?city=', () => {
   test('an old Siliguri link lands on the service page with Siliguri and the trade', async ({ page }) => {
     await page.goto('/glow-sign-board-in-siliguri?city=Malda')
     await expect(page).toHaveURL(/\/services\/glow-sign-boards\?city=Malda$/)
     await expect(page.getByRole('heading', { level: 1 })).toContainText('Glow Sign Boards')
-    await expect(leadCity(page)).toHaveValue('Siliguri')
+    await expect(await leadCity(page)).toHaveValue('Siliguri')
     await expect(page.locator('input[type="checkbox"][value="glow-sign-boards"]')).toBeChecked()
     await expect(page.locator('input[type="checkbox"]:checked')).toHaveCount(1)
   })
 
   test('a town page keeps its town', async ({ page }) => {
     await page.goto('/areas/cooch-behar?city=Malda')
-    await expect(leadCity(page)).toHaveValue('Cooch Behar')
+    await expect(await leadCity(page)).toHaveValue('Cooch Behar')
     await expect(page.locator('input[type="checkbox"]:checked')).toHaveCount(0)
   })
 
   test('an old town link lands on the town page with the town filled in', async ({ page }) => {
     await page.goto('/flex-printing-in-jalpaiguri')
     await expect(page).toHaveURL(/\/areas\/jalpaiguri$/)
-    await expect(leadCity(page)).toHaveValue('Jalpaiguri')
+    await expect(await leadCity(page)).toHaveValue('Jalpaiguri')
   })
 
   test('the areas page has no town of its own, so ?city= still applies', async ({ page }) => {
     await page.goto('/areas?city=Kalimpong')
-    await expect(leadCity(page)).toHaveValue('Kalimpong')
+    await expect(await leadCity(page)).toHaveValue('Kalimpong')
   })
 })
 

@@ -5,8 +5,19 @@ test('the contact page embeds the workshop listing at usable sizes', async ({ pa
     await page.setViewportSize({ width, height: 900 })
     await page.goto('/contact')
 
+    // The embed costs about 450 KB, so it waits for "Show map" (or for the
+    // block to be on screen once the page is idle) before asking Google.
     const map = page.getByTitle('AD JEET workshop in Patiram Jote, Siliguri on Google Maps')
-    await map.scrollIntoViewIfNeeded()
+    const show = page.getByRole('button', { name: 'Show map' })
+    if (width === 390) {
+      await expect(map).toHaveCount(0)
+      // Pressed without scrolling to it, so the on-screen trigger cannot race the button.
+      await show.dispatchEvent('click')
+      await expect(map).toBeFocused()
+      await map.scrollIntoViewIfNeeded()
+    } else {
+      await page.locator('.contact-map').scrollIntoViewIfNeeded()
+    }
     await expect(map).toBeVisible()
     const src = new URL((await map.getAttribute('src'))!, page.url())
     expect(src.hostname).toBe('maps.google.com')

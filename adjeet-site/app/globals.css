@@ -564,12 +564,16 @@ section[id] {
   color: var(--signal-hot);
 }
 
+/* The dock clears the consent banner with a transform, never by changing
+   `bottom`: moving a fixed box's position is a layout shift, a transform is not. */
 .quote-dock {
   position: fixed;
   right: max(0.85rem, env(safe-area-inset-right, 0px));
+  bottom: 0.85rem;
   left: max(0.85rem, env(safe-area-inset-left, 0px));
   z-index: 45;
   pointer-events: none;
+  transform: translateY(calc(-1 * var(--consent-h, 0px)));
 }
 
 /* The desktop header already supplies this action. */
