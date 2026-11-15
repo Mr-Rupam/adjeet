@@ -1,0 +1,59 @@
+/* Fills the existing .contact-map frame (fieldwork.css), so the box keeps its
+   size when the embed replaces it and nothing below moves. A faint street grid
+   says "map" without fetching one. */
+.placeholder {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  gap: 10px;
+  height: 100%;
+  padding: 24px;
+  background-color: var(--paper-deep);
+  background-image:
+    linear-gradient(var(--rule) 1px, transparent 1px),
+    linear-gradient(90deg, var(--rule) 1px, transparent 1px);
+  background-size: 56px 56px;
+  background-position: -1px -1px;
+}
+
+.address {
+  max-width: 34ch;
+  font-size: 17px;
+  font-weight: 500;
+  color: var(--ink);
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px 20px;
+  margin-top: 6px;
+}
+
+.show {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  padding: 0 18px;
+  border: 2px solid var(--ink);
+  background: var(--paper-elevated);
+  color: var(--ink);
+  cursor: pointer;
+  transition: background-color 0.15s, color 0.15s;
+}
+
+.show:hover {
+  background: var(--ink);
+  color: var(--paper);
+}
+
+.open {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  color: var(--signal-text);
+  font-size: 14px;
+  text-decoration: underline;
+  text-underline-offset: 5px;
+}
