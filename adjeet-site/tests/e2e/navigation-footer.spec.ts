@@ -112,7 +112,7 @@ for (const width of [320, 390, 768]) {
     const footer = page.getByRole('contentinfo')
     await footer.scrollIntoViewIfNeeded()
     const nav = await footer.getByText('Find your way').boundingBox()
-    const contact = await footer.getByText('Talk to the workshop').boundingBox()
+    const contact = await footer.getByText('Talk to us', { exact: true }).boundingBox()
     expect(Math.abs(nav!.y - contact!.y)).toBeLessThan(2)
     const whatsapp = await footer.getByRole('link', { name: 'WhatsApp', exact: true }).boundingBox()
     const call = await footer.getByRole('link', { name: /^Call/ }).boundingBox()
