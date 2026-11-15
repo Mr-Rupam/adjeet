@@ -9,9 +9,9 @@ import { business } from '@/lib/business'
  */
 export default function manifest(): MetadataRoute.Manifest {
   return {
-    name: `${business.name}, sign board makers in ${business.city}`,
+    name: `${business.name}, advertising agency in ${business.city}`,
     short_name: business.name,
-    description: `Sign boards, printing and outdoor advertising made in ${business.city} since ${business.foundingYear}.`,
+    description: `Advertising agency in ${business.city} since ${business.foundingYear}: outdoor advertising, signage and brand rollouts across North Bengal and Sikkim.`,
     start_url: '/',
     display: 'browser',
     background_color: '#F6F0E3',

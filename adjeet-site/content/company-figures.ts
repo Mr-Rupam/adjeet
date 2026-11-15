@@ -28,7 +28,12 @@ export function yearsWith(since: number, now: Date = new Date()): number {
   return Math.max(0, now.getFullYear() - since)
 }
 
-export const WORKSHOP = { area: '7,200 sq ft', place: 'Patiram Jote, Siliguri' } as const
+/** "16 years with Havells", one per brand, in the order above. */
+export function brandTenureLines(now: Date = new Date()): string[] {
+  return BRAND_TENURES.map(({ brand, since }) => `${yearsWith(since, now)} years with ${brand}`)
+}
+
+export const WORKSHOP ={ area: '7,200 sq ft', place: 'Patiram Jote, Siliguri' } as const
 
 /** A network of fitters and painters, not employees: never "staff" or "team of 300". */
 export const CREW_NETWORK = { size: 300, line: 'a crew network of 300 fitters and painters' } as const

@@ -4,12 +4,13 @@ import { reviewedOn } from '@/content/page-reviews'
 import { COVERAGE_AREAS } from '@/lib/coverage'
 import { business } from '@/lib/business'
 import { DEFAULT_PAGE_SHARE, pageShareFor } from '@/content/page-share'
+import { ALSO_SERVICES } from '@/content/company-figures'
 
 export const siteConfig = {
   name: business.name,
   url: business.url,
   ogImage: DEFAULT_PAGE_SHARE.url,
-  description: 'Sign board makers in Siliguri since 1990: glow sign boards, ACP and 3D LED letters, flex printing and vehicle branding for North Bengal and Sikkim.',
+  description: `Advertising agency in Siliguri since ${business.foundingYear}: sign boards, hoardings, wall painting, vehicle branding and brand rollouts across North Bengal and Sikkim.`,
 }
 
 // Stable node IDs. Every page's structured data points at the same business,
@@ -124,7 +125,7 @@ export function buildLocalBusinessJsonLd() {
     // A differently run advertising agency with a near-identical name is
     // listed in Kolkata, with its own directory pages. Tie this entity to the
     // facts that separate them: Siliguri, the founder and the founding year.
-    disambiguatingDescription: `The Siliguri sign board and outdoor advertising workshop founded in ${business.foundingYear} by ${business.founder}. Its workshop and office are both in Siliguri, West Bengal.`,
+    disambiguatingDescription: `The Siliguri advertising agency founded in ${business.foundingYear} by ${business.founder}, with its own workshop. Its workshop and office are both in Siliguri, West Bengal.`,
     description: siteConfig.description,
     url: siteConfig.url,
     telephone: business.phone,
@@ -169,14 +170,18 @@ export function buildLocalBusinessJsonLd() {
       closes: '20:00',
     },
     areaServed: COVERAGE_AREAS.map(a => a.name),
-    knowsAbout: services.flatMap(service => [service.name, ...service.alternateNames]),
+    knowsAbout: [...services.flatMap(service => [service.name, ...service.alternateNames]), ...ALSO_SERVICES],
     hasOfferCatalog: {
       '@type': 'OfferCatalog',
-      name: 'Signage, printing and outdoor advertising services',
-      itemListElement: services.map(service => ({
-        '@type': 'Offer',
-        itemOffered: { '@type': 'Service', name: service.name, url: `${siteConfig.url}/services/${service.slug}` },
-      })),
+      name: 'Advertising, signage and brand rollout services',
+      itemListElement: [
+        ...services.map(service => ({
+          '@type': 'Offer',
+          itemOffered: { '@type': 'Service', name: service.name, url: `${siteConfig.url}/services/${service.slug}` },
+        })),
+        // Done, but with no page of their own yet: named without a URL.
+        ...ALSO_SERVICES.map(name => ({ '@type': 'Offer', itemOffered: { '@type': 'Service', name } })),
+      ],
     },
   }
 }
