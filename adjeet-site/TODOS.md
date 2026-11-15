@@ -155,6 +155,8 @@ refresh; the 20-navigation matrix then lands at the top at 390px and 1280px.
 `navigation-footer.spec.ts` covers the `/portfolio` and homepage routes and
 checks the top still holds after the refresh window.
 
+2026-11-15: GSAP was removed; the motion system no longer restores scroll, so the SiteMotion fix described above no longer exists and the spec still guards the behaviour.
+
 ### [ ] P3: DESIGN.md and design-loop.md describe the pre-redesign homepage
 **DESIGN.md done 2026-10-20:** it now describes the storefront homepage. design-loop.md still says 19 clients.
 `DESIGN.md:42` still gives the section order from before 1612d04 and calls the
