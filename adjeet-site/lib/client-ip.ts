@@ -1,4 +1,4 @@
-import { createHash } from 'node:crypto'
+import { createHash, createHmac } from 'node:crypto'
 import { isIPv4, isIPv6 } from 'node:net'
 
 /** An IP address with any brackets and zone id removed, or null when it is not one. */
@@ -46,13 +46,28 @@ export function rateKey(raw: string): string | null {
   return `${groups.slice(0, 4).map(group => group.toString(16).padStart(4, '0')).join(':')}::/64`
 }
 
+let warnedNoSecret = false
+
 /**
- * What a rate limiter stores in Redis for a `rateKey`: its SHA-256 digest, so
- * the database never holds a visitor's address. The same key always gives
+ * What a rate limiter stores in Redis for a key (a `rateKey`, or a phone
+ * number): an HMAC-SHA256 digest, so the database never holds the address or
+ * number, and the digest cannot be reversed by trying every IPv4 address or
+ * Indian mobile number without the server secret. The same key always gives
  * the same digest, so counting still works.
+ *
+ * The secret is LIMITER_KEY_SECRET, otherwise TURNSTILE_SECRET_KEY. With
+ * neither (local development) it is a plain SHA-256 hash. Neither the secret
+ * nor the key is ever logged.
  */
 export function limiterKey(key: string): string {
-  return createHash('sha256').update(`adjeet-limiter:${key}`).digest('hex')
+  const secret = process.env.LIMITER_KEY_SECRET || process.env.TURNSTILE_SECRET_KEY
+  const input = `adjeet-limiter:${key}`
+  if (secret) return createHmac('sha256', secret).update(input).digest('hex')
+  if (process.env.NODE_ENV === 'production' && !warnedNoSecret) {
+    console.warn('[limiter] No LIMITER_KEY_SECRET or TURNSTILE_SECRET_KEY: rate-limit keys are plain hashes')
+    warnedNoSecret = true
+  }
+  return createHash('sha256').update(input).digest('hex')
 }
 
 /**

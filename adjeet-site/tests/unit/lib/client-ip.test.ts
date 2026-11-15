@@ -1,5 +1,6 @@
 // @vitest-environment node
-import { describe, expect, it } from 'vitest'
+import { createHash, createHmac } from 'node:crypto'
+import { afterEach, describe, expect, it, vi } from 'vitest'
 import { clientIp, limiterKey, rateKey } from '@/lib/client-ip'
 
 describe('rateKey', () => {
@@ -77,6 +78,46 @@ describe('clientIp', () => {
   it('is null when the request names no usable address', () => {
     expect(clientIp(headers({}))).toBeNull()
     expect(clientIp(headers({ 'x-forwarded-for': 'unknown' }))).toBeNull()
+  })
+})
+
+describe('limiterKey secret', () => {
+  afterEach(() => { vi.unstubAllEnvs(); vi.restoreAllMocks() })
+  const hmac = (secret: string, key: string) => createHmac('sha256', secret).update(`adjeet-limiter:${key}`).digest('hex')
+  const sha = (key: string) => createHash('sha256').update(`adjeet-limiter:${key}`).digest('hex')
+
+  it('uses HMAC-SHA256 with LIMITER_KEY_SECRET when it is set', () => {
+    vi.stubEnv('LIMITER_KEY_SECRET', 'limiter-secret')
+    vi.stubEnv('TURNSTILE_SECRET_KEY', 'turnstile-secret')
+    expect(limiterKey('203.0.113.7')).toBe(hmac('limiter-secret', '203.0.113.7'))
+  })
+
+  it('falls back to HMAC with TURNSTILE_SECRET_KEY', () => {
+    vi.stubEnv('LIMITER_KEY_SECRET', '')
+    vi.stubEnv('TURNSTILE_SECRET_KEY', 'turnstile-secret')
+    expect(limiterKey('203.0.113.7')).toBe(hmac('turnstile-secret', '203.0.113.7'))
+  })
+
+  it('uses the plain hash only when neither secret is set, as in local development', () => {
+    vi.stubEnv('NODE_ENV', 'development')
+    vi.stubEnv('LIMITER_KEY_SECRET', '')
+    vi.stubEnv('TURNSTILE_SECRET_KEY', '')
+    expect(limiterKey('203.0.113.7')).toBe(sha('203.0.113.7'))
+  })
+
+  it('never logs the secret or the key', () => {
+    const spies = (['log', 'info', 'warn', 'error'] as const).map(method => vi.spyOn(console, method).mockImplementation(() => {}))
+    for (const env of ['production', 'development']) {
+      vi.stubEnv('NODE_ENV', env)
+      vi.stubEnv('LIMITER_KEY_SECRET', '')
+      vi.stubEnv('TURNSTILE_SECRET_KEY', '')
+      limiterKey('203.0.113.7')
+      vi.stubEnv('LIMITER_KEY_SECRET', 'limiter-secret')
+      limiterKey('203.0.113.7')
+    }
+    const text = spies.flatMap(spy => spy.mock.calls.flat()).map(String).join('\n')
+    expect(text).not.toContain('limiter-secret')
+    expect(text).not.toContain('203.0.113.7')
   })
 })
 
