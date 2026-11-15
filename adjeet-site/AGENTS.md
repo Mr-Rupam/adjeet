@@ -15,7 +15,8 @@ AD-JEET is a marketing website for a North Bengal signage company. The entire pr
 | `MONGODB_URI` | Lead storage (primary) |
 | `RESEND_API_KEY` | Email notification on each lead |
 | `GOOGLE_*` | Google Sheets backup of leads |
-| `UPSTASH_*` | Rate limiting on `/api/lead` and `/api/chatbot`, keyed by hashes, never raw addresses or numbers. If it is down the lead form still stores enquiries and answers truthfully, but the paid owner notifications stop; the chat fails closed and points to WhatsApp |
+| `UPSTASH_*` | Rate limiting on `/api/lead` and `/api/chatbot`, keyed by HMAC digests, never raw addresses or numbers. If it is missing or down the lead form still stores enquiries and answers truthfully, and the owner is still notified, bounded in memory to 6 notifications per 10 minutes per server instance (`LEAD_FALLBACK`); the chat fails closed and points to WhatsApp |
+| `LIMITER_KEY_SECRET` | Optional: HMAC secret for rate-limit keys. Falls back to `TURNSTILE_SECRET_KEY`; with neither (local development) keys are plain SHA-256 hashes |
 | `LEAD_DAILY_CAP` | Optional: enquiries across the site per UTC day before owner notifications stop (default 300). Enquiries past it are still stored |
 | `LEAD_NOTIFY_HOURLY_CAP`, `LEAD_NOTIFY_DAILY_CAP` | Optional: owner notifications per hour (default 20) and per UTC day (default 60), whatever the phone number. Defaults are in `lib/lead-limits.ts` |
 | `OPENAI_API_KEY` | AI chatbot responses |

@@ -74,7 +74,7 @@ beforeEach(() => {
   vi.stubEnv('UPSTASH_REDIS_REST_TOKEN', 'test')
   vi.stubEnv('KV_REST_API_URL', '')
   vi.stubEnv('KV_REST_API_TOKEN', '')
-  for (const name of ['LEAD_DAILY_CAP', 'LEAD_NOTIFY_HOURLY_CAP', 'LEAD_NOTIFY_DAILY_CAP']) vi.stubEnv(name, '')
+  for (const name of ['LEAD_DAILY_CAP', 'LEAD_NOTIFY_HOURLY_CAP', 'LEAD_NOTIFY_DAILY_CAP', 'LIMITER_KEY_SECRET', 'TURNSTILE_SECRET_KEY']) vi.stubEnv(name, '')
   vi.stubEnv('TWILIO_ACCOUNT_SID', '')
   vi.stubGlobal('fetch', vi.fn().mockImplementation(async () => new Response(JSON.stringify({ success: true, hostname: 'adjeet.in' }))))
   for (const method of ['log', 'info', 'warn', 'error'] as const) vi.spyOn(console, method).mockImplementation(() => {})
@@ -319,8 +319,20 @@ describe('owner notification cap per phone', () => {
     expect(phoneKey).not.toContain(brief.phone)
   })
 
-  // Changed on 2026-11-15: paid notifications now fail closed (finding N1).
-  it('stores the enquiry but sends no notification when the cap cannot be checked', async () => {
+  it('keys the phone and the visitor with HMAC under LIMITER_KEY_SECRET, so neither can be brute-forced from Redis', async () => {
+    vi.stubEnv('LIMITER_KEY_SECRET', 'limiter-secret')
+    const { createHmac } = await import('node:crypto')
+    expect((await submit()).status).toBe(200)
+    await notificationsSettled()
+    const keyOf = (prefix: string) => fakes.limit.mock.calls.find(([p]) => p === prefix)?.[1]
+    expect(keyOf('lead-notify')).toBe(createHmac('sha256', 'limiter-secret').update(`adjeet-limiter:phone:${brief.phone}`).digest('hex'))
+    expect(keyOf('lead')).toBe(createHmac('sha256', 'limiter-secret').update('adjeet-limiter:198.51.100.20').digest('hex'))
+    expect(logged()).not.toContain('limiter-secret')
+  })
+
+  // Changed again on 2026-11-15: when the caps cannot be counted, the owner
+  // is still told, under the in-process fallback bound.
+  it('stores the enquiry and still notifies, under the fallback bound, when the cap cannot be checked', async () => {
     fakes.limit.mockImplementation(async (prefix: string) => {
       if (prefix === 'lead-notify') throw new Error('offline')
       return { success: true }
@@ -328,7 +340,7 @@ describe('owner notification cap per phone', () => {
     expect((await submit()).status).toBe(200)
     await notificationsSettled()
     expect(fakes.insert).toHaveBeenCalledTimes(1)
-    expect(fakes.email).not.toHaveBeenCalled()
+    expect(fakes.email).toHaveBeenCalledTimes(1)
   })
 })
 
@@ -387,7 +399,9 @@ describe('owner notification volume caps (no phone dimension)', () => {
     expect(fakes.email).not.toHaveBeenCalled()
   })
 
-  it('fails closed for notifications, and open for storing, when the limiter errors', async () => {
+  const fallbackWarnings = () => vi.mocked(console.warn).mock.calls.flat().map(String).filter(line => /in-process fallback/i.test(line))
+
+  it('still notifies by email and WhatsApp when the limiter errors, warns once, and logs no secret', async () => {
     fakes.limit.mockImplementation(async (prefix: string) => {
       if (prefix === 'lead') return { success: true }
       throw new Error('Upstash rejected token SECRET-TOKEN')
@@ -395,13 +409,13 @@ describe('owner notification volume caps (no phone dimension)', () => {
     expect((await submit()).status).toBe(200)
     await notificationsSettled()
     expect(fakes.insert).toHaveBeenCalledTimes(1)
-    expect(fakes.email).not.toHaveBeenCalled()
-    expect(twilio).not.toHaveBeenCalled()
-    expect(logged()).toMatch(/notification skipped/i)
+    expect(fakes.email).toHaveBeenCalledTimes(1)
+    expect(twilio).toHaveBeenCalledTimes(1)
+    expect(fallbackWarnings()).toHaveLength(1)
     expect(logged()).not.toContain('SECRET-TOKEN')
   })
 
-  it('fails closed for notifications when the limiter stalls', async () => {
+  it('still notifies when the limiter stalls', async () => {
     const { POST } = await import('@/app/api/lead/route')
     const { LEAD_DEADLINES } = await import('@/lib/lead-deadline')
     fakes.limit.mockImplementation(async (prefix: string) => (prefix === 'lead' ? { success: true } : new Promise(() => {})))
@@ -410,17 +424,48 @@ describe('owner notification volume caps (no phone dimension)', () => {
     expect(response.status).toBe(200)
     await vi.advanceTimersByTimeAsync(LEAD_DEADLINES.limiter + 100)
     await notificationsSettled()
-    expect(fakes.email).not.toHaveBeenCalled()
+    expect(fakes.email).toHaveBeenCalledTimes(1)
   })
 
-  it('fails closed for notifications, and open for storing, when no limiter is configured', async () => {
+  it('still notifies, and stores, when no limiter is configured', async () => {
     vi.stubEnv('UPSTASH_REDIS_REST_URL', '')
     vi.stubEnv('UPSTASH_REDIS_REST_TOKEN', '')
     expect((await submit()).status).toBe(200)
     await notificationsSettled()
     expect(fakes.insert).toHaveBeenCalledTimes(1)
+    expect(fakes.email).toHaveBeenCalledTimes(1)
+    expect(twilio).toHaveBeenCalledTimes(1)
+  })
+
+  it('bounds degraded notifications per instance, warning once, and opens again when the window passes', async () => {
+    const { LEAD_FALLBACK } = await import('@/lib/lead-limits')
+    vi.stubEnv('UPSTASH_REDIS_REST_URL', '')
+    vi.stubEnv('UPSTASH_REDIS_REST_TOKEN', '')
+    vi.useFakeTimers({ toFake: ['Date'] })
+    vi.setSystemTime(new Date('2026-11-15T10:00:00Z'))
+    const runs = LEAD_FALLBACK.maxNotifications + 2
+    for (let i = 0; i < runs; i++) expect((await submit()).status).toBe(200)
+    await notificationsSettled()
+    // Every enquiry is stored; only the notifications past the bound are skipped.
+    expect(fakes.insert).toHaveBeenCalledTimes(runs)
+    expect(fakes.email).toHaveBeenCalledTimes(LEAD_FALLBACK.maxNotifications)
+    expect(twilio).toHaveBeenCalledTimes(LEAD_FALLBACK.maxNotifications)
+    expect(fallbackWarnings()).toHaveLength(1)
+    const skipped = vi.mocked(console.warn).mock.calls.flat().map(String).filter(line => /notification skipped \(fallback-cap\)/i.test(line))
+    expect(skipped).toHaveLength(2)
+
+    vi.setSystemTime(new Date(Date.now() + LEAD_FALLBACK.windowMs + 1000))
+    expect((await submit()).status).toBe(200)
+    await notificationsSettled()
+    expect(fakes.email).toHaveBeenCalledTimes(LEAD_FALLBACK.maxNotifications + 1)
+  })
+
+  it('keeps the working caps when the limiter answers: the fallback never widens them', async () => {
+    fakes.limit.mockImplementation(async (prefix: string) => ({ success: prefix !== 'lead-notify-day' }))
+    expect((await submit()).status).toBe(200)
+    await notificationsSettled()
     expect(fakes.email).not.toHaveBeenCalled()
-    expect(twilio).not.toHaveBeenCalled()
+    expect(fallbackWarnings()).toHaveLength(0)
   })
 
   it('uses the default caps, and env overrides when they are positive whole numbers', async () => {

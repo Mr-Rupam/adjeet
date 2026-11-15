@@ -150,8 +150,9 @@ function describe(outcome: MongoOutcome | BackupOutcome) {
 /** Best effort, after the response. The stores, not these messages, are the record. */
 async function notifyOwner(record: LeadRecord, confirmed: boolean) {
   const id = record.receiptId
-  // Paid messages fail closed: past a cap, or when the caps cannot be
-  // counted, the owner finds this enquiry in the register and the Sheet instead.
+  // Paid messages are capped: past a cap the owner finds this enquiry in the
+  // register and the Sheet instead. When the caps cannot be counted, a
+  // per-instance fallback bound applies (lib/lead-limits.ts).
   const verdict = await admitNotification(record.phone)
   if (!verdict.send) {
     console.warn(`[lead:${id}] Owner notification skipped (${verdict.reason}); the enquiry is ${confirmed ? 'stored' : 'NOT confirmed as stored'}`)

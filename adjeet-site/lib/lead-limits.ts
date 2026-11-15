@@ -1,4 +1,3 @@
-import { createHash } from 'node:crypto'
 import { limiterKey } from '@/lib/client-ip'
 import { bounded, LEAD_DEADLINES } from '@/lib/lead-deadline'
 
@@ -13,11 +12,15 @@ import { bounded, LEAD_DEADLINES } from '@/lib/lead-deadline'
  *   Turnstile still gates every submission, and the receipt contract in the
  *   route promises an answer only once a store acknowledges the brief.
  * - Owner notifications (email through Resend, WhatsApp through Twilio) cost
- *   money and can flood the owner, so they fail CLOSED. Past any cap below, or
- *   when the caps cannot be counted, the enquiry stays stored and receipted and
- *   only the notification is skipped. The register and the Sheet still hold it.
+ *   money and can flood the owner, so they are capped. Past any cap below the
+ *   enquiry stays stored and receipted and only the notification is skipped;
+ *   the register and the Sheet still hold it. When the caps cannot be counted
+ *   (Upstash missing, erroring or slow), a real enquiry the owner never hears
+ *   about costs more than a bounded burst, so notifications still go out,
+ *   bounded per server instance by `LEAD_FALLBACK`.
  *
- * Every key is a hash, so Redis never holds a visitor's address or phone number.
+ * Every key is an HMAC digest (`limiterKey`), so Redis never holds a visitor's
+ * address or phone number.
  */
 export const LEAD_LIMITS = {
   /** Enquiries one visitor (IPv4 address or IPv6 /64) may send in an hour. */
@@ -37,6 +40,32 @@ export const LEAD_LIMITS = {
   /** Owner notifications per UTC day, whatever the phone number. LEAD_NOTIFY_DAILY_CAP overrides. */
   notifyPerDay: 60,
 } as const
+
+/**
+ * The bound on owner notifications while Upstash cannot answer. It is counted
+ * in memory, so each running server instance (a warm Vercel function) has its
+ * own: a burst across several instances can reach a few times this, and a new
+ * instance starts at zero. It applies only when the limiter fails; when it
+ * answers, `LEAD_LIMITS` decides alone.
+ */
+export const LEAD_FALLBACK = {
+  /** Notifications one instance may send in any `windowMs`. */
+  maxNotifications: 6,
+  /** Ten minutes. */
+  windowMs: 10 * 60 * 1000,
+} as const
+
+/** When this instance sent each fallback notification still inside the window. */
+const fallbackSent: number[] = []
+let warnedFallback = false
+
+/** Take one fallback notification slot if the window has one free. */
+function takeFallbackSlot(now = Date.now()): boolean {
+  while (fallbackSent.length && fallbackSent[0] <= now - LEAD_FALLBACK.windowMs) fallbackSent.shift()
+  if (fallbackSent.length >= LEAD_FALLBACK.maxNotifications) return false
+  fallbackSent.push(now)
+  return true
+}
 
 /** `value` when it is a positive whole number, otherwise `fallback`. */
 export function capFromEnv(value: string | undefined, fallback: number): number {
@@ -74,7 +103,7 @@ async function getLimiters(): Promise<Limiters | null> {
   const url = process.env.UPSTASH_REDIS_REST_URL || process.env.KV_REST_API_URL
   const token = process.env.UPSTASH_REDIS_REST_TOKEN || process.env.KV_REST_API_TOKEN
   if (!url || !token) {
-    if (!warnedNoLimiter) console.warn('[lead] Upstash env vars missing: enquiries are stored without rate limits, and owner notifications are off')
+    if (!warnedNoLimiter) console.warn('[lead] Upstash env vars missing: enquiries are stored without rate limits')
     warnedNoLimiter = true
     return null
   }
@@ -124,19 +153,30 @@ export async function admitVisitor(visitor: string | null, ms: number): Promise<
 
 export type NotifyVerdict =
   | { send: true }
-  | { send: false; reason: 'phone-cap' | 'site-daily-cap' | 'notify-hourly-cap' | 'notify-daily-cap' | 'unconfigured' | `limiter-${string}` }
+  | { send: false; reason: 'phone-cap' | 'site-daily-cap' | 'notify-hourly-cap' | 'notify-daily-cap' | 'fallback-cap' }
+
+/** The limiter could not answer: send under the in-process bound. */
+function degraded(cause: string): NotifyVerdict {
+  if (!warnedFallback) {
+    console.warn(`[lead] Notification limiter unavailable (${cause}): owner notifications continue under the in-process fallback of ${LEAD_FALLBACK.maxNotifications} per ${LEAD_FALLBACK.windowMs / 60_000} minutes on this instance`)
+    warnedFallback = true
+  }
+  return takeFallbackSlot() ? { send: true } : { send: false, reason: 'fallback-cap' }
+}
 
 /**
  * May the owner be notified about this enquiry? Counts the enquiry against the
  * site's daily total and the phone number's share, then the notification
- * against the hourly and daily totals. Anything but a clear yes is a no.
+ * against the hourly and daily totals. A clear no from the limiter is a no;
+ * no answer at all falls back to `LEAD_FALLBACK`.
  */
 export async function admitNotification(phone: string): Promise<NotifyVerdict> {
+  let verdict: NotifyVerdict | 'unconfigured'
   try {
-    return await bounded<NotifyVerdict>(async () => {
+    verdict = await bounded<NotifyVerdict | 'unconfigured'>(async () => {
       const configured = await getLimiters()
-      if (!configured) return { send: false, reason: 'unconfigured' }
-      const phoneKey = createHash('sha256').update(`lead-notify:${phone}`).digest('hex')
+      if (!configured) return 'unconfigured'
+      const phoneKey = limiterKey(`phone:${phone}`)
       const [site, perPhone] = await Promise.all([configured.siteDay.limit('all-enquiries'), configured.perPhone.limit(phoneKey)])
       if (!site.success) return { send: false, reason: 'site-daily-cap' }
       if (!perPhone.success) return { send: false, reason: 'phone-cap' }
@@ -146,6 +186,7 @@ export async function admitNotification(phone: string): Promise<NotifyVerdict> {
       return { send: true }
     }, LEAD_DEADLINES.limiter)
   } catch (error) {
-    return { send: false, reason: `limiter-${category(error)}` }
+    return degraded(category(error))
   }
+  return verdict === 'unconfigured' ? degraded('unconfigured') : verdict
 }
