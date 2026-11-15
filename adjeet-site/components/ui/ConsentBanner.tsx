@@ -73,7 +73,8 @@ export function ConsentBanner() {
       <p className="mb-4 max-w-prose text-sm text-ink-muted md:mb-0">
         We use Google Analytics to understand how visitors use our site. Until you choose, it runs
         without cookies or identifiers. Accept to allow analytics cookies, or decline to switch analytics off.{' '}
-        <Link href="/privacy" className="underline hover:text-ink">Privacy Policy</Link>
+        {/* No prefetch: the banner shows on every first visit, and few readers follow this link. */}
+        <Link href="/privacy" prefetch={false} className="underline hover:text-ink">Privacy Policy</Link>
       </p>
       <div className="flex shrink-0 gap-3">
         <button
