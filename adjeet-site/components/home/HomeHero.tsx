@@ -1,5 +1,6 @@
 import Link from 'next/link'
 import { getImageProps } from 'next/image'
+import { preload } from 'react-dom'
 import { ArrowDown } from 'lucide-react'
 import { outfit } from '@/app/fonts'
 import { FOUNDED_YEAR } from '@/lib/coverage'
@@ -39,17 +40,49 @@ function layer(scene: HeroLight): HeroArtLayer {
   const { tall, wide, alt } = SCENES[scene]
   // Lazy, so the browser only fetches the scene that is laid out (the other is
   // display: none). The one for the visitor's theme is preloaded below.
-  const common = { alt, quality: 85, loading: 'lazy', fetchPriority: 'high' } as const
+  // The night scene asks for 85 to keep its dark sky's long gradient smooth
+  // (next.config.ts); the misty day scene needs no more than the default 75,
+  // which makes it about 30% lighter (143 KB against 204 KB for the tall cut).
+  const quality = scene === 'night' ? 85 : 75
+  const common = { alt, quality, loading: 'lazy', fetchPriority: 'high' } as const
   const { props: { srcSet: wideSrcSet } } = getImageProps({ ...common, src: wide, width: 1672, height: 941, sizes: WIDE_SIZES })
   const { props: tallProps } = getImageProps({ ...common, src: tall, width: 941, height: 1672, sizes: TALL_SIZES })
   return { tall: tallProps, wideSrcSet: wideSrcSet ?? '', alt }
 }
 
 /**
- * Preload the one image the visitor will see: the scene for the theme that
- * ThemeScript has already set on <html>, in the cut for this screen. The
- * server cannot know the theme (it is in localStorage or the system setting),
- * so this runs inline as the hero is parsed, before the images are laid out.
+ * Preload the one image a visitor on the system theme will see, from <head>:
+ * the scene for the system colour scheme in the cut for this screen, picked by
+ * each preload's `media`. React places these links ahead of the stylesheets,
+ * so the request starts with the fonts instead of after the CSS has arrived
+ * (an inline script in the body only runs once the stylesheets are in, which
+ * cost more than a second on a phone). Every first visit is on the system
+ * theme. The tall cut's query is the wide one negated (Media Queries 4), so
+ * exactly one of the four matches.
+ */
+function preloadScenes(layers: Record<HeroLight, HeroArtLayer>) {
+  const cuts = [
+    { media: WIDE_SCREEN, srcSet: (scene: HeroLight) => layers[scene].wideSrcSet, sizes: WIDE_SIZES },
+    { media: `(not (${WIDE_SCREEN}))`, srcSet: (scene: HeroLight) => layers[scene].tall.srcSet ?? '', sizes: TALL_SIZES },
+  ]
+  for (const scene of ['day', 'night'] as const) {
+    const scheme = `(prefers-color-scheme: ${scene === 'night' ? 'dark' : 'light'})`
+    for (const cut of cuts) {
+      preload(String(layers[scene].tall.src), {
+        as: 'image',
+        imageSrcSet: cut.srcSet(scene),
+        imageSizes: cut.sizes,
+        fetchPriority: 'high',
+        media: `${scheme} and ${cut.media}`,
+      })
+    }
+  }
+}
+
+/**
+ * A visitor who chose the theme opposite to the system's (ThemeScript has set
+ * it on <html> from localStorage) needs the other scene, which the server
+ * cannot know. This runs inline as the hero is parsed and preloads it then.
  */
 function preloadScript(layers: Record<HeroLight, HeroArtLayer>) {
   const sets = {
@@ -59,6 +92,8 @@ function preloadScript(layers: Record<HeroLight, HeroArtLayer>) {
   return `(function(){try{
 var sets=${JSON.stringify(sets)};
 var scene=document.documentElement.getAttribute('data-theme')==='dark'?'night':'day';
+var system=window.matchMedia('(prefers-color-scheme: dark)').matches?'night':'day';
+if(scene===system)return;
 var pick=sets[scene][window.matchMedia(${JSON.stringify(WIDE_SCREEN)}).matches?1:0];
 var link=document.createElement('link');
 link.rel='preload';link.as='image';
@@ -79,6 +114,7 @@ document.head.appendChild(link);
  */
 export function HomeHero() {
   const layers = { day: layer('day'), night: layer('night') }
+  preloadScenes(layers)
 
   return (
     <section id="hero-section" className={`${styles.hero} ${outfit.variable}`} aria-labelledby="home-heading">

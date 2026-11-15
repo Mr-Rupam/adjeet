@@ -101,6 +101,8 @@ test.describe('home hero', () => {
 
     test(`initial load in the ${theme} theme fetches only that scene, then the other once the page is idle`, async ({ page }) => {
       await seenIntro(page)
+      // A visitor on the system theme, as every first visit is.
+      await page.emulateMedia({ colorScheme: theme })
       await page.addInitScript(theme => localStorage.setItem('adjeet-theme', theme), theme)
       for (const [width, height, cut] of [[390, 844, 'tall'], [1440, 900, 'wide']] as const) {
         // Leave the last page first, so its resize cannot fetch anything into this count.
@@ -117,11 +119,14 @@ test.describe('home hero', () => {
         const atLoad = [...requested]
         expect(atLoad.length, `${width}px: hero images during the load`).toBeGreaterThan(0)
         expect(atLoad.every(url => url.includes(`/hero/${want}-street-${cut}.webp`)), `${width}px: ${atLoad.join(', ')}`).toBe(true)
-        // The preload names the same one image.
-        const preload = page.locator('link[data-hero-preload]')
-        await expect(preload).toHaveCount(1)
-        await expect(preload).toHaveAttribute('data-hero-preload', want)
-        expect(decodeURIComponent((await preload.getAttribute('imagesrcset')) ?? '')).toContain(`/hero/${want}-street-${cut}.webp`)
+        // Exactly one hero preload applies, from <head> (each carries a media
+        // query), and it names the same one image. The inline script adds none.
+        const applied = await page.locator('link[rel="preload"][as="image"][imagesrcset*="hero"]').evaluateAll(links => links
+          .filter(link => !link.getAttribute('media') || window.matchMedia(link.getAttribute('media')!).matches)
+          .map(link => decodeURIComponent(link.getAttribute('imagesrcset') ?? '')))
+        expect(applied, `${width}px`).toHaveLength(1)
+        expect(applied[0]).toContain(`/hero/${want}-street-${cut}.webp`)
+        await expect(page.locator('link[data-hero-preload]')).toHaveCount(0)
         // Idle: the other scene is laid out, invisible, and loads, ready for the first switch.
         await expect(page.locator('#hero-section [data-both-scenes]')).toHaveCount(1, { timeout: 10000 })
         await expect.poll(() => requested.some(url => url.includes(`/hero/${other}-street-${cut}.webp`)), { timeout: 10000 }).toBe(true)
@@ -129,6 +134,19 @@ test.describe('home hero', () => {
       }
     })
   }
+
+  test('a visitor who chose the theme opposite to the system gets that scene preloaded by the inline script', async ({ page }) => {
+    await seenIntro(page)
+    await page.emulateMedia({ colorScheme: 'light' })
+    await page.addInitScript(() => localStorage.setItem('adjeet-theme', 'dark'))
+    await page.setViewportSize({ width: 390, height: 844 })
+    await page.goto('/', { waitUntil: 'load' })
+    const preload = page.locator('link[data-hero-preload]')
+    await expect(preload).toHaveCount(1)
+    await expect(preload).toHaveAttribute('data-hero-preload', 'night')
+    await expect(preload).toHaveAttribute('fetchpriority', 'high')
+    expect(decodeURIComponent((await preload.getAttribute('imagesrcset')) ?? '')).toContain('/hero/night-street-tall.webp')
+  })
 
   test('reaching for the theme toggle loads the other scene even before the page is idle', async ({ page }) => {
     await seenIntro(page)

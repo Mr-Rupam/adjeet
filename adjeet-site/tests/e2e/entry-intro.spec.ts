@@ -39,10 +39,13 @@ test('the hero artwork loads first and paints under the shutter', async ({ page 
   await expect(page.locator('html')).toHaveAttribute('data-entry-intro', 'playing')
 
   // One image is preloaded at high priority: the scene for the theme already
-  // on the page (light, so day), in the wide cut on this screen.
-  const preload = page.locator('link[rel="preload"][as="image"][fetchpriority="high"]')
-  await expect(preload).toHaveCount(1)
-  expect(await preload.getAttribute('imagesrcset')).toContain('day-street-wide.webp')
+  // on the page (light, so day), in the wide cut on this screen. The hero's
+  // preloads carry a media query each, and only one of them applies here.
+  const applied = await page.locator('link[rel="preload"][as="image"][fetchpriority="high"]').evaluateAll(links => links
+    .filter(link => !link.getAttribute('media') || window.matchMedia(link.getAttribute('media')!).matches)
+    .map(link => link.getAttribute('imagesrcset') ?? ''))
+  expect(applied).toHaveLength(1)
+  expect(applied[0]).toContain('day-street-wide.webp')
   // The intro's own logo never competes for that bandwidth.
   await expect(page.locator('link[rel="preload"][imagesrcset*="adjeet-original.png"][fetchpriority="high"]')).toHaveCount(0)
   const introLogo = page.locator('[data-entry-loader] img')

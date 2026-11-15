@@ -57,6 +57,9 @@ function useOverHero(isHome: boolean, pathname: string, header: RefObject<HTMLEl
       if (frame) window.cancelAnimationFrame(frame)
       window.removeEventListener('scroll', schedule)
       window.removeEventListener('resize', schedule)
+      // Leaving the home page: the next visit opens at the top, over the hero,
+      // not in the state the last visit was scrolled to.
+      setState({ path: pathname, over: true })
     }
   }, [isHome, pathname, header])
 

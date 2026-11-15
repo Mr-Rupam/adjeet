@@ -51,9 +51,11 @@ describe('storefront homepage', () => {
     expect(hero.querySelector('[data-hero-label]')?.textContent).toBe('Visualisation')
   })
 
-  it('preloads only the scene for the theme already set on the page, from an inline script', () => {
+  it('preloads the scene for a theme opposite to the system one from an inline script', () => {
     const script = render().querySelector('#hero-section > script')?.textContent ?? ''
     expect(script).toContain("getAttribute('data-theme')==='dark'?'night':'day'")
+    // The system theme's scene is preloaded from <head>, so the script only covers a chosen theme.
+    expect(script).toContain('if(scene===system)return;')
     expect(script).toContain('day-street-tall.webp')
     expect(script).toContain('night-street-wide.webp')
     expect(script).toContain("setAttribute('fetchpriority','high')")
