@@ -63,6 +63,9 @@ const nextConfig: NextConfig = {
     // 75 is the default for every photograph. The home hero's night artwork
     // asks for 85, to keep the long gradient of its dark sky smooth.
     qualities: [75, 85],
+    // AVIF first, WebP for browsers that do not accept it. AVIF about halves
+    // the home hero (the page's largest paint) against WebP at the same quality.
+    formats: ['image/avif', 'image/webp'],
   },
   // The retired regional pages answer 308 to the page that absorbed them, so
   // their links and the little ranking they had carry over. Redirects run

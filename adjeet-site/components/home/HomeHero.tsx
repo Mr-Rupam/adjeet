@@ -42,7 +42,8 @@ function layer(scene: HeroLight): HeroArtLayer {
   // display: none). The one for the visitor's theme is preloaded below.
   // The night scene asks for 85 to keep its dark sky's long gradient smooth
   // (next.config.ts); the misty day scene needs no more than the default 75,
-  // which makes it about 30% lighter (143 KB against 204 KB for the tall cut).
+  // which makes it about 30% lighter. With AVIF (next.config.ts) the tall cuts
+  // a phone gets are about 74 KB by day and 56 KB at night.
   const quality = scene === 'night' ? 85 : 75
   const common = { alt, quality, loading: 'lazy', fetchPriority: 'high' } as const
   const { props: { srcSet: wideSrcSet } } = getImageProps({ ...common, src: wide, width: 1672, height: 941, sizes: WIDE_SIZES })
