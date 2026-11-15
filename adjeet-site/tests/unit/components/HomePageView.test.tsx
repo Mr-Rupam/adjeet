@@ -31,7 +31,7 @@ describe('storefront homepage', () => {
     expect(doc.querySelector('#hero-section')?.textContent).not.toContain('Send a photo of your shop to start.')
   })
 
-  it('opens on the labelled street scene, by day and by night, each in a tall and a wide cut', () => {
+  it('opens on the street visualisation, by day and by night, each in a tall and a wide cut', () => {
     const hero = render().querySelector('#hero-section')!
     const images = [...hero.querySelectorAll('img')]
     expect(images.map(image => image.getAttribute('data-hero-image'))).toEqual(['day', 'night'])
@@ -47,8 +47,10 @@ describe('storefront homepage', () => {
     }
     expect(images[0].getAttribute('alt')).toMatch(/^Visualisation: a small market street on a misty morning after rain/)
     expect(images[1].getAttribute('alt')).toMatch(/^Visualisation: a small market street at night after rain/)
-    // The label generated imagery must carry (DESIGN.md), on the artwork itself.
-    expect(hero.querySelector('[data-hero-label]')?.textContent).toBe('Visualisation')
+    // Since 16 November 2026 a concept scene carries no visible label: the
+    // alt text above says what it is (DESIGN.md).
+    expect(hero.querySelector('[data-hero-label]')).toBeNull()
+    expect(hero.textContent).not.toMatch(/visualisation/i)
   })
 
   it('preloads the scene for a theme opposite to the system one from an inline script', () => {

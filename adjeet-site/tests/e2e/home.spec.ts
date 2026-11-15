@@ -11,8 +11,8 @@ test.describe('Home page', () => {
 
   // The storefront homepage (2026-10-20) keeps the strong H1 and names the
   // trade and the town straight under it. Since 15 November 2026 it does so on
-  // a labelled street visualisation; real shopfronts start in the next section.
-  test('uses one clear hero proposition on the labelled night scene', async ({ page }) => {
+  // a street visualisation; real shopfronts start in the next section.
+  test('uses one clear hero proposition on the street scene', async ({ page }) => {
     const hero = page.locator('#hero-section')
     await expect(hero.getByRole('heading', { level: 1, name: /advertising that gets you noticed/i })).toBeVisible()
     await expect(page.getByRole('heading', { level: 1 })).toHaveCount(1)
@@ -91,11 +91,11 @@ test.describe('Home page', () => {
     for (const alt of await workImages.evaluateAll(images => images.map(image => image.getAttribute('alt')))) {
       expect(galleryAlts.has(alt ?? ''), `${alt} is a gallery project photo`).toBe(true)
     }
-    // The homepage shows the workshop as photographed. Its one generated image
-    // is the hero, labelled on the artwork; nothing below the hero is generated.
+    // The homepage shows the workshop as photographed. Its generated image is
+    // the hero, named as a visualisation in its alt text and never captioned
+    // as a job; since 16 November 2026 no scene carries a visible label.
     await expect(page.getByText('The AD JEET workshop, Siliguri. Site photograph.')).toBeVisible()
-    await expect(page.getByText(/visualisation/i)).toHaveCount(1)
-    await expect(page.locator('#hero-section').getByText('Visualisation', { exact: true })).toBeVisible()
+    await expect(page.getByText(/visualisation/i)).toHaveCount(0)
     const generated = await page.locator('main img').evaluateAll(images => images.filter(image => /^visualisation/i.test(image.getAttribute('alt') ?? '')).map(image => image.closest('section')?.id))
     expect(new Set(generated)).toEqual(new Set(['hero-section']))
   })

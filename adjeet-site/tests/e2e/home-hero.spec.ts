@@ -1,6 +1,7 @@
 import { expect, test, type Page } from '@playwright/test'
+import sharp from 'sharp'
 
-// The home hero since 15 November 2026: a labelled visualisation, "The one lit
+// The home hero since 15 November 2026: a visualisation, "The one lit
 // sign" (DESIGN.md, "Homepage"), by day in the light theme and at night in the
 // dark theme. These replace the photo slideshow's checks; the rotation, its
 // pause button and its caption left the hero.
@@ -161,7 +162,7 @@ test.describe('home hero', () => {
     await expect.poll(() => requested.some(url => url.includes('/hero/night-street-tall.webp'))).toBe(true)
   })
 
-  test('switching the theme cross-fades the two scenes and the colours together, in place', async ({ page }) => {
+  test('switching the theme changes the whole page in one cross-fade, in place', async ({ page }) => {
     await seenIntro(page)
     await page.setViewportSize({ width: 390, height: 844 })
     await page.goto('/')
@@ -171,20 +172,27 @@ test.describe('home hero', () => {
     const art = await box(page, DAY)
 
     await page.getByRole('button', { name: 'Switch to dark mode' }).click()
-    await expect(page.locator('html')).toHaveAttribute('data-hero-light', 'night')
-    // The night scene fades in over 700ms while the ground and the type change with it.
-    const fading = await page.evaluate(() => {
-      const transitions = (element: Element | null) => (element?.getAnimations() ?? [])
-        .filter((animation): animation is CSSTransition => 'transitionProperty' in animation)
-        .map(animation => ({ property: animation.transitionProperty, duration: Number(animation.effect?.getTiming().duration) }))
-      return {
-        layer: transitions(document.querySelector('[data-hero-image="night"]')?.closest('picture') ?? null),
-        hero: transitions(document.getElementById('hero-section')),
-      }
-    })
-    expect(fading.layer).toContainEqual({ property: 'opacity', duration: 700 })
-    expect(fading.hero).toContainEqual({ property: '--ground', duration: 700 })
-    expect(fading.hero).toContainEqual({ property: '--hero-ink', duration: 700 })
+    // One view transition: the page's theme and the hero's scene change in the
+    // same frame, and the new look fades in over the old one, which stays
+    // fully drawn underneath, over 700ms. The page's own transitions are off.
+    await expect(page.locator('html')).toHaveAttribute('data-theme-switching', '')
+    const during = await page.evaluate(() => ({
+      theme: document.documentElement.getAttribute('data-theme'),
+      light: document.documentElement.getAttribute('data-hero-light'),
+      fades: document.getAnimations().map(animation => {
+        const effect = animation.effect as KeyframeEffect | null
+        const timing = effect?.getTiming()
+        return { pseudo: effect?.pseudoElement ?? null, duration: Number(timing?.duration) }
+      }).filter(fade => fade.pseudo?.startsWith('::view-transition')),
+      // A CSS animation's easing lives on its keyframes, so read it from the style.
+      easing: getComputedStyle(document.documentElement, '::view-transition-new(root)').animationTimingFunction,
+    }))
+    expect(during.theme).toBe('dark')
+    expect(during.light).toBe('night')
+    expect(during.fades).toContainEqual({ pseudo: '::view-transition-new(root)', duration: 700 })
+    expect(during.easing).toBe('ease')
+    expect(during.fades.filter(fade => fade.pseudo === '::view-transition-old(root)')).toEqual([])
+    await expect(page.locator('html')).not.toHaveAttribute('data-theme-switching', '')
 
     await expect(page.locator('#hero-section')).toHaveCSS('background-color', COLOURS.dark.ground)
     await expect(page.locator('#hero-section h1 em')).toHaveCSS('color', COLOURS.dark.accent)
@@ -196,10 +204,76 @@ test.describe('home hero', () => {
 
     await page.getByRole('button', { name: 'Switch to light mode' }).click()
     await expect(page.locator('html')).toHaveAttribute('data-hero-light', 'day')
+    await expect(page.locator('html')).toHaveAttribute('data-theme', 'light')
     await expect(page.locator('#hero-section')).toHaveCSS('background-color', COLOURS.light.ground)
   })
 
-  test('if the other scene has not loaded, the switch waits for it, then fades', async ({ page }) => {
+  // The owner saw dark to light "phase in two halves": the colours changed,
+  // then the picture. Screenshots taken through the switch, slowed down, must
+  // show the hero's ground and its artwork moving together, with no dip.
+  for (const [width, height] of [[390, 844], [1440, 900]] as const) {
+    test(`dark to light changes the ground and the artwork together at ${width}px`, async ({ page }) => {
+      test.slow()
+      await seenIntro(page)
+      await page.addInitScript(() => localStorage.setItem('adjeet-theme', 'dark'))
+      await page.setViewportSize({ width, height })
+      await page.goto('/')
+      await expect(page.locator('#hero-section [data-both-scenes]')).toHaveCount(1, { timeout: 10000 })
+      await expect(page.locator(DAY)).toHaveAttribute('data-image-status', 'loaded', { timeout: 10000 })
+      await page.waitForTimeout(300)
+      const shot = async () => {
+        const { data, info } = await sharp(await page.screenshot({ scale: 'css' })).raw().toBuffer({ resolveWithObject: true })
+        return { data, info }
+      }
+      const before = await shot()
+      const cdp = await page.context().newCDPSession(page)
+      await cdp.send('Animation.enable')
+      await cdp.send('Animation.setPlaybackRate', { playbackRate: 0.1 })
+      const frames: Array<Awaited<ReturnType<typeof shot>>> = []
+      await page.getByRole('button', { name: 'Switch to light mode' }).click()
+      const started = Date.now()
+      while (Date.now() - started < 9000) frames.push(await shot())
+      await cdp.send('Animation.setPlaybackRate', { playbackRate: 1 })
+      await expect(page.locator('html')).toHaveAttribute('data-hero-light', 'day')
+      await expect(page.locator('html')).not.toHaveAttribute('data-theme-switching', '')
+      await page.waitForTimeout(900)
+      const after = await shot()
+
+      // The pixel that changes most in the hero's ground (the band above the
+      // artwork) and in the artwork itself (the lower half).
+      const luma = (image: typeof before, x: number, y: number) => {
+        const index = (y * image.info.width + x) * image.info.channels
+        return (image.data[index] + image.data[index + 1] + image.data[index + 2]) / 3
+      }
+      const strongest = (top: number, bottom: number, right: number) => {
+        let best = { x: 0, y: 0, delta: 0 }
+        for (let y = Math.floor(top * height); y < bottom * height; y += 6) {
+          for (let x = 8; x < right * width; x += 6) {
+            const delta = Math.abs(luma(after, x, y) - luma(before, x, y))
+            if (delta > best.delta) best = { x, y, delta }
+          }
+        }
+        return best
+      }
+      const ground = width > 1000 ? strongest(0.02, 0.1, 0.3) : strongest(0.02, 0.08, 1)
+      const artwork = width > 1000 ? strongest(0.5, 0.95, 1) : strongest(0.55, 0.85, 1)
+      expect(ground.delta, 'the ground changes').toBeGreaterThan(60)
+      expect(artwork.delta, 'the artwork changes').toBeGreaterThan(40)
+      const progress = (image: typeof before, point: typeof ground) =>
+        (luma(image, point.x, point.y) - luma(before, point.x, point.y)) / (luma(after, point.x, point.y) - luma(before, point.x, point.y))
+      const samples = frames.map(frame => ({ ground: progress(frame, ground), artwork: progress(frame, artwork) }))
+      const moving = samples.filter(sample => sample.ground > 0.05 && sample.ground < 0.95)
+      expect(moving.length, 'frames caught mid-switch').toBeGreaterThan(2)
+      for (const sample of samples) {
+        expect(Math.abs(sample.ground - sample.artwork), JSON.stringify(samples)).toBeLessThan(0.25)
+        // No dip: nothing goes darker or lighter than both ends.
+        expect(sample.artwork, JSON.stringify(samples)).toBeGreaterThan(-0.1)
+        expect(sample.artwork, JSON.stringify(samples)).toBeLessThan(1.1)
+      }
+    })
+  }
+
+  test('if the other scene has not loaded, the whole page waits for it, then changes at once', async ({ page }) => {
     await seenIntro(page)
     await page.addInitScript(() => { window.requestIdleCallback = (() => 0) as typeof window.requestIdleCallback })
     let release!: () => void
@@ -212,13 +286,14 @@ test.describe('home hero', () => {
     await page.goto('/')
     try {
       await page.getByRole('button', { name: 'Switch to dark mode' }).click()
-      await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark')
       await page.waitForTimeout(800)
-      // The page has gone dark, but the hero holds the day scene until the night one is ready.
+      // Nothing has changed yet: not the page's theme, not the hero.
+      await expect(page.locator('html')).toHaveAttribute('data-theme', 'light')
       await expect(page.locator('html')).toHaveAttribute('data-hero-light', 'day')
       await expect(page.locator('#hero-section')).toHaveCSS('background-color', COLOURS.light.ground)
       await expect(page.locator(DAY)).toBeVisible()
       release()
+      await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark')
       await expect(page.locator('html')).toHaveAttribute('data-hero-light', 'night')
       await expect(page.locator('#hero-section')).toHaveCSS('background-color', COLOURS.dark.ground)
     } finally {
@@ -288,7 +363,6 @@ test.describe('home hero', () => {
       const board = await box(page, '[data-hero-board]')
       expect(board.y, `${width}x${height}: the board is clear of the copy`).toBeGreaterThan(lead.y + lead.height)
       await expect(page.locator('#hero-section').getByRole('link', { name: 'See finished shopfronts' })).toBeInViewport()
-      await expect(page.locator('#hero-section').getByText('Visualisation', { exact: true })).toBeInViewport()
       expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(width)
     }
   })
@@ -332,7 +406,6 @@ test.describe('home hero', () => {
         const overlaps = area.x < chat.x + chat.width && chat.x < area.x + area.width && area.y < chat.y + chat.height && chat.y < area.y + area.height
         expect(overlaps, `${width}x${height}: ${await link.textContent()} is clear of the chat button`).toBe(false)
       }
-      await expect(hero.getByText('Visualisation', { exact: true })).toBeInViewport()
     }
   })
 
@@ -373,7 +446,8 @@ test.describe('home hero', () => {
     await expect(hero.getByRole('img', { name: /^Visualisation: a small market street on a misty morning/ })).toBeVisible()
     await expect(page.locator(NIGHT)).toBeHidden()
     await expect(hero.getByRole('link', { name: 'WhatsApp your project' })).toBeInViewport()
-    await expect(hero.getByText('Visualisation', { exact: true })).toBeVisible()
+    // A concept scene carries no visible label (16 November 2026); its alt text names it.
+    await expect(hero.getByText(/visualisation/i)).toHaveCount(0)
     const header = page.getByRole('banner')
     await expect(header).toHaveAttribute('data-over-hero', 'true')
     await expect(header.getByRole('img', { name: 'AD JEET, since 1990' })).toBeVisible()
