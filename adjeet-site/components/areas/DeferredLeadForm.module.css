@@ -1,0 +1,21 @@
+/* Holds the lead form's measured height (with its CAPTCHA slot): 1597px at
+   320px wide, 1367px at 390px, 1148px from 768px up, so the late mount moves
+   nothing below it. */
+.placeholder {
+  display: flex;
+  align-items: flex-start;
+  min-height: 1370px;
+  padding-top: 8px;
+}
+
+@media (max-width: 359px) {
+  .placeholder {
+    min-height: 1600px;
+  }
+}
+
+@media (min-width: 768px) {
+  .placeholder {
+    min-height: 1150px;
+  }
+}

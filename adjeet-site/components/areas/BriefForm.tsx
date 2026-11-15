@@ -1,4 +1,5 @@
-import { LeadForm, type LeadFormProps } from '@/components/sections/LeadForm'
+import type { LeadFormProps } from '@/components/sections/LeadForm'
+import { DeferredLeadForm } from './DeferredLeadForm'
 import { WhatsAppLink } from '@/components/ui/WhatsAppLink'
 import styles from './Areas.module.css'
 
@@ -29,7 +30,7 @@ export function BriefForm({ heading, note, whatsAppUrl, source, defaultCity, def
           <WhatsAppLink href={whatsAppUrl} source={source} className="field-link">Prefer WhatsApp? Send it there ↗</WhatsAppLink>
         </div>
         <div className={styles.formPanel}>
-          <LeadForm defaultCity={defaultCity} defaultService={defaultService} />
+          <DeferredLeadForm defaultCity={defaultCity} defaultService={defaultService} />
         </div>
       </div>
     </section>
