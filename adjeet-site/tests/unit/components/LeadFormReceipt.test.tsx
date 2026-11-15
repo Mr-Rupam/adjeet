@@ -2,10 +2,12 @@ import { afterEach, describe, expect, it, vi } from 'vitest'
 import { cleanup, fireEvent, render, screen, waitFor, within } from '@testing-library/react'
 import { LeadForm } from '@/components/sections/LeadForm'
 const reset = vi.hoisted(() => vi.fn())
+const widget = vi.hoisted(() => ({ options: undefined as Record<string, unknown> | undefined }))
 vi.mock('@/components/ui/DeferUntilNear', () => ({ DeferUntilNear: ({ children }: { children: React.ReactNode }) => children }))
 vi.mock('@marsidev/react-turnstile', async () => {
   const React = await import('react')
-  return { Turnstile: React.forwardRef(function Widget({ onSuccess }: { onSuccess: (token: string) => void }, ref) {
+  return { Turnstile: React.forwardRef(function Widget({ onSuccess, options }: { onSuccess: (token: string) => void; options?: Record<string, unknown> }, ref) {
+    widget.options = options
     React.useImperativeHandle(ref, () => ({ reset }))
     return <button type="button" onClick={() => onSuccess('fresh-token')}>Complete verification</button>
   }) }
@@ -34,6 +36,17 @@ describe('form defaults', () => {
     render(<LeadForm />)
     expect(screen.getByLabelText('Timeline')).toHaveValue('unspecified')
     expect(screen.getByRole('checkbox', { name: /help choosing/i })).toBeInTheDocument()
+  })
+
+  it("declares the 'lead' Turnstile action, which /api/lead checks", () => {
+    render(<LeadForm />)
+    expect(widget.options).toMatchObject({ action: 'lead' })
+  })
+
+  it('says under the submit button what the details are used for, with a link to the privacy policy', () => {
+    render(<LeadForm />)
+    expect(screen.getByText(/We use these details only to answer your enquiry\./)).toBeInTheDocument()
+    expect(screen.getByRole('link', { name: 'Privacy policy' })).toHaveAttribute('href', '/privacy')
   })
 })
 
