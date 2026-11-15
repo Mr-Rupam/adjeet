@@ -3,6 +3,7 @@ import { renderToStaticMarkup } from 'react-dom/server'
 import type { Metadata } from 'next'
 import type { ReactElement } from 'react'
 import { homeFaqs } from '@/content/home-faqs'
+import { ALSO_SERVICES } from '@/content/company-figures'
 import { services, SERVICE_SLUGS, getServiceBySlug, type ServiceSlug } from '@/content/services'
 import { SILIGURI_BRIEFS, SILIGURI_SEND_US_BN } from '@/content/service-local'
 import { TOWNS } from '@/content/areas'
@@ -46,10 +47,16 @@ describe('home FAQs (content audit C8, C11)', () => {
     }
   })
 
-  it('promises no site visit and keeps lead times labelled as estimates', () => {
+  it('promises no site visit and counts job times from the order', () => {
     const text = homeFaqs.map(faq => faq.a).join(' ')
     expect(text).not.toMatch(/site visit/i)
-    expect(homeFaqs.find(faq => /how long/i.test(faq.q))!.a).toMatch(/planning estimates/)
+    expect(homeFaqs.find(faq => /how long/i.test(faq.q))!.a).toMatch(/days from the order/)
+  })
+
+  it('opens the sign board answer with the agency and names the full offer', () => {
+    expect(homeFaqs[0].a).toMatch(/^AD JEET, an advertising agency in Siliguri/)
+    const about = homeFaqs.find(faq => faq.q.startsWith('What is AD JEET'))!.a
+    for (const name of ALSO_SERVICES) expect(about).toContain(name.toLowerCase())
   })
 })
 
