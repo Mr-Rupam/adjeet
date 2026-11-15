@@ -3,7 +3,12 @@
 // The tag only loads after a visitor accepts analytics in the consent banner.
 export const GA_ID = process.env.NEXT_PUBLIC_GA_ID || 'G-MHDXYFE82G'
 
-type GtagFn = (...args: unknown[]) => void
+// Microsoft Clarity project ID for adjeet.in (session replays and heatmaps). Like
+// the GA4 ID it is public, so it lives in code; NEXT_PUBLIC_CLARITY_ID can override it.
+// The tag follows the same consent banner as GA4: see components/Clarity.tsx.
+export const CLARITY_ID = process.env.NEXT_PUBLIC_CLARITY_ID || 'ze7m2o8ov5'
+
+type GtagFn= (...args: unknown[]) => void
 
 function gtag(...args: unknown[]) {
   if (typeof window === 'undefined') return

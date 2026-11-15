@@ -209,7 +209,7 @@ export function LeadForm({ defaultCity, defaultService }: LeadFormProps = {}) {
   }
 
   return (
-    <form onSubmit={handleFormSubmit} noValidate className="space-y-5">
+    <form onSubmit={handleFormSubmit} noValidate className="space-y-5" data-clarity-mask="true">
       <p className="text-sm text-ink-muted">Fields marked * are required.</p>
       {/* Honeypot */}
       <input

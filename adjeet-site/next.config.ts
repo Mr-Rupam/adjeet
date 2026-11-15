@@ -40,14 +40,18 @@ const securityHeaders = [
       // 'unsafe-eval' is ONLY added in dev. Production stays strict.
       // gtag.js comes from googletagmanager.com; google-analytics.com serves no
       // script the site loads, so it is only in connect-src.
-      `script-src 'self' 'unsafe-inline'${isDev ? " 'unsafe-eval'" : ''} https://www.googletagmanager.com https://challenges.cloudflare.com`,
+      `script-src 'self' 'unsafe-inline'${isDev ? " 'unsafe-eval'" : ''} https://www.googletagmanager.com https://*.clarity.ms https://challenges.cloudflare.com`,
       "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
       "font-src 'self' https://fonts.gstatic.com",
+      // Microsoft Clarity (learn.microsoft.com/clarity, "Content Security Policy"):
+      // https://*.clarity.ms and https://c.bing.com. Its tag is fetched from
+      // www.clarity.ms and it loads its recorder from a sibling clarity.ms host,
+      // so the script and connect lists both carry the wildcard Microsoft documents.
       "img-src 'self' data: https:",
       // GA4 hits: consent-denied cookieless pings go to www.google.com/g/collect,
       // consent-granted hits go to regional hosts such as
       // region1.google-analytics.com and region1.analytics.google.com.
-      "connect-src 'self' https://*.google-analytics.com https://analytics.google.com https://*.analytics.google.com https://www.google.com https://www.googletagmanager.com https://challenges.cloudflare.com",
+      "connect-src 'self' https://*.google-analytics.com https://analytics.google.com https://*.analytics.google.com https://www.google.com https://www.googletagmanager.com https://*.clarity.ms https://c.bing.com https://challenges.cloudflare.com",
       "frame-src https://www.google.com https://maps.google.com https://challenges.cloudflare.com",
       "frame-ancestors 'none'",
       "base-uri 'none'",

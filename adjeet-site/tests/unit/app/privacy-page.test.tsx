@@ -54,8 +54,23 @@ describe('privacy policy', () => {
     expect(text).toContain(business.office)
   })
 
-  it('is dated 15 November 2026', () => {
-    expect(pageText()).toContain('Last updated: 15 November 2026')
+  it('is dated 16 November 2026', () => {
+    expect(pageText()).toContain('Last updated: 16 November 2026')
+  })
+
+  it('names Microsoft Clarity as a processor and says what it records, what is masked and how to decline', () => {
+    const text = pageText()
+    expect(text).toContain('Microsoft Clarity')
+    expect(text).toMatch(/session replays and\s+heatmaps/)
+    expect(text).toMatch(/clicks[^.]*scrolls[^.]*page views/)
+    expect(text).toMatch(/Text you type is masked/)
+    expect(text).toMatch(/If you decline, it is not loaded/)
+  })
+
+  it('describes the business as an advertising agency, not a sign-board maker', () => {
+    const text = pageText()
+    expect(text).toMatch(/an advertising agency in/)
+    expect(text).not.toMatch(/sign-board maker/i)
   })
 
   it('uses no em dashes', () => {

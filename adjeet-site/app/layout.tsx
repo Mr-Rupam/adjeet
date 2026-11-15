@@ -8,6 +8,7 @@ import { WhatsAppFAB } from '@/components/WhatsAppFAB'
 import { Chatbot } from '@/components/Chatbot'
 import { ConsentBanner } from '@/components/ui/ConsentBanner'
 import { Analytics } from '@/components/Analytics'
+import { Clarity } from '@/components/Clarity'
 import { LeadSourceCapture } from '@/components/analytics/LeadSourceCapture'
 import { Analytics as VercelAnalytics } from '@vercel/analytics/next'
 import { SpeedInsights } from '@vercel/speed-insights/next'
@@ -88,6 +89,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <WhatsAppFAB />
           <ConsentBanner />
           <Analytics />
+          <Clarity />
           <LeadSourceCapture />
           {/* Cookieless, aggregate page views for every visitor, independent of the GA4 consent banner. */}
           <VercelAnalytics />
