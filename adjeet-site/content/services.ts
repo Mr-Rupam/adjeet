@@ -37,18 +37,18 @@ const baseServices: ServiceBase[] = [
     name: 'Glow Sign Boards',
     tagline: 'Illuminate your brand 24/7',
     description:
-      'LED-backlit and neon-effect acrylic sign boards that keep your business visible day and night. We fabricate custom glow signs in ACP, acrylic, and aluminium channel letters, sized from a single shopfront panel to large hoarding installations. Every sign is weatherproofed for North Bengal\'s monsoon and winter conditions, and wired for low energy consumption.',
+      'LED-lit shop name boards, made at our Siliguri workshop. A printed flex, acrylic or ACP face sits on a metal frame with LEDs inside, so the name can be read after dark. Sizes run from a single shopfront board to a large hoarding.',
     materials: ['Acrylic', 'ACP sheet', 'Aluminium channel letters', 'LED strip (SMD)', 'MS frame'],
     sizes: ['1×2 ft', '2×4 ft', '3×6 ft', '4×8 ft', 'Custom hoarding size'],
     turnaround: '5–7 working days',
     faqs: [
       {
         q: 'How long do the LED strips last?',
-        a: 'LED life depends on the selected modules, driver, ventilation and operating hours. Ask for the component specifications and warranty terms with your quote so you can compare the actual system being supplied.',
+        a: 'LED life depends on the LED modules, the driver, the ventilation and the hours the sign is lit each day. Before you order, ask AD JEET to write down the parts used and what the warranty covers.',
       },
       {
         q: 'Can you install on a second-floor facade?',
-        a: 'Yes. Our installation team handles elevated work with proper scaffolding and safety equipment across Siliguri and surrounding districts.',
+        a: 'Send a photo of the frontage and say which floor the sign goes on. Installation at height is planned for each site.',
       },
       {
         q: 'Do glow signs work during power cuts?',
@@ -56,7 +56,7 @@ const baseServices: ServiceBase[] = [
       },
       {
         q: 'What warranty do you offer?',
-        a: 'Warranty terms depend on the components and project scope. Ask the team to confirm the covered parts, workmanship, service arrangements and warranty period in writing before ordering.',
+        a: 'Warranty depends on the parts and the job. Before you order, ask AD JEET to write down what is covered and for how long.',
       },
     ],
     relatedServices: ['acp-led-signage', 'f-pole-installation', 'in-shop-branding'],
@@ -68,7 +68,7 @@ const baseServices: ServiceBase[] = [
     name: 'ACP & LED Signage',
     tagline: 'Clean, durable faces for modern brands',
     description:
-      'Aluminium Composite Panel (ACP) cladding combined with LED module lighting creates the clean, premium look demanded by banks, telecom showrooms, and retail chains. We cut, route, and bond ACP to precise dimensions, then back-light or face-light with uniform LED modules. The result is a sign that reads well at distance and retains its finish through years of sun and rain.',
+      'Aluminium Composite Panel (ACP) cladding combined with LED module lighting creates the clean, premium look demanded by banks, telecom showrooms, and retail chains. We cut, route, and bond ACP to precise dimensions, then back-light or face-light with uniform LED modules. The result is a clean, flat face that reads well from a distance.',
     materials: ['ACP sheet (grade agreed per project)', 'LED modules', 'Aluminium extrusion', 'PVC flex backing', 'Stainless steel fixings'],
     sizes: ['Custom sizing from 2 sq ft to full building facade'],
     turnaround: '7–10 working days',
@@ -122,7 +122,7 @@ const baseServices: ServiceBase[] = [
     name: 'Vehicle Branding',
     tagline: 'Turn every kilometre into an impression',
     description:
-      'Full and partial vehicle wraps that transform cars, auto-rickshaws, buses, and delivery vans into moving billboards. We use calendered and cast vinyl films, cut-vinyl lettering, and printed wraps, applied by trained fitters who ensure bubble-free, heat-contoured coverage across curves and edges. Ideal for fleet owners, FMCG brands, and election campaigns across North Bengal.',
+      'Full and partial vehicle wraps that transform cars, auto-rickshaws, buses, and delivery vans into moving billboards. We use calendered and cast vinyl films, cut-vinyl lettering, and printed wraps, applied by hand across the vehicle\'s curves and edges. Ideal for fleet owners, FMCG brands, and election campaigns across North Bengal.',
     materials: ['Cast vinyl wrap film', 'Calendered vinyl', 'Cut vinyl lettering', 'Laminate (matte/gloss)'],
     sizes: ['Auto-rickshaw panels', 'Car partial/full', 'Bus full-wrap', 'Truck side panels'],
     turnaround: '2–5 working days per vehicle',
@@ -162,7 +162,7 @@ const baseServices: ServiceBase[] = [
       },
       {
         q: 'How many years does wall painting last?',
-        a: 'With quality exterior enamel and a proper primer coat, wall painting typically lasts 3–5 years before a refresh is needed.',
+        a: 'It depends on the paint, the wall surface and the weather. Ask AD JEET which paint will be used on your wall.',
       },
       {
         q: 'Can you repaint an existing old wall ad?',
@@ -193,7 +193,7 @@ const baseServices: ServiceBase[] = [
       },
       {
         q: 'Can I change the sign face later without replacing the pole?',
-        a: 'Yes. We design mounting systems that allow sign-face replacement without structural work, keeping future update costs low.',
+        a: 'Yes, if it is planned at the start. Say so in your brief, so the mounting lets a new face be fitted to the same pole later.',
       },
     ],
     relatedServices: ['glow-sign-boards', 'acp-led-signage', 'flex-printing'],
@@ -212,7 +212,7 @@ const baseServices: ServiceBase[] = [
     faqs: [
       {
         q: 'Can you work outside business hours to avoid disruption?',
-        a: 'Yes. For retail and bank installations we schedule overnight or early morning shifts so the space is ready before opening.',
+        a: 'Say when the outlet is closed or quiet, and the fitting can be planned around those hours. The timing is agreed for each site.',
       },
       {
         q: 'Do you handle multiple outlet rollouts simultaneously?',
@@ -220,7 +220,7 @@ const baseServices: ServiceBase[] = [
       },
       {
         q: 'Can you match my HO-supplied brand kit?',
-        a: 'Absolutely. Send us your brand guidelines and site dimensions and we will produce a compliant execution plan for approval before fabrication.',
+        a: 'Yes. Send the brand guidelines and the size of each site. The work is planned to your kit and shared with you for approval before anything is made.',
       },
     ],
     relatedServices: ['acp-led-signage', 'glow-sign-boards', 'product-display'],
@@ -242,7 +242,7 @@ const baseServices: ServiceBase[] = [
         a: 'Yes. Send the venue, theme, dimensions, setup date and dismantling requirements. Seasonal availability and the final scope must be confirmed with the team before booking.',
       },
       {
-        q: 'Can you supply and install within 48 hours for an urgent event?',
+        q: 'Can you handle an urgent event?',
         a: 'Call with the artwork, dimensions, quantity and event deadline. The team must confirm material availability, production capacity, transport and installation before accepting an urgent date.',
       },
       {
