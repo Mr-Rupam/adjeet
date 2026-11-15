@@ -11,6 +11,9 @@ const securityHeaders = [
   { key: 'X-Frame-Options', value: 'DENY' },
   { key: 'X-Content-Type-Options', value: 'nosniff' },
   { key: 'Referrer-Policy', value: 'strict-origin-when-cross-origin' },
+  // No page opens a popup that needs window.opener, and WhatsApp links are
+  // already noopener, so other windows get no handle on this one.
+  { key: 'Cross-Origin-Opener-Policy', value: 'same-origin' },
   {
     key: 'Permissions-Policy',
     value: [
@@ -35,7 +38,9 @@ const securityHeaders = [
       "default-src 'self'",
       // React 19 requires eval() in development for debugging callstacks.
       // 'unsafe-eval' is ONLY added in dev. Production stays strict.
-      `script-src 'self' 'unsafe-inline'${isDev ? " 'unsafe-eval'" : ''} https://www.googletagmanager.com https://www.google-analytics.com https://challenges.cloudflare.com`,
+      // gtag.js comes from googletagmanager.com; google-analytics.com serves no
+      // script the site loads, so it is only in connect-src.
+      `script-src 'self' 'unsafe-inline'${isDev ? " 'unsafe-eval'" : ''} https://www.googletagmanager.com https://challenges.cloudflare.com`,
       "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
       "font-src 'self' https://fonts.gstatic.com",
       "img-src 'self' data: https:",
@@ -58,7 +63,18 @@ const nextConfig: NextConfig = {
   // their links and the little ranking they had carry over. Redirects run
   // before the filesystem, and any query string is passed through.
   async redirects() {
-    return LEGACY_REGIONAL_REDIRECTS.map(({ source, destination }) => ({ source, destination, permanent: true }));
+    return [
+      ...LEGACY_REGIONAL_REDIRECTS.map(({ source, destination }) => ({ source, destination, permanent: true })),
+      // The production deployment's vercel.app host would otherwise serve a
+      // second copy of the site. Only this exact host matches, so preview
+      // deployments and localhost are untouched.
+      {
+        source: '/:path*',
+        has: [{ type: 'host' as const, value: 'adjeet.vercel.app' }],
+        destination: 'https://adjeet.in/:path*',
+        permanent: true,
+      },
+    ];
   },
   async headers() {
     return [
@@ -66,6 +82,13 @@ const nextConfig: NextConfig = {
         source: '/(.*)',
         headers: securityHeaders,
       },
+      // Raw public media that pages reference by path (not through the image
+      // optimizer, whose output Next caches itself). The files rarely change,
+      // and a changed file keeps working after at most 30 days.
+      ...['/hero/:path*', '/brand/:path*', '/client-logos/:path*', '/images/:path*'].map((source) => ({
+        source,
+        headers: [{ key: 'Cache-Control', value: 'public, max-age=2592000, stale-while-revalidate=86400' }],
+      })),
     ];
   },
 };

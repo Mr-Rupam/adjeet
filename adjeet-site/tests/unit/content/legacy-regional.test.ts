@@ -52,7 +52,8 @@ describe('retired regional URLs', () => {
   })
 
   it('is applied by next.config as permanent redirects', async () => {
-    const rules = await nextConfig.redirects!()
+    // The one host-matched rule is the vercel.app redirect (tests/unit/app/host-redirect.test.ts).
+    const rules = (await nextConfig.redirects!()).filter((rule) => !rule.has)
     expect(rules).toHaveLength(27)
     for (const rule of rules) expect(rule).toMatchObject({ permanent: true })
   })
