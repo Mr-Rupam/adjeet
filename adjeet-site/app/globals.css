@@ -119,6 +119,21 @@ section[id] {
   }
 }
 
+/* The theme toggle changes the whole page in one view transition
+   (lib/theme-switch.ts): the old look fades out and the new one in, over one
+   duration and one easing, so the ground, the type, the header and every day
+   and night scene change together. The new look is drawn over the old one,
+   which stays fully opaque underneath until the end, so nothing dips. While it
+   runs the page's own colour and opacity transitions are off, so nothing
+   moves on a second clock. Reduced motion never starts one. */
+::view-transition-group(root) { animation-duration: 700ms; }
+::view-transition-old(root) { animation: none; mix-blend-mode: normal; }
+::view-transition-new(root) { animation: theme-switch-in 700ms ease both; mix-blend-mode: normal; }
+@keyframes theme-switch-in { from { opacity: 0; } }
+:root[data-theme-switching] *,
+:root[data-theme-switching] *::before,
+:root[data-theme-switching] *::after { transition: none !important; }
+
 .display {
   font-family: var(--font-heading);
   font-weight: 600;

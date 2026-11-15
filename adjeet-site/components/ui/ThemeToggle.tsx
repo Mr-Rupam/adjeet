@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react'
 import { Moon, Sun } from 'lucide-react'
 import { STORAGE_KEY, THEME_TOGGLE_EVENT, type ResolvedTheme } from '@/lib/theme'
 import { trackThemeToggle } from '@/lib/analytics'
+import { switchTheme } from '@/lib/theme-switch'
 
 function readTheme(): ResolvedTheme {
   if (typeof window === 'undefined') return 'light'
@@ -27,12 +28,16 @@ export function ThemeToggle() {
     setTheme(readTheme())
   }, [])
 
+  // The whole page changes at once, after any day or night scene on screen
+  // has its incoming image ready (lib/theme-switch.ts).
   function toggle() {
     const next: ResolvedTheme = theme === 'light' ? 'dark' : 'light'
-    setTheme(next)
-    applyTheme(next)
-    window.dispatchEvent(new CustomEvent(THEME_TOGGLE_EVENT, { detail: next }))
     trackThemeToggle(next)
+    void switchTheme(next, () => {
+      setTheme(next)
+      applyTheme(next)
+      window.dispatchEvent(new CustomEvent(THEME_TOGGLE_EVENT, { detail: next }))
+    })
   }
 
   return (

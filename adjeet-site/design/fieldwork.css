@@ -13,7 +13,7 @@
 /* Home page, while the header is over the hero: no cream bar, the original
    logo, the links and the buttons straight on the artwork, in marine ink on
    the day scene and in the night ink on the night scene. It changes with the
-   hero (data-hero-light, set by HeroArt; data-theme before that), over the
+   hero (data-hero-light, set by ThemeScene; data-theme before that), over the
    same 700ms. Past the hero it is the header above again. */
 .site-header.site-header--over-hero { --hero-ink: var(--day-ink); --focus-ring: var(--cerulean-deep); background: transparent; border-bottom-color: transparent; color: var(--hero-ink); transition: --hero-ink 700ms ease, background-color 320ms ease, border-color 320ms ease; }
 :root[data-hero-light="night"] .site-header.site-header--over-hero,
