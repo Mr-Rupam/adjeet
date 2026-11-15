@@ -17,7 +17,7 @@ test.beforeEach(async ({ page }) => {
 test('new homepage keeps real project discovery and every coverage area accessible', async ({ page }) => {
   await page.emulateMedia({ reducedMotion: 'reduce' })
   await page.goto('/')
-  await expect(page.getByRole('heading', { level: 1 })).toHaveText('Sign boards that get you noticed.')
+  await expect(page.getByRole('heading', { level: 1 })).toHaveText('Advertising that gets you noticed.')
   await expect(page.locator('#hero-section').getByRole('link', { name: 'WhatsApp your project' })).toBeVisible()
   await expect(page.getByRole('list', { name: 'Areas we serve' }).getByRole('listitem')).toHaveCount(COVERAGE_AREAS.length)
   // Real work starts straight after the hero; its closing link opens the whole portfolio.

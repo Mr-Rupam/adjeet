@@ -123,8 +123,8 @@ export function HomeHero() {
       <HeroArt layers={layers} wideScreen={WIDE_SCREEN} wideSizes={WIDE_SIZES} />
 
       <div className={styles.heroCopy}>
-        <h1 id="home-heading" data-hero-title>Sign boards{' '}<br />that get you{' '}<br /><em>noticed.</em></h1>
-        <p className={styles.heroLead} data-hero-lead>Sign board makers in Siliguri, since {FOUNDED_YEAR}.</p>
+        <h1 id="home-heading" data-hero-title>Advertising{' '}<br />that gets you{' '}<br /><em>noticed.</em></h1>
+        <p className={styles.heroLead} data-hero-lead>Advertising agency in Siliguri, since {FOUNDED_YEAR}.</p>
       </div>
 
       <div className={styles.heroActions} data-hero-actions>
