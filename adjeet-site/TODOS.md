@@ -3,6 +3,33 @@
 See DESIGN.md for the design system rules. DESIGN.md wins wherever this file
 and it disagree.
 
+## Inner pages to the homepage's standard (2026-11-15)
+
+### [x] Kickers, meta rows and upper-case taglines on the inner pages
+**Done 2026-11-15.** "SERVICE 01 / 10", the taglines under the H1, "SILIGURI
+BRIEF", "COMPARE / SHOPFRONT BOARDS" and the "AD JEET /" meta rows are gone;
+DESIGN.md "Inner pages" records what replaced them.
+
+### [x] One gold primary action, fascia plate captions, photo-first phones
+**Done 2026-11-15.** Every first screen leads with the gold WhatsApp button and
+a quiet brief link; every finished-job photo is captioned on the fascia plate;
+service and town pages show the photo inside the first screen at 390 x 844 and
+360 x 640.
+
+### [x] Consent banner, phone menu, touch and type floors, landmarks
+**Done 2026-11-15.** See DESIGN.md "Layout and interaction".
+
+### [ ] Owner: the trade tagline is now each service page's lead
+The one-line lead under a service H1 is the tagline from `content/services.ts`
+in sentence case ("Illuminate your brand 24/7."). Some read as slogans; if the
+owner wants a plainer line, change `tagline` there (it also shows in the
+/services catalogue).
+
+### [ ] Owner: town pages lead with their cover photograph
+Each town page opens on `coverPhotoId` from `content/areas.ts`. When a better
+local job is photographed, change that id; the plate claims only what the
+gallery records.
+
 ## Storefront homepage (2026-10-20)
 
 ### [x] May 2026 entries pruned
@@ -156,7 +183,7 @@ refresh; the 20-navigation matrix then lands at the top at 390px and 1280px.
 checks the top still holds after the refresh window.
 
 ### [ ] P3: DESIGN.md and design-loop.md describe the pre-redesign homepage
-**DESIGN.md done 2026-10-20:** it now describes the storefront homepage. design-loop.md still says 19 clients.
+**DESIGN.md done 2026-10-20:** it now describes the storefront homepage, and since 2026-11-15 the inner pages too. design-loop.md still says 19 clients.
 `DESIGN.md:42` still gives the section order from before 1612d04 and calls the
 workshop scene "Workshop illustration" (the site says "visualisation");
 `design-loop.md:28` still says 19 clients. DESIGN.md is the design authority,
