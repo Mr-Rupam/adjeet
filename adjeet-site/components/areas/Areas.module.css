@@ -12,7 +12,7 @@
 .sectionElevated { background: var(--paper-elevated); }
 
 .heading {
-  margin: 12px 0 0;
+  margin: 0;
   font: 500 clamp(30px, 3.4vw, 46px)/1.06 var(--font-heading);
   letter-spacing: -.01em;
   color: var(--ink);
@@ -41,16 +41,17 @@
 }
 .textLink:hover { color: var(--signal-text); }
 
-.breadcrumb {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-  padding-top: 28px;
-  font-size: 12px;
-  color: var(--ink-muted);
+/* The trail itself is the global .page-breadcrumb; this only spaces it on the page. */
+.breadcrumb { padding-top: 14px; }
+
+/* A short heading over a list ("Send us", "Every enquiry needs"), in the
+   heading face rather than as an upper-case label. */
+.listHeading {
+  margin: 0;
+  font: 500 24px/1.1 var(--font-heading);
+  letter-spacing: .01em;
+  color: var(--ink);
 }
-.breadcrumb a { display: inline-flex; align-items: center; min-height: 24px; }
-.breadcrumb a:hover { color: var(--signal-text); }
 
 /* ── Brief and "send us" (service and town pages) ─────────────────────── */
 

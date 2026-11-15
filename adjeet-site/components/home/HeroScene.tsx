@@ -7,6 +7,11 @@ import { LoadingRawImage } from '@/components/ui/LoadingImage'
 
 type ThemeTransition = 'day-to-night' | 'night-to-day'
 
+/** Pre-sized copies of the film frames (scaled down only), plus the original. */
+const frameSrcSet = (frame: 'day' | 'night') =>
+  [640, 828, 1080].map(width => `/hero/workshop/${frame}-${width}.webp ${width}w`).concat(`/hero/workshop/${frame}.webp 1280w`).join(', ')
+const FRAME_SIZES = '(min-width: 768px) 1280px, 100vw'
+
 function isResolvedTheme(value: unknown): value is ResolvedTheme {
   return value === 'light' || value === 'dark'
 }
@@ -85,10 +90,12 @@ export function HeroScene({ label, eager = false }: { label?: string; eager?: bo
     >
       <picture className="heroSceneLayer" data-testid="hero-day-layer" data-visible={staticTheme === 'light'}>
         {/* The raw frame stays tied directly to the supplied transition film. */}
-        <LoadingRawImage data-testid="hero-background-image" src="/hero/workshop/day.webp" alt="" width={1280} height={720} loading={eager ? 'eager' : 'lazy'} fetchPriority={eager ? 'high' : undefined} />
+        {/* Phones get a scaled copy of the same frame; wide screens keep the 1280px original. */}
+        <LoadingRawImage data-testid="hero-background-image" src="/hero/workshop/day.webp" srcSet={frameSrcSet('day')} sizes={FRAME_SIZES} alt="" width={1280} height={720} loading={eager ? 'eager' : 'lazy'} fetchPriority={eager ? 'high' : undefined} />
       </picture>
       <picture className="heroSceneLayer" data-testid="hero-night-layer" data-visible={staticTheme === 'dark'}>
-        <LoadingRawImage data-testid="hero-background-image" src="/hero/workshop/night.webp" alt="" width={1280} height={720} loading={eager ? 'eager' : 'lazy'} fetchPriority={eager ? 'high' : undefined} />
+        {/* Day is what the page paints first, so the night frame does not compete with it. */}
+        <LoadingRawImage data-testid="hero-background-image" src="/hero/workshop/night.webp" srcSet={frameSrcSet('night')} sizes={FRAME_SIZES} alt="" width={1280} height={720} loading={eager ? 'eager' : 'lazy'} fetchPriority={eager ? 'low' : undefined} />
       </picture>
       <video
         ref={dayToNightRef}

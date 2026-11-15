@@ -153,6 +153,18 @@
   color: var(--night-ink);
 }
 
+/* The AI disclosure, a quiet ruled strip under the header. */
+.chatbot-notice {
+  margin: 0;
+  padding: 8px 18px;
+  border-bottom: 1px solid var(--rule);
+  background: var(--paper-elevated);
+  color: var(--ink-muted);
+  font-size: 12px;
+  line-height: 1.4;
+  flex-shrink: 0;
+}
+
 /* ─── Messages area ───────────────────────────────────────────────────── */
 .chatbot-messages {
   flex: 1;

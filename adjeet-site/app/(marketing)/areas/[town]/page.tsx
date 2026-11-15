@@ -17,6 +17,10 @@ import { defaultWhatsAppUrl } from '@/lib/whatsapp'
 import { PageMasthead } from '@/components/street/PageMasthead'
 import { GalleryStrip } from '@/components/sections/GalleryStrip'
 import { WhatsAppLink } from '@/components/ui/WhatsAppLink'
+import { WhatsAppIcon } from '@/components/ui/WhatsAppIcon'
+import { LoadingImage as Image } from '@/components/ui/LoadingImage'
+import { FasciaCaption } from '@/components/street/FasciaCaption'
+import { ArrowDown } from 'lucide-react'
 import { Accordion } from '@/components/ui/Accordion'
 import { BriefForm } from '@/components/areas/BriefForm'
 import styles from '@/components/areas/Areas.module.css'
@@ -74,19 +78,32 @@ export default async function TownPage({ params }: { params: Promise<Params> }) 
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLdString(faqSchema) }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLdString(breadcrumb) }} />
 
-      <nav aria-label="Breadcrumb" className={`field-container ${styles.breadcrumb}`}>
+      <nav aria-label="Breadcrumb" className={`field-container page-breadcrumb ${styles.breadcrumb}`}>
         <Link href="/">Home</Link><span aria-hidden="true">/</span>
         <Link href="/areas">Areas we cover</Link><span aria-hidden="true">/</span>
         <span aria-current="page">{town.name}</span>
       </nav>
 
-      <PageMasthead compact meta={[town.name, town.region, `About ${km} km from the workshop`]} title={town.headline} lead={town.lead}>
-        <WhatsAppLink href={waUrl} source={'area:' + town.slug} className="cta cta--md">Discuss your project ↗</WhatsAppLink>
+      <PageMasthead
+        compact
+        title={town.headline}
+        lead={town.lead}
+        fact={`About ${km} km from the workshop, in ${town.region}.`}
+        media={cover && (
+          <figure className="m-0">
+            <div className="field-masthead-photo">
+              <Image src={cover.src} alt={cover.alt} fill preload sizes="(max-width: 767px) 100vw, (max-width: 1280px) 45vw, 600px" />
+            </div>
+            <FasciaCaption photo={cover} />
+          </figure>
+        )}
+      >
+        <WhatsAppLink href={waUrl} source={'area:' + town.slug} className="cta cta--md cta--yellow"><WhatsAppIcon />Discuss your project</WhatsAppLink>
+        <a href="#send-brief" className="action-quiet">Or send the brief <ArrowDown size={17} aria-hidden="true" /></a>
       </PageMasthead>
 
       <section className={`${styles.section} ${styles.sectionTight}`} aria-labelledby="town-work-heading">
         <div className="field-container">
-          <p className="spec text-signal">Photographed on site</p>
           <h2 id="town-work-heading" className={styles.heading}>Work in and around {town.name}</h2>
           <p className={styles.lead}>{town.work}</p>
           <p className={styles.reviewed}>Page reviewed <time dateTime={reviewed}>{formatReviewDate(reviewed)}</time></p>
@@ -103,13 +120,13 @@ export default async function TownPage({ params }: { params: Promise<Params> }) 
 
       <section className={styles.section} aria-labelledby="town-trip-heading">
         <div className="field-container">
-          <p className="spec text-signal">From the Siliguri workshop</p>
           <h2 id="town-trip-heading" className={styles.heading}>How a {town.name} job is planned</h2>
           <div className={styles.tripGrid}>
             <div className={styles.prose}>
               {town.trip.map(paragraph => <p key={paragraph}>{paragraph}</p>)}
             </div>
-            <aside className={styles.plate} aria-label={`${town.name} at a glance`}>
+            {/* A plain block, not an aside: a complementary landmark may not sit inside a region. */}
+            <div className={styles.plate}>
               <p className={styles.plateFigure}>{km}<span className={styles.plateUnit}>km</span></p>
               <p className={styles.plateLabel}>From our Siliguri workshop to {town.name}, in a straight line.</p>
               <p className={styles.plateNearby}>
@@ -117,14 +134,13 @@ export default async function TownPage({ params }: { params: Promise<Params> }) 
                 {town.nearbyNote}
               </p>
               <Link href="/areas" className={styles.textLink}>Every place we cover ↗</Link>
-            </aside>
+            </div>
           </div>
         </div>
       </section>
 
       <section className={styles.section} aria-labelledby="town-trades-heading">
         <div className="field-container">
-          <p className="spec text-signal">Before you send the brief</p>
           <h2 id="town-trades-heading" className={styles.heading}>What to send from {town.name}, trade by trade</h2>
           <ul className={styles.trades}>
             {trades.map(trade => (
@@ -144,7 +160,6 @@ export default async function TownPage({ params }: { params: Promise<Params> }) 
       <section className={styles.section} aria-labelledby="town-faq-heading">
         <div className={`field-container ${styles.faqGrid}`}>
           <div>
-            <p className="spec text-signal">Questions</p>
             <h2 id="town-faq-heading" className={styles.heading}>Asked from {town.name}</h2>
           </div>
           <Accordion items={town.faqs} />
@@ -153,7 +168,7 @@ export default async function TownPage({ params }: { params: Promise<Params> }) 
 
       <section className="commission" aria-labelledby="town-commission-heading">
         <div className="field-container commission-inner">
-          <div><p className="spec">Start with the site</p><h2 id="town-commission-heading">Your sign,<br />in {town.name}.</h2></div>
+          <div><h2 id="town-commission-heading">Your sign,<br />in {town.name}.</h2></div>
           <div className="commission-actions">
             <p>Share a photo, the size and the location for a project-specific quote.</p>
             <WhatsAppLink href={waUrl} source={'area-commission:' + town.slug} className="cta cta--md">WhatsApp us now →</WhatsAppLink>

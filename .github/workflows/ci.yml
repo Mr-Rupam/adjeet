@@ -46,7 +46,11 @@ jobs:
   # The e2e suite was never run in CI, and 16 of its tests went stale on main
   # without anything flagging it. This job runs every spec on every push and PR.
   e2e:
-    runs-on: ubuntu-latest
+    # Pinned to 24.04. `ubuntu-latest` became Ubuntu 26.04 in November 2026,
+    # and the Playwright release in the lockfile (1.59) cannot install Chromium
+    # there ("Playwright does not support chromium on ubuntu26.04-x64"). Go back
+    # to `ubuntu-latest` once Playwright is upgraded to a release that supports it.
+    runs-on: ubuntu-24.04
     timeout-minutes: 20
     steps:
       - uses: actions/checkout@v7
@@ -62,7 +66,8 @@ jobs:
         working-directory: adjeet-site
 
       # The suite runs against a production build, so it checks what ships.
-      # No secrets are needed: every variable in lib/env.ts is optional, and the
+      # No secrets are needed: every server variable is read where it is used and
+      # a missing one is handled there (see AGENTS.md, Env Setup), and the
       # lead form specs stub the Turnstile widget and intercept /api/lead, so no
       # spec submits a real lead. The site key is Cloudflare's public
       # always-pass test key; without one a production build renders LeadForm's

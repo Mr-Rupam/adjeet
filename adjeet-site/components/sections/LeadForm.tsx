@@ -3,6 +3,7 @@
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useState, useRef, useEffect, type FormEvent } from 'react'
+import Link from 'next/link'
 import { DeferUntilNear } from '@/components/ui/DeferUntilNear'
 import { leadSchema, type LeadInput, TIMELINE_OPTIONS, CALL_TIME_OPTIONS, COVERAGE_CITIES, HELP_CHOOSING } from '@/lib/lead-schema'
 import { Turnstile, type TurnstileInstance } from '@marsidev/react-turnstile'
@@ -381,7 +382,7 @@ export function LeadForm({ defaultCity, defaultService }: LeadFormProps = {}) {
               onSuccess={(token) => setValue('cfTurnstileResponse', token, { shouldValidate: true })}
               onError={() => { setValue('cfTurnstileResponse', ''); setServerError('CAPTCHA failed. Please try again.') }}
               onExpire={() => setValue('cfTurnstileResponse', '', { shouldValidate: true })}
-              options={{ theme: widgetTheme, size: 'compact' }}
+              options={{ theme: widgetTheme, size: 'compact', action: 'lead' }}
             />
           </DeferUntilNear>
         {errors.cfTurnstileResponse && (
@@ -421,9 +422,10 @@ export function LeadForm({ defaultCity, defaultService }: LeadFormProps = {}) {
         )}
       </button>
 
-      {/* Trust line */}
+      {/* Privacy line */}
       <p className="spec text-center text-ink-subtle">
-        We use your details to respond to your enquiry.
+        We use these details only to answer your enquiry.{' '}
+        <Link href="/privacy" className="underline underline-offset-2">Privacy policy</Link>.
       </p>
     </form>
   )

@@ -1,66 +1,155 @@
 'use client'
 
-import { gsap } from 'gsap'
-import { ScrollTrigger } from 'gsap/ScrollTrigger'
-import { SplitText } from 'gsap/SplitText'
+/**
+ * The site's scroll motion, built on the browser's own Web Animations API and
+ * IntersectionObserver instead of GSAP. GSAP and ScrollTrigger used to load and
+ * run on every page before it was interactive (about 0.4 s of main thread on a
+ * mid-range phone, 1 s on the homepage). These helpers keep the same moves, the
+ * same easing and the same trigger lines at a fraction of that cost.
+ *
+ * Every reveal works like `gsap.from()`: the element is held in its starting
+ * pose while it waits below the fold, plays to its own styles when it reaches
+ * its trigger line, then lets go so nothing is left inline.
+ */
 
-if (typeof window !== 'undefined') {
-  gsap.registerPlugin(ScrollTrigger, SplitText)
-}
+/** GSAP's eases as CSS curves. power3 is a quartic curve, power4 a quintic one. */
+export const EASE = {
+  out3: 'cubic-bezier(0.25, 1, 0.5, 1)',
+  out4: 'cubic-bezier(0.22, 1, 0.36, 1)',
+  inOut3: 'cubic-bezier(0.76, 0, 0.24, 1)',
+} as const
 
 /** Shared values keep the page and route entrances feeling like one system. */
 export const MOTION = {
-  entranceEase: 'power3.out',
   headingDuration: 0.74,
   headingStagger: 0.08,
-  scriptDuration: 0.82,
-  bodyDuration: 0.48,
-  imageDuration: 0.82,
-  bodyDistance: 10,
-  desktopQuery: '(min-width: 1024px)',
+  desktopQuery: '(min-width: 768px)',
   reduceQuery: '(prefers-reduced-motion: reduce)',
 } as const
 
-/** Keep controls exposed to keyboard and assistive navigation before scrolling. */
-export function createBodyReveal(target: HTMLElement, start = 'top 86%') {
-  if (target.matches('form') || target.querySelector('form')) return
-  const controls = 'a[href], button, input, select, textarea, summary, [tabindex]'
-  const interactive = target.matches(controls) || target.querySelector(controls) !== null
-
-  return gsap.from(target, {
-    opacity: interactive ? 1 : 0,
-    y: MOTION.bodyDistance,
-    duration: MOTION.bodyDuration,
-    ease: MOTION.entranceEase,
-    scrollTrigger: { trigger: target, start, once: true },
-  })
+export function motionIsReduced() {
+  return window.matchMedia(MOTION.reduceQuery).matches
 }
 
-/**
- * Fonts can resolve after first paint. Refreshing the triggers then keeps
- * entrance points aligned without blocking visible server-rendered content.
- */
-export function refreshScrollTriggersAfterLayout() {
-  let active = true
-  const frame = window.requestAnimationFrame(() => ScrollTrigger.refresh())
-  const fontsReady = document.fonts?.ready
+export interface RevealOptions {
+  /** The starting pose. The end pose is the element's own computed style. */
+  from: Keyframe
+  /** Needed only for properties that cannot blend with `none`, such as clip-path. */
+  to?: Keyframe
+  /** Seconds, as in the GSAP calls this replaced. */
+  duration: number
+  delay?: number
+  ease?: string
+  onComplete?: () => void
+}
 
-  void fontsReady?.then(
-    () => { if (active) ScrollTrigger.refresh() },
-    () => { /* A failed optional font must not make motion fail. */ },
-  )
+export interface Reveal {
+  play: () => void
+  cancel: () => void
+}
 
-  return () => {
-    active = false
-    window.cancelAnimationFrame(frame)
+/** Holds `element` at `from` until `play()`, then animates to its own styles. */
+export function holdFrom(element: HTMLElement, options: RevealOptions): Reveal {
+  const keyframes = options.to ? [options.from, options.to] : [{ ...options.from, offset: 0 }]
+  let animation: Animation | null = null
+  try {
+    animation = element.animate(keyframes, {
+      duration: options.duration * 1000,
+      delay: (options.delay ?? 0) * 1000,
+      easing: options.ease ?? EASE.out3,
+      fill: 'backwards',
+    })
+    animation.pause()
+  } catch {
+    // A browser without WAAPI simply shows the element as it is.
+    animation = null
+  }
+  let played = false
+  return {
+    play() {
+      if (played) return
+      played = true
+      if (!animation) { options.onComplete?.(); return }
+      animation.onfinish = () => {
+        animation?.cancel()
+        options.onComplete?.()
+      }
+      animation.play()
+    },
+    cancel() {
+      animation?.cancel()
+    },
   }
 }
 
-interface MaskedLineRevealOptions {
-  trigger?: HTMLElement
-  start?: string
-  delay?: number
-  lines?: (lines: HTMLElement[]) => HTMLElement[]
+/**
+ * Calls `onEnter` once, when the top of each element crosses `startPercent` of
+ * the viewport height (ScrollTrigger's `start: 'top 89%'`). The observed area
+ * reaches far above the viewport, so anything already scrolled past, after a
+ * Back navigation or an anchor jump, also fires instead of waiting forever.
+ */
+export function createEnterWatcher() {
+  const observers = new Map<number, IntersectionObserver>()
+  const callbacks = new Map<Element, () => void>()
+
+  const observerFor = (startPercent: number) => {
+    let observer = observers.get(startPercent)
+    if (!observer) {
+      observer = new IntersectionObserver(entries => {
+        for (const entry of entries) {
+          if (!entry.isIntersecting) continue
+          observer?.unobserve(entry.target)
+          const callback = callbacks.get(entry.target)
+          callbacks.delete(entry.target)
+          callback?.()
+        }
+      }, { rootMargin: `100000px 0px ${startPercent - 100}% 0px` })
+      observers.set(startPercent, observer)
+    }
+    return observer
+  }
+
+  return {
+    watch(element: Element, startPercent: number, onEnter: () => void) {
+      if (typeof IntersectionObserver === 'undefined') { onEnter(); return }
+      const previous = callbacks.get(element)
+      callbacks.set(element, previous ? () => { previous(); onEnter() } : onEnter)
+      observerFor(startPercent).observe(element)
+    },
+    disconnect() {
+      observers.forEach(observer => observer.disconnect())
+      observers.clear()
+      callbacks.clear()
+    },
+  }
+}
+
+export type EnterWatcher = ReturnType<typeof createEnterWatcher>
+
+/** A reveal held now and played when `trigger` crosses its line. */
+export function revealOnEnter(
+  watcher: EnterWatcher,
+  element: HTMLElement,
+  options: RevealOptions & { trigger?: Element; start: number },
+): Reveal {
+  const reveal = holdFrom(element, options)
+  watcher.watch(options.trigger ?? element, options.start, reveal.play)
+  return reveal
+}
+
+/** Several elements that start together, each `stagger` seconds after the last. */
+export function staggerOnEnter(
+  watcher: EnterWatcher,
+  elements: ArrayLike<HTMLElement>,
+  options: RevealOptions & { stagger: number; trigger?: Element; start: number },
+): Reveal[] {
+  const list = Array.from(elements)
+  if (!list.length) return []
+  const reveals = list.map((element, index) => holdFrom(element, {
+    ...options, delay: (options.delay ?? 0) + index * options.stagger,
+  }))
+  watcher.watch(options.trigger ?? list[0], options.start, () => reveals.forEach(reveal => reveal.play()))
+  return reveals
 }
 
 function originalRenderedText(target: HTMLElement) {
@@ -70,86 +159,151 @@ function originalRenderedText(target: HTMLElement) {
 }
 
 /**
- * Splits only ordinary headings. SplitText owns its masks and re-splits after
- * fonts or layout settle; teardown restores the exact semantic source markup.
+ * Splits a heading into its rendered lines, each inside a clipping mask. Inline
+ * wrappers such as a coloured `<span>` are copied onto every line they cover.
+ * The heading's own nodes are set aside untouched and put back by `revert()`,
+ * so React keeps the exact nodes it rendered.
  */
-export function createMaskedLineReveal(target: HTMLElement, options: MaskedLineRevealOptions = {}) {
-  let active = true
-  let refreshFrame: number | undefined
-  const previousAriaLabel = target.getAttribute('aria-label')
-  const accessibleName = originalRenderedText(target)
-  if (previousAriaLabel === null && accessibleName) target.setAttribute('aria-label', accessibleName)
-  const split = SplitText.create(target, {
-    type: 'lines',
-    mask: 'lines',
-    // We preserve the rendered source name ourselves. SplitText's automatic
-    // label uses textContent, which joins words separated by a <br />.
-    aria: 'none',
-    autoSplit: true,
-    onSplit(current) {
-      const allLines = current.lines as HTMLElement[]
-      const lines = options.lines ? options.lines(allLines) : allLines
-      if (!active || lines.length === 0) return
+export function splitLines(target: HTMLElement) {
+  const originals = Array.from(target.childNodes)
+  const words: HTMLElement[] = []
 
-      refreshFrame = window.requestAnimationFrame(() => {
-        if (active) ScrollTrigger.refresh()
-      })
-
-      return gsap.from(lines, {
-        autoAlpha: 0,
-        yPercent: 105,
-        duration: MOTION.headingDuration,
-        stagger: lines.length > 1 ? MOTION.headingStagger : 0,
-        delay: options.delay,
-        ease: MOTION.entranceEase,
-        scrollTrigger: options.trigger
-          ? { trigger: options.trigger, start: options.start ?? 'top 86%', once: true }
-          : undefined,
-      })
-    },
-  })
-
-  return () => {
-    active = false
-    if (refreshFrame !== undefined) window.cancelAnimationFrame(refreshFrame)
-    split.kill()
-    split.revert()
-    if (previousAriaLabel === null) target.removeAttribute('aria-label')
-    else target.setAttribute('aria-label', previousAriaLabel)
+  const wrapWords = (node: Node): Node => {
+    if (node.nodeType === Node.TEXT_NODE) {
+      const fragment = document.createDocumentFragment()
+      for (const part of (node.textContent ?? '').split(/(\s+)/)) {
+        if (!part) continue
+        if (/^\s+$/.test(part)) { fragment.append(document.createTextNode(' ')); continue }
+        const word = document.createElement('span')
+        word.textContent = part
+        words.push(word)
+        fragment.append(word)
+      }
+      return fragment
+    }
+    if (node.nodeType === Node.ELEMENT_NODE) {
+      const element = node as Element
+      const copy = element.cloneNode(false) as Element
+      if (element.tagName !== 'BR') element.childNodes.forEach(child => copy.append(wrapWords(child)))
+      return copy
+    }
+    return node.cloneNode(true)
   }
+
+  const measured = document.createDocumentFragment()
+  originals.forEach(node => measured.append(wrapWords(node)))
+  target.replaceChildren(measured)
+
+  const grouped: HTMLElement[][] = []
+  let lineTop = Number.NEGATIVE_INFINITY
+  for (const word of words) {
+    const box = word.getBoundingClientRect()
+    if (box.top > lineTop + Math.max(1, box.height * 0.5)) {
+      grouped.push([])
+      lineTop = box.top
+    }
+    grouped[grouped.length - 1].push(word)
+  }
+
+  const output = document.createDocumentFragment()
+  const lines: HTMLElement[] = []
+  for (const lineWords of grouped) {
+    const mask = document.createElement('span')
+    mask.style.cssText = 'display:block; overflow:clip;'
+    const line = document.createElement('span')
+    line.style.display = 'block'
+    mask.append(line)
+    output.append(mask)
+    lines.push(line)
+
+    let owners: Element[] = []
+    let copies: Element[] = []
+    lineWords.forEach((word, index) => {
+      const ancestors: Element[] = []
+      for (let parent = word.parentElement; parent && parent !== target; parent = parent.parentElement) ancestors.unshift(parent)
+      let shared = 0
+      while (shared < ancestors.length && shared < owners.length && ancestors[shared] === owners[shared]) shared++
+      owners = owners.slice(0, shared)
+      copies = copies.slice(0, shared)
+      for (let depth = shared; depth < ancestors.length; depth++) {
+        const copy = ancestors[depth].cloneNode(false) as Element
+        ;(copies[depth - 1] ?? line).append(copy)
+        owners.push(ancestors[depth])
+        copies.push(copy)
+      }
+      const host = copies[copies.length - 1] ?? line
+      if (index > 0) host.append(document.createTextNode(' '))
+      host.append(word)
+    })
+  }
+  target.replaceChildren(output)
+
+  return { lines, revert: () => target.replaceChildren(...originals) }
+}
+
+interface MaskedLineRevealOptions {
+  /** Plays at once when absent, as the masthead heading does. */
+  start?: number
+  trigger?: Element
+  delay?: number
 }
 
 /**
- * The hero's script stays outside its mask so the Pristina swash has its full
- * line box. Ordinary headings use SplitText above; this wraps only the plain
- * first text node and restores it exactly on cleanup.
+ * Desktop headings rise line by line out of a mask. The heading waits hidden
+ * below the fold and is split only when it is about to play, after fonts have
+ * usually settled, then restored to its own markup when the lines land.
  */
-export function createHeroHeadlineReveal(target: HTMLElement) {
-  const textNode = Array.from(target.childNodes).find(
-    node => node.nodeType === Node.TEXT_NODE && node.textContent?.trim(),
-  )
-  if (!textNode) return () => undefined
+export function maskedLineReveal(watcher: EnterWatcher, target: HTMLElement, options: MaskedLineRevealOptions = {}) {
+  let active = true
+  let animations: Animation[] = []
+  let restore: (() => void) | null = null
+  const previousOpacity = target.style.opacity
+  const previousAriaLabel = target.getAttribute('aria-label')
+  target.style.opacity = '0'
 
-  const mask = document.createElement('span')
-  const line = document.createElement('span')
-  mask.style.cssText = 'display:inline-block; overflow:clip; vertical-align:top;'
-  line.style.display = 'block'
-  line.textContent = textNode.textContent
-  mask.appendChild(line)
-  target.replaceChild(mask, textNode)
+  const finish = () => {
+    restore?.()
+    restore = null
+    if (previousAriaLabel === null) target.removeAttribute('aria-label')
+    else target.setAttribute('aria-label', previousAriaLabel)
+    target.style.opacity = previousOpacity
+  }
 
-  const animation = gsap.from(line, {
-    autoAlpha: 0,
-    yPercent: 105,
-    duration: MOTION.headingDuration,
-    delay: 0.16,
-    ease: MOTION.entranceEase,
-  })
+  const play = () => {
+    if (!active) return
+    const accessibleName = originalRenderedText(target)
+    if (previousAriaLabel === null && accessibleName) target.setAttribute('aria-label', accessibleName)
+    const { lines, revert } = splitLines(target)
+    restore = revert
+    target.style.opacity = previousOpacity
+    if (!lines.length) { finish(); return }
+    const stagger = lines.length > 1 ? MOTION.headingStagger : 0
+    try {
+      animations = lines.map((line, index) => line.animate(
+        [{ transform: 'translateY(105%)', opacity: 0, offset: 0 }, { transform: 'translateY(0)', opacity: 1 }],
+        { duration: MOTION.headingDuration * 1000, delay: ((options.delay ?? 0) + index * stagger) * 1000, easing: EASE.out3, fill: 'backwards' },
+      ))
+    } catch {
+      finish()
+      return
+    }
+    void Promise.all(animations.map(animation => animation.finished)).then(
+      () => { if (active) finish() },
+      () => { /* Cancelled by a route change; the cleanup restores the heading. */ },
+    )
+  }
+
+  if (options.start === undefined) play()
+  else watcher.watch(options.trigger ?? target, options.start, play)
 
   return () => {
-    animation.revert()
-    target.replaceChild(textNode, mask)
+    active = false
+    animations.forEach(animation => animation.cancel())
+    finish()
   }
 }
 
-export { gsap, ScrollTrigger }
+/** Adds a class once `element` crosses its line, as `ScrollTrigger.create({ onEnter })` did. */
+export function classOnEnter(watcher: EnterWatcher, element: HTMLElement, className: string, start: number) {
+  watcher.watch(element, start, () => element.classList.add(className))
+}

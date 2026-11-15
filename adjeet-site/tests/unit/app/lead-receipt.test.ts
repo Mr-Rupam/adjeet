@@ -3,19 +3,27 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { NextRequest } from 'next/server'
 
 const fakes = vi.hoisted(() => ({
-  insert: vi.fn(), find: vi.fn(), open: vi.fn(), sheet: vi.fn(), email: vi.fn(), limit: vi.fn(),
+  insert: vi.fn(), find: vi.fn(), open: vi.fn(), sheet: vi.fn(), email: vi.fn(), limit: vi.fn(), whatsapp: vi.fn(),
   scheduled: [] as Promise<unknown>[],
+  /** Each limiter's window by prefix, as the route configured it. */
+  windows: new Map<string, { kind: string; tokens: number; window: string }>(),
 }))
 vi.mock('@/lib/mongodb', () => ({ default: async () => ({ db: () => ({ collection: () => ({ insertOne: fakes.insert, findOne: fakes.find }) }) }) }))
 vi.mock('@/lib/google-sheets', () => ({ openLeadSheet: fakes.open }))
 vi.mock('resend', () => ({ Resend: class { emails = { send: fakes.email } } }))
+vi.mock('twilio', () => ({ Twilio: class { messages = { create: fakes.whatsapp } } }))
 // Only the real Sheets writer uses it, in the "best time to call" tests below.
 vi.mock('google-auth-library', () => ({ JWT: class { async getAccessToken() { return { token: 'test-token' } } } }))
-// Each limiter is told apart by its prefix: 'lead' per IP, 'lead-notify' per phone.
+// Each limiter is told apart by its prefix: 'lead' per IP, 'lead-noip' for
+// requests without one, 'lead-notify' per phone, 'lead-site-day' for every
+// enquiry, 'lead-notify-hour' and 'lead-notify-day' for notifications.
 vi.mock('@upstash/ratelimit', () => ({
   Ratelimit: class {
-    static slidingWindow() { return {} }
-    constructor(private readonly config: { prefix: string }) {}
+    static slidingWindow(tokens: number, window: string) { return { kind: 'sliding', tokens, window } }
+    static fixedWindow(tokens: number, window: string) { return { kind: 'fixed', tokens, window } }
+    constructor(private readonly config: { prefix: string; limiter: { kind: string; tokens: number; window: string } }) {
+      fakes.windows.set(config.prefix, config.limiter)
+    }
     limit = (key: string) => fakes.limit(this.config.prefix, key)
   },
 }))
@@ -35,13 +43,15 @@ const PERSONAL = [brief.name, brief.phone, brief.message]
 const saved = { status: 'saved', missing: [] }
 const sheetDown = { status: 'failed', reason: 'http-503' }
 
-const request = (body: unknown = brief) => new NextRequest('https://adjeet.in/api/lead', {
-  method: 'POST', headers: { origin: 'https://adjeet.in', 'content-type': 'application/json' },
+// Vercel always sets the visitor's address; `withoutAddress` drops it.
+const request = (body: unknown = brief, { withoutAddress = false } = {}) => new NextRequest('https://adjeet.in/api/lead', {
+  method: 'POST',
+  headers: { origin: 'https://adjeet.in', 'content-type': 'application/json', ...(withoutAddress ? {} : { 'x-forwarded-for': '198.51.100.20' }) },
   body: JSON.stringify(body),
 })
-async function submit(body: unknown = brief) {
+async function submit(body: unknown = brief, options?: { withoutAddress?: boolean }) {
   const { POST } = await import('@/app/api/lead/route')
-  return POST(request(body))
+  return POST(request(body, options))
 }
 async function notificationsSettled() { await Promise.allSettled(fakes.scheduled) }
 function logged() {
@@ -54,13 +64,17 @@ function logged() {
 beforeEach(() => {
   vi.resetModules(); vi.clearAllMocks()
   fakes.scheduled.length = 0
+  fakes.windows.clear()
   vi.stubEnv('NODE_ENV', 'test')
   vi.stubEnv('MONGODB_URI', 'mongodb://example.test/adjeet')
   vi.stubEnv('RESEND_API_KEY', '')
-  vi.stubEnv('UPSTASH_REDIS_REST_URL', '')
-  vi.stubEnv('UPSTASH_REDIS_REST_TOKEN', '')
+  // Configured by default: owner notifications are only sent once the volume
+  // caps have been counted. Tests of an unconfigured limiter clear these.
+  vi.stubEnv('UPSTASH_REDIS_REST_URL', 'https://example.upstash.io')
+  vi.stubEnv('UPSTASH_REDIS_REST_TOKEN', 'test')
   vi.stubEnv('KV_REST_API_URL', '')
   vi.stubEnv('KV_REST_API_TOKEN', '')
+  for (const name of ['LEAD_DAILY_CAP', 'LEAD_NOTIFY_HOURLY_CAP', 'LEAD_NOTIFY_DAILY_CAP', 'LIMITER_KEY_SECRET', 'TURNSTILE_SECRET_KEY']) vi.stubEnv(name, '')
   vi.stubEnv('TWILIO_ACCOUNT_SID', '')
   vi.stubGlobal('fetch', vi.fn().mockImplementation(async () => new Response(JSON.stringify({ success: true, hostname: 'adjeet.in' }))))
   for (const method of ['log', 'info', 'warn', 'error'] as const) vi.spyOn(console, method).mockImplementation(() => {})
@@ -223,6 +237,61 @@ describe('rate limiter dependency (fails open: Turnstile still gates every enqui
     expect((await pending).status).toBe(200)
   })
 
+  it('counts every address in one IPv6 /64 as one visitor, and sends the CAPTCHA check the address itself', async () => {
+    const { POST } = await import('@/app/api/lead/route')
+    for (const address of ['2401:4900:1c2a:5b3d:1:2:3:4', '2401:4900:1c2a:5b3d:ffff:eeee:dddd:cccc']) {
+      const req = new NextRequest('https://adjeet.in/api/lead', {
+        method: 'POST',
+        headers: { origin: 'https://adjeet.in', 'content-type': 'application/json', 'x-forwarded-for': address },
+        body: JSON.stringify(brief),
+      })
+      expect((await POST(req)).status).toBe(200)
+    }
+    const visitorKeys = fakes.limit.mock.calls.filter(([prefix]) => prefix === 'lead').map(([, key]) => key)
+    expect(visitorKeys).toHaveLength(2)
+    expect(visitorKeys[0]).toBe(visitorKeys[1])
+    // Redis holds a hash of the /64, never the address.
+    expect(visitorKeys[0]).toMatch(/^[0-9a-f]{64}$/)
+    const sent = vi.mocked(fetch).mock.calls.map(([, init]) => String((init as RequestInit).body))
+    expect(sent[0]).toContain('remoteip=2401%3A4900%3A1c2a%3A5b3d%3A1%3A2%3A3%3A4')
+  })
+
+  it('keeps an IPv4 visitor under a hash of the address itself', async () => {
+    const { POST } = await import('@/app/api/lead/route')
+    const send = (forwarded: string) => POST(new NextRequest('https://adjeet.in/api/lead', {
+      method: 'POST',
+      headers: { origin: 'https://adjeet.in', 'content-type': 'application/json', 'x-forwarded-for': forwarded },
+      body: JSON.stringify(brief),
+    }))
+    expect((await send('203.0.113.7, 10.0.0.1')).status).toBe(200)
+    expect((await send('203.0.113.8')).status).toBe(200)
+    const [first, second] = fakes.limit.mock.calls.filter(([prefix]) => prefix === 'lead').map(([, key]) => String(key))
+    expect(first).toMatch(/^[0-9a-f]{64}$/)
+    expect(first).not.toBe(second)
+    expect(JSON.stringify(fakes.limit.mock.calls)).not.toContain('203.0.113')
+  })
+
+  it('counts requests without an address in their own bucket, not a shared "unknown" one, and warns once', async () => {
+    expect((await submit(brief, { withoutAddress: true })).status).toBe(200)
+    expect((await submit(brief, { withoutAddress: true })).status).toBe(200)
+    const keys = fakes.limit.mock.calls.filter(([prefix]) => prefix === 'lead' || prefix === 'lead-noip')
+    expect(keys.map(([prefix]) => prefix)).toEqual(['lead-noip', 'lead-noip'])
+    expect(keys.map(([, key]) => key)).not.toContain('unknown')
+    // Generous enough that one sender cannot lock out every visitor without an address.
+    expect(fakes.windows.get('lead-noip')!.tokens).toBeGreaterThan(fakes.windows.get('lead')!.tokens)
+    const warnings = vi.mocked(console.warn).mock.calls.flat().filter(line => /no client address/i.test(String(line)))
+    expect(warnings).toHaveLength(1)
+    // Turnstile is not told an address it does not have.
+    const sent = vi.mocked(fetch).mock.calls.map(([, init]) => String((init as RequestInit).body))
+    expect(sent[0]).not.toContain('remoteip')
+  })
+
+  it('still refuses a request without an address once that bucket is spent', async () => {
+    fakes.limit.mockImplementation(async (prefix: string) => ({ success: prefix !== 'lead-noip' }))
+    expect((await submit(brief, { withoutAddress: true })).status).toBe(429)
+    expect(fakes.insert).not.toHaveBeenCalled()
+  })
+
   it('keeps accepting enquiries when production has no limiter configured, as before', async () => {
     vi.stubEnv('UPSTASH_REDIS_REST_URL', '')
     vi.stubEnv('UPSTASH_REDIS_REST_TOKEN', '')
@@ -250,14 +319,191 @@ describe('owner notification cap per phone', () => {
     expect(phoneKey).not.toContain(brief.phone)
   })
 
-  it('still notifies when the cap cannot be checked', async () => {
+  it('keys the phone and the visitor with HMAC under LIMITER_KEY_SECRET, so neither can be brute-forced from Redis', async () => {
+    vi.stubEnv('LIMITER_KEY_SECRET', 'limiter-secret')
+    const { createHmac } = await import('node:crypto')
+    expect((await submit()).status).toBe(200)
+    await notificationsSettled()
+    const keyOf = (prefix: string) => fakes.limit.mock.calls.find(([p]) => p === prefix)?.[1]
+    expect(keyOf('lead-notify')).toBe(createHmac('sha256', 'limiter-secret').update(`adjeet-limiter:phone:${brief.phone}`).digest('hex'))
+    expect(keyOf('lead')).toBe(createHmac('sha256', 'limiter-secret').update('adjeet-limiter:198.51.100.20').digest('hex'))
+    expect(logged()).not.toContain('limiter-secret')
+  })
+
+  // Changed again on 2026-11-15: when the caps cannot be counted, the owner
+  // is still told, under the in-process fallback bound.
+  it('stores the enquiry and still notifies, under the fallback bound, when the cap cannot be checked', async () => {
     fakes.limit.mockImplementation(async (prefix: string) => {
       if (prefix === 'lead-notify') throw new Error('offline')
       return { success: true }
     })
     expect((await submit()).status).toBe(200)
     await notificationsSettled()
+    expect(fakes.insert).toHaveBeenCalledTimes(1)
     expect(fakes.email).toHaveBeenCalledTimes(1)
+  })
+})
+
+describe('owner notification volume caps (no phone dimension)', () => {
+  beforeEach(() => {
+    vi.stubEnv('RESEND_API_KEY', 'test-key')
+    vi.stubEnv('TWILIO_ACCOUNT_SID', 'AC-test')
+    vi.stubEnv('TWILIO_AUTH_TOKEN', 'twilio-test')
+    vi.stubEnv('TWILIO_WHATSAPP_FROM', 'whatsapp:+10000000000')
+    vi.stubEnv('RUPAM_WHATSAPP_NUMBER', 'whatsapp:+910000000000')
+  })
+  const twilio = fakes.whatsapp
+  beforeEach(() => { twilio.mockResolvedValue({ sid: 'SM-test' }) })
+
+  it('notifies by email and WhatsApp while under every cap, counting each cap once', async () => {
+    expect((await submit()).status).toBe(200)
+    await notificationsSettled()
+    expect(fakes.email).toHaveBeenCalledTimes(1)
+    expect(twilio).toHaveBeenCalledTimes(1)
+    const counted = fakes.limit.mock.calls.map(([prefix]) => prefix)
+    for (const prefix of ['lead-site-day', 'lead-notify', 'lead-notify-hour', 'lead-notify-day']) {
+      expect(counted.filter(p => p === prefix), prefix).toHaveLength(1)
+    }
+    // The site and notification counters are one bucket each, with no phone or address in them.
+    for (const prefix of ['lead-site-day', 'lead-notify-hour', 'lead-notify-day']) {
+      const key = String(fakes.limit.mock.calls.find(([p]) => p === prefix)![1])
+      expect(key).not.toContain(brief.phone)
+      expect(key).not.toMatch(/^[0-9a-f]{64}$/)
+    }
+  })
+
+  it.each([
+    ['site-wide daily enquiry cap', 'lead-site-day'],
+    ['hourly notification cap', 'lead-notify-hour'],
+    ['daily notification cap', 'lead-notify-day'],
+  ])('past the %s, still stores and receipts the enquiry, sends nothing, and logs one warning', async (_label, capped) => {
+    fakes.limit.mockImplementation(async (prefix: string) => ({ success: prefix !== capped }))
+    fakes.sheet.mockResolvedValue(saved)
+    const response = await submit()
+    expect(response.status).toBe(200)
+    expect(await response.json()).toEqual({ ok: true, receiptId: brief.submissionId })
+    await notificationsSettled()
+    expect(fakes.insert).toHaveBeenCalledTimes(1)
+    expect(fakes.sheet).toHaveBeenCalledTimes(1)
+    expect(fakes.email).not.toHaveBeenCalled()
+    expect(twilio).not.toHaveBeenCalled()
+    const warnings = vi.mocked(console.warn).mock.calls.flat().map(String).filter(line => /notification skipped/i.test(line))
+    expect(warnings).toHaveLength(1)
+    expect(warnings[0]).toContain(brief.submissionId)
+  })
+
+  it('a fresh phone number does not get past the hourly cap', async () => {
+    fakes.limit.mockImplementation(async (prefix: string) => ({ success: prefix !== 'lead-notify-hour' }))
+    expect((await submit({ ...brief, phone: '9123456780', submissionId: '6f1c2c9e-1d5b-4d8e-9a59-2f3a6f0f6b11' })).status).toBe(200)
+    await notificationsSettled()
+    expect(fakes.email).not.toHaveBeenCalled()
+  })
+
+  const fallbackWarnings = () => vi.mocked(console.warn).mock.calls.flat().map(String).filter(line => /in-process fallback/i.test(line))
+
+  it('still notifies by email and WhatsApp when the limiter errors, warns once, and logs no secret', async () => {
+    fakes.limit.mockImplementation(async (prefix: string) => {
+      if (prefix === 'lead') return { success: true }
+      throw new Error('Upstash rejected token SECRET-TOKEN')
+    })
+    expect((await submit()).status).toBe(200)
+    await notificationsSettled()
+    expect(fakes.insert).toHaveBeenCalledTimes(1)
+    expect(fakes.email).toHaveBeenCalledTimes(1)
+    expect(twilio).toHaveBeenCalledTimes(1)
+    expect(fallbackWarnings()).toHaveLength(1)
+    expect(logged()).not.toContain('SECRET-TOKEN')
+  })
+
+  it('still notifies when the limiter stalls', async () => {
+    const { POST } = await import('@/app/api/lead/route')
+    const { LEAD_DEADLINES } = await import('@/lib/lead-deadline')
+    fakes.limit.mockImplementation(async (prefix: string) => (prefix === 'lead' ? { success: true } : new Promise(() => {})))
+    vi.useFakeTimers()
+    const response = await POST(request())
+    expect(response.status).toBe(200)
+    await vi.advanceTimersByTimeAsync(LEAD_DEADLINES.limiter + 100)
+    await notificationsSettled()
+    expect(fakes.email).toHaveBeenCalledTimes(1)
+  })
+
+  it('still notifies, and stores, when no limiter is configured', async () => {
+    vi.stubEnv('UPSTASH_REDIS_REST_URL', '')
+    vi.stubEnv('UPSTASH_REDIS_REST_TOKEN', '')
+    expect((await submit()).status).toBe(200)
+    await notificationsSettled()
+    expect(fakes.insert).toHaveBeenCalledTimes(1)
+    expect(fakes.email).toHaveBeenCalledTimes(1)
+    expect(twilio).toHaveBeenCalledTimes(1)
+  })
+
+  it('bounds degraded notifications per instance, warning once, and opens again when the window passes', async () => {
+    const { LEAD_FALLBACK } = await import('@/lib/lead-limits')
+    vi.stubEnv('UPSTASH_REDIS_REST_URL', '')
+    vi.stubEnv('UPSTASH_REDIS_REST_TOKEN', '')
+    vi.useFakeTimers({ toFake: ['Date'] })
+    vi.setSystemTime(new Date('2026-11-15T10:00:00Z'))
+    const runs = LEAD_FALLBACK.maxNotifications + 2
+    for (let i = 0; i < runs; i++) expect((await submit()).status).toBe(200)
+    await notificationsSettled()
+    // Every enquiry is stored; only the notifications past the bound are skipped.
+    expect(fakes.insert).toHaveBeenCalledTimes(runs)
+    expect(fakes.email).toHaveBeenCalledTimes(LEAD_FALLBACK.maxNotifications)
+    expect(twilio).toHaveBeenCalledTimes(LEAD_FALLBACK.maxNotifications)
+    expect(fallbackWarnings()).toHaveLength(1)
+    const skipped = vi.mocked(console.warn).mock.calls.flat().map(String).filter(line => /notification skipped \(fallback-cap\)/i.test(line))
+    expect(skipped).toHaveLength(2)
+
+    vi.setSystemTime(new Date(Date.now() + LEAD_FALLBACK.windowMs + 1000))
+    expect((await submit()).status).toBe(200)
+    await notificationsSettled()
+    expect(fakes.email).toHaveBeenCalledTimes(LEAD_FALLBACK.maxNotifications + 1)
+  })
+
+  it('keeps the working caps when the limiter answers: the fallback never widens them', async () => {
+    fakes.limit.mockImplementation(async (prefix: string) => ({ success: prefix !== 'lead-notify-day' }))
+    expect((await submit()).status).toBe(200)
+    await notificationsSettled()
+    expect(fakes.email).not.toHaveBeenCalled()
+    expect(fallbackWarnings()).toHaveLength(0)
+  })
+
+  it('uses the default caps, and env overrides when they are positive whole numbers', async () => {
+    const { LEAD_LIMITS } = await import('@/lib/lead-limits')
+    await submit()
+    await notificationsSettled()
+    expect(fakes.windows.get('lead-site-day')).toEqual({ kind: 'fixed', tokens: LEAD_LIMITS.sitePerDay, window: '1 d' })
+    expect(fakes.windows.get('lead-notify-hour')).toEqual({ kind: 'sliding', tokens: LEAD_LIMITS.notifyPerHour, window: '1 h' })
+    expect(fakes.windows.get('lead-notify-day')).toEqual({ kind: 'fixed', tokens: LEAD_LIMITS.notifyPerDay, window: '1 d' })
+
+    vi.resetModules(); fakes.windows.clear()
+    vi.stubEnv('LEAD_DAILY_CAP', '40')
+    vi.stubEnv('LEAD_NOTIFY_HOURLY_CAP', '4')
+    vi.stubEnv('LEAD_NOTIFY_DAILY_CAP', 'lots')
+    await submit()
+    await notificationsSettled()
+    expect(fakes.windows.get('lead-site-day')!.tokens).toBe(40)
+    expect(fakes.windows.get('lead-notify-hour')!.tokens).toBe(4)
+    expect(fakes.windows.get('lead-notify-day')!.tokens).toBe(LEAD_LIMITS.notifyPerDay)
+  })
+})
+
+describe('notification text', () => {
+  it('puts a multi-line message on one line in the email and WhatsApp text, and keeps the original in Mongo and the Sheet', async () => {
+    vi.stubEnv('RESEND_API_KEY', 'test-key')
+    const LINE_SEPARATOR = String.fromCharCode(0x2028)
+    const message = `Shop board\r\nEnquiry ID: forged\nNOT CONFIRMED: call 9000000000${LINE_SEPARATOR}end`
+    expect((await submit({ ...brief, message })).status).toBe(200)
+    await notificationsSettled()
+    const text = String(fakes.email.mock.calls[0][0].text)
+    const lines = text.split('\n')
+    expect(lines.filter(line => line.startsWith('Enquiry ID:'))).toEqual([`Enquiry ID: ${brief.submissionId}`])
+    expect(lines.filter(line => line.startsWith('NOT CONFIRMED'))).toEqual([])
+    expect(lines.find(line => line.startsWith('Message:'))).toBe('Message: Shop board Enquiry ID: forged NOT CONFIRMED: call 9000000000 end')
+    expect(text).not.toContain('\r')
+    expect(text).not.toContain(LINE_SEPARATOR)
+    expect(fakes.insert.mock.calls[0][0].message).toBe(message)
+    expect(fakes.sheet.mock.calls[0][0].Message).toBe(message)
   })
 })
 
@@ -273,6 +519,36 @@ describe('CAPTCHA', () => {
     vi.stubEnv('TURNSTILE_SECRET_KEY', 'live-secret')
     vi.stubGlobal('fetch', vi.fn().mockImplementation(async () => new Response(JSON.stringify({ success: true, hostname: 'www.adjeet.in' }))))
     expect((await submit()).status).toBe(200)
+  })
+
+  const answer = (body: Record<string, unknown>) =>
+    vi.stubGlobal('fetch', vi.fn().mockImplementation(async () => new Response(JSON.stringify({ success: true, hostname: 'adjeet.in', ...body }))))
+
+  it('rejects a token solved for another widget action', async () => {
+    vi.stubEnv('TURNSTILE_SECRET_KEY', 'live-secret')
+    answer({ action: 'login' })
+    expect((await submit()).status).toBe(400)
+    expect(fakes.insert).not.toHaveBeenCalled()
+  })
+
+  it("accepts a token solved for the 'lead' action", async () => {
+    vi.stubEnv('TURNSTILE_SECRET_KEY', 'live-secret')
+    answer({ action: 'lead' })
+    expect((await submit()).status).toBe(200)
+  })
+
+  it.each([[undefined], ['']])('accepts a token with no action (%j), as a page cached before the action was set sends', async action => {
+    vi.stubEnv('TURNSTILE_SECRET_KEY', 'live-secret')
+    answer({ action })
+    expect((await submit()).status).toBe(200)
+  })
+
+  it('rejects a token solved on localhost in production', async () => {
+    vi.stubEnv('NODE_ENV', 'production')
+    vi.stubEnv('TURNSTILE_SECRET_KEY', 'live-secret')
+    answer({ hostname: 'localhost' })
+    expect((await submit()).status).toBe(400)
+    expect(fakes.insert).not.toHaveBeenCalled()
   })
 })
 

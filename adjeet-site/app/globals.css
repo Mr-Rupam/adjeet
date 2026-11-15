@@ -143,6 +143,7 @@ section[id] {
 .brand-logo {
   display: inline-flex;
   width: clamp(150px, 45vw, 200px);
+  min-height: 44px;
   align-items: center;
   flex: 0 0 auto;
 }
@@ -439,6 +440,18 @@ section[id] {
   transform: translateY(0) scale(0.98);
 }
 
+/* A secondary button: outlined, never filled, so one gold action leads. */
+.cta.cta--quiet {
+  border-color: color-mix(in srgb, var(--ink) 34%, transparent);
+  background: transparent;
+  color: var(--ink);
+}
+
+.cta.cta--quiet:hover {
+  border-color: var(--ink);
+  filter: none;
+}
+
 .cta--sm {
   min-height: 44px;
   padding-inline: 1rem;
@@ -500,10 +513,12 @@ section[id] {
   flex: 0 0 auto;
 }
 
+/* The phone menu reads as a short directory: page names in the heading face,
+   the main trades two to a row under Services, then call and WhatsApp. */
 .mobile-nav-drawer__links {
   display: grid;
-  margin-top: clamp(4rem, 13vh, 7rem);
-  border-top: 1px solid var(--rule);
+  margin-top: clamp(1.5rem, 5vh, 3rem);
+  border-top: 2px solid var(--ink);
 }
 
 .mobile-nav-link {
@@ -511,16 +526,16 @@ section[id] {
   grid-template-columns: minmax(0, 1fr) auto;
   align-items: center;
   gap: 0.5rem;
-  min-height: 68px;
+  min-height: 56px;
   border-bottom: 1px solid var(--rule);
   color: var(--ink);
   font-family: var(--font-heading);
-  font-size: clamp(2.2rem, 11vw, 3.4rem);
+  font-size: clamp(1.75rem, 8vw, 2.25rem);
   font-weight: 600;
   line-height: 1;
-  letter-spacing: -0.02em;
+  letter-spacing: -0.01em;
   text-decoration: none;
-  padding-block: 0.8rem;
+  padding-block: 0.55rem;
 }
 
 .mobile-nav-link svg {
@@ -534,7 +549,7 @@ section[id] {
 
 .mobile-nav-drawer__cta {
   margin-top: auto;
-  padding-top: 2.25rem;
+  padding-top: 1.75rem;
 }
 
 .mobile-nav-drawer__cta p {
@@ -553,6 +568,7 @@ section[id] {
 
 .footer-link {
   display: inline-flex;
+  min-width: 44px;
   min-height: 44px;
   align-items: center;
   color: var(--night-ink-muted);
@@ -564,12 +580,150 @@ section[id] {
   color: var(--signal-hot);
 }
 
+/* The form's honeypot is never for people: no box at all, not even 1px. */
+form input[name="_hp"] {
+  width: 0 !important;
+  height: 0 !important;
+}
+
+/* The enquiry form's trade checkboxes. The box is drawn 18px, but the control
+   itself is a 44px square (negative margins keep the chip's layout), so the
+   tick target meets the touch floor on its own, not only through its label. */
+form label > input[type="checkbox"].accent-signal {
+  flex: none;
+  width: 44px;
+  height: 44px;
+  margin: -12px -8px -12px -12px;
+  border: 0;
+  border-radius: 0;
+  background:
+    linear-gradient(var(--paper-elevated), var(--paper-elevated)) center / 14px 14px no-repeat,
+    linear-gradient(var(--ink-muted), var(--ink-muted)) center / 18px 18px no-repeat;
+  cursor: pointer;
+  appearance: none;
+  -webkit-appearance: none;
+}
+
+form label > input[type="checkbox"].accent-signal:checked {
+  background:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12'%3E%3Cpath d='M2 6.2 4.8 9 10 3' fill='none' stroke='%23fff' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center / 12px 12px no-repeat,
+    linear-gradient(var(--cerulean-deep), var(--cerulean-deep)) center / 18px 18px no-repeat;
+}
+
+form label > input[type="checkbox"].accent-signal:focus-visible {
+  outline: 2px solid var(--focus-ring);
+  outline-offset: -11px;
+}
+
+/* Consent banner. Phones: two lines of message ("More" opens the rest) and
+   both choices on one row. Its measured height is --consent-h. */
+.consent-banner {
+  position: fixed;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 50;
+  display: grid;
+  gap: 8px;
+  padding: 10px max(var(--page-gutter, 20px), env(safe-area-inset-right, 0px)) max(10px, env(safe-area-inset-bottom, 0px)) max(var(--page-gutter, 20px), env(safe-area-inset-left, 0px));
+  border-top: 2px solid var(--ink);
+  background: var(--paper-elevated);
+  color: var(--ink);
+}
+
+.consent-banner__text {
+  display: -webkit-box;
+  max-width: 76ch;
+  margin: 0;
+  overflow: hidden;
+  color: var(--ink-muted);
+  font-size: 13px;
+  line-height: 1.45;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+}
+
+/* "More", or keyboard focus reaching the policy link, shows the whole message. */
+.consent-banner[data-expanded] .consent-banner__text,
+.consent-banner__text:focus-within {
+  display: block;
+  overflow: visible;
+  -webkit-line-clamp: unset;
+  line-clamp: none;
+}
+
+.consent-banner__actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.consent-banner__more {
+  min-width: 44px;
+  min-height: 44px;
+  margin-right: auto;
+  padding: 0 2px;
+  border: 0;
+  background: none;
+  color: var(--ink);
+  font-size: 14px;
+  font-weight: 500;
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+
+.consent-banner__button {
+  display: inline-flex;
+  min-width: 44px;
+  min-height: 44px;
+  align-items: center;
+  justify-content: center;
+  padding: 0 18px;
+  border: 2px solid var(--ink);
+  background: transparent;
+  color: var(--ink);
+  font-size: 14px;
+  font-weight: 500;
+  transition: background-color 180ms ease, color 180ms ease;
+}
+
+.consent-banner__button:hover {
+  background: var(--ink);
+  color: var(--paper);
+}
+
+.consent-banner__button--accept { font-weight: 600; }
+
+@media (min-width: 768px) {
+  .consent-banner {
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 32px;
+    padding-block: 16px;
+  }
+
+  .consent-banner__text {
+    display: block;
+    overflow: visible;
+    font-size: 14px;
+    -webkit-line-clamp: unset;
+    line-clamp: none;
+  }
+
+  .consent-banner__more { display: none; }
+}
+
+/* The dock clears the consent banner with a transform, never by changing
+   `bottom`: moving a fixed box's position is a layout shift, a transform is not. */
 .quote-dock {
   position: fixed;
   right: max(0.85rem, env(safe-area-inset-right, 0px));
+  bottom: 0.85rem;
   left: max(0.85rem, env(safe-area-inset-left, 0px));
   z-index: 45;
   pointer-events: none;
+  transform: translateY(calc(-1 * var(--consent-h, 0px)));
 }
 
 /* The desktop header already supplies this action. */

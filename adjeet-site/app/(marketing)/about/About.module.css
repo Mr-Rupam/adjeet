@@ -20,7 +20,6 @@
   min-height: 44px;
   align-items: center;
   gap: 14px;
-  margin-top: 18px;
   border-bottom: 1px solid currentColor;
   color: var(--ink);
   font-size: 15px;
@@ -28,6 +27,8 @@
   text-decoration: none;
 }
 .storyLink:hover { color: var(--signal-text); }
+/* The gold WhatsApp action, then the story as the quiet second link. */
+.introActions { display: flex; flex-wrap: wrap; align-items: center; gap: 12px 26px; margin-top: 24px; }
 .workshop { min-width: 0; align-self: stretch; margin: 0; }
 .workshop > div { position: relative; aspect-ratio: 1.5; }
 .workshop figcaption { min-height: 44px; padding: 12px var(--page-gutter); background: var(--paper-elevated); color: var(--ink-muted); font-size: 12px; }
@@ -72,20 +73,6 @@
 .trustCopy a { margin-top: 8px; }
 .clientWork { display: grid; max-width: 1240px; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 20px 12px; margin: 40px auto 0; padding: 0; list-style: none; }
 .clientWorkImage { position: relative; display: block; overflow: hidden; aspect-ratio: 4 / 5; background: var(--night-elevated); }
-/* The brand on a fascia plate: cerulean, cream lettering, the gold sweep. */
-.clientWorkName {
-  display: block;
-  padding: 10px 12px 12px;
-  border-top: 3px solid var(--gold);
-  background: var(--cerulean-deep);
-  color: var(--night-ink);
-  font-family: var(--font-heading);
-  font-size: 19px;
-  font-weight: 600;
-  line-height: 1.1;
-  letter-spacing: .01em;
-  text-transform: uppercase;
-}
 
 .coverage { align-items: center; }
 .coverage ul { display: grid; grid-template-columns: 1fr 1fr; gap: .5rem 1rem; margin: 2rem 0 0; padding: 0; color: var(--ink-muted); font-size: .95rem; list-style: none; }
@@ -110,5 +97,4 @@
   .workshopPhotos li:first-child { grid-row: 1 / -1; grid-column: 1; aspect-ratio: 4 / 3; }
   .trustHead { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); align-items: end; gap: 48px; }
   .clientWork { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 18px; margin-top: 56px; }
-  .clientWorkName { font-size: 22px; }
 }

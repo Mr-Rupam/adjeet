@@ -75,6 +75,14 @@ yarn-error.log*
 # ─── Vendored third-party tool repos (own git history) ─
 claude-seo/
 
+# ─── Personal data and working output (never commit) ──
+# prospecting/ holds named outreach contacts, i.e. personal data about third
+# parties, and output/ holds scratch reports and screenshots. This is a public
+# repository, so one `git add -A` would publish them. Anchored to the repo root.
+# Files already tracked under output/ stay tracked; only new ones are ignored.
+/prospecting/
+/output/
+
 # ─── Misc build artifacts ────────────────────────────
 *.log
 *.pid

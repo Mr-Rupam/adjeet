@@ -23,6 +23,7 @@ const CONSENT_KEY = 'adjeet-consent'
  */
 export function ConsentBanner() {
   const [visible, setVisible] = useState(false)
+  const [expanded, setExpanded] = useState(false)
   const ref = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
@@ -45,8 +46,12 @@ export function ConsentBanner() {
     }
     measure()
     window.addEventListener('resize', measure)
+    // "More" and keyboard focus on the policy link change the height too.
+    const observer = typeof ResizeObserver === 'undefined' ? null : new ResizeObserver(measure)
+    if (ref.current) observer?.observe(ref.current)
     return () => {
       window.removeEventListener('resize', measure)
+      observer?.disconnect()
       root.style.removeProperty('--consent-h')
     }
   }, [visible])
@@ -62,29 +67,45 @@ export function ConsentBanner() {
 
   if (!visible) return null
 
+  // Phones: the message is held to two lines with "More" to read the rest, and
+  // both buttons share one row, so the banner stays short of the hero's
+  // WhatsApp action. From 768px the whole message shows beside the buttons.
   return (
     <div
       ref={ref}
       role="dialog"
       aria-label="Cookie and analytics consent"
       aria-live="polite"
-      className="fixed inset-x-0 bottom-0 z-50 border-t-2 border-ink bg-paper-elevated p-5 md:flex md:items-center md:justify-between md:gap-8"
+      className="consent-banner"
+      data-expanded={expanded ? 'true' : undefined}
     >
-      <p className="mb-4 max-w-prose text-sm text-ink-muted md:mb-0">
+      <p id="consent-message" className="consent-banner__text">
         We use Google Analytics to understand how visitors use our site. Until you choose, it runs
         without cookies or identifiers. Accept to allow analytics cookies, or decline to switch analytics off.{' '}
-        <Link href="/privacy" className="underline hover:text-ink">Privacy Policy</Link>
+        {/* No prefetch: the banner shows on every first visit, and few readers follow this link. */}
+        <Link href="/privacy" prefetch={false} className="underline hover:text-ink">Privacy Policy</Link>
       </p>
-      <div className="flex shrink-0 gap-3">
+      <div className="consent-banner__actions">
         <button
+          type="button"
+          className="consent-banner__more"
+          aria-expanded={expanded}
+          aria-controls="consent-message"
+          onClick={() => setExpanded(value => !value)}
+        >
+          {expanded ? 'Less' : 'More'}
+        </button>
+        <button
+          type="button"
           onClick={() => respond('declined')}
-          className="button-shape spec inline-flex min-h-11 items-center border-2 border-ink px-4 text-ink transition-colors hover:bg-ink hover:text-paper"
+          className="consent-banner__button button-shape"
         >
           Decline
         </button>
         <button
+          type="button"
           onClick={() => respond('accepted')}
-          className="button-shape spec inline-flex min-h-11 items-center border-2 border-ink px-4 font-semibold text-ink transition-colors hover:bg-ink hover:text-paper"
+          className="consent-banner__button consent-banner__button--accept button-shape"
         >
           Accept
         </button>

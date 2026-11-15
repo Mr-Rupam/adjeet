@@ -18,6 +18,12 @@ vi.mock('@/components/sections/LeadForm', () => ({
     <div data-testid="lead-form" data-default-city={defaultCity ?? ''} data-default-service={defaultService ?? ''} />
   ),
 }))
+// The pages load the form when it nears the viewport; the wrapper hands the
+// same prefill through, so render it as the form itself here.
+vi.mock('@/components/areas/DeferredLeadForm', async () => {
+  const { LeadForm } = await import('@/components/sections/LeadForm')
+  return { DeferredLeadForm: LeadForm }
+})
 vi.mock('@/components/PageViewTracker', () => ({ ServicePageTracker: () => null }))
 vi.mock('@/components/coverage/CoverageStage', () => ({ CoverageStage: () => null }))
 vi.mock('@/components/coverage/CoveragePlaceList', () => ({ CoveragePlaceList: () => null }))
@@ -142,7 +148,7 @@ describe('town pages', () => {
 })
 
 describe('service pages', () => {
-  it('carry the Siliguri brief and send-us list on the five trades that absorbed a Siliguri page', async () => {
+  it('carry the Siliguri brief and send-us list on every trade', async () => {
     for (const slug of SERVICE_SLUGS) {
       const doc = await serviceDoc(slug)
       const brief = SILIGURI_BRIEFS[slug as ServiceSlug]
@@ -156,7 +162,9 @@ describe('service pages', () => {
       expect(text, slug).toContain(brief.brief)
       for (const item of brief.sendUs) expect(text, slug).toContain(item)
     }
-    expect(Object.keys(SILIGURI_BRIEFS).sort()).toEqual(['acp-led-signage', 'f-pole-installation', 'flex-printing', 'glow-sign-boards', 'vehicle-branding'])
+    // The five that absorbed a Siliguri page, plus the five added from the
+    // content audit (C6) on 15 November 2026.
+    expect(Object.keys(SILIGURI_BRIEFS).sort()).toEqual([...SERVICE_SLUGS].sort())
   })
 
   // LeadForm keeps a page's own city over `?city=`; the page has to pass it.
@@ -178,9 +186,10 @@ describe('service pages', () => {
 
   it('caption each project photo with the place and year only where recorded', async () => {
     const doc = await serviceDoc('glow-sign-boards')
-    const captions = [...doc.querySelectorAll('li p')].map(node => node.textContent)
-    expect(captions).toContain('Havells · Jalpaiguri · 2021')
-    expect(captions).toContain('Astral Pipe · Khagrabari, Cooch Behar · 2026')
+    // Each caption is a fascia plate: the brand, then the trade, place and year.
+    const captions = [...doc.querySelectorAll('li .fascia-plate')].map(node => [...node.children].map(part => part.textContent).join(' | '))
+    expect(captions).toContain('Havells | Glow Sign Boards · Jalpaiguri · 2021')
+    expect(captions).toContain('Astral Pipe | Glow Sign Boards · Khagrabari, Cooch Behar · 2026')
   })
 })
 

@@ -1,4 +1,5 @@
-import { LeadForm, type LeadFormProps } from '@/components/sections/LeadForm'
+import type { LeadFormProps } from '@/components/sections/LeadForm'
+import { DeferredLeadForm } from './DeferredLeadForm'
 import { WhatsAppLink } from '@/components/ui/WhatsAppLink'
 import styles from './Areas.module.css'
 
@@ -23,13 +24,12 @@ export function BriefForm({ heading, note, whatsAppUrl, source, defaultCity, def
     <section className={styles.formSection} aria-labelledby="brief-form-heading" id="send-brief">
       <div className={`field-container ${styles.formGrid}`}>
         <div>
-          <p className="spec text-signal">Send the brief</p>
           <h2 id="brief-form-heading" className={styles.heading}>{heading}</h2>
           <p className={styles.formNote}>{note}</p>
           <WhatsAppLink href={whatsAppUrl} source={source} className="field-link">Prefer WhatsApp? Send it there ↗</WhatsAppLink>
         </div>
         <div className={styles.formPanel}>
-          <LeadForm defaultCity={defaultCity} defaultService={defaultService} />
+          <DeferredLeadForm defaultCity={defaultCity} defaultService={defaultService} />
         </div>
       </div>
     </section>

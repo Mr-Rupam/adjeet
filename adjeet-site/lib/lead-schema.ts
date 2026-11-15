@@ -1,5 +1,6 @@
 import { z } from '@/lib/zod'
 import { SERVICE_SLUGS } from '@/content/services'
+import { containsLink } from '@/lib/link-filter'
 
 export const TIMELINE_OPTIONS = [
   { value: 'unspecified', label: 'No fixed date yet' },
@@ -81,8 +82,8 @@ export const leadSchema = z.object({
     .string()
     .max(1000, 'Please shorten your message to 1000 characters or fewer')
     .refine(
-      (val) => !/(http|https):\/\/[^\s]+/.test(val ?? ''),
-      'Please remove any links from your message, then send again'
+      (val) => !containsLink(val ?? ''),
+      'Please remove any links or web addresses from your message, then send again'
     )
     .optional()
     .or(z.literal('')), // Allows empty strings when optional fails

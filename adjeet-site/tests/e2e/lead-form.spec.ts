@@ -97,6 +97,8 @@ test.describe('Lead Form on a service page', () => {
   test.beforeEach(async ({ page }) => {
     await stubTurnstile(page);
     await page.goto(regionalPath);
+    // The form loads as it nears the viewport; a visitor reaches it by scrolling.
+    await page.locator('[data-lead-form-slot]').scrollIntoViewIfNeeded();
   });
 
   test('arrives with the city and trade filled in and submits', async ({ page }) => {

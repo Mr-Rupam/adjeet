@@ -4,23 +4,14 @@ import { callTimeLabel, leadSchema } from '@/lib/lead-schema'
 import { leadBrief, type LeadBrief } from '@/lib/lead-brief'
 import { normalizeLeadSource, type LeadSource } from '@/lib/lead-source'
 import { bounded, deadlineIn, LEAD_DEADLINES } from '@/lib/lead-deadline'
+import { clientIp, rateKey } from '@/lib/client-ip'
+import { allowedHostnames, allowedOrigins } from '@/lib/allowed-origins'
+import { admitNotification, admitVisitor, category } from '@/lib/lead-limits'
+import { BodyTooLarge, readJsonBody } from '@/lib/request-body'
 import getClientPromise from '@/lib/mongodb'
 import { openLeadSheet, type SheetOutcome, type SheetRow } from '@/lib/google-sheets'
 
-const ALLOWED_ORIGINS = [
-  'https://adjeet.in',
-  'https://www.adjeet.in',
-  'https://adjeet.vercel.app',
-  'https://www.adjeet.vercel.app',
-  'http://localhost:3000',
-  // A Vercel preview may post from its own deployment and branch URLs, so the
-  // form can be tested before it ships. Production never widens this list.
-  ...(process.env.VERCEL_ENV === 'preview'
-    ? [process.env.VERCEL_URL, process.env.VERCEL_BRANCH_URL]
-        .filter((host): host is string => Boolean(host))
-        .map((host) => `https://${host}`)
-    : []),
-]
+const ALLOWED_ORIGINS = allowedOrigins()
 
 // Max request body size: 10KB, generous for this form.
 const MAX_BODY_SIZE = 10_000
@@ -47,106 +38,40 @@ type BackupOutcome = SheetOutcome | { status: 'skipped' }
 
 const RECOVERY = 'Please retry, or send your brief on WhatsApp.'
 
-/** A loggable error category: a class name or code, never a message, which can carry personal data or secrets. */
-function category(error: unknown): string {
-  if (error && typeof error === 'object') {
-    const { name, code } = error as { name?: unknown; code?: unknown }
-    if (typeof name === 'string' && name !== 'Error') return name
-    if (typeof code === 'string' || typeof code === 'number') return `code-${code}`
-  }
-  return 'error'
-}
-
-type Limiter = { limit: (key: string) => Promise<{ success: boolean }> }
-let limiters: { perIp: Limiter; perPhone: Limiter } | null = null
-let warnedNoLimiter = false
-
-/**
- * Upstash limiters: 5 enquiries an hour per IP, and 3 owner notifications a
- * day per phone number, so a scripted run cannot flood the owner's WhatsApp
- * and email or have the business call one person over and over.
- *
- * Both fail OPEN. A lost enquiry costs more than some extra spam, and
- * Turnstile still gates every submission. Callers bound each check.
- */
-async function getLimiters() {
-  if (limiters) return limiters
-  // The Upstash integration from the Vercel Marketplace names these KV_REST_API_*.
-  const url = process.env.UPSTASH_REDIS_REST_URL || process.env.KV_REST_API_URL
-  const token = process.env.UPSTASH_REDIS_REST_TOKEN || process.env.KV_REST_API_TOKEN
-  if (!url || !token) {
-    if (!warnedNoLimiter) console.warn('[lead] Upstash env vars missing, rate limiting disabled')
-    warnedNoLimiter = true
-    return null
-  }
-  const { Ratelimit } = await import('@upstash/ratelimit')
-  const { Redis } = await import('@upstash/redis')
-  const redis = new Redis({ url, token, retry: false, signal: () => AbortSignal.timeout(LEAD_DEADLINES.limiter) })
-  // `timeout: 0` turns off the library's own slow-Redis fallback; the bound
-  // around each call decides instead.
-  limiters = {
-    perIp: new Ratelimit({ redis, limiter: Ratelimit.slidingWindow(5, '1 h'), analytics: false, prefix: 'lead', timeout: 0 }),
-    perPhone: new Ratelimit({ redis, limiter: Ratelimit.slidingWindow(3, '1 d'), analytics: false, prefix: 'lead-notify', timeout: 0 }),
-  }
-  return limiters
-}
-
-/** True unless the limiter positively says no. Errors and timeouts allow, with a sanitised warning. */
-async function withinLimit(pick: (l: { perIp: Limiter; perPhone: Limiter }) => Limiter, key: string, ms: number, label: string) {
-  try {
-    return await bounded(async () => {
-      const configured = await getLimiters()
-      return !configured || (await pick(configured).limit(key)).success
-    }, ms)
-  } catch (error) {
-    console.warn(`[lead] ${label} rate limiter unavailable, allowing: ${category(error)}`)
-    return true
-  }
-}
-
-class BodyTooLarge extends Error {}
-
-/** Enforce the size limit on the bytes actually sent, not on a header a client controls. */
-async function readBody(req: NextRequest, ms: number) {
-  const reader = req.body?.getReader()
-  if (!reader) throw new Error('Empty body')
-  const chunks: Uint8Array[] = []
-  let bytes = 0
-  try {
-    return await bounded(async signal => {
-      signal.addEventListener('abort', () => { void reader.cancel().catch(() => {}) }, { once: true })
-      while (true) {
-        const { done, value } = await reader.read()
-        if (done) break
-        bytes += value.byteLength
-        if (bytes > MAX_BODY_SIZE) { void reader.cancel().catch(() => {}); throw new BodyTooLarge() }
-        chunks.push(value)
-      }
-      return JSON.parse(Buffer.concat(chunks).toString('utf8')) as unknown
-    }, ms)
-  } finally {
-    try { reader.releaseLock() } catch {}
-  }
-}
-
 // Cloudflare's documented test secrets (always pass, always fail, spent token)
-// answer with a placeholder hostname, so the hostname check is for live keys.
+// answer with placeholder hostname and action values, so both checks are for live keys.
 const TEST_SECRET = /^[123]x0{30,}AA$/
-const ALLOWED_HOSTNAMES = new Set(ALLOWED_ORIGINS.map(origin => new URL(origin).hostname))
+const ALLOWED_HOSTNAMES = allowedHostnames()
+/** The action LeadForm's widget declares. */
+const TURNSTILE_ACTION = 'lead'
 
-async function verifyCaptcha(token: string, ip: string, secret: string, ms: number) {
+async function verifyCaptcha(token: string, ip: string | null, secret: string, ms: number) {
   return bounded(async signal => {
     const form = new URLSearchParams({ secret, response: token })
-    if (ip !== 'unknown') form.set('remoteip', ip)
+    if (ip) form.set('remoteip', ip)
     const response = await fetch('https://challenges.cloudflare.com/turnstile/v0/siteverify', {
       method: 'POST', signal, headers: { 'Content-Type': 'application/x-www-form-urlencoded' }, body: form.toString(),
     })
     if (!response.ok) return false
-    const result = await response.json() as { success?: unknown; hostname?: unknown }
+    const result = await response.json() as { success?: unknown; hostname?: unknown; action?: unknown }
     if (result.success !== true) return false
+    if (TEST_SECRET.test(secret)) return true
     // A token solved on another site that embeds our public site key is not ours.
-    return TEST_SECRET.test(secret) || (typeof result.hostname === 'string' && ALLOWED_HOSTNAMES.has(result.hostname))
+    if (typeof result.hostname !== 'string' || !ALLOWED_HOSTNAMES.has(result.hostname)) return false
+    // A token solved for another action was not solved on this form. A token
+    // with no action is still accepted for now (2026-11-15): pages cached
+    // before the widget declared its action send one, and those visitors must
+    // not lose an enquiry. Require the action once those caches have expired.
+    return result.action === undefined || result.action === null || result.action === '' || result.action === TURNSTILE_ACTION
   }, ms)
+}
+
+/** Carriage returns, line feeds and Unicode line breaks, which would start a new line in the owner's notification. */
+const LINE_BREAKS = /[\r\n\v\f\u0085\p{Zl}\p{Zp}]+/gu
+
+/** The visitor's free text on one line, so it cannot add lines that look like the notification's own. */
+function oneLine(text: string) {
+  return text.replace(LINE_BREAKS, ' ').trim()
 }
 
 async function saveToMongo(record: LeadRecord, ms: number): Promise<MongoOutcome> {
@@ -225,10 +150,12 @@ function describe(outcome: MongoOutcome | BackupOutcome) {
 /** Best effort, after the response. The stores, not these messages, are the record. */
 async function notifyOwner(record: LeadRecord, confirmed: boolean) {
   const id = record.receiptId
-  // Keyed by a hash so Redis never holds the number itself.
-  const phoneKey = createHash('sha256').update(`lead-notify:${record.phone}`).digest('hex')
-  if (!(await withinLimit(l => l.perPhone, phoneKey, LEAD_DEADLINES.limiter, 'Per-phone notification'))) {
-    console.warn(`[lead:${id}] Owner notification skipped: this phone number reached its daily notification cap; the enquiry is stored`)
+  // Paid messages are capped: past a cap the owner finds this enquiry in the
+  // register and the Sheet instead. When the caps cannot be counted, a
+  // per-instance fallback bound applies (lib/lead-limits.ts).
+  const verdict = await admitNotification(record.phone)
+  if (!verdict.send) {
+    console.warn(`[lead:${id}] Owner notification skipped (${verdict.reason}); the enquiry is ${confirmed ? 'stored' : 'NOT confirmed as stored'}`)
     return
   }
   const text = [
@@ -241,7 +168,7 @@ async function notifyOwner(record: LeadRecord, confirmed: boolean) {
     `Services: ${record.serviceInterest.join(', ')}`,
     `Timeline: ${record.timeline}`,
     `Best time to call: ${record.bestTimeToCall ? `${callTimeLabel(record.bestTimeToCall)} (a request, not a booked slot)` : '(not given)'}`,
-    `Message: ${record.message || '(none)'}`,
+    `Message: ${oneLine(record.message ?? '') || '(none)'}`,
   ].join('\n')
   const tasks: { channel: string; send: Promise<unknown> }[] = []
 
@@ -283,8 +210,10 @@ export async function POST(req: NextRequest) {
   const started = Date.now()
   const clock = deadlineIn(LEAD_DEADLINES.response)
 
-  // Origin / CSRF check: browsers always send Origin on this POST, so direct
-  // hits from curl and scrapers without it are refused.
+  // Origin / CSRF check: a browser sets Origin itself on this POST, so a page
+  // on another site cannot post here with a visitor's browser. It does not
+  // block curl or any other script, which can send whatever Origin it likes:
+  // Turnstile and the rate limits, not this, are what stop scripted traffic.
   if (!ALLOWED_ORIGINS.includes(req.headers.get('origin') ?? '')) {
     return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
   }
@@ -292,14 +221,17 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'Request too large.' }, { status: 413 })
   }
 
-  const ip = req.headers.get('x-forwarded-for')?.split(',')[0].trim() || 'unknown'
-  if (!(await withinLimit(l => l.perIp, ip, clock.left(LEAD_DEADLINES.limiter), 'Per-IP'))) {
+  // The address itself goes to Turnstile. The limiter counts an IPv6 visitor by
+  // /64, so rotating through addresses in one connection's range gains nothing,
+  // and stores only a hash of it.
+  const ip = clientIp(req.headers)
+  if (!(await admitVisitor(ip && rateKey(ip), clock.left(LEAD_DEADLINES.limiter)))) {
     return NextResponse.json({ error: 'Too many requests. Please try again later.' }, { status: 429 })
   }
 
   let body: unknown
   try {
-    body = await readBody(req, clock.left(LEAD_DEADLINES.body))
+    body = await readJsonBody(req, MAX_BODY_SIZE, clock.left(LEAD_DEADLINES.body))
   } catch (error) {
     return error instanceof BodyTooLarge
       ? NextResponse.json({ error: 'Request too large.' }, { status: 413 })

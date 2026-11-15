@@ -4,13 +4,17 @@ import { useEffect, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { ArrowUpRight, Menu, X } from 'lucide-react'
+import { ArrowUpRight, Menu, Phone, X } from 'lucide-react'
 import { BrandLogo } from '@/components/BrandLogo'
 import { QuoteCTA } from '@/components/ui/QuoteCTA'
+import { business } from '@/lib/business'
+import styles from './MobileNav.module.css'
 
 interface NavLink {
   href: string
   label: string
+  /** Smaller links listed under this one, e.g. the main trades under Services. */
+  children?: { href: string; label: string }[]
 }
 
 export function MobileNav({ links }: { links: NavLink[] }) {
@@ -89,22 +93,45 @@ export function MobileNav({ links }: { links: NavLink[] }) {
             {links.map(link => {
               const isActive = pathname === link.href || pathname.startsWith(`${link.href}/`)
               return (
-                <Link
-                  href={link.href}
-                  key={link.href}
-                  aria-current={isActive ? 'page' : undefined}
-                  className={isActive ? 'mobile-nav-link mobile-nav-link--active' : 'mobile-nav-link'}
-                  onClick={() => setOpenPath(null)}
-                >
-                  <span>{link.label}</span>
-                  <ArrowUpRight size={26} aria-hidden="true" />
-                </Link>
+                <div key={link.href} className={styles.group}>
+                  <Link
+                    href={link.href}
+                    aria-current={pathname === link.href || (isActive && !link.children) ? 'page' : undefined}
+                    className={isActive ? 'mobile-nav-link mobile-nav-link--active' : 'mobile-nav-link'}
+                    onClick={() => setOpenPath(null)}
+                  >
+                    <span>{link.label}</span>
+                    <ArrowUpRight size={22} aria-hidden="true" />
+                  </Link>
+                  {link.children && (
+                    <ul className={styles.children} aria-label={link.label}>
+                      {link.children.map(child => (
+                        <li key={child.href}>
+                          <Link
+                            href={child.href}
+                            aria-current={pathname === child.href ? 'page' : undefined}
+                            className={styles.childLink}
+                            onClick={() => setOpenPath(null)}
+                          >
+                            {child.label}
+                          </Link>
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                </div>
               )
             })}
           </nav>
           <div className="mobile-nav-drawer__cta">
             <p>Have a site, a size, or a photo? Start there.</p>
-            <QuoteCTA source="mobile-drawer" label="Talk on WhatsApp" className="w-full" />
+            <div className={styles.actions}>
+              <QuoteCTA source="mobile-drawer" label="Talk on WhatsApp" tone="yellow" className={styles.whatsapp} />
+              <a href={'tel:' + business.phone} className={`cta cta--md ${styles.call}`} aria-label={`Call ${business.phoneDisplay}`}>
+                <Phone size={18} aria-hidden="true" />
+                Call
+              </a>
+            </div>
           </div>
         </div>,
         document.body,

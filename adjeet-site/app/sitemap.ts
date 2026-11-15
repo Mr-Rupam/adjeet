@@ -1,7 +1,8 @@
 import type { MetadataRoute } from 'next'
 import { SERVICE_SLUGS } from '@/content/services'
 import { TOWNS, townPath } from '@/content/areas'
-import { getPhotosByService, photos, type GalleryPhoto } from '@/content/gallery'
+import { getPhotoById, getPhotosByService, photos, type GalleryPhoto } from '@/content/gallery'
+import { BRAND_PHOTO_IDS, FOR_BRANDS_PATH } from '@/content/for-brands'
 import { reviewedOn } from '@/content/page-reviews'
 import { siteConfig } from '@/lib/seo'
 
@@ -31,6 +32,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     ...SERVICE_SLUGS.map(slug => ({ path: `/services/${slug}`, images: imageUrls(getPhotosByService(slug)) })),
     { path: '/areas' },
     ...TOWNS.filter(town => town.indexable).map(town => ({ path: townPath(town), images: imageUrls(town.photos) })),
+    { path: FOR_BRANDS_PATH, images: imageUrls(BRAND_PHOTO_IDS.map(getPhotoById)) },
   ]
   return pages.map(({ path, images }) => ({
     url: siteConfig.url + path,

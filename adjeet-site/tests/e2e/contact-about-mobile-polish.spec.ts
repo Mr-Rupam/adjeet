@@ -5,8 +5,19 @@ test('the contact page embeds the workshop listing at usable sizes', async ({ pa
     await page.setViewportSize({ width, height: 900 })
     await page.goto('/contact')
 
+    // The embed costs about 450 KB, so it waits for "Show map" (or for the
+    // block to be on screen once the page is idle) before asking Google.
     const map = page.getByTitle('AD JEET workshop in Patiram Jote, Siliguri on Google Maps')
-    await map.scrollIntoViewIfNeeded()
+    const show = page.getByRole('button', { name: 'Show map' })
+    if (width === 390) {
+      await expect(map).toHaveCount(0)
+      // Pressed without scrolling to it, so the on-screen trigger cannot race the button.
+      await show.dispatchEvent('click')
+      await expect(map).toBeFocused()
+      await map.scrollIntoViewIfNeeded()
+    } else {
+      await page.locator('.contact-map').scrollIntoViewIfNeeded()
+    }
     await expect(map).toBeVisible()
     const src = new URL((await map.getAttribute('src'))!, page.url())
     expect(src.hostname).toBe('maps.google.com')
@@ -54,7 +65,9 @@ test('phone client cards and reach signs contain their text', async ({ page }) =
     await expect(cards).toHaveCount(21)
     const columns = await page.locator('#client-history ul[aria-label="Brands in our work history"]')
       .evaluate(element => getComputedStyle(element).gridTemplateColumns.split(' ').map(parseFloat))
-    expect(columns).toHaveLength(3)
+    // Three to a row, except under 360px, where two keep the 12px type floor
+    // without breaking a trade word such as "Electricals".
+    expect(columns).toHaveLength(width < 360 ? 2 : 3)
     expect(Math.max(...columns) - Math.min(...columns)).toBeLessThan(1)
 
     const signs = page.locator('svg[aria-hidden="true"] [data-map-place]')

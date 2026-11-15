@@ -6,7 +6,8 @@ import Link from 'next/link'
 import { Lightbox, type LightboxPhoto } from '@/components/ui/Lightbox'
 import type { GalleryPhoto } from '@/content/gallery'
 import { photoReference } from '@/lib/project-reference'
-import { photoCaption } from '@/content/photo-places'
+import { ArrowUpRight } from 'lucide-react'
+import { FasciaCaption } from '@/components/street/FasciaCaption'
 
 interface GalleryStripProps {
   photos: GalleryPhoto[]
@@ -33,34 +34,36 @@ export function GalleryStrip({ photos, title = 'Project gallery', link, note }: 
   }
 
   return (
-    <section className="border-b-2 border-ink bg-paper py-12 md:py-16">
-      <div className="mx-auto max-w-content px-5 md:px-8">
-        <div className="mb-6 flex flex-wrap items-baseline justify-between gap-3">
-          <h2 className="spec m-0 text-signal">{title}</h2>
-          {link && <Link href={link.href} className="field-link">{link.label} ↗</Link>}
+    // The night surface: lit work sits on the street after dark, as on the homepage.
+    <section className="gallery-strip">
+      <div className="field-container">
+        <div className="gallery-strip__head">
+          <h2>{title}</h2>
+          {link && <Link href={link.href} className="gallery-strip__link">{link.label} <ArrowUpRight size={17} aria-hidden="true" /></Link>}
         </div>
-        <ul className="m-0 flex list-none snap-x snap-mandatory gap-4 overflow-x-auto p-0 pb-4">
+        <ul className="gallery-strip__list">
           {photos.map((photo, idx) => (
-            <li key={photo.id} className="w-64 shrink-0 snap-start">
+            <li key={photo.id}>
               <button
+                type="button"
                 onClick={() => openAt(idx)}
-                className="group relative block aspect-[4/3] w-full overflow-hidden border-2 border-ink bg-rule transition-shadow hover:shadow-[6px_6px_0_0_var(--signal)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-signal"
+                className="gallery-strip__photo group"
                 aria-label={`View photo: ${photo.alt}`}
               >
                 <Image
                   src={photo.src}
                   alt={photo.alt}
                   fill
-                  className="object-cover group-hover:scale-105 transition-transform duration-500"
-                  sizes="256px"
+                  className="object-cover transition-transform duration-500 group-hover:scale-105"
+                  sizes="288px"
                 />
               </button>
-              {/* The brand, and the place and year only where the gallery records them. */}
-              <p className="m-0 mt-2 text-xs leading-snug text-ink-muted">{photoCaption(photo)}</p>
+              {/* The brand, the trade, and the place and year only where the gallery records them. */}
+              <FasciaCaption photo={photo} as="span" size="sm" />
             </li>
           ))}
         </ul>
-        {note && <p className="max-w-[65ch] text-sm text-ink-muted">{note}</p>}
+        {note && <p className="gallery-strip__note">{note}</p>}
         {isOpen && (
           <Lightbox
             photos={lightboxPhotos}

@@ -37,14 +37,24 @@ export function LoadingImage({ src, alt, onLoad, onError, ...props }: ImageProps
 
 type RawImageProps = Omit<ImgHTMLAttributes<HTMLImageElement>, 'alt'> & { alt: string }
 
-/** Workshop frames remain raw files so they match the transition films exactly. */
+/**
+ * A plain <img> with the same shimmer: the workshop frames (raw files, so they
+ * match the transition films exactly) and the home hero's art-directed
+ * <picture>. A preloaded image can finish before React hydrates and attaches
+ * onLoad, so the image is also checked once it is mounted.
+ */
 export function LoadingRawImage({ src, alt, onLoad, onError, ...props }: RawImageProps) {
   const { status, settle } = useLoadingStatus(src)
+  const settledBeforeHydration = (image: HTMLImageElement | null) => {
+    if (status !== 'loading' || !image?.complete) return
+    settle(image.naturalWidth > 0 ? 'loaded' : 'error')
+  }
 
   return (
     // eslint-disable-next-line @next/next/no-img-element
     <img
       {...props}
+      ref={settledBeforeHydration}
       src={src}
       alt={alt}
       data-image-status={status}

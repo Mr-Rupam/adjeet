@@ -25,34 +25,40 @@ test('every retired regional URL answers 308 with its new home and keeps the que
   }
 })
 
-/** The lead form's city select, once hydration has applied any prefill. */
-const leadCity = (page: Page) => page.locator('form').filter({ has: page.locator('#lead-name') }).locator('#lead-city')
+/**
+ * The lead form's city select, once hydration has applied any prefill. These
+ * pages load the form only as it nears the viewport, so scroll to its place.
+ */
+async function leadCity(page: Page) {
+  await page.locator('[data-lead-form-slot]').scrollIntoViewIfNeeded()
+  return page.locator('form').filter({ has: page.locator('#lead-name') }).locator('#lead-city')
+}
 
 test.describe('the page\'s own town wins over ?city=', () => {
   test('an old Siliguri link lands on the service page with Siliguri and the trade', async ({ page }) => {
     await page.goto('/glow-sign-board-in-siliguri?city=Malda')
     await expect(page).toHaveURL(/\/services\/glow-sign-boards\?city=Malda$/)
     await expect(page.getByRole('heading', { level: 1 })).toContainText('Glow Sign Boards')
-    await expect(leadCity(page)).toHaveValue('Siliguri')
+    await expect(await leadCity(page)).toHaveValue('Siliguri')
     await expect(page.locator('input[type="checkbox"][value="glow-sign-boards"]')).toBeChecked()
     await expect(page.locator('input[type="checkbox"]:checked')).toHaveCount(1)
   })
 
   test('a town page keeps its town', async ({ page }) => {
     await page.goto('/areas/cooch-behar?city=Malda')
-    await expect(leadCity(page)).toHaveValue('Cooch Behar')
+    await expect(await leadCity(page)).toHaveValue('Cooch Behar')
     await expect(page.locator('input[type="checkbox"]:checked')).toHaveCount(0)
   })
 
   test('an old town link lands on the town page with the town filled in', async ({ page }) => {
     await page.goto('/flex-printing-in-jalpaiguri')
     await expect(page).toHaveURL(/\/areas\/jalpaiguri$/)
-    await expect(leadCity(page)).toHaveValue('Jalpaiguri')
+    await expect(await leadCity(page)).toHaveValue('Jalpaiguri')
   })
 
   test('the areas page has no town of its own, so ?city= still applies', async ({ page }) => {
     await page.goto('/areas?city=Kalimpong')
-    await expect(leadCity(page)).toHaveValue('Kalimpong')
+    await expect(await leadCity(page)).toHaveValue('Kalimpong')
   })
 })
 
@@ -74,12 +80,18 @@ test('a town page below its quality gate is noindex, follow; the others are inde
   }
 })
 
-test('the footer links the four main trades and the areas page', async ({ page }) => {
+test('the footer links every service, the areas page and the brand page', async ({ page }) => {
   await page.goto('/about')
   const footer = page.getByRole('contentinfo')
-  await expect(footer.getByRole('navigation', { name: 'Footer navigation' }).getByRole('link', { name: 'Areas we cover', exact: true })).toHaveAttribute('href', '/areas')
-  const trades = footer.getByRole('navigation', { name: 'Main trades' }).getByRole('link')
-  await expect(trades).toHaveText(['Glow sign boards', 'ACP and 3D LED letters', 'Flex printing', 'Vehicle branding'])
+  const pages = footer.getByRole('navigation', { name: 'Footer navigation' })
+  await expect(pages.getByRole('link', { name: 'Areas we cover', exact: true })).toHaveAttribute('href', '/areas')
+  await expect(pages.getByRole('link', { name: 'For brands', exact: true })).toHaveAttribute('href', '/for-brands')
+  const trades = footer.getByRole('navigation', { name: 'All services' }).getByRole('link')
+  await expect(trades).toHaveText([
+    'Glow sign boards', 'ACP and 3D LED letters', 'Flex printing', 'Vehicle branding', 'Wall painting advertising',
+    'F-pole sign boards', 'In-shop branding', 'Puja and event branding', 'One way vision film', 'POP displays and standees',
+  ])
+  await expect(footer.getByText('Write or speak to us in English, Bengali or Hindi.')).toBeVisible()
 })
 
 for (const route of ['/areas', '/areas/cooch-behar', '/areas/gangtok', '/services/acp-led-signage']) {

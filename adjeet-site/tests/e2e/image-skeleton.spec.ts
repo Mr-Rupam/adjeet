@@ -11,7 +11,8 @@ test('image shimmer keeps moving until a slow image finishes loading', async ({ 
 
   await page.route('**/_next/image?**', async route => {
     const source = new URL(route.request().url()).searchParams.get('url')
-    if (source === '/images/work/ambuja-cement-acp-126.webp') {
+    // The default 1280 x 720 window, in the light theme, shows the day scene's wide cut.
+    if (source === '/hero/day-street-wide.webp') {
       await imageGate
     }
     await route.continue()
@@ -19,7 +20,7 @@ test('image shimmer keeps moving until a slow image finishes loading', async ({ 
 
   try {
     await page.goto('/', { waitUntil: 'domcontentloaded' })
-    const heroImage = page.locator('[data-hero-image]')
+    const heroImage = page.locator('[data-hero-image="day"]')
     await expect(heroImage).toHaveAttribute('data-image-status', 'loading')
     await expect(heroImage).toHaveCSS('animation-name', 'image-loading-sweep, image-loading-breathe')
     await heroImage.screenshot({ path: testInfo.outputPath('hero-loading.png') })

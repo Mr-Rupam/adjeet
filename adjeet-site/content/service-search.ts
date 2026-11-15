@@ -12,6 +12,12 @@ import type { ServiceSlug } from '@/content/services'
  */
 export interface ServiceSearch {
   keyword: string
+  /**
+   * The page's H1 where the buyer's term differs from the trade name, e.g.
+   * "F-Pole Sign Boards" for "F-Pole Installation". `name` still feeds the
+   * form chips, breadcrumbs and lists; this is used only for the heading.
+   */
+  h1?: string
   seoTitle: string
   metaDescription: string
   question: string
@@ -24,14 +30,14 @@ export const SERVICE_SEARCH: Record<ServiceSlug, ServiceSearch> = {
   'glow-sign-boards': {
     keyword: 'Glow Sign Board',
     seoTitle: 'Glow Sign Board & LED Sign Board Makers in Siliguri',
-    metaDescription: 'Glow sign boards, LED sign boards and lit shop name boards made in Siliguri. Share a shopfront photo and size for a quote across North Bengal and Sikkim.',
+    metaDescription: 'Glow sign boards, LED sign boards and lit shop name boards made in Siliguri. Send a shopfront photo and size for a quote in North Bengal and Sikkim.',
     question: 'What is a glow sign board?',
-    answer: 'A glow sign board is a lit shop name board: a printed flex, acrylic or ACP face on a metal frame with LED lighting inside, so the name stays readable after dark. AD JEET makes glow sign boards and LED sign boards at its Siliguri workshop for shops, clinics, showrooms and offices, and installs them across North Bengal.',
+    answer: 'A glow sign board is a lit shop name board. It has a printed flex, acrylic or ACP face on a metal frame with LED lighting inside, so the name stays readable after dark. AD JEET makes glow sign boards and LED sign boards at its Siliguri workshop for shops, clinics, showrooms and offices, and installs them across North Bengal.',
     alternateNames: ['LED sign board', 'Lit shop name board', 'Backlit sign board', 'Acrylic glow sign board'],
     faqs: [
       {
         q: 'How is the price of a glow sign board worked out in Siliguri?',
-        a: 'Glow sign boards are usually quoted by area in square feet, then adjusted for the face material (flex, acrylic or ACP), the LED lighting, the frame, the artwork and the installation height. Send the width, height, a shopfront photo and your location on WhatsApp for a written quote for your board.',
+        a: 'Glow sign boards are usually quoted by area in square feet. The price is then adjusted for the face material (flex, acrylic or ACP), the LED lighting, the frame, the artwork and the installation height. Send the width, height, a shopfront photo and your location on WhatsApp for a written quote for your board.',
       },
       {
         q: 'What is the difference between a glow sign board and an ACP board with 3D LED letters?',
@@ -41,15 +47,16 @@ export const SERVICE_SEARCH: Record<ServiceSlug, ServiceSearch> = {
   },
   'acp-led-signage': {
     keyword: 'ACP Sign Board',
+    h1: 'ACP Sign Boards and 3D LED Letters',
     seoTitle: 'ACP Sign Board & 3D LED Letter Signage in Siliguri',
-    metaDescription: 'ACP sign boards, ACP facade cladding and 3D LED letters for showrooms, banks and retail outlets. Designed and fabricated in Siliguri for North Bengal and Sikkim.',
+    metaDescription: 'ACP sign boards, facade cladding and 3D LED letters for showrooms, banks and retail outlets, made in Siliguri for North Bengal and Sikkim.',
     question: 'What is ACP signage?',
     answer: 'ACP signage uses aluminium composite panels as a clean, weather-resistant sign face or shopfront cladding, finished with acrylic or metal 3D letters lit by LED modules. AD JEET cuts, routes and fits ACP sign boards and 3D LED letter signs from its Siliguri workshop for showrooms, dealerships, banks and branded outlets.',
     alternateNames: ['ACP sign board', '3D LED letter sign', 'ACP facade cladding', 'ACP elevation signage', 'Acrylic 3D letters'],
     faqs: [
       {
         q: 'Can you make 3D LED letters for a shop or showroom?',
-        a: 'Yes. 3D letters can be made in acrylic or metal and lit from inside or from behind for a halo effect, then fixed to an ACP panel or directly to the wall. Share your logo file, the frontage width and a photo so the letter height and lighting can be planned.',
+        a: 'Yes. 3D letters can be made in acrylic or metal and lit from inside, or from behind for a halo effect. They are then fixed to an ACP panel or directly to the wall. Share your logo file, the frontage width and a photo so the letter height and lighting can be planned.',
       },
       {
         q: 'How is an ACP sign board priced?',
@@ -60,7 +67,7 @@ export const SERVICE_SEARCH: Record<ServiceSlug, ServiceSearch> = {
   'flex-printing': {
     keyword: 'Flex Printing',
     seoTitle: 'Flex Printing, Banners & Hoarding Prints in Siliguri',
-    metaDescription: 'Flex banner printing, hoarding flex and vinyl printing in Siliguri. Frontlit and blockout flex with eyelets, framing or installation across North Bengal.',
+    metaDescription: 'Flex banner, hoarding and vinyl printing in Siliguri. Frontlit and blockout flex with eyelets, framing or installation across North Bengal.',
     question: 'What is flex printing used for?',
     answer: 'Flex printing is large-format digital printing on PVC flex media, used for shop banners, hoardings, event backdrops and temporary signs. AD JEET prints frontlit and blockout flex and vinyl in Siliguri, finishes it with eyelets, hemming or framing, and can install banner and hoarding prints across North Bengal.',
     alternateNames: ['Flex banner printing', 'Hoarding printing', 'Vinyl printing', 'Banner printing', 'Star flex printing'],
@@ -71,7 +78,7 @@ export const SERVICE_SEARCH: Record<ServiceSlug, ServiceSearch> = {
       },
       {
         q: 'What is the difference between frontlit and blockout flex?',
-        a: 'Frontlit flex is lit from the front and is the usual choice for banners and hoardings. Blockout flex has a dark inner layer that stops light passing through, so it suits double-sided displays and prints that must look solid against sunlight or a lit background.',
+        a: 'Frontlit flex is lit from the front and is the usual choice for banners and hoardings. Blockout flex has a dark inner layer that stops light passing through. It suits double-sided displays and prints that must look solid against sunlight or a lit background.',
       },
     ],
   },
@@ -92,7 +99,7 @@ export const SERVICE_SEARCH: Record<ServiceSlug, ServiceSearch> = {
   'wall-painting': {
     keyword: 'Wall Painting Advertising',
     seoTitle: 'Wall Painting Advertising in Siliguri & North Bengal',
-    metaDescription: 'Hand-painted wall advertising and wall writing for brands across Siliguri, the Dooars and rural North Bengal. Exterior paints, site checks and campaign planning.',
+    metaDescription: 'Hand-painted wall advertising and wall writing for brands across Siliguri, the Dooars and rural North Bengal, with site checks and campaign planning.',
     question: 'What is wall painting advertising?',
     answer: 'Wall painting advertising is a brand message painted by hand directly onto a building or boundary wall, most often along highways and in rural and semi-urban markets. AD JEET plans and paints wall advertisements from Siliguri for brands and distributors reaching towns and villages across North Bengal.',
     alternateNames: ['Wall writing', 'Wall ad painting', 'Rural wall advertising', 'Wall branding'],
@@ -105,8 +112,9 @@ export const SERVICE_SEARCH: Record<ServiceSlug, ServiceSearch> = {
   },
   'f-pole-installation': {
     keyword: 'F-Pole Sign',
+    h1: 'F-Pole Sign Boards',
     seoTitle: 'F-Pole Sign Boards & Installation in Siliguri',
-    metaDescription: 'F-pole signs for fuel stations, hospitals, hotels and highway businesses. Pole fabrication, foundation and sign face installed from Siliguri across North Bengal.',
+    metaDescription: 'F-pole signs for fuel stations, hospitals, hotels and highway businesses: pole, foundation and sign face, installed from Siliguri across North Bengal.',
     question: 'What is an F-pole sign?',
     answer: 'An F-pole sign is a raised steel pole with an arm that holds a sign face above road level, so a business can be seen from a distance along highways and busy roads. AD JEET fabricates F-pole structures and sign faces in Siliguri and installs them after a site and foundation assessment.',
     alternateNames: ['F pole sign board', 'Pole sign', 'Roadside sign structure', 'Highway pole signage'],
@@ -120,7 +128,7 @@ export const SERVICE_SEARCH: Record<ServiceSlug, ServiceSearch> = {
   'in-shop-branding': {
     keyword: 'In-Shop Branding',
     seoTitle: 'In-Shop & Retail Branding in Siliguri',
-    metaDescription: 'Retail and in-shop branding in Siliguri: wall graphics, counter fascias, hanging signs and dealer outlet branding to your brand guidelines across North Bengal.',
+    metaDescription: 'In-shop and retail branding in Siliguri: wall graphics, counter fascias, hanging signs and dealer outlet branding to your brand guidelines.',
     question: 'What does in-shop branding include?',
     answer: 'In-shop branding covers everything inside an outlet that carries the brand: wall graphics, counter fascias, backlit panels, hanging signs, directional signs and display headers. AD JEET produces and installs in-shop branding in Siliguri for dealer outlets, showrooms, restaurants and offices, following the guidelines supplied by head office or the agency.',
     alternateNames: ['Retail branding', 'Shop interior branding', 'Dealer outlet branding', 'Showroom branding'],
@@ -133,6 +141,7 @@ export const SERVICE_SEARCH: Record<ServiceSlug, ServiceSearch> = {
   },
   'events-and-puja': {
     keyword: 'Durga Puja Branding',
+    h1: 'Durga Puja and Event Branding',
     seoTitle: 'Durga Puja Gate Branding & Event Signage in Siliguri',
     metaDescription: 'Durga Puja pandal gate branding, entrance arches, stage backdrops and event signage made in Siliguri for brands, puja committees and corporate events.',
     question: 'What is Puja and event branding?',
@@ -156,8 +165,9 @@ export const SERVICE_SEARCH: Record<ServiceSlug, ServiceSearch> = {
   },
   'product-display': {
     keyword: 'POP Display',
+    h1: 'POP Displays and Standees',
     seoTitle: 'POP Displays, Standees & Display Units in Siliguri',
-    metaDescription: 'POP and POS displays made in Siliguri: standees, shelf talkers, product glorifiers and freestanding display units for FMCG, pharma and electronics brands.',
+    metaDescription: 'POP and POS displays made in Siliguri: standees, shelf talkers, glorifiers and freestanding display units for FMCG, pharma and electronics brands.',
     question: 'What are POP product displays?',
     answer: 'Product displays are the point-of-purchase pieces that sit next to the product in a shop: standees, shelf talkers, counter units, glorifiers and freestanding display units. AD JEET fabricates them in acrylic, foam board, ACP and metal in Siliguri for brands and distributors supplying retailers across North Bengal.',
     alternateNames: ['POP display', 'POS display', 'Standee', 'Shelf talker', 'Product glorifier', 'FSDU'],

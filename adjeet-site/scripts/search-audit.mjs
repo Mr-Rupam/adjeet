@@ -24,8 +24,9 @@ async function checkAccessibility(page, route, theme, width) {
 async function crawl() {
   const sitemap = await fetch(base + '/sitemap.xml').then(response => response.text())
   const urls = [...sitemap.matchAll(/<loc>(.*?)<\/loc>/g)].map(match => match[1])
-  // 5 core pages, 10 services, /areas and the town pages past their quality gate.
-  assert.equal(urls.length, 18)
+  // 5 core pages, 10 services, /areas, the town pages past their quality gate
+  // and /for-brands.
+  assert.equal(urls.length, 19)
   portfolioPhotos = (sitemap.match(/<loc>https:\/\/adjeet\.in\/portfolio<\/loc>([\s\S]*?)<\/url>/)?.[1].match(/<image:loc>/g) || []).length
   assert(portfolioPhotos > 0, 'sitemap lists no portfolio photos')
   assert.equal(new Set(urls).size, urls.length)

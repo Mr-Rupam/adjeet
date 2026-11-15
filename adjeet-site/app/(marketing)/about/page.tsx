@@ -4,6 +4,8 @@ import Link from 'next/link'
 import { ArrowDown, ArrowUpRight } from 'lucide-react'
 import { buildBreadcrumbJsonLd, buildFounderJsonLd, buildWebPageJsonLd, jsonLdString } from '@/lib/seo'
 import { CommissionCTA } from '@/components/street/CommissionCTA'
+import { FasciaCaption } from '@/components/street/FasciaCaption'
+import { QuoteCTA } from '@/components/ui/QuoteCTA'
 import { FOUNDED_YEAR } from '@/lib/coverage'
 import { CoverageMapProvider } from '@/components/coverage/CoverageMapContext'
 import { CoveragePlaceList } from '@/components/coverage/CoveragePlaceList'
@@ -11,6 +13,9 @@ import { CoverageStage } from '@/components/coverage/CoverageStage'
 import { getPhotoById } from '@/content/gallery'
 import { HeroScene } from '@/components/home/HeroScene'
 import styles from './About.module.css'
+import extras from './AboutExtras.module.css'
+import { business } from '@/lib/business'
+import { LANGUAGES_LINE } from '@/content/enquiry'
 
 const PAGE = {
   title: "About Our Siliguri Signage Workshop",
@@ -46,7 +51,10 @@ export default function AboutPage() {
         <div className={styles.introCopy}>
           <h1 id="about-heading" data-site-reveal="title">AD JEET. <br />A Siliguri workshop, <br /><span>since {FOUNDED_YEAR}.</span></h1>
           <p>Ranjit Das was 20 when he started AD JEET. More than 35 years later, the space has changed. The belief in doing good work has stayed.</p>
-          <a href="#our-story" className={styles.storyLink}>Follow our story <ArrowDown size={18} aria-hidden="true" /></a>
+          <div className={styles.introActions}>
+            <QuoteCTA source="about" label="WhatsApp your project" tone="yellow" />
+            <a href="#our-story" className={styles.storyLink}>Follow our story <ArrowDown size={18} aria-hidden="true" /></a>
+          </div>
         </div>
         <figure className={styles.workshop} data-site-reveal="media">
           <div><HeroScene label="Visualisation of the AD JEET workshop in Siliguri" eager /></div>
@@ -61,6 +69,11 @@ export default function AboutPage() {
         <ol className={styles.journey}>
           {JOURNEY.map(step => <li key={step.marker} data-site-reveal><p className={styles.marker}>{step.marker}</p><div><h3>{step.title}</h3><p>{step.body}</p></div></li>)}
         </ol>
+        {/* Recorded facts only (content audit C4): no team names until the owner supplies them. */}
+        <div className={extras.dealWith}>
+          <h3>Who you will deal with</h3>
+          <p>AD JEET was founded in {FOUNDED_YEAR} by {business.founder}. He started it at 20 in a small room in his own flat. Today the work is made at our own workshop in {business.city}, at {business.workshop}. Walk-ins are welcome {business.hours.replace(', walk-ins welcome', '')}. {LANGUAGES_LINE}</p>
+        </div>
       </section>
       <section className={styles.workshopBand} aria-labelledby="workshop-heading">
         <div className={styles.workshopBandHead}>
@@ -80,7 +93,7 @@ export default function AboutPage() {
         <div className={styles.trustHead}>
           <h2 id="trust-heading" data-site-reveal="title">Quality, every time.<br /><span>Trust, over time.</span></h2>
           <div className={styles.trustCopy}>
-            <p>Our client history includes Fortune 500 companies. What matters most to us is the trust that continues beyond the first project.</p>
+            <p>Our client history includes national brands such as Airtel, Havells, Supreme Pipe and Star Cement. Their work is photographed on the portfolio page. What matters most to us is the trust that continues beyond the first project.</p>
             <p>That trust rests on the quality of the work and the consistency we bring to it. It is how we have grown, and how we intend to keep growing.</p>
             <Link href="/portfolio" className="cta cta--md cta--yellow">See our work <ArrowUpRight size={18} aria-hidden="true" /></Link>
           </div>
@@ -89,7 +102,7 @@ export default function AboutPage() {
           {CLIENT_WORK.map(photo => (
             <li key={photo.id} data-about-client-work>
               <span className={styles.clientWorkImage}><Image src={photo.src} alt={photo.alt} fill sizes="(max-width: 767px) 50vw, 25vw" className="object-cover" /></span>
-              <span className={styles.clientWorkName}>{photo.client}</span>
+              <FasciaCaption photo={photo} as="span" size="sm" />
             </li>
           ))}
         </ul>

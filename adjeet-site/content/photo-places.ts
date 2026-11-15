@@ -35,3 +35,16 @@ export function shareImageFor(photo: GalleryPhoto): { url: string; alt: string }
   const name = photo.src.replace(/^\/images\/work\//, '').replace(/\.webp$/, '')
   return { url: `/images/share/${name}.jpg`, alt: photo.alt }
 }
+
+/** The size link previews draw a large card at. */
+export const WIDE_SHARE_SIZE = { width: 1200, height: 630 } as const
+
+/**
+ * The 1200 x 630 link preview card for a site page (home, services, portfolio,
+ * about, contact, areas, for brands): a centred crop of a real gallery photo,
+ * scaled down only, made by `scripts/build-share-images.mjs --wide`.
+ */
+export function pageShareImage(photo: GalleryPhoto): { url: string; alt: string; width: number; height: number } {
+  const name = photo.src.replace(/^\/images\/work\//, '').replace(/\.webp$/, '')
+  return { url: `/images/share/${name}-wide.jpg`, alt: photo.alt, ...WIDE_SHARE_SIZE }
+}

@@ -1,0 +1,11 @@
+/* The contact page's "what to send" list, added 15 November 2026. */
+.checklist {
+  margin-top: 28px;
+}
+
+.checklistHeading {
+  margin: 0;
+  font: 500 24px/1.1 var(--font-heading);
+  letter-spacing: .01em;
+  color: var(--ink);
+}

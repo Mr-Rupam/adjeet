@@ -11,7 +11,6 @@ import styles from './SignComparison.module.css'
 export function SignComparison({ current }: { current?: ServiceSlug }) {
   return (
     <section className={`field-container ${styles.section}`} aria-labelledby="sign-compare-heading">
-      <p className="spec text-signal">Compare / Shopfront boards</p>
       <h2 id="sign-compare-heading">{COMPARISON_HEADING}</h2>
       <p className={styles.lead}>{COMPARISON_LEAD}</p>
       {/* Explicit roles keep the table readable to screen readers on phones, where CSS restacks the rows. */}

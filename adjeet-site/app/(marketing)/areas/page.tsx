@@ -21,6 +21,8 @@ import {
 import { defaultWhatsAppUrl } from '@/lib/whatsapp'
 import { PageMasthead } from '@/components/street/PageMasthead'
 import { WhatsAppLink } from '@/components/ui/WhatsAppLink'
+import { WhatsAppIcon } from '@/components/ui/WhatsAppIcon'
+import { ArrowDown } from 'lucide-react'
 import { Accordion } from '@/components/ui/Accordion'
 import { CoverageMapProvider } from '@/components/coverage/CoverageMapContext'
 import { CoveragePlaceList } from '@/components/coverage/CoveragePlaceList'
@@ -29,8 +31,8 @@ import { BriefForm } from '@/components/areas/BriefForm'
 import styles from '@/components/areas/Areas.module.css'
 
 const PAGE = {
-  title: 'Areas We Cover: Signage Across North Bengal & Sikkim',
-  description: 'AD JEET makes signs at its Siliguri workshop and installs them across North Bengal and Sikkim: the hills, the Dooars, Cooch Behar, Malda and more. Distances and how each job is planned.',
+  title: 'Areas We Cover from Siliguri: North Bengal and Sikkim',
+  description: 'Signs made in Siliguri by AD JEET and installed across North Bengal and Sikkim: the hills, the Dooars, Cooch Behar and Malda. How each job is planned.',
   path: '/areas',
 }
 
@@ -53,18 +55,17 @@ export default function AreasPage() {
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLdString(breadcrumb) }} />
 
       <PageMasthead
-        meta={['Areas we cover', 'North Bengal', 'Sikkim']}
         title={<>Areas we cover.<br /><span className="text-signal">Made in Siliguri.</span></>}
         lead="Every sign is made at our Siliguri workshop, then delivered and installed across North Bengal and Sikkim. Every place below is covered the same way."
       >
-        <WhatsAppLink href={waUrl} source="areas" className="cta cta--md">Discuss your site ↗</WhatsAppLink>
+        <WhatsAppLink href={waUrl} source="areas" className="cta cta--md cta--yellow"><WhatsAppIcon />Discuss your site</WhatsAppLink>
+        <a href="#send-brief" className="action-quiet">Or send the brief <ArrowDown size={17} aria-hidden="true" /></a>
       </PageMasthead>
 
       <section className={styles.section} aria-labelledby="areas-map-heading">
         <CoverageMapProvider>
           <div className={`field-container ${styles.mapGrid}`}>
             <div className={styles.mapCopy}>
-              <p className="spec text-signal">The map</p>
               <h2 id="areas-map-heading" className={styles.heading}>From the hills to Malda.</h2>
               <p className={styles.intro}>Pick a place to see how far it is from the workshop and start a quote for it.</p>
               <CoveragePlaceList />
@@ -78,7 +79,6 @@ export default function AreasPage() {
 
       <section className={styles.section} aria-labelledby="areas-groups-heading">
         <div className="field-container">
-          <p className="spec text-signal">Distance and planning</p>
           <h2 id="areas-groups-heading" className={styles.heading}>How a job is planned, place by place</h2>
           <p className={styles.intro}>Distances are from the workshop in a straight line; the roads are longer. What changes from place to place is the trip, so each group says what helps us plan it.</p>
           <div className={styles.groups}>
@@ -118,7 +118,6 @@ export default function AreasPage() {
 
       <section className={styles.section} aria-labelledby="areas-steps-heading">
         <div className="field-container">
-          <p className="spec text-signal">Every place, the same way</p>
           <h2 id="areas-steps-heading" className={styles.heading}>From your site to the workshop and back</h2>
           <ol className={styles.steps}>
             {AREAS_STEPS.map(step => <li key={step.title}><h3>{step.title}</h3><p>{step.body}</p></li>)}
@@ -128,7 +127,6 @@ export default function AreasPage() {
 
       <section className={styles.section} aria-labelledby="areas-towns-heading">
         <div className="field-container">
-          <p className="spec text-signal">Town pages</p>
           <h2 id="areas-towns-heading" className={styles.heading}>Cooch Behar, Jalpaiguri and Gangtok</h2>
           <p className={styles.intro}>These towns each have a page with the work photographed there, the questions people from those towns ask and what to send for each trade.</p>
           <ul className={styles.towns}>
@@ -150,10 +148,9 @@ export default function AreasPage() {
       <section className={styles.section} aria-labelledby="areas-faq-heading">
         <div className={`field-container ${styles.faqGrid}`}>
           <div>
-            <p className="spec text-signal">Questions</p>
             <h2 id="areas-faq-heading" className={styles.heading}>Working outside Siliguri</h2>
             <div className={`${styles.sendUs} mt-8`}>
-              <p className="spec text-signal">Every enquiry needs</p>
+              <h3 className={styles.listHeading}>Every enquiry needs</h3>
               <ul>{AREAS_SEND_US.map(item => <li key={item}>{item}</li>)}</ul>
             </div>
           </div>

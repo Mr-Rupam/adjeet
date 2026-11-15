@@ -1,15 +1,19 @@
 import { business } from '@/lib/business'
 import { buildPageMetadata } from '@/lib/seo'
 import { LeadForm } from '@/components/sections/LeadForm'
+import { ContactMap } from '@/components/contact/ContactMap'
 import { buildBreadcrumbJsonLd, buildWebPageJsonLd, jsonLdString } from '@/lib/seo'
 import { PageMasthead } from '@/components/street/PageMasthead'
 import { QuoteCTA } from '@/components/ui/QuoteCTA'
 import { WhatsAppLink } from '@/components/ui/WhatsAppLink'
-import { ArrowUpRight } from 'lucide-react'
+import { ArrowDown, ArrowUpRight } from 'lucide-react'
+import { CONTACT_SEND_US, LANGUAGES_LINE } from '@/content/enquiry'
+import areaStyles from '@/components/areas/Areas.module.css'
+import styles from './Contact.module.css'
 
 const PAGE = {
   title: "Contact Our Siliguri Team for a Signage Quote",
-  description: "Call or WhatsApp +91 98320 11524 for signage, printing and outdoor advertising in North Bengal. AD JEET office: Platinum Square, Station Feeder Road, Siliguri.",
+  description: "Call or WhatsApp +91 98320 11524 for signage and outdoor advertising in North Bengal. AD JEET office: Platinum Square, Station Feeder Road, Siliguri.",
   path: "/contact",
 }
 export const metadata = buildPageMetadata(PAGE)
@@ -25,11 +29,13 @@ export default function ContactPage() {
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLdString(webPage) }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLdString(breadcrumb) }} />
-      <PageMasthead compact meta={['Start a project', 'Siliguri / North Bengal']} title={<>Your signage project. <br /><span className="text-signal">Let&apos;s talk.</span></>} lead="Contact AD JEET in Siliguri for signage, printing and outdoor branding across North Bengal. Start with a site photo or a complete project brief.">
-        <QuoteCTA source="contact" label="WhatsApp your project" />
+      <PageMasthead compact title={<>Your signage project. <br /><span className="text-signal">Let&apos;s talk.</span></>} lead="Contact AD JEET in Siliguri for signage, printing and outdoor branding across North Bengal. Start with a site photo or a complete project brief.">
+        <QuoteCTA source="contact" label="WhatsApp your project" tone="yellow" />
+        <a href="#send-brief" className="action-quiet">Or send a project brief <ArrowDown size={17} aria-hidden="true" /></a>
       </PageMasthead>
       <section className="field-container contact-layout">
-        <aside className="contact-intro">
+        {/* A plain block, not an aside: a complementary landmark may not sit inside main's sections. */}
+        <div className="contact-intro">
           <h2 data-site-reveal="title">A conversation.<br />Then a plan.</h2>
           {METHODS.map(item => {
             const content = <><span className="spec">{item.method} <ArrowUpRight size={14} aria-hidden="true" /></span><strong>{item.value}</strong><small>{item.note}</small></>
@@ -38,21 +44,24 @@ export default function ContactPage() {
               ? <WhatsAppLink key={item.method} href={item.href} source="contact-method" className="contact-method contact-method--primary">{content}</WhatsAppLink>
               : <a key={item.method} href={item.href} className="contact-method">{content}</a>
           })}
-          <div className="contact-address"><p className="spec">Find us in Siliguri</p><h3>Workshop / {business.workshop}</h3><p>{business.street}, {business.city}, {business.region} {business.postalCode}. Open {business.hours}.</p><h3>Office / {business.office}</h3><p>{business.city}, {business.region} {business.officePostalCode}</p></div>
-          <div className="contact-map">
-            <iframe
-              src={business.mapsEmbedUrl}
-              title="AD JEET workshop in Patiram Jote, Siliguri on Google Maps"
-              loading="lazy"
-              referrerPolicy="strict-origin-when-cross-origin"
-              allowFullScreen
-            />
+          {/* What to send (content audit C10) and the languages enquiries are handled in (C13). */}
+          <div className={`${areaStyles.sendUs} ${styles.checklist}`}>
+            <h3 className={styles.checklistHeading}>What to send</h3>
+            <ul>{CONTACT_SEND_US.map(item => <li key={item}>{item}</li>)}</ul>
+            <p className={areaStyles.sendUsNote}>{LANGUAGES_LINE}</p>
           </div>
+          <div className="contact-address"><h3 className={styles.checklistHeading}>Find us in Siliguri</h3><h4>Workshop / {business.workshop}</h4><p>{business.street}, {business.city}, {business.region} {business.postalCode}. Open {business.hours}.</p><h4>Office / {business.office}</h4><p>{business.city}, {business.region} {business.officePostalCode}</p></div>
+          <ContactMap
+            embedUrl={business.mapsEmbedUrl}
+            mapsUrl={business.mapsUrl}
+            title="AD JEET workshop in Patiram Jote, Siliguri on Google Maps"
+            address={`AD JEET workshop, ${business.workshop}, ${business.city} ${business.postalCode}`}
+          />
           <a className="contact-location-link" href={business.mapsUrl} target="_blank" rel="noopener noreferrer">
             <span className="spec">Plan your visit</span><strong>AD JEET, Patiram Jote, Siliguri</strong><span>Open our Google Maps listing ↗</span>
           </a>
-        </aside>
-        <div className="contact-form"><h2 data-site-reveal="title">Send a project brief.</h2><p>The location, what you need and when you need it.</p><LeadForm /></div>
+        </div>
+        <div className="contact-form" id="send-brief"><h2 data-site-reveal="title">Send a project brief.</h2><p>The location, what you need and when you need it.</p><LeadForm /></div>
       </section>
     </>
   )

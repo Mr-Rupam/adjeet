@@ -15,15 +15,15 @@ test.beforeEach(async ({ page }) => {
 })
 
 test('new homepage keeps real project discovery and every coverage area accessible', async ({ page }) => {
-  // Reduced motion holds the hero slideshow on its first slide, the one clicked below.
   await page.emulateMedia({ reducedMotion: 'reduce' })
   await page.goto('/')
   await expect(page.getByRole('heading', { level: 1 })).toHaveText('Sign boards that get you noticed.')
   await expect(page.locator('#hero-section').getByRole('link', { name: 'WhatsApp your project' })).toBeVisible()
   await expect(page.getByRole('list', { name: 'Areas we serve' }).getByRole('listitem')).toHaveCount(COVERAGE_AREAS.length)
-  await page.getByRole('link', { name: 'Explore Ambuja Cement ACP and LED Signage, Kushmandi' }).click()
-  await expect(page).toHaveURL(/service=acp-led-signage/)
-  await expect(page.getByRole('button', { name: /^View:/ })).toHaveCount(acpCount)
+  // Real work starts straight after the hero; its closing link opens the whole portfolio.
+  await page.locator('#selected-work').getByRole('link', { name: `See all ${photos.length} project photographs` }).click()
+  await expect(page).toHaveURL(/\/portfolio$/)
+  await expect(page.getByRole('button', { name: /^View:/ })).toHaveCount(photos.length)
 })
 
 test('all service and area routes resolve, with town links matching the content records', async ({ page, request }) => {
@@ -107,7 +107,8 @@ test('small screens keep controls reachable and drawer focus contained', async (
       await page.keyboard.press('Shift+Tab')
       await expect(dialog.getByRole('link', { name: 'AD JEET home' })).toBeFocused()
       await page.keyboard.press('Shift+Tab')
-      await expect(dialog.getByRole('link', { name: 'Talk on WhatsApp' })).toBeFocused()
+      // The call link sits beside WhatsApp and is the drawer's last stop.
+      await expect(dialog.getByRole('link', { name: /^Call / })).toBeFocused()
       await page.keyboard.press('Escape')
       await expect(trigger).toBeFocused()
     }

@@ -1,0 +1,27 @@
+/*
+ * /for-brands. It is built from the areas page's sections and classes
+ * (components/areas/Areas.module.css); only what they lack is here.
+ */
+.intro { margin-top: 18px; }
+
+.tradeTitle {
+  margin: 0;
+  font: 500 26px/1.1 var(--font-heading);
+  color: var(--ink);
+}
+
+/* The service links under each trade, without the trade list's row rules. */
+ul.tradeLinkList { margin-top: 6px; }
+ul.tradeLinkList > li { padding: 0; border-bottom: 0; }
+
+.onRequest {
+  max-width: 640px;
+  margin-top: 32px;
+}
+
+.onRequestHeading {
+  margin: 0;
+  font: 500 24px/1.1 var(--font-heading);
+  letter-spacing: .01em;
+  color: var(--ink);
+}
