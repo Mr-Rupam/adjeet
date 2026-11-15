@@ -10,14 +10,15 @@ test.describe('Home page', () => {
   })
 
   // The storefront homepage (2026-10-20) keeps the strong H1 and names the
-  // trade and the town straight under it, beside a photographed shopfront.
-  test('uses one clear hero proposition beside a real shopfront', async ({ page }) => {
+  // trade and the town straight under it. Since 15 November 2026 it does so on
+  // a labelled street visualisation; real shopfronts start in the next section.
+  test('uses one clear hero proposition on the labelled night scene', async ({ page }) => {
     const hero = page.locator('#hero-section')
     await expect(hero.getByRole('heading', { level: 1, name: /sign boards that get you noticed/i })).toBeVisible()
     await expect(page.getByRole('heading', { level: 1 })).toHaveCount(1)
-    await expect(hero.getByText(/sign board makers in siliguri, since 1990/i)).toBeVisible()
-    await expect(hero.getByText(/send a photo of your shop to start/i)).toBeVisible()
-    await expect(hero.getByRole('img', { name: /ambuja cement/i })).toBeVisible()
+    await expect(hero.getByText('Sign board makers in Siliguri, since 1990.', { exact: true })).toBeVisible()
+    await expect(hero.getByText(/send a photo of your shop to start/i)).toHaveCount(0)
+    await expect(hero.getByRole('img', { name: /^visualisation: a small market street on a misty morning/i })).toBeVisible()
   })
 
   test('keeps the client history proof section on the landing page', async ({ page }) => {
@@ -82,7 +83,6 @@ test.describe('Home page', () => {
 
   test('keeps real work separate from generated visual direction', async ({ page }) => {
     await expect(page.getByRole('heading', { name: /finished shopfronts.*real jobs/i })).toBeVisible()
-    await expect(page.getByRole('img', { name: /ambuja cement/i })).toBeVisible()
     // The selected work changes with the gallery (068759d), so check that every
     // image in it is a documented project photo rather than naming particular ones.
     const workImages = page.locator('#selected-work').getByRole('img')
@@ -91,9 +91,13 @@ test.describe('Home page', () => {
     for (const alt of await workImages.evaluateAll(images => images.map(image => image.getAttribute('alt')))) {
       expect(galleryAlts.has(alt ?? ''), `${alt} is a gallery project photo`).toBe(true)
     }
-    // The homepage shows the workshop as photographed; no generated image is on it.
+    // The homepage shows the workshop as photographed. Its one generated image
+    // is the hero, labelled on the artwork; nothing below the hero is generated.
     await expect(page.getByText('The AD JEET workshop, Siliguri. Site photograph.')).toBeVisible()
-    await expect(page.getByText(/visualisation/i)).toHaveCount(0)
+    await expect(page.getByText(/visualisation/i)).toHaveCount(1)
+    await expect(page.locator('#hero-section').getByText('Visualisation', { exact: true })).toBeVisible()
+    const generated = await page.locator('main img').evaluateAll(images => images.filter(image => /^visualisation/i.test(image.getAttribute('alt') ?? '')).map(image => image.closest('section')?.id))
+    expect(new Set(generated)).toEqual(new Set(['hero-section']))
   })
 
   test('compares the two main sign choices and links the main trades', async ({ page }) => {

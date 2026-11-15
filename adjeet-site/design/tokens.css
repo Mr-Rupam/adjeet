@@ -29,6 +29,15 @@
   --surface-inverse: var(--night);
   --map-paper: #F6F0E3;
 
+  /* Daylight, fixed: the light theme's paper, ink and text cerulean, which
+     the dark theme does not redefine. The home hero uses them for its day
+     scene, so it keeps daylight colours while it cross-fades to night after
+     the theme has already switched. */
+  --day-paper: #F6F0E3;
+  --day-ink: #172229;
+  --day-ink-muted: #4F5655;
+  --day-signal-text: #006A93;
+
   /* Kept as aliases while the established route components use their old
      names. They resolve to the same brand system, never to a second palette. */
   --adjeet-blue: var(--ink);

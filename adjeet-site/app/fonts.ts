@@ -27,6 +27,21 @@ export const barlowCondensed = localFont({
   preload: true,
 })
 
+/**
+ * Outfit, the face of the approved company profile, sets the home page hero
+ * only: the headline, the line under it and the lettering on the lit board.
+ * One variable file (weights 100 to 900; the hero uses 400, 600 and 700), the
+ * Latin subset from Fontsource 5.3.0 (`@fontsource-variable/outfit`, not a
+ * dependency). Its licence is `fonts/Outfit-OFL.txt`. It is called from the
+ * home page's component, not the root layout, so only the home route preloads it.
+ */
+export const outfit = localFont({
+  src: [{ path: './fonts/Outfit-Variable-latin.woff2', weight: '100 900', style: 'normal' }],
+  variable: '--font-outfit',
+  display: 'swap',
+  preload: true,
+})
+
 export const hindSiliguri = localFont({
   src: [
     { path: './fonts/HindSiliguri-Regular.woff2', weight: '400', style: 'normal' },

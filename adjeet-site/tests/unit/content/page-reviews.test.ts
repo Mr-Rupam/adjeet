@@ -13,13 +13,18 @@ describe('page review dates', () => {
   // 15 November 2026 was a review of the whole site, privacy policy included.
   it('dates every page from the 15 November 2026 site review', () => {
     expect(SITE_REVIEWED).toBe('2026-11-15')
-    for (const path of ['/', '/about', '/contact', '/privacy', '/for-brands', '/services/flex-printing', '/areas/cooch-behar']) {
+    for (const path of ['/about', '/contact', '/privacy', '/for-brands', '/services/flex-printing', '/areas/cooch-behar']) {
       expect(reviewedOn(path), path).toBe('2026-11-15')
     }
   })
 
+  // The home hero changed on 16 November 2026 (the day and night visualisation).
+  it('dates the home page from its hero change', () => {
+    expect(reviewedOn('/')).toBe('2026-11-16')
+  })
+
   it('gives summaries the newest review on the site', () => {
-    expect(newestReview()).toBe('2026-11-15')
+    expect(newestReview()).toBe('2026-11-16')
   })
 
   it('prints the date the way the pages show it, on the same day in every time zone', () => {
