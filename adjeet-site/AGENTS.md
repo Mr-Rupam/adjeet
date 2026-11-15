@@ -15,15 +15,19 @@ AD-JEET is a marketing website for a North Bengal signage company. The entire pr
 | `MONGODB_URI` | Lead storage (primary) |
 | `RESEND_API_KEY` | Email notification on each lead |
 | `GOOGLE_*` | Google Sheets backup of leads |
-| `UPSTASH_*` | Rate limiting on `/api/lead` and `/api/chatbot`. The lead form still accepts enquiries if it is down; the chat does not (it fails closed and points to WhatsApp) |
+| `UPSTASH_*` | Rate limiting on `/api/lead` and `/api/chatbot`, keyed by hashes, never raw addresses or numbers. If it is down the lead form still stores enquiries and answers truthfully, but the paid owner notifications stop; the chat fails closed and points to WhatsApp |
+| `LEAD_DAILY_CAP` | Optional: enquiries across the site per UTC day before owner notifications stop (default 300). Enquiries past it are still stored |
+| `LEAD_NOTIFY_HOURLY_CAP`, `LEAD_NOTIFY_DAILY_CAP` | Optional: owner notifications per hour (default 20) and per UTC day (default 60), whatever the phone number. Defaults are in `lib/lead-limits.ts` |
 | `OPENAI_API_KEY` | AI chatbot responses |
-| `CHATBOT_DAILY_BUDGET` | Optional: chat replies across all visitors per UTC day (default 500) |
+| `CHATBOT_DAILY_BUDGET` | Optional: chat replies across all visitors per UTC day (default 200) |
+| `CHATBOT_ENABLED` | Optional: `false` switches the chat off; it answers with the WhatsApp message and calls nothing |
+| `CHATBOT_MODEL` | Optional: OpenAI model for chat replies (default `gpt-3.5-turbo`) |
 | `TURNSTILE_SECRET_KEY` | CAPTCHA verification (has dev test key fallback) |
 | `TWILIO_*` | WhatsApp notification to Rupam on each lead |
 
 ## Key Files
 
-- `app/api/lead/route.ts` is the lead form submission pipeline
+- `app/api/lead/route.ts` is the lead form submission pipeline. Its volume caps are in `lib/lead-limits.ts` and the origins both API routes accept in `lib/allowed-origins.ts` (localhost only outside production). Keep `app/(marketing)/privacy/page.tsx` true when either route changes what it collects or where it sends it
 - `app/api/chatbot/route.ts` is the chatbot response handler. Its input rules are in `lib/chatbot-input.ts` and its per-visitor and daily limits in `lib/chatbot-guard.ts`; both routes key their limiters through `lib/client-ip.ts` (an IPv6 visitor counts by /64)
 - `components/sections/LeadForm.tsx` is the lead form UI, on `/contact`, every service page, `/areas` and the town pages under it (through `components/areas/BriefForm.tsx`). It takes optional `defaultCity` / `defaultService` props to prefill, and still reads `?city=` from the URL when they are absent
 - `design/tokens.css` holds all design tokens (colours, spacing, type scale)

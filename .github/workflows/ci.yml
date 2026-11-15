@@ -62,7 +62,8 @@ jobs:
         working-directory: adjeet-site
 
       # The suite runs against a production build, so it checks what ships.
-      # No secrets are needed: every variable in lib/env.ts is optional, and the
+      # No secrets are needed: every server variable is read where it is used and
+      # a missing one is handled there (see AGENTS.md, Env Setup), and the
       # lead form specs stub the Turnstile widget and intercept /api/lead, so no
       # spec submits a real lead. The site key is Cloudflare's public
       # always-pass test key; without one a production build renders LeadForm's
