@@ -3,7 +3,8 @@ import sitemap from '@/app/sitemap'
 import { SERVICE_SLUGS } from '@/content/services'
 import { TOWNS, townPath } from '@/content/areas'
 import { LEGACY_REGIONAL_REDIRECTS } from '@/content/legacy-regional'
-import { getPhotosByService, photos } from '@/content/gallery'
+import { getPhotoById, getPhotosByService, photos } from '@/content/gallery'
+import { BRAND_PHOTO_IDS } from '@/content/for-brands'
 import { reviewedOn } from '@/content/page-reviews'
 import { siteConfig } from '@/lib/seo'
 
@@ -39,10 +40,14 @@ describe('sitemap', () => {
     expect(new Set(urls).size).toBe(urls.length)
     for (const url of urls) expect(new URL(url).origin).toBe(siteConfig.url)
   })
+  it('includes the page for brand teams, with the brand photographs it shows', () => {
+    const images = entryFor('/for-brands').images!
+    expect(images).toEqual(BRAND_PHOTO_IDS.map(id => siteConfig.url + getPhotoById(id).src))
+  })
   it('scales with the content inventory', () => {
-    expect(entries).toHaveLength(5 + SERVICE_SLUGS.length + 1 + TOWNS.filter(town => town.indexable).length)
-    // 18 today; scripts/search-audit.mjs asserts the same count against a build.
-    expect(entries).toHaveLength(18)
+    expect(entries).toHaveLength(5 + SERVICE_SLUGS.length + 1 + TOWNS.filter(town => town.indexable).length + 1)
+    // 19 today; scripts/search-audit.mjs asserts the same count against a build.
+    expect(entries).toHaveLength(19)
   })
   // The IndexNow job submits the pages whose lastmod moved, so it must be each
   // page's own review date, never the build or deployment date.

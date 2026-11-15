@@ -12,6 +12,7 @@ import { ProcessStory } from './ProcessStory'
 import { HomeMotion } from '@/components/motion/HomeMotion'
 import { ClientStreet } from '@/components/street/ClientStreet'
 import { CommissionCTA } from '@/components/street/CommissionCTA'
+import { BrandTeamsLink } from '@/components/sections/BrandTeamsLink'
 import { homeFaqs } from '@/content/home-faqs'
 import { getPhotoById } from '@/content/gallery'
 import { getServiceBySlug } from '@/content/services'
@@ -66,6 +67,7 @@ export function HomePageView() {
       </section>
       <ShopfrontExamples />
       <ClientStreet />
+      <BrandTeamsLink />
       <SignChoices />
       <ProcessStory />
       <section id="areas" className={styles.coverage} aria-labelledby="coverage-heading">

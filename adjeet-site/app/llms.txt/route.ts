@@ -3,7 +3,9 @@ import { COVERAGE_AREAS } from '@/lib/coverage'
 import { services } from '@/content/services'
 import { homeFaqs } from '@/content/home-faqs'
 import { TOWNS, townPath } from '@/content/areas'
-import { SITE_REVIEWED, formatReviewDate } from '@/content/page-reviews'
+import { formatReviewDate, newestReview } from '@/content/page-reviews'
+import { BRAND_TRADES, FOR_BRANDS_FAQS, FOR_BRANDS_PATH } from '@/content/for-brands'
+import { LANGUAGES_LINE } from '@/content/enquiry'
 import { COMPARED_BOARDS, COMPARISON_COLUMNS, COMPARISON_HEADING, COMPARISON_NOTE } from '@/content/sign-comparison'
 
 export const dynamic = 'force-static'
@@ -17,7 +19,8 @@ export function GET() {
     '',
     `> ${business.name} is a sign board, printing and outdoor advertising company in ${business.city}, West Bengal, India. Founded in ${business.foundingYear} by ${business.founder}. It designs, fabricates and installs signage from its own Siliguri workshop for businesses across North Bengal and Sikkim.`,
     '',
-    `Last reviewed: ${formatReviewDate(SITE_REVIEWED)}.`,
+    // The newest review date on the site, so this file never trails the pages.
+    `Last reviewed: ${formatReviewDate(newestReview())}.`,
     '',
     '## Business and contact',
     `- Name: ${business.name} (also written ADJEET or AD-JEET)`,
@@ -28,6 +31,7 @@ export function GET() {
     `- Workshop (main address): ${business.street}, ${business.city}, ${business.region} ${business.postalCode}, India`,
     `- Office: ${business.office}, ${business.city}, ${business.region} ${business.officePostalCode}, India`,
     `- Hours: ${business.hours}`,
+    `- Languages: ${LANGUAGES_LINE}`,
     `- Google Maps: ${business.mapsUrl}`,
     `- Founded: ${business.foundingYear}, by ${business.founder}`,
     `- Service areas: ${COVERAGE_AREAS.map(area => area.name).join(', ')}`,
@@ -44,6 +48,9 @@ export function GET() {
     `- [Areas we cover](${business.url}/areas): Every coverage place with its distance from the Siliguri workshop and how a job there is planned. Everything is made in Siliguri and installed on site.`,
     ...TOWNS.filter(town => town.indexable).map(town => `- [${town.name}](${business.url}${townPath(town)}): ${town.metaDescription}`),
     '',
+    '## For brands',
+    `- [Dealer boards and rollouts for brands](${business.url}${FOR_BRANDS_PATH}): For regional, zonal and trade marketing teams. ${BRAND_TRADES.map(trade => trade.title).join(', ')}, made at the ${business.city} workshop and fitted across North Bengal and Sikkim. Send one outlet list, with a frontage photo and a size for each outlet and artwork files named per outlet.`,
+    ...FOR_BRANDS_FAQS.flatMap(faq => [`### ${faq.q}`, faq.a, '']),
     '## Common questions',
     ...homeFaqs.flatMap(faq => [`### ${faq.q}`, faq.a, '']),
     '## Project evidence and enquiries',
