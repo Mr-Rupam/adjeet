@@ -1,132 +1,205 @@
 import type { ServiceSlug } from '@/content/services'
+import {
+  ALSO_SERVICES,
+  BRAND_TENURES,
+  COMPANIES_SERVED,
+  CREW_NETWORK,
+  GPS_PHOTO_LINE,
+  VEHICLES,
+  WORKSHOP,
+  yearsWith,
+} from '@/content/company-figures'
+import { COVERAGE_AREAS, FOUNDED_YEAR } from '@/lib/coverage'
 
 /**
- * /for-brands: for regional, zonal and trade marketing teams (approved by the
- * owner on 20 October 2026; SEO plan S5, S6).
+ * /for-brands: the credentials page for regional, zonal and trade marketing
+ * teams (rebuilt 16 November 2026 to the owner's brief: who trusts us, what
+ * we run, how big, how we report, how fast, what next).
  *
- * Recorded facts only. What AD JEET makes and where comes from
- * content/services.ts and lib/business.ts; how a rollout is sent in restates
- * the /areas guidance; brands are named only where content/gallery.ts holds
- * their photographs (tests/unit/app/for-brands-page.test.tsx checks it). The
- * process is written as what a brand team can ask for, never as past numbers.
- * No prices, reply times, site visits, capacities or client counts.
+ * Every figure is read from content/company-figures.ts or lib/coverage.ts and
+ * never typed here. Photographs are gallery records and their captions say only
+ * what content/gallery.ts records. Brands are named only where the gallery has
+ * their photographs or the client logo board carries their logo
+ * (tests/unit/app/for-brands-page.test.tsx checks both). No prices, reply
+ * times, site visits or client counts for today.
  */
 
 export const FOR_BRANDS_PATH = '/for-brands'
 
 export const FOR_BRANDS_PAGE = {
-  title: 'Outdoor Advertising Agency in Siliguri for Dealer Boards',
-  description: 'Dealer boards, in-shop branding, wall paintings, vehicle graphics and Puja gates for brands. Made in Siliguri, fitted across North Bengal and Sikkim.',
+  title: 'Advertising Agency for Brands in North Bengal & Sikkim',
+  description: 'Dealer boards, wall painting, in-shop branding, fleets and Puja gates for brands. Made in Siliguri, fitted across North Bengal and Sikkim.',
   path: FOR_BRANDS_PATH,
 }
 
 export const FOR_BRANDS_LEAD =
-  'Dealer boards, in-shop branding, wall painting, vehicle graphics and Puja gates for regional, zonal and trade marketing teams. Made at our Siliguri workshop, fitted across North Bengal and Sikkim.'
+  `Dealer boards, wall paintings, shop interiors, fleets and Puja gates since ${FOUNDED_YEAR}. Made at our own Siliguri workshop, put up by our own crews.`
 
-/** The message a brand team sends. They edit it before it goes. */
+/** The gold action: the company profile, sent on WhatsApp. */
+export const PROFILE_WHATSAPP_MESSAGE = 'Please send me the AD JEET company profile.'
+
+/** The quiet second action. The brand team edits it before it goes. */
 export const FOR_BRANDS_WHATSAPP_MESSAGE =
   'Hi AD JEET, I am on a brand or trade marketing team and want to send an outlet list for a rollout. Can we discuss it?'
 
-export const FOR_BRANDS_INTRO = [
-  'This page is for the people who brief outlet branding: regional and zonal marketing managers, trade marketing teams and the agencies that work for them. You hold a dealer list, a design kit from head office and a date to meet. AD JEET turns that list into boards, wall paintings and branded interiors, one outlet at a time.',
-  'AD JEET has worked from Siliguri since 1990. Boards, panels and graphics are made at our own workshop at Patiram Jote, then taken out and fitted where the dealer trades, and wall paintings are done on the wall itself. That reaches the plains and the Dooars, the hills, the southern districts down to Malda, and Sikkim. The workshop and the office are both in Siliguri, so the whole list is handled from one place.',
-]
+/** The opening mosaic: one brand job per trade, the first one preloaded. */
+export const MOSAIC_PHOTO_IDS = [
+  'star-cement-137',
+  'captain-tmt-bar-144',
+  'sel-tmt-058',
+  'toptech-tmt-040',
+  'supreme-pipe-085',
+] as const
 
-export interface BrandTrade {
-  title: string
-  body: string
-  links: { slug: ServiceSlug; label: string }[]
+/** Split "200+ companies since 1990" into the numeral and its words. */
+function splitFigure(text: string): { value: string; label: string } {
+  const [value, ...rest] = text.split(' ')
+  return { value, label: rest.join(' ') }
 }
 
-export const BRAND_TRADES: BrandTrade[] = [
+export interface Figure {
+  value: string
+  label: string
+}
+
+/** The lead figure, set largest. */
+export const LEAD_FIGURE: Figure = splitFigure(COMPANIES_SERVED)
+
+/** Years with a brand, counted from its start year. */
+export function tenureFigures(now: Date = new Date()): Figure[] {
+  return BRAND_TENURES.map(({ brand, since }) => ({ value: String(yearsWith(since, now)), label: `years with ${brand}` }))
+}
+
+/** The size of the operation, each as a numeral and a few words. */
+export const SCALE_FIGURES: Figure[] = [
+  { value: WORKSHOP.area.replace(/ sq ft$/, ''), label: `sq ft workshop at ${WORKSHOP.place}` },
+  { value: String(CREW_NETWORK.size), label: CREW_NETWORK.line.replace(` ${CREW_NETWORK.size}`, '') },
+  { value: VEHICLES.range, label: VEHICLES.line.replace(`${VEHICLES.range} `, '') },
+  { value: String(COVERAGE_AREAS.length), label: 'areas covered' },
+]
+
+export interface LedgerBrand {
+  name: string
+  logo: string
+  /** The logo file's own pixel size, so it can be set to one optical height. */
+  width: number
+  height: number
+}
+
+/**
+ * The client logo board as a ledger, one row per sector. The same names and
+ * files as the homepage board (components/street/ClientStreet.tsx).
+ */
+export const BRAND_LEDGER: { sector: string; brands: LedgerBrand[] }[] = [
   {
-    title: 'Dealer boards',
-    body: 'The board over a dealer or retailer counter, as printed flex, a glow sign board or an ACP panel with 3D letters. Each one carries your brand with that dealer\'s own name and phone number.',
-    links: [
-      { slug: 'flex-printing', label: 'Flex boards' },
-      { slug: 'glow-sign-boards', label: 'Glow sign boards' },
-      { slug: 'acp-led-signage', label: 'ACP and 3D LED letters' },
+    sector: 'Cement',
+    brands: [
+      { name: 'Star Cement', logo: '/client-logos/star-cement.webp', width: 280, height: 280 },
+      { name: 'Adani Cement', logo: '/client-logos/adani-cement.webp', width: 462, height: 174 },
+      { name: 'Dalmia Cement', logo: '/client-logos/dalmia-cement.png', width: 400, height: 225 },
     ],
   },
   {
-    title: 'In-shop branding',
-    body: 'Wall graphics, counter fascias, backlit panels and display headers inside the outlet, made to the brand manual your head office supplies.',
-    links: [{ slug: 'in-shop-branding', label: 'In-shop branding' }],
+    sector: 'Steel and TMT',
+    brands: [
+      { name: 'Shyam Steel', logo: '/client-logos/shyam-steel.webp', width: 220, height: 97 },
+      { name: 'SRMB', logo: '/client-logos/srmb.webp', width: 105, height: 32 },
+      { name: 'Captain TMT Bar', logo: '/client-logos/captain-tmt-bar.webp', width: 190, height: 36 },
+      { name: 'Toptech TMT', logo: '/client-logos/toptech-tmt.webp', width: 660, height: 185 },
+      { name: 'SEL TMT', logo: '/client-logos/sel-tmt.webp', width: 150, height: 62 },
+      { name: 'SD Lion TMT', logo: '/client-logos/sd-lion-tmt.webp', width: 517, height: 280 },
+      { name: 'Supershakti', logo: '/client-logos/supershakti.webp', width: 146, height: 49 },
+      { name: 'Elegant TMT Bar', logo: '/client-logos/elegant-tmt-bar.webp', width: 150, height: 71 },
+    ],
   },
   {
-    title: 'Wall painting advertising',
-    body: 'Your message painted by hand on walls along highways and in village markets, where a frame or a light cannot be fixed.',
-    links: [{ slug: 'wall-painting', label: 'Wall painting advertising' }],
+    sector: 'Pipes',
+    brands: [
+      { name: 'Supreme Pipe', logo: '/client-logos/supreme-pipe.webp', width: 660, height: 213 },
+      { name: 'Astral Pipe', logo: '/client-logos/astral-pipe.webp', width: 150, height: 52 },
+    ],
   },
   {
-    title: 'Vehicle graphics',
-    body: 'Printed wraps and cut-vinyl lettering for delivery vans, trucks, transit mixers, autos and e-rickshaws that carry the brand on the road.',
-    links: [{ slug: 'vehicle-branding', label: 'Vehicle branding' }],
+    sector: 'Electricals',
+    brands: [
+      { name: 'Havells', logo: '/client-logos/havells.webp', width: 424, height: 280 },
+      { name: 'Anchor', logo: '/client-logos/anchor.webp', width: 536, height: 155 },
+    ],
   },
   {
-    title: 'Puja gate branding',
-    body: 'Sponsor gates, arches and pillars for Durga Puja and for dealer events. Your brand and the committee agree the sponsorship; AD JEET builds and fits the structure.',
-    links: [{ slug: 'events-and-puja', label: 'Puja and event branding' }],
+    sector: 'Telecom and DTH',
+    brands: [
+      { name: 'Airtel', logo: '/client-logos/airtel.webp', width: 660, height: 271 },
+      { name: 'Jio', logo: '/client-logos/jio.webp', width: 83, height: 83 },
+      { name: 'Vivo', logo: '/client-logos/vivo.webp', width: 660, height: 173 },
+      { name: 'Dish TV', logo: '/client-logos/dish-tv.webp', width: 660, height: 240 },
+    ],
+  },
+  {
+    sector: 'Consumer and hospitality',
+    brands: [
+      { name: 'Emami', logo: '/client-logos/emami.png', width: 612, height: 567 },
+      { name: 'OYO', logo: '/client-logos/oyo.webp', width: 660, height: 232 },
+    ],
   },
 ]
+
+export const LEDGER_NOTE = 'Selected history includes assignments through regional agencies.'
+
+export interface BrandTrade {
+  title: string
+  photoId: string
+  link: { slug: ServiceSlug; label: string }
+}
+
+/** The five trades with a photographed brand job each. */
+export const BRAND_TRADES: BrandTrade[] = [
+  { title: 'Dealer boards', photoId: 'supreme-pipe-107', link: { slug: 'glow-sign-boards', label: 'Glow sign boards' } },
+  { title: 'In-shop branding', photoId: 'dish-tv-142', link: { slug: 'in-shop-branding', label: 'In-shop branding' } },
+  { title: 'Wall painting campaigns', photoId: 'sd-lion-tmt-140', link: { slug: 'wall-painting', label: 'Wall painting' } },
+  { title: 'Vehicle and fleet branding', photoId: 'srmb-143', link: { slug: 'vehicle-branding', label: 'Vehicle branding' } },
+  { title: 'Puja gates and events', photoId: 'anchor-by-panasonic-111', link: { slug: 'events-and-puja', label: 'Puja and event branding' } },
+]
+
+/** Work with no photographs on the site yet: named, one honest line each, never a borrowed picture. */
+export const TYPE_ONLY_TRADES: { title: (typeof ALSO_SERVICES)[number]; line: string }[] = [
+  { title: ALSO_SERVICES[0], line: 'Tell us the towns and the sizes you need.' },
+  { title: ALSO_SERVICES[1], line: 'Branding for your stall or your dealer meet.' },
+  { title: ALSO_SERVICES[2], line: 'Ask about a road show through your districts.' },
+]
+
+/** A real Star Cement job beside the Malda story, captioned with its own place. */
+export const SPEED_PHOTO_ID = 'star-cement-134'
 
 export const ROLLOUT_STEPS = [
-  {
-    title: 'One outlet list',
-    body: 'Put every outlet in a single list: the dealer\'s name, the address or a location pin, and a number to call on the fitting day.',
-  },
-  {
-    title: 'A frontage photo and a size for each',
-    body: 'Photograph each frontage straight on and add the width and height of the space. Where nobody has measured yet, the photo still lets the job be planned.',
-  },
-  {
-    title: 'Artwork named per outlet',
-    body: 'Name every artwork file after its outlet, so no dealer ends up with another shop\'s name or phone number on the board.',
-  },
-  {
-    title: 'Made in Siliguri, fitted on site',
-    body: 'Printing and fabrication happen at the workshop, and wall paintings on the wall itself. The finished work then goes out outlet by outlet, on dates agreed with your team.',
-  },
+  'One outlet list',
+  'A frontage photo and a size for each',
+  'Artwork named per outlet',
+  'Made in Siliguri, fitted on site',
 ]
 
-/** What a brand team can ask for. Offers, not records of past jobs. */
-export const ON_REQUEST = [
-  'Photo reports for each outlet, on request',
-  'Vendor documents for your empanelment, on request',
-  'Staged fitting when outlets cannot all be reached on one trip',
-  'Artwork set to each dealer\'s name from your master design',
-]
+export const VENDOR_LINE = 'Vendor documents for your empanelment, on request.'
 
-/** Named on the page; each has photographs in content/gallery.ts. */
-export const BRANDS_PHOTOGRAPHED = ['Captain TMT Bar', 'Supreme Pipe', 'Star Cement', 'Toptech TMT', 'Havells', 'ACC']
+/** Every gallery photo on the page, for the sitemap. */
+export const BRAND_PHOTO_IDS: string[] = [...MOSAIC_PHOTO_IDS, ...BRAND_TRADES.map(trade => trade.photoId), SPEED_PHOTO_ID]
 
-/** Brand work shown on the page, one or two per trade, by gallery id. */
-export const BRAND_PHOTO_IDS = [
-  'captain-tmt-bar-144',
-  'supreme-pipe-107',
-  'supreme-pipe-110',
-  'toptech-tmt-040',
-  'star-cement-135',
-  'star-cement-137',
-  'star-cement-132',
-  'supreme-pipe-085',
-]
+const areaNames = COVERAGE_AREAS.map(area => area.name)
 
 export const FOR_BRANDS_FAQS = [
   {
-    q: 'Can AD JEET brand all our dealer outlets in North Bengal?',
-    a: 'Send the outlet list with a frontage photo and a size for each outlet. AD JEET makes the boards at its Siliguri workshop and plans the fitting outlet by outlet, across North Bengal and Sikkim. How the work is staged depends on the places and the dates, and the quote sets that out.',
-  },
-  {
     q: 'Can you work from our head office design kit?',
-    a: 'Yes. Send the brand manual or the approved kit along with the outlet list. Each board or interior is planned to that kit with the dealer\'s own name and number, and shared with your team for approval before anything is made.',
+    a: 'Yes. Send the brand manual or kit with the outlet list. Each board carries the dealer\'s own name, and your team approves it before it is made.',
   },
   {
-    q: 'Can we get a photo of each outlet once it is fitted?',
-    a: 'Yes. Ask for photo reports when you send the list, and a photograph of each finished outlet comes back with the job. Your team can then check the work without travelling to every site.',
+    q: 'How do we check the work without visiting every outlet?',
+    a: `${GPS_PHOTO_LINE} The photos come back to your team.`,
   },
   {
     q: 'Can you share vendor documents for our empanelment?',
-    a: 'Yes, vendor documents are available on request. When you first write, say which documents your company\'s vendor process asks for, and they can be shared along with the quote.',
+    a: 'Yes. Name the documents your vendor process asks for, and they come with the quote.',
+  },
+  {
+    q: 'Which places do you cover?',
+    a: `${areaNames.slice(0, -1).join(', ')} and ${areaNames.at(-1)}. All made in Siliguri, then fitted on site.`,
   },
 ]
