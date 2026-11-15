@@ -1,12 +1,12 @@
 import { business } from '@/lib/business'
 import { buildPageMetadata } from '@/lib/seo'
 import { LeadForm } from '@/components/sections/LeadForm'
+import { ContactMap } from '@/components/contact/ContactMap'
 import { buildBreadcrumbJsonLd, buildWebPageJsonLd, jsonLdString } from '@/lib/seo'
 import { PageMasthead } from '@/components/street/PageMasthead'
 import { QuoteCTA } from '@/components/ui/QuoteCTA'
 import { WhatsAppLink } from '@/components/ui/WhatsAppLink'
 import { ArrowUpRight } from 'lucide-react'
-import { ContactMap } from '@/components/contact/ContactMap'
 
 const PAGE = {
   title: "Contact Our Siliguri Team for a Signage Quote",
