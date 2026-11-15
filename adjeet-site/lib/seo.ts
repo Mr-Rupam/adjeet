@@ -230,7 +230,7 @@ export function buildFounderJsonLd() {
     name: business.founder,
     jobTitle: 'Founder',
     worksFor: { '@id': BUSINESS_ID },
-    description: `${business.founder} founded ${siteConfig.name} in ${business.foundingYear}, at 20, starting in a small room in his own flat. He went on to build the company's own signage workshop in ${business.city}.`,
+    description: `${business.founder} founded ${siteConfig.name} in ${business.foundingYear}, at 20, starting in a small room in his own flat. He went on to build the company's own workshop in ${business.city}.`,
     url: `${siteConfig.url}/about`,
   }
 }

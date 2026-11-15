@@ -5,6 +5,7 @@ import { WhatsAppLink } from '@/components/ui/WhatsAppLink'
 import { SERVICE_SLUGS } from '@/content/services'
 import { SERVICE_LINK_LABELS } from '@/content/site-links'
 import { LANGUAGES_LINE } from '@/content/enquiry'
+import { ALSO_SERVICES } from '@/content/company-figures'
 
 const WHATSAPP_DISPLAY = business.phoneDisplay
 const WHATSAPP_HREF = `https://wa.me/${business.phone.replace('+', '')}`
@@ -19,7 +20,7 @@ export function Footer() {
         <div className="col-span-2 md:col-span-1">
           <BrandLogo className="w-[200px] max-w-full" />
           <p className="mt-4 max-w-[38ch] text-sm leading-relaxed text-night-ink-muted">
-            Signage, print, and outdoor work made in Siliguri for businesses across North Bengal and Sikkim.
+            An advertising agency in Siliguri: outdoor advertising, signage and brand rollouts across North Bengal and Sikkim, made at our own workshop.
           </p>
           <p className="spec mt-3 text-signal-hot md:mt-8">Since 1990</p>
         </div>
@@ -61,6 +62,7 @@ export function Footer() {
               <Link key={trade.href} href={trade.href} className="footer-link">{trade.label}</Link>
             ))}
           </nav>
+          <p className="mt-3 text-sm leading-relaxed text-night-ink-muted">Also: {ALSO_SERVICES.join(', ').toLowerCase()}.</p>
         </div>
       </div>
 

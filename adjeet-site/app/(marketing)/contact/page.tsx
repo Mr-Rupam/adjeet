@@ -12,8 +12,8 @@ import areaStyles from '@/components/areas/Areas.module.css'
 import styles from './Contact.module.css'
 
 const PAGE = {
-  title: "Contact Our Siliguri Team for a Signage Quote",
-  description: "Call or WhatsApp +91 98320 11524 for signage and outdoor advertising in North Bengal. AD JEET office: Platinum Square, Station Feeder Road, Siliguri.",
+  title: "Contact AD JEET, Advertising Agency in Siliguri",
+  description: "Call or WhatsApp +91 98320 11524 for advertising and signage in North Bengal. AD JEET office: Platinum Square, Station Feeder Road, Siliguri.",
   path: "/contact",
 }
 export const metadata = buildPageMetadata(PAGE)
@@ -29,7 +29,7 @@ export default function ContactPage() {
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLdString(webPage) }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLdString(breadcrumb) }} />
-      <PageMasthead compact title={<>Your signage project. <br /><span className="text-signal">Let&apos;s talk.</span></>} lead="Contact AD JEET in Siliguri for signage, printing and outdoor branding across North Bengal. Start with a site photo or a complete project brief.">
+      <PageMasthead compact title={<>Your next project. <br /><span className="text-signal">Let&apos;s talk.</span></>} lead="Contact AD JEET, an advertising agency in Siliguri, for signage, outdoor advertising and brand rollouts across North Bengal and Sikkim. Start with a site photo or an outlet list.">
         <QuoteCTA source="contact" label="WhatsApp your project" tone="yellow" />
         <a href="#send-brief" className="action-quiet">Or send a project brief <ArrowDown size={17} aria-hidden="true" /></a>
       </PageMasthead>

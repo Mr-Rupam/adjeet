@@ -96,7 +96,7 @@ describe('buildFounderJsonLd', () => {
 
   it('says only what the About page says: 1990, at 20, from one room to a Siliguri workshop', () => {
     expect(buildFounderJsonLd().description).toBe(
-      "Ranjit Das founded AD JEET in 1990, at 20, starting in a small room in his own flat. He went on to build the company's own signage workshop in Siliguri.",
+      "Ranjit Das founded AD JEET in 1990, at 20, starting in a small room in his own flat. He went on to build the company's own workshop in Siliguri.",
     )
   })
 })

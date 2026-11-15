@@ -138,7 +138,7 @@ test.describe('Home page', () => {
   })
 
   test('keeps one direct enquiry close', async ({ page }) => {
-    const enquiry = page.getByRole('heading', { name: /what are we putting your name on/i })
+    const enquiry = page.getByRole('heading', { name: /one shopfront, or every outlet you have/i })
     await enquiry.scrollIntoViewIfNeeded()
     const section = page.locator('section').filter({ has: enquiry })
     const link = section.getByRole('link', { name: /whatsapp your project/i })
