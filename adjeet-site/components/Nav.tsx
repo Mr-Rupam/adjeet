@@ -9,26 +9,29 @@ import { MobileNav } from '@/components/MobileNav'
 import { QuoteCTA } from '@/components/ui/QuoteCTA'
 import { MAIN_TRADE_SLUGS, SERVICE_LINK_LABELS } from '@/content/site-links'
 
-// "Areas" fits at 1024 px without wrapping: about 280 px of the header row
-// was free there on 15 November 2026, and the link takes about 62 px with its gap.
 const NAV_LINKS = [
+  { href: '/', label: 'Home' },
   { href: '/services', label: 'Services' },
+  { href: '/for-brands', label: 'For Brands' },
   { href: '/areas', label: 'Areas' },
   { href: '/portfolio', label: 'Portfolio' },
   { href: '/about', label: 'About' },
   { href: '/contact', label: 'Contact' },
 ]
 
-/** The phone menu: the same pages, plus the main trades and brand teams. */
+/** The phone menu: the same pages, plus the main trades under Services. */
 const MOBILE_LINKS = [
+  { href: '/', label: 'Home' },
   {
     href: '/services',
     label: 'Services',
     children: MAIN_TRADE_SLUGS.map(slug => ({ href: `/services/${slug}`, label: SERVICE_LINK_LABELS[slug] })),
   },
+  { href: '/for-brands', label: 'For Brands' },
   { href: '/areas', label: 'Areas we cover' },
-  { href: '/for-brands', label: 'For brands' },
-  ...NAV_LINKS.slice(2),
+  { href: '/portfolio', label: 'Portfolio' },
+  { href: '/about', label: 'About' },
+  { href: '/contact', label: 'Contact' },
 ]
 
 /**
@@ -89,7 +92,8 @@ export function Nav() {
 
         <ul className="m-0 hidden list-none items-center gap-7 p-0 lg:flex">
           {NAV_LINKS.map(({ href, label }) => {
-            const isActive = pathname === href || pathname.startsWith(`${href}/`)
+            // Home matches only the exact route, or it would be current everywhere.
+            const isActive = href === '/' ? pathname === '/' : pathname === href || pathname.startsWith(`${href}/`)
             return (
               <li key={href}>
                 <Link

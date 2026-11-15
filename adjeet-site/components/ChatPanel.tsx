@@ -180,6 +180,7 @@ export function ChatPanel({ isOpen, onClose, triggerRef }: {
       data-visible={shown}
       role="dialog"
       aria-label="AD JEET Chat Assistant"
+      data-clarity-mask="true"
       aria-hidden={!shown}
       inert={!shown}
     >

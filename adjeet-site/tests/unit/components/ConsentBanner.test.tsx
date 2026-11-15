@@ -35,6 +35,14 @@ describe('ConsentBanner', () => {
     expect(storage['adjeet-consent']).toBe('declined')
   })
 
+  it('names both tools that run before a choice, in one short sentence', () => {
+    render(<ConsentBanner />)
+    const text = screen.getByRole('dialog').textContent ?? ''
+    expect(text).toContain('Google Analytics')
+    expect(text).toContain('Microsoft Clarity')
+    expect(text).toMatch(/without cookies/)
+  })
+
   it('announces both answers so analytics can switch cookies on or GA4 off', () => {
     const events: string[] = []
     const listener = (event: Event) => events.push((event as CustomEvent).detail)

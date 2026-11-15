@@ -59,7 +59,7 @@ export function ConsentBanner() {
   function respond(value: 'accepted' | 'declined') {
     localStorage.setItem(CONSENT_KEY, value)
     setVisible(false)
-    // Analytics listens for both answers: accept turns on cookies, decline switches GA4 off.
+    // Analytics and Clarity listen for both answers: accept turns on cookies, decline switches both off.
     if (typeof window !== 'undefined') {
       window.dispatchEvent(new CustomEvent('adjeet:consent', { detail: value }))
     }
@@ -80,8 +80,8 @@ export function ConsentBanner() {
       data-expanded={expanded ? 'true' : undefined}
     >
       <p id="consent-message" className="consent-banner__text">
-        We use Google Analytics to understand how visitors use our site. Until you choose, it runs
-        without cookies or identifiers. Accept to allow analytics cookies, or decline to switch analytics off.{' '}
+        We use Google Analytics and Microsoft Clarity to understand how visitors use our site. Until you
+        choose, they run without cookies. Accept to allow analytics cookies, or decline to switch them off.{' '}
         {/* No prefetch: the banner shows on every first visit, and few readers follow this link. */}
         <Link href="/privacy" prefetch={false} className="underline hover:text-ink">Privacy Policy</Link>
       </p>
