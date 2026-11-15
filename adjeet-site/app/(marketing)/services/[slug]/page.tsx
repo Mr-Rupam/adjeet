@@ -21,6 +21,9 @@ import { ServicePageTracker } from '@/components/PageViewTracker'
 import { Accordion } from '@/components/ui/Accordion'
 import { CommissionCTA } from '@/components/street/CommissionCTA'
 import { WhatsAppLink } from '@/components/ui/WhatsAppLink'
+import { WhatsAppIcon } from '@/components/ui/WhatsAppIcon'
+import { FasciaCaption } from '@/components/street/FasciaCaption'
+import { ArrowDown } from 'lucide-react'
 import { getPhotosByService, getServiceCover } from '@/content/gallery'
 import { formatReviewDate, reviewedOn } from '@/content/page-reviews'
 import { COMPARED_SLUGS } from '@/content/sign-comparison'
@@ -64,9 +67,6 @@ export default async function ServiceDetailPage({
   if (!service) notFound()
 
   const waUrl = defaultWhatsAppUrl({ service: service.name })
-  const serviceIndex = SERVICE_SLUGS.indexOf(slug as ServiceSlug) + 1
-  const indexStr = String(serviceIndex).padStart(2, '0')
-  const totalStr = String(SERVICE_SLUGS.length).padStart(2, '0')
   const related = service.relatedServices
     .map(s => services.find(x => x.slug === s))
     .filter((s): s is NonNullable<typeof s> => Boolean(s))
@@ -112,27 +112,31 @@ export default async function ServiceDetailPage({
         dangerouslySetInnerHTML={{ __html: jsonLdString(breadcrumbSchema) }}
       />
 
-      <section className="service-detail-hero field-container">
-        <nav aria-label="Breadcrumb" className="service-detail-breadcrumb">
-          <Link href="/">Home</Link><span aria-hidden="true">/</span><Link href="/services">Services</Link><span aria-hidden="true">/</span><span>{service.name}</span>
-        </nav>
-        <div className="service-detail-grid">
-          <div>
-            <p className="spec text-signal">Service {indexStr} / {totalStr}</p>
-            <h1>{service.h1 ?? service.name} <span className="service-location">in Siliguri &amp; North Bengal</span></h1>
-            <p className="spec text-signal mb-5">{service.tagline}</p>
-            <p className="service-description">{service.description}</p>
-            <div className="mt-7 flex flex-wrap items-center gap-5">
-              <WhatsAppLink href={waUrl} source={'service:' + service.slug} className="cta cta--md">Quote this job →</WhatsAppLink>
-              <Link href="/services" className="field-link">All trades ↗</Link>
+      <section className="service-detail-hero">
+        <div className="field-container">
+          <nav aria-label="Breadcrumb" className="page-breadcrumb service-detail-breadcrumb">
+            <Link href="/">Home</Link><span aria-hidden="true">/</span><Link href="/services">Services</Link><span aria-hidden="true">/</span><span aria-current="page">{service.name}</span>
+          </nav>
+          {/* Heading, a one-line lead, then the photograph, so a phone sees the work in its first screen. */}
+          <div className="service-detail-grid">
+            <div className="service-detail-head">
+              <h1>{service.h1 ?? service.name} <span className="service-location">in Siliguri &amp; North Bengal</span></h1>
+              <p className="service-lead">{service.tagline}.</p>
+            </div>
+            <figure className="service-detail-figure">
+              <div className="service-detail-media">
+                <Image src={workPhoto ? workPhoto.src : '/images/home/materials.webp'} alt={workPhoto ? workPhoto.alt : 'Material visualization for ' + service.name} fill preload sizes="(max-width: 767px) 100vw, (max-width: 1280px) 45vw, 640px" />
+              </div>
+              {workPhoto ? <FasciaCaption photo={workPhoto} /> : <figcaption className="visual-label">Material visualization, not a project photograph</figcaption>}
+            </figure>
+            <div className="service-detail-body">
+              <div className="service-detail-actions">
+                <WhatsAppLink href={waUrl} source={'service:' + service.slug} className="cta cta--md cta--yellow"><WhatsAppIcon />Quote this job</WhatsAppLink>
+                <a href="#send-brief" className="action-quiet">Or send the brief <ArrowDown size={17} aria-hidden="true" /></a>
+              </div>
+              <p className="service-description">{service.description}</p>
             </div>
           </div>
-          <figure>
-            <div className="service-detail-media">
-              <Image src={workPhoto ? workPhoto.src : '/images/home/materials.webp'} alt={workPhoto ? workPhoto.alt : 'Material visualization for ' + service.name} fill preload sizes="(max-width: 767px) 100vw, 48vw" />
-            </div>
-            <figcaption className="service-detail-caption">{workPhoto ? 'Documented project photograph' : 'Material visualization, not a project photograph'}</figcaption>
-          </figure>
         </div>
       </section>
 
@@ -141,7 +145,7 @@ export default async function ServiceDetailPage({
         <h2 id="service-answer-heading">{service.question}</h2>
         <p>{service.answer}</p>
         <p>Also known as: {service.alternateNames.join(', ')}.</p>
-        <p className="spec">Page reviewed <time dateTime={reviewed}>{formatReviewDate(reviewed)}</time></p>
+        <p className={areaStyles.reviewed}>Page reviewed <time dateTime={reviewed}>{formatReviewDate(reviewed)}</time></p>
       </section>
 
       {/*
@@ -152,13 +156,12 @@ export default async function ServiceDetailPage({
       {siliguri && (
         <section className={areaStyles.section} aria-labelledby="service-siliguri-heading">
           <div className="field-container">
-            <p className="spec text-signal">Siliguri brief</p>
             <h2 id="service-siliguri-heading" className={areaStyles.heading}>Planning {siliguri.work} in Siliguri</h2>
             <div className={areaStyles.brief}>
               <p className={areaStyles.briefText}>{siliguri.brief}</p>
               <div className={detailStyles.sendColumn}>
                 <div className={areaStyles.sendUs}>
-                  <p className="spec text-signal">Send us</p>
+                  <h3 className={areaStyles.listHeading}>Send us</h3>
                   <ul>{siliguri.sendUs.map(item => <li key={item}>{item}</li>)}</ul>
                   <p className={areaStyles.sendUsNote}>Also for nearby {SILIGURI_NEARBY.slice(0, -1).join(', ')} and {SILIGURI_NEARBY.at(-1)}.</p>
                 </div>
@@ -183,10 +186,9 @@ export default async function ServiceDetailPage({
       {/* Spec sheet */}
       <section className="service-specs border-b border-rule" aria-label="Service specifications">
         <div className="mx-auto max-w-content px-5 py-12 md:px-8 md:py-16">
-          <p className="spec mb-8 text-signal">Spec sheet: {service.name}</p>
           <div className="grid gap-6 md:grid-cols-3 lg:gap-8">
             <div className="plate p-6">
-              <h2 className="spec m-0 text-ink-subtle">Materials</h2>
+              <h2 className="service-spec-title">Materials</h2>
               <ul className="m-0 mt-4 list-none space-y-2 p-0">
                 {service.materials.map(m => (
                   <li key={m} className="border-b border-rule pb-2 text-sm text-ink last:border-0">
@@ -196,7 +198,7 @@ export default async function ServiceDetailPage({
               </ul>
             </div>
             <div className="plate p-6">
-              <h2 className="spec m-0 text-ink-subtle">Sizes / Formats</h2>
+              <h2 className="service-spec-title">Sizes / Formats</h2>
               <ul className="m-0 mt-4 list-none space-y-2 p-0">
                 {service.sizes.map(s => (
                   <li key={s} className="border-b border-rule pb-2 text-sm text-ink last:border-0">
@@ -206,9 +208,9 @@ export default async function ServiceDetailPage({
               </ul>
             </div>
             <div className="plate-signal p-6">
-              <h2 className="spec m-0 text-ink-subtle">Turnaround</h2>
+              <h2 className="service-spec-title">Turnaround</h2>
               <p className="display m-0 mt-4 text-4xl text-ink">{service.turnaround}</p>
-              <p className="spec m-0 mt-2 text-ink-subtle">Planning estimate. Confirm your schedule before ordering.</p>
+              <p className="m-0 mt-3 text-sm text-ink-muted">Planning estimate. Confirm your schedule before ordering.</p>
             </div>
           </div>
         </div>
@@ -242,7 +244,6 @@ export default async function ServiceDetailPage({
       <section className={areaStyles.section} aria-labelledby="service-outside-heading">
         <div className={`field-container ${areaStyles.outside}`}>
           <div>
-            <p className="spec text-signal">Beyond the workshop town</p>
             <h2 id="service-outside-heading" className={areaStyles.heading}>Working outside Siliguri?</h2>
             <p className={areaStyles.intro}>Everything is made at the Siliguri workshop and installed on site across North Bengal and Sikkim. The areas page has the distance to every place we cover and what helps us plan a job there.</p>
             <ul className={areaStyles.outsideLinks} aria-label="Town pages">
@@ -264,7 +265,7 @@ export default async function ServiceDetailPage({
       {related.length > 0 && (
         <section className="border-b border-rule bg-paper">
           <div className="mx-auto max-w-content px-5 py-12 md:px-8 md:py-16">
-            <p className="spec mb-6 text-signal">Often ordered together</p>
+            <h2 className={`${areaStyles.heading} mb-6`}>Often ordered together</h2>
             <ol className="m-0 list-none border-t-2 border-ink p-0">
               {related.map(r => (
                 <li key={r.slug} className="border-b-2 border-ink">

@@ -4,6 +4,8 @@ import Link from 'next/link'
 import { ArrowDown, ArrowUpRight } from 'lucide-react'
 import { buildBreadcrumbJsonLd, buildFounderJsonLd, buildWebPageJsonLd, jsonLdString } from '@/lib/seo'
 import { CommissionCTA } from '@/components/street/CommissionCTA'
+import { FasciaCaption } from '@/components/street/FasciaCaption'
+import { QuoteCTA } from '@/components/ui/QuoteCTA'
 import { FOUNDED_YEAR } from '@/lib/coverage'
 import { CoverageMapProvider } from '@/components/coverage/CoverageMapContext'
 import { CoveragePlaceList } from '@/components/coverage/CoveragePlaceList'
@@ -49,7 +51,10 @@ export default function AboutPage() {
         <div className={styles.introCopy}>
           <h1 id="about-heading" data-site-reveal="title">AD JEET. <br />A Siliguri workshop, <br /><span>since {FOUNDED_YEAR}.</span></h1>
           <p>Ranjit Das was 20 when he started AD JEET. More than 35 years later, the space has changed. The belief in doing good work has stayed.</p>
-          <a href="#our-story" className={styles.storyLink}>Follow our story <ArrowDown size={18} aria-hidden="true" /></a>
+          <div className={styles.introActions}>
+            <QuoteCTA source="about" label="WhatsApp your project" tone="yellow" />
+            <a href="#our-story" className={styles.storyLink}>Follow our story <ArrowDown size={18} aria-hidden="true" /></a>
+          </div>
         </div>
         <figure className={styles.workshop} data-site-reveal="media">
           <div><HeroScene label="Visualisation of the AD JEET workshop in Siliguri" eager /></div>
@@ -97,7 +102,7 @@ export default function AboutPage() {
           {CLIENT_WORK.map(photo => (
             <li key={photo.id} data-about-client-work>
               <span className={styles.clientWorkImage}><Image src={photo.src} alt={photo.alt} fill sizes="(max-width: 767px) 50vw, 25vw" className="object-cover" /></span>
-              <span className={styles.clientWorkName}>{photo.client}</span>
+              <FasciaCaption photo={photo} as="span" size="sm" />
             </li>
           ))}
         </ul>

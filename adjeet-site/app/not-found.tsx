@@ -26,7 +26,6 @@ export const metadata: Metadata = {
 export default function NotFound() {
   return (
     <PageMasthead
-      meta={['A wrong turn', 'Let’s get you back on track']}
       title={<>Page not found.</>}
       lead="This address doesn’t lead to a page. Explore our work, browse the services or head back home."
     >

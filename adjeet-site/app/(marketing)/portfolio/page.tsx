@@ -3,7 +3,10 @@ import { connection } from 'next/server'
 import { photos, getFeaturedPhotos } from '@/content/gallery'
 import { PortfolioContent } from './PortfolioContent'
 import { buildBreadcrumbJsonLd, buildWebPageJsonLd, jsonLdString } from '@/lib/seo'
+import Link from 'next/link'
+import { ArrowUpRight } from 'lucide-react'
 import { PageMasthead } from '@/components/street/PageMasthead'
+import { QuoteCTA } from '@/components/ui/QuoteCTA'
 import { CommissionCTA } from '@/components/street/CommissionCTA'
 
 const PAGE = {
@@ -35,15 +38,17 @@ export default async function PortfolioPage() {
       />
 
       <PageMasthead
-        meta={['Selected work', photos.length + ' project photographs', 'Made in North Bengal']}
         title={
           <>
             Signage &amp; branding. <br />
             <span className="glow-signal text-signal">Our work in North Bengal.</span>
           </>
         }
-        lead="Shopfronts, walls, vehicles and puja gates, photographed on site. Open any photo to ask us about a sign like it on WhatsApp."
-      />
+        lead={`${photos.length} project photographs: shopfronts, walls, vehicles and puja gates, photographed on site. Open any photo to ask us about a sign like it on WhatsApp.`}
+      >
+        <QuoteCTA source="portfolio" label="WhatsApp your project" tone="yellow" />
+        <Link href="/contact" className="action-quiet">Or send a project brief <ArrowUpRight size={17} aria-hidden="true" /></Link>
+      </PageMasthead>
 
       <PortfolioContent />
 

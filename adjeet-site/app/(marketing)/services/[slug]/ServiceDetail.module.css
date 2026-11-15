@@ -15,10 +15,10 @@
 .bengaliHeading {
   margin: 0;
   font-family: inherit;
-  font-size: 15px;
+  font-size: 19px;
   font-weight: 600;
-  line-height: 1.5;
-  color: var(--signal-text);
+  line-height: 1.4;
+  color: var(--ink);
 }
 
 .why {

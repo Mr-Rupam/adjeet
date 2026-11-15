@@ -24,7 +24,6 @@ export function BriefForm({ heading, note, whatsAppUrl, source, defaultCity, def
     <section className={styles.formSection} aria-labelledby="brief-form-heading" id="send-brief">
       <div className={`field-container ${styles.formGrid}`}>
         <div>
-          <p className="spec text-signal">Send the brief</p>
           <h2 id="brief-form-heading" className={styles.heading}>{heading}</h2>
           <p className={styles.formNote}>{note}</p>
           <WhatsAppLink href={whatsAppUrl} source={source} className="field-link">Prefer WhatsApp? Send it there ↗</WhatsAppLink>
