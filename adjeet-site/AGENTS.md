@@ -6,7 +6,7 @@ This version has breaking changes: APIs, conventions, and file structure may all
 
 ## Project Overview
 
-AD-JEET is a marketing website for a North Bengal signage company. The entire product goal is one conversion: visitor fills the lead form or clicks WhatsApp.
+AD JEET is a marketing website for an advertising agency in Siliguri (since 1990): outdoor advertising, signage and brand rollouts across North Bengal and Sikkim. The entire product goal is one conversion: visitor fills the lead form or clicks WhatsApp.
 
 ## Service Map
 

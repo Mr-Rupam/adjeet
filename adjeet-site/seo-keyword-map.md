@@ -26,7 +26,7 @@ Current URLs, 15 November 2026. The 27 regional pages (`/<service>-in-<city>`) a
 
 | Priority | Search terms | Page |
 | --- | --- | --- |
-| 1 | sign board makers in Siliguri, who makes sign boards in Siliguri, signage company Siliguri, sign board shop Siliguri | Home `/` |
+| 1 | advertising agency in Siliguri, outdoor advertising agency Siliguri, sign board makers in Siliguri, who makes sign boards in Siliguri, sign board shop Siliguri | Home `/` (title leads with "Advertising Agency in Siliguri"; the description still names sign boards; the FAQ "Who makes sign boards in Siliguri?" stays) |
 | 1 | glow sign board Siliguri, LED sign board Siliguri, glow sign board price, shop name board | `/services/glow-sign-boards` |
 | 1 | ACP sign board Siliguri, 3D LED letter board, acrylic 3D letters, ACP elevation | `/services/acp-led-signage` |
 | 1 | flex printing Siliguri, flex banner printing, hoarding printing Siliguri, star flex | `/services/flex-printing` |
@@ -48,7 +48,7 @@ Not targeted: "hoarding advertising Siliguri" (media-space rental, sold by Media
 
 ## What changed on the site
 
-- Titles and descriptions use the buyer phrase: "Sign Board Makers & Outdoor Advertising in Siliguri", "Glow Sign Board & LED Sign Board Makers in Siliguri", and so on. Source: `content/service-search.ts`.
+- Since 16 November 2026 the agency term leads on the home page, About and For Brands: "Advertising Agency in Siliguri: Sign Boards & Outdoor Ads", "About AD JEET, an Advertising Agency in Siliguri". Service pages keep the buyer phrase for the product: "Glow Sign Board & LED Sign Board Makers in Siliguri", and so on. Source: `content/service-search.ts`.
 - **AEO:** every service page opens with a question and a short, quotable answer, plus its local alternate names. New buyer questions on price basis, glow sign vs ACP vs 3D letters, frontlit vs blockout flex, hoarding flex, e-rickshaw branding and Puja gates. The home FAQ adds "What is AD JEET?", sign board cost, which board suits a shop, and lead times. All answers are visible in HTML and match the FAQ markup.
 - **Regional guides:** titles use the singular searched phrase ("Glow Sign Board in Jalpaiguri"). Each guide names nearby towns (Mal Bazar, Dinhata, Kurseong, Rangpo and others), and opens with a local "Can AD JEET handle ... in <city>?" answer. Two Gangtok guides added (42 sitemap URLs).
 - **GEO:** the LocalBusiness entity now carries `alternateName` (ADJEET, AD-JEET), `knowsAbout` and an `OfferCatalog` linking every service. Service entities carry `alternateName` and the quotable answer. `llms.txt` now has a one-line entity definition, services with definitions and alternate names, regional guides, and the home FAQ.

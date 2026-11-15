@@ -6,11 +6,11 @@ brand
 
 ## Users
 
-North Bengal shop owners, local businesses, and regional brand or agency teams looking for signage, printing, outdoor branding, and installation. Most visitors use phones. Design for someone checking the business on the street or between shop-floor tasks, often with one hand and a variable mobile connection.
+Two audiences, one voice: regional, zonal and trade marketing teams of brands, who need many outlets and walls done right and reported, and local businesses, who need one shopfront done well. Lead with the agency; never lose the shop owner. Most visitors use phones. Design for someone checking the business on the street or between shop-floor tasks, often with one hand and a variable mobile connection.
 
 ## Product Purpose
 
-Turn interest into a useful enquiry on WhatsApp or through the contact form. Establish the company as a capable, established local maker through its identity, work, and clear offer. Preserve the existing contact destinations, lead pipeline, and factual coverage sources.
+Turn interest into a useful enquiry on WhatsApp or through the contact form. Establish AD JEET as what it is: an advertising agency in Siliguri, at work since 1990, doing outdoor advertising, signage and brand rollouts across North Bengal and Sikkim, made at its own workshop and put up by its own crews. One agency from artwork to installation; brands stay for years. Figures come only from `content/company-figures.ts` (see DESIGN.md, "Content rules"). Preserve the existing contact destinations, lead pipeline, and factual coverage sources.
 
 ## Brand Personality
 
