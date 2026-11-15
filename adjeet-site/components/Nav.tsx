@@ -58,7 +58,8 @@ export function Nav() {
 
         <div className="flex shrink-0 items-center gap-2">
           <span className="hidden md:block">
-            <QuoteCTA source="nav" size="sm" label="Start a project" />
+            {/* Outlined, so the page's own gold WhatsApp button stays the one filled action on screen. */}
+            <QuoteCTA source="nav" size="sm" label="Start a project" className="cta--quiet" />
           </span>
           <ThemeToggle />
           <MobileNav links={MOBILE_LINKS} />

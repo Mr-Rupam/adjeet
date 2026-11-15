@@ -35,11 +35,13 @@ const heroSlide = (id: string, phoneFocus?: string): HeroSlide => {
     phoneFocus,
   }
 }
+// phoneFocus pans each photo sideways on phones so the brand's name on the
+// board reads in the clear band above the headline (checked at 390 and 360px).
 const HERO_SLIDES: HeroSlide[] = [
   heroSlide('ambuja-cement-126'),
-  heroSlide('astral-pipe-129'),
-  heroSlide('sd-lion-tmt-139'),
-  heroSlide('acc-124'),
+  heroSlide('astral-pipe-129', '12%'),
+  heroSlide('sd-lion-tmt-139', '34%'),
+  heroSlide('acc-124', '64%'),
 ]
 
 export function HomePageView() {

@@ -14,7 +14,7 @@ import styles from './Home.module.css'
  * named only where the photo's record names one.
  */
 const EXAMPLES = [
-  { id: 'tanyamakeovers-154', title: 'Lit studio lettering', detail: 'Siliguri', sizes: '(max-width: 767px) 100vw, (max-width: 1320px) 92vw, 1240px' },
+  { id: 'tanyamakeovers-154', title: 'Lit studio lettering', detail: 'Siliguri', sizes: '(max-width: 767px) 100vw, (max-width: 1023px) 92vw, 830px' },
   { id: 'acc-125', title: 'ACP shopfront fascia', detail: 'Dalkhola', sizes: '(max-width: 767px) 100vw, 40vw' },
   { id: 'anchor-by-panasonic-112', title: 'Jai Maa Anjani Electricals', detail: 'Shop board', sizes: '(max-width: 767px) 100vw, 56vw' },
 ] as const
