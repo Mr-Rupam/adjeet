@@ -14,19 +14,14 @@
  * To record a change to one page, add its path to `PAGE_REVIEWED`. After a
  * review of the whole site, move `SITE_REVIEWED` and clear the overrides.
  */
-// 15 November 2026: a review of the whole site. Every page's text changed: the
-// footer (all ten services, the areas and for-brands links, the languages
-// line) is on every page, the new /for-brands page went up, the FAQs, service
-// copy, titles and descriptions were rewritten, and the privacy policy was
-// redone on the same day.
-export const SITE_REVIEWED = '2026-11-15'
+// 16 November 2026: a review of the whole site's words. Every page's text
+// changed: the site now speaks as an advertising agency, the footer on every
+// page names the added services, the job times, titles, descriptions, FAQs
+// and service leads were rewritten, and the home hero changed on the same day.
+export const SITE_REVIEWED = '2026-11-16'
 
 /** Paths reviewed on a different day from the rest of the site, e.g. `'/services/flex-printing': '2026-10-02'`. */
-const PAGE_REVIEWED: Record<string, string> = {
-  // The home hero changed: a labelled day and night visualisation replaced the photo
-  // slideshow, and the lead lost its second sentence.
-  '/': '2026-11-16',
-}
+const PAGE_REVIEWED: Record<string, string> = {}
 
 export function reviewedOn(path: string): string {
   return PAGE_REVIEWED[path] ?? SITE_REVIEWED
