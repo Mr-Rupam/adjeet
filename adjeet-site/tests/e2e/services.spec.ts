@@ -48,9 +48,9 @@ test.describe('/services/[slug] detail', () => {
     const firstQuestion = page.locator('summary').filter({ hasText: /how long do the led strips last/i })
     await expect(firstQuestion).toBeVisible()
     await firstQuestion.click()
-    await expect(page.getByText(/LED life depends on the selected modules/)).toBeVisible()
+    await expect(page.getByText(/LED life depends on the LED modules/)).toBeVisible()
     await firstQuestion.click()
-    await expect(page.getByText(/LED life depends on the selected modules/)).not.toBeVisible()
+    await expect(page.getByText(/LED life depends on the LED modules/)).not.toBeVisible()
   })
 
   test('WhatsApp CTA href starts with wa.me', async ({ page }) => {

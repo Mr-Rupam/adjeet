@@ -49,7 +49,10 @@
 }
 .whyLink:hover { color: var(--signal-text); }
 
-@media (min-width: 1024px) {
-  /* Under the English list, in the brief's second column. */
-  .bengali { grid-column: 2; }
+/* The English send-us list and, where there is one, the Bengali list under it. */
+.sendColumn {
+  display: grid;
+  gap: 20px;
+  align-content: start;
+  min-width: 0;
 }

@@ -156,20 +156,22 @@ export default async function ServiceDetailPage({
             <h2 id="service-siliguri-heading" className={areaStyles.heading}>Planning {siliguri.work} in Siliguri</h2>
             <div className={areaStyles.brief}>
               <p className={areaStyles.briefText}>{siliguri.brief}</p>
-              <div className={areaStyles.sendUs}>
-                <p className="spec text-signal">Send us</p>
-                <ul>{siliguri.sendUs.map(item => <li key={item}>{item}</li>)}</ul>
-                <p className={areaStyles.sendUsNote}>Also for nearby {SILIGURI_NEARBY.slice(0, -1).join(', ')} and {SILIGURI_NEARBY.at(-1)}.</p>
-              </div>
-              {/* The same list in Bengali. Its font stack is the system Bengali
-                  font, because the self-hosted Hind Siliguri subset is Latin only. */}
-              {siliguriBn && (
-                <div lang="bn" className={`${areaStyles.sendUs} ${detailStyles.bengali}`}>
-                  <h3 className={detailStyles.bengaliHeading}>{siliguriBn.heading}</h3>
-                  <ul>{siliguriBn.sendUs.map(item => <li key={item}>{item}</li>)}</ul>
-                  <p className={areaStyles.sendUsNote}>{siliguriBn.note}</p>
+              <div className={detailStyles.sendColumn}>
+                <div className={areaStyles.sendUs}>
+                  <p className="spec text-signal">Send us</p>
+                  <ul>{siliguri.sendUs.map(item => <li key={item}>{item}</li>)}</ul>
+                  <p className={areaStyles.sendUsNote}>Also for nearby {SILIGURI_NEARBY.slice(0, -1).join(', ')} and {SILIGURI_NEARBY.at(-1)}.</p>
                 </div>
-              )}
+                {/* The same list in Bengali. Its font stack is the system Bengali
+                    font, because the self-hosted Hind Siliguri subset is Latin only. */}
+                {siliguriBn && (
+                  <div lang="bn" className={`${areaStyles.sendUs} ${detailStyles.bengali}`}>
+                    <h3 className={detailStyles.bengaliHeading}>{siliguriBn.heading}</h3>
+                    <ul>{siliguriBn.sendUs.map(item => <li key={item}>{item}</li>)}</ul>
+                    <p className={areaStyles.sendUsNote}>{siliguriBn.note}</p>
+                  </div>
+                )}
+              </div>
             </div>
           </div>
         </section>

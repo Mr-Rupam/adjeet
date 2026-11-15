@@ -8,14 +8,17 @@ import { MobileNav } from '@/components/MobileNav'
 import { QuoteCTA } from '@/components/ui/QuoteCTA'
 import { MAIN_TRADE_SLUGS, SERVICE_LINK_LABELS } from '@/content/site-links'
 
+// "Areas" fits at 1024 px without wrapping: about 280 px of the header row
+// was free there on 15 November 2026, and the link takes about 62 px with its gap.
 const NAV_LINKS = [
   { href: '/services', label: 'Services' },
+  { href: '/areas', label: 'Areas' },
   { href: '/portfolio', label: 'Portfolio' },
   { href: '/about', label: 'About' },
   { href: '/contact', label: 'Contact' },
 ]
 
-/** The phone menu: the same pages, plus the main trades, the areas and brand teams. */
+/** The phone menu: the same pages, plus the main trades and brand teams. */
 const MOBILE_LINKS = [
   {
     href: '/services',
@@ -24,7 +27,7 @@ const MOBILE_LINKS = [
   },
   { href: '/areas', label: 'Areas we cover' },
   { href: '/for-brands', label: 'For brands' },
-  ...NAV_LINKS.slice(1),
+  ...NAV_LINKS.slice(2),
 ]
 
 export function Nav() {
