@@ -3,7 +3,7 @@
  *
  * The route's `maxDuration` is 10 seconds, and work scheduled with `after()`
  * runs inside that same budget. The visitor gets an answer by `response`;
- * after it, the per-phone cap check gets `limiter` and the owner
+ * after it, the notification caps check gets `limiter` and the owner
  * notifications get `notify`, leaving a margin for a cold start. A unit test
  * keeps `response + limiter + notify + 1000` within it.
  */

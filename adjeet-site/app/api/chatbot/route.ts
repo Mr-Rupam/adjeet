@@ -5,18 +5,16 @@ import { ADJEET_SYSTEM_PROMPT } from '@/lib/chatbot-prompt'
 import { CHAT_LIMITS, parseChatMessages } from '@/lib/chatbot-input'
 import { CHATBOT_DEADLINES, checkChatAllowance } from '@/lib/chatbot-guard'
 import { clientIp, rateKey } from '@/lib/client-ip'
+import { allowedOrigins } from '@/lib/allowed-origins'
 import { bounded } from '@/lib/lead-deadline'
 import { BodyTooLarge, readJsonBody } from '@/lib/request-body'
 
 export const maxDuration = 30
 
-const ALLOWED_ORIGINS = [
-  'https://adjeet.in',
-  'https://www.adjeet.in',
-  'https://adjeet.vercel.app',
-  'https://www.adjeet.vercel.app',
-  'http://localhost:3000',
-]
+const ALLOWED_ORIGINS = allowedOrigins()
+
+/** The OpenAI model unless CHATBOT_MODEL names another. */
+const DEFAULT_MODEL = 'gpt-3.5-turbo'
 
 // Every refusal points at WhatsApp, which needs none of this machinery.
 const WHATSAPP = `Please reach us on WhatsApp at ${business.phoneDisplay}.`
@@ -49,6 +47,12 @@ export async function POST(req: NextRequest) {
   const parsed = parseChatMessages(body)
   if (!parsed.ok) return NextResponse.json({ error: parsed.error }, { status: 400 })
 
+  // Server kill switch: CHATBOT_ENABLED=false answers every chat with the
+  // WhatsApp fallback, spending nothing on OpenAI or the limiter.
+  if (process.env.CHATBOT_ENABLED?.trim().toLowerCase() === 'false') {
+    return NextResponse.json({ error: UNAVAILABLE }, { status: 503 })
+  }
+
   if (!process.env.OPENAI_API_KEY) {
     console.error(`[chatbot:${reqId}] OPENAI_API_KEY missing, chatbot disabled`)
     return NextResponse.json({ error: UNAVAILABLE }, { status: 503 })
@@ -69,7 +73,7 @@ export async function POST(req: NextRequest) {
 
   try {
     const response = await bounded(signal => ai.chat.completions.create({
-      model: 'gpt-3.5-turbo',
+      model: process.env.CHATBOT_MODEL?.trim() || DEFAULT_MODEL,
       messages: [
         { role: 'system', content: ADJEET_SYSTEM_PROMPT },
         ...parsed.messages,

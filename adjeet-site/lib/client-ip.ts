@@ -1,3 +1,4 @@
+import { createHash } from 'node:crypto'
 import { isIPv4, isIPv6 } from 'node:net'
 
 /** An IP address with any brackets and zone id removed, or null when it is not one. */
@@ -43,6 +44,15 @@ export function rateKey(raw: string): string | null {
   const mapped = groups.slice(0, 5).every(group => group === 0) && groups[5] === 0xffff
   if (mapped) return `${groups[6] >> 8}.${groups[6] & 255}.${groups[7] >> 8}.${groups[7] & 255}`
   return `${groups.slice(0, 4).map(group => group.toString(16).padStart(4, '0')).join(':')}::/64`
+}
+
+/**
+ * What a rate limiter stores in Redis for a `rateKey`: its SHA-256 digest, so
+ * the database never holds a visitor's address. The same key always gives
+ * the same digest, so counting still works.
+ */
+export function limiterKey(key: string): string {
+  return createHash('sha256').update(`adjeet-limiter:${key}`).digest('hex')
 }
 
 /**

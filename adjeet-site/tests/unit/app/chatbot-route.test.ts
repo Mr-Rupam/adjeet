@@ -44,6 +44,8 @@ beforeEach(() => {
   vi.stubEnv('KV_REST_API_URL', '')
   vi.stubEnv('KV_REST_API_TOKEN', '')
   vi.stubEnv('CHATBOT_DAILY_BUDGET', '')
+  vi.stubEnv('CHATBOT_MODEL', '')
+  vi.stubEnv('CHATBOT_ENABLED', '')
   fakes.limit.mockResolvedValue({ success: true })
   fakes.create.mockResolvedValue(reply())
   for (const method of ['log', 'info', 'warn', 'error'] as const) vi.spyOn(console, method).mockImplementation(() => {})
@@ -73,13 +75,21 @@ describe('/api/chatbot, when everything works', () => {
 
   it('counts the visitor, then the whole site for the day', async () => {
     await post(question)
-    expect(fakes.limit.mock.calls).toEqual([['chatbot', '203.0.113.7'], ['chatbot-day', 'all-visitors']])
+    expect(fakes.limit.mock.calls.map(([prefix]) => prefix)).toEqual(['chatbot', 'chatbot-day'])
+    expect(fakes.limit.mock.calls[1][1]).toBe('all-visitors')
   })
 
-  it('uses a daily budget and an hourly share, with the library fallback off', async () => {
+  it('keeps only a hash of the visitor address in Redis', async () => {
+    const { limiterKey } = await import('@/lib/client-ip')
+    await post(question)
+    expect(fakes.limit.mock.calls[0][1]).toBe(limiterKey('203.0.113.7'))
+    expect(JSON.stringify(fakes.limit.mock.calls)).not.toContain('203.0.113')
+  })
+
+  it('uses a daily budget of 200 and an hourly share, with the library fallback off', async () => {
     await post(question)
     expect(fakes.windows).toContainEqual({ kind: 'sliding', tokens: 20, window: '1 h' })
-    expect(fakes.windows).toContainEqual({ kind: 'fixed', tokens: 500, window: '1 d' })
+    expect(fakes.windows).toContainEqual({ kind: 'fixed', tokens: 200, window: '1 d' })
     expect(fakes.windows.filter(w => w.kind.startsWith('config:')).map(w => w.kind)).toEqual([
       'config:chatbot:timeout=0:analytics=false',
       'config:chatbot-day:timeout=0:analytics=false',
@@ -95,14 +105,24 @@ describe('/api/chatbot, when everything works', () => {
   it.each(['0', '-5', '1.5', 'abc'])('ignores an unusable CHATBOT_DAILY_BUDGET (%s)', async value => {
     vi.stubEnv('CHATBOT_DAILY_BUDGET', value)
     await post(question)
-    expect(fakes.windows).toContainEqual({ kind: 'fixed', tokens: 500, window: '1 d' })
+    expect(fakes.windows).toContainEqual({ kind: 'fixed', tokens: 200, window: '1 d' })
   })
 
   it('counts every address in one IPv6 /64 as one visitor', async () => {
+    const { limiterKey } = await import('@/lib/client-ip')
     await post(question, { 'x-forwarded-for': '2401:4900:1c2a:5b3d:1:2:3:4' })
     await post(question, { 'x-forwarded-for': '2401:4900:1c2a:5b3d:ffff:eeee:dddd:cccc' })
     const visitorKeys = fakes.limit.mock.calls.filter(([prefix]) => prefix === 'chatbot').map(([, key]) => key)
-    expect(visitorKeys).toEqual(['2401:4900:1c2a:5b3d::/64', '2401:4900:1c2a:5b3d::/64'])
+    const key = limiterKey('2401:4900:1c2a:5b3d::/64')
+    expect(visitorKeys).toEqual([key, key])
+  })
+
+  it('uses the model named in CHATBOT_MODEL, and gpt-3.5-turbo when it is unset', async () => {
+    await post(question)
+    expect(fakes.create.mock.calls[0][0].model).toBe('gpt-3.5-turbo')
+    vi.stubEnv('CHATBOT_MODEL', 'some-other-model')
+    await post(question)
+    expect(fakes.create.mock.calls[1][0].model).toBe('some-other-model')
   })
 
   it('sends the model only the system prompt and the visitor and assistant turns, with just role and content', async () => {
@@ -300,5 +320,20 @@ describe('/api/chatbot when OpenAI fails', () => {
     const response = await post(question)
     expect(response.status).toBe(200)
     expect((await response.json()).content).toContain(WHATSAPP)
+  })
+})
+
+describe('/api/chatbot kill switch', () => {
+  it('with CHATBOT_ENABLED=false, points to WhatsApp without counting or calling OpenAI', async () => {
+    vi.stubEnv('CHATBOT_ENABLED', 'false')
+    await expectFriendly(await post(question), 503)
+    expect(fakes.create).not.toHaveBeenCalled()
+    expect(fakes.limit).not.toHaveBeenCalled()
+  })
+
+  it.each(['', 'true', '1'])('answers as usual when CHATBOT_ENABLED is %j', async value => {
+    vi.stubEnv('CHATBOT_ENABLED', value)
+    expect((await post(question)).status).toBe(200)
+    expect(fakes.create).toHaveBeenCalledTimes(1)
   })
 })

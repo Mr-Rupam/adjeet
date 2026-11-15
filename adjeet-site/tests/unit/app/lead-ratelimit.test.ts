@@ -7,6 +7,9 @@ vi.mock('@upstash/ratelimit', () => {
     static slidingWindow() {
       return {}
     }
+    static fixedWindow() {
+      return {}
+    }
     async limit() {
       return { success: false }
     }

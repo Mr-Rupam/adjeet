@@ -1,3 +1,4 @@
+import { limiterKey } from '@/lib/client-ip'
 import { bounded } from '@/lib/lead-deadline'
 
 /**
@@ -15,8 +16,12 @@ import { bounded } from '@/lib/lead-deadline'
 export const CHATBOT_LIMITS = {
   /** Requests one visitor may make in an hour. */
   perVisitorPerHour: 20,
-  /** Requests across all visitors in one UTC day unless CHATBOT_DAILY_BUDGET says otherwise. */
-  dailyBudget: 500,
+  /**
+   * Requests across all visitors in one UTC day unless CHATBOT_DAILY_BUDGET
+   * says otherwise. One sender can spend it and switch the chat off for the
+   * day, which is acceptable because the fallback is WhatsApp.
+   */
+  dailyBudget: 200,
 } as const
 
 export const CHATBOT_DEADLINES = {
@@ -80,7 +85,8 @@ export async function checkChatAllowance(visitorKey: string): Promise<ChatAllowa
         console.error('[chatbot] Upstash is not configured, so the chat is switched off')
         return 'unavailable'
       }
-      if (!(await configured.perVisitor.limit(visitorKey)).success) return 'visitor-limit'
+      // Redis keeps a hash of the visitor key, never the address.
+      if (!(await configured.perVisitor.limit(limiterKey(visitorKey))).success) return 'visitor-limit'
       if (!(await configured.daily.limit('all-visitors')).success) return 'daily-budget'
       return 'allowed'
     }, CHATBOT_DEADLINES.limiter)

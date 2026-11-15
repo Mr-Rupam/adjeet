@@ -1,6 +1,6 @@
 // @vitest-environment node
 import { describe, expect, it } from 'vitest'
-import { clientIp, rateKey } from '@/lib/client-ip'
+import { clientIp, limiterKey, rateKey } from '@/lib/client-ip'
 
 describe('rateKey', () => {
   it('keeps an IPv4 address whole', () => {
@@ -77,5 +77,15 @@ describe('clientIp', () => {
   it('is null when the request names no usable address', () => {
     expect(clientIp(headers({}))).toBeNull()
     expect(clientIp(headers({ 'x-forwarded-for': 'unknown' }))).toBeNull()
+  })
+})
+
+describe('limiterKey', () => {
+  it('is a stable SHA-256 hex digest that never contains the key itself', () => {
+    const key = limiterKey('203.0.113.7')
+    expect(key).toMatch(/^[0-9a-f]{64}$/)
+    expect(key).toBe(limiterKey('203.0.113.7'))
+    expect(key).not.toBe(limiterKey('203.0.113.8'))
+    expect(limiterKey('2401:4900:1c2a:5b3d::/64')).not.toContain('2401')
   })
 })
