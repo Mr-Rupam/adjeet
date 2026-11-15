@@ -107,7 +107,8 @@ test('small screens keep controls reachable and drawer focus contained', async (
       await page.keyboard.press('Shift+Tab')
       await expect(dialog.getByRole('link', { name: 'AD JEET home' })).toBeFocused()
       await page.keyboard.press('Shift+Tab')
-      await expect(dialog.getByRole('link', { name: 'Talk on WhatsApp' })).toBeFocused()
+      // The call link sits beside WhatsApp and is the drawer's last stop.
+      await expect(dialog.getByRole('link', { name: /^Call / })).toBeFocused()
       await page.keyboard.press('Escape')
       await expect(trigger).toBeFocused()
     }

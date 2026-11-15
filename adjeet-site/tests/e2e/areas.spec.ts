@@ -74,12 +74,18 @@ test('a town page below its quality gate is noindex, follow; the others are inde
   }
 })
 
-test('the footer links the four main trades and the areas page', async ({ page }) => {
+test('the footer links every service, the areas page and the brand page', async ({ page }) => {
   await page.goto('/about')
   const footer = page.getByRole('contentinfo')
-  await expect(footer.getByRole('navigation', { name: 'Footer navigation' }).getByRole('link', { name: 'Areas we cover', exact: true })).toHaveAttribute('href', '/areas')
-  const trades = footer.getByRole('navigation', { name: 'Main trades' }).getByRole('link')
-  await expect(trades).toHaveText(['Glow sign boards', 'ACP and 3D LED letters', 'Flex printing', 'Vehicle branding'])
+  const pages = footer.getByRole('navigation', { name: 'Footer navigation' })
+  await expect(pages.getByRole('link', { name: 'Areas we cover', exact: true })).toHaveAttribute('href', '/areas')
+  await expect(pages.getByRole('link', { name: 'For brands', exact: true })).toHaveAttribute('href', '/for-brands')
+  const trades = footer.getByRole('navigation', { name: 'All services' }).getByRole('link')
+  await expect(trades).toHaveText([
+    'Glow sign boards', 'ACP and 3D LED letters', 'Flex printing', 'Vehicle branding', 'Wall painting advertising',
+    'F-pole sign boards', 'In-shop branding', 'Puja and event branding', 'One way vision film', 'POP displays and standees',
+  ])
+  await expect(footer.getByText('Write or speak to us in English, Bengali or Hindi.')).toBeVisible()
 })
 
 for (const route of ['/areas', '/areas/cooch-behar', '/areas/gangtok', '/services/acp-led-signage']) {

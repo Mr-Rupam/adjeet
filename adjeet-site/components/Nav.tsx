@@ -6,12 +6,25 @@ import { BrandLogo } from '@/components/BrandLogo'
 import { ThemeToggle } from '@/components/ui/ThemeToggle'
 import { MobileNav } from '@/components/MobileNav'
 import { QuoteCTA } from '@/components/ui/QuoteCTA'
+import { MAIN_TRADE_SLUGS, SERVICE_LINK_LABELS } from '@/content/site-links'
 
 const NAV_LINKS = [
   { href: '/services', label: 'Services' },
   { href: '/portfolio', label: 'Portfolio' },
   { href: '/about', label: 'About' },
   { href: '/contact', label: 'Contact' },
+]
+
+/** The phone menu: the same pages, plus the main trades, the areas and brand teams. */
+const MOBILE_LINKS = [
+  {
+    href: '/services',
+    label: 'Services',
+    children: MAIN_TRADE_SLUGS.map(slug => ({ href: `/services/${slug}`, label: SERVICE_LINK_LABELS[slug] })),
+  },
+  { href: '/areas', label: 'Areas we cover' },
+  { href: '/for-brands', label: 'For brands' },
+  ...NAV_LINKS.slice(1),
 ]
 
 export function Nav() {
@@ -45,7 +58,7 @@ export function Nav() {
             <QuoteCTA source="nav" size="sm" label="Start a project" />
           </span>
           <ThemeToggle />
-          <MobileNav links={NAV_LINKS} />
+          <MobileNav links={MOBILE_LINKS} />
         </div>
       </nav>
     </header>

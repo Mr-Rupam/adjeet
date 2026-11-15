@@ -34,12 +34,28 @@ describe('MobileNav', () => {
     expect(trigger).toHaveFocus()
   })
 
+  it('lists child links under their parent and offers a call beside WhatsApp', () => {
+    const withTrades = [
+      { href: '/services', label: 'Services', children: [{ href: '/services/glow-sign-boards', label: 'Glow sign boards' }] },
+      { href: '/for-brands', label: 'For brands' },
+    ]
+    render(<MobileNav links={withTrades} />)
+    fireEvent.click(screen.getByRole('button', { name: 'Open navigation menu' }))
+    const drawer = within(screen.getByRole('dialog'))
+    const trades = within(drawer.getByRole('list', { name: 'Services' }))
+    expect(trades.getByRole('link', { name: 'Glow sign boards' })).toHaveAttribute('href', '/services/glow-sign-boards')
+    expect(drawer.getByRole('link', { name: 'For brands' })).toHaveAttribute('href', '/for-brands')
+    expect(drawer.getByRole('link', { name: 'Call +91 98320 11524' })).toHaveAttribute('href', 'tel:+919832011524')
+    fireEvent.click(trades.getByRole('link', { name: 'Glow sign boards' }))
+    expect(screen.queryByRole('dialog')).not.toBeInTheDocument()
+  })
+
   it('keeps forward and backward keyboard focus inside the open menu', () => {
     render(<MobileNav links={links} />)
     fireEvent.click(screen.getByRole('button', { name: 'Open navigation menu' }))
     const drawer = within(screen.getByRole('dialog'))
     const first = drawer.getByRole('link', { name: 'AD JEET home' })
-    const last = drawer.getByRole('link', { name: 'Start a project' })
+    const last = drawer.getByRole('link', { name: 'Call +91 98320 11524' })
     last.focus()
     fireEvent.keyDown(document, { key: 'Tab' })
     expect(first).toHaveFocus()

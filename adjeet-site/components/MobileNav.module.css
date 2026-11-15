@@ -1,0 +1,45 @@
+/*
+ * Additions to the phone menu (15 November 2026): the main trades under
+ * Services and a call action beside WhatsApp. The drawer itself is styled in
+ * app/globals.css.
+ */
+.group { display: contents; }
+
+/* The trades, small and two to a row, under the Services row. */
+.children {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0 16px;
+  margin: 0;
+  padding: 6px 0 10px;
+  list-style: none;
+  border-bottom: 1px solid var(--rule);
+}
+
+.childLink {
+  display: flex;
+  min-height: 44px;
+  align-items: center;
+  font-size: 15px;
+  font-weight: 500;
+  line-height: 1.25;
+  color: var(--ink-muted);
+}
+.childLink:hover,
+.childLink[aria-current='page'] { color: var(--signal-text); }
+
+.actions {
+  display: flex;
+  gap: 10px;
+}
+
+.actions .whatsapp { flex: 1 1 auto; justify-content: center; }
+
+.actions .call {
+  flex: 0 0 auto;
+  justify-content: center;
+  gap: 8px;
+  border: 1px solid color-mix(in srgb, var(--ink) 30%, transparent);
+  background: transparent;
+  color: var(--ink);
+}
