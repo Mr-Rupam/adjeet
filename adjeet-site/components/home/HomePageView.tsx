@@ -40,7 +40,7 @@ const heroSlide = (id: string, phoneFocus?: string): HeroSlide => {
 const HERO_SLIDES: HeroSlide[] = [
   heroSlide('ambuja-cement-126'),
   heroSlide('astral-pipe-129', '12%'),
-  heroSlide('sd-lion-tmt-139', '34%'),
+  heroSlide('sd-lion-tmt-139', '44%'),
   heroSlide('acc-124', '64%'),
 ]
 
