@@ -18,7 +18,7 @@ test.describe('/services overview', () => {
     const serviceLinks = page.locator('#services a[href^="/services/"]')
     await expect(serviceLinks).toHaveCount(10)
     // First service tagline visible in expanded mode
-    await expect(page.getByText('Illuminate your brand 24/7')).toBeVisible()
+    await expect(page.getByText('Lit name boards for shops, clinics and dealer outlets')).toBeVisible()
   })
 })
 

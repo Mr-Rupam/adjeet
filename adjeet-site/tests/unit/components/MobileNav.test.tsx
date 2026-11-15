@@ -37,17 +37,27 @@ describe('MobileNav', () => {
   it('lists child links under their parent and offers a call beside WhatsApp', () => {
     const withTrades = [
       { href: '/services', label: 'Services', children: [{ href: '/services/glow-sign-boards', label: 'Glow sign boards' }] },
-      { href: '/for-brands', label: 'For brands' },
+      { href: '/for-brands', label: 'For Brands' },
     ]
     render(<MobileNav links={withTrades} />)
     fireEvent.click(screen.getByRole('button', { name: 'Open navigation menu' }))
     const drawer = within(screen.getByRole('dialog'))
     const trades = within(drawer.getByRole('list', { name: 'Services' }))
     expect(trades.getByRole('link', { name: 'Glow sign boards' })).toHaveAttribute('href', '/services/glow-sign-boards')
-    expect(drawer.getByRole('link', { name: 'For brands' })).toHaveAttribute('href', '/for-brands')
+    expect(drawer.getByRole('link', { name: 'For Brands' })).toHaveAttribute('href', '/for-brands')
     expect(drawer.getByRole('link', { name: 'Call +91 98320 11524' })).toHaveAttribute('href', 'tel:+919832011524')
     fireEvent.click(trades.getByRole('link', { name: 'Glow sign boards' }))
     expect(screen.queryByRole('dialog')).not.toBeInTheDocument()
+  })
+
+  it('marks Home current on the exact home route only, and leaves other links unmarked there', () => {
+    const withHome = [{ href: '/', label: 'Home' }, { href: '/services', label: 'Services' }, { href: '/for-brands', label: 'For Brands' }]
+    render(<MobileNav links={withHome} />)
+    fireEvent.click(screen.getByRole('button', { name: 'Open navigation menu' }))
+    const drawer = within(screen.getByRole('dialog'))
+    expect(drawer.getByRole('link', { name: 'Home' })).toHaveAttribute('aria-current', 'page')
+    expect(drawer.getByRole('link', { name: 'Services' })).not.toHaveAttribute('aria-current')
+    expect(drawer.getByRole('link', { name: 'For Brands' })).not.toHaveAttribute('aria-current')
   })
 
   it('keeps forward and backward keyboard focus inside the open menu', () => {

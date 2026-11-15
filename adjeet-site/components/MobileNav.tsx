@@ -91,7 +91,8 @@ export function MobileNav({ links }: { links: NavLink[] }) {
           </div>
           <nav className="mobile-nav-drawer__links" aria-label="Mobile navigation">
             {links.map(link => {
-              const isActive = pathname === link.href || pathname.startsWith(`${link.href}/`)
+              // Home matches only the exact route, or it would be current everywhere.
+              const isActive = link.href === '/' ? pathname === '/' : pathname === link.href || pathname.startsWith(`${link.href}/`)
               return (
                 <div key={link.href} className={styles.group}>
                   <Link

@@ -6,7 +6,7 @@ This version has breaking changes: APIs, conventions, and file structure may all
 
 ## Project Overview
 
-AD-JEET is a marketing website for a North Bengal signage company. The entire product goal is one conversion: visitor fills the lead form or clicks WhatsApp.
+AD JEET is a marketing website for an advertising agency in Siliguri (since 1990): outdoor advertising, signage and brand rollouts across North Bengal and Sikkim. The entire product goal is one conversion: visitor fills the lead form or clicks WhatsApp.
 
 ## Service Map
 
@@ -41,7 +41,7 @@ AD-JEET is a marketing website for a North Bengal signage company. The entire pr
 - **Add a town page:** add it to `TOWNS` in `content/areas.ts`, with only photographs whose place `content/gallery.ts` records. It is indexed (sitemap, llms.txt, no `noindex`) only when `indexable` is true, which the SEO plan's gate decides: two or more documented local jobs, 600+ words and 60%+ text of its own, measured by `tests/unit/app/areas-pages.test.tsx`. `/areas` lists every coverage place the same way: never add counts, grades or evidence badges per place
 - **The old regional URLs** (`/glow-sign-board-in-siliguri` and the other 26) are permanent redirects listed in `content/legacy-regional.ts` and applied in `next.config.ts`. Never reuse one of those paths for a page
 - **Add a service:** edit `content/services.ts`, give it a Siliguri brief in `content/service-local.ts` (every trade has one) and a link label in `content/site-links.ts`, which the footer reads. A buyer's term for the H1 goes in `h1` in `content/service-search.ts`; `name` still feeds the form chips
-- **The page for brand teams** is `/for-brands`, with its copy in `content/for-brands.ts`. Name a brand there only if `content/gallery.ts` has its photographs, and write the process as what a team can ask for, never as past numbers. `tests/unit/app/for-brands-page.test.tsx` holds its quality gate (500+ words, under 30% overlap with any other page)
+- **The page for brand teams** is `/for-brands`, with its copy in `content/for-brands.ts`. Name a brand there only if `content/gallery.ts` has its photographs, and write the process as what a team can ask for, never as past numbers. `tests/unit/app/for-brands-page.test.tsx` holds its quality gate (350 to 500 words of its own, under 30% overlap with any other page, every figure traced to `content/company-figures.ts`)
 - **Link previews:** a service or town page uses its lead photo; the seven site pages use a 1200 x 630 card listed in `content/page-share.ts`, made with `node scripts/build-share-images.mjs --wide /images/work/<file>.webp` from a photo at least that size
 - **Titles and descriptions:** at most 60 characters before " | AD JEET" and 150 for a description; `tests/unit/content/site-copy.test.tsx` checks every indexable page
 - **Change design tokens:** edit `design/tokens.css`

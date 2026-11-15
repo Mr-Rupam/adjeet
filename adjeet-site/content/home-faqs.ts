@@ -1,21 +1,24 @@
 import { business } from '@/lib/business'
+import { ALSO_SERVICES, COMPANIES_SERVED, jobDaysLabel } from '@/content/company-figures'
 
 /**
  * The home page questions, also printed in llms.txt and the home FAQ JSON-LD.
  *
  * Each answer can be quoted on its own by a search or AI answer: 40 to 170
  * words, naming AD JEET and Siliguri, and stating only what `lib/business.ts`,
- * `content/services.ts` and `content/sign-comparison.ts` record. Lead times
- * stay labelled as planning estimates. No prices, reply times or site visits.
+ * `content/services.ts` and `content/company-figures.ts` record. Job times are
+ * the approved ones, counted from the order. No prices, reply times or site visits.
  */
+const alsoDone = ALSO_SERVICES.map(name => name.toLowerCase())
+
 export const homeFaqs = [
   {
     q: 'Who makes sign boards in Siliguri?',
-    a: `${business.name} makes sign boards in ${business.city}, West Bengal. ${business.founder} founded it in ${business.foundingYear}. Glow sign boards, ACP and 3D LED letters, flex boards, vehicle branding, wall painting advertising and F-pole signs are made at its own workshop at ${business.workshop}. They are installed across North Bengal and Sikkim. Walk-ins are welcome ${business.hours.replace(', walk-ins welcome', '')}.`,
+    a: `${business.name}, an advertising agency in ${business.city}, West Bengal, makes sign boards at its own workshop at ${business.workshop}. ${business.founder} founded it in ${business.foundingYear}. Glow sign boards, ACP and 3D LED letters, flex boards, vehicle branding, wall painting advertising and F-pole signs are made there. They are installed across North Bengal and Sikkim. Walk-ins are welcome ${business.hours.replace(', walk-ins welcome', '')}.`,
   },
   {
     q: 'What is AD JEET and what does it make?',
-    a: `${business.name} is a sign board and outdoor advertising company in ${business.city}, West Bengal, founded in ${business.foundingYear} by ${business.founder}. It designs, fabricates and installs glow sign boards, ACP and 3D LED letter signage, flex prints, vehicle branding, wall advertising and F-pole signs. It also makes in-shop branding, Puja and event branding, one way vision window graphics and product displays.`,
+    a: `${business.name} is an advertising agency in ${business.city}, West Bengal, founded in ${business.foundingYear} by ${business.founder}. It does outdoor advertising, signage and brand rollouts across North Bengal and Sikkim, made at its own workshop and put up by its own crews. The work covers glow sign boards, ACP and LED signage, flex printing, vehicle branding, wall painting advertising, F-pole sign boards, in-shop branding, events and Puja branding, one way vision film and product displays. It also does ${alsoDone[0]}, ${alsoDone[1]}, and ${alsoDone[2]}. It has worked for ${COMPANIES_SERVED}.`,
   },
   {
     q: 'Where is AD JEET based, and which areas do you serve?',
@@ -31,7 +34,7 @@ export const homeFaqs = [
   },
   {
     q: 'How long does it take to make a sign board?',
-    a: `As planning estimates, ${business.name} allows about 5 to 7 working days for a glow sign board and about 7 to 10 working days for an ACP board with 3D LED letters at its ${business.city} workshop. These are counted once the artwork and size are approved. A flex print can take 1 to 3 working days. Quantity, site access and the fitting date change this, so the schedule is confirmed for your job before you order.`,
+    a: `At ${business.name} in ${business.city}, counted in days from the order, a glow sign board takes ${jobDaysLabel('glow-sign-boards')}, an F-pole sign board ${jobDaysLabel('f-pole-installation')} and in-shop branding ${jobDaysLabel('in-shop-branding')}. Wall painting takes ${jobDaysLabel('wall-painting')}, and an ACP board with 3D LED letters ${jobDaysLabel('acp-led-signage')}. A flex print can take 1 to 3 working days. Quantity, site access and the fitting date change this, so the schedule is confirmed for your job before you order.`,
   },
   {
     q: 'Can you help with design, fabrication and installation?',

@@ -1,4 +1,12 @@
 import { SERVICE_SEARCH, type ServiceSearch } from '@/content/service-search'
+import { jobDaysLabel } from '@/content/company-figures'
+
+/** The approved job time for a trade listed in content/company-figures.ts. */
+function jobDays(slug: ServiceSlug): string {
+  const label = jobDaysLabel(slug)
+  if (!label) throw new Error(`services: no job time for ${slug}`)
+  return label
+}
 
 export const SERVICE_SLUGS = [
   'glow-sign-boards',
@@ -35,12 +43,12 @@ const baseServices: ServiceBase[] = [
   {
     slug: 'glow-sign-boards',
     name: 'Glow Sign Boards',
-    tagline: 'Illuminate your brand 24/7',
+    tagline: 'Lit name boards for shops, clinics and dealer outlets',
     description:
       'LED-lit shop name boards, made at our Siliguri workshop. A printed flex, acrylic or ACP face sits on a metal frame with LEDs inside, so the name can be read after dark. Sizes run from a single shopfront board to a large hoarding.',
     materials: ['Acrylic', 'ACP sheet', 'Aluminium channel letters', 'LED strip (SMD)', 'MS frame'],
     sizes: ['1×2 ft', '2×4 ft', '3×6 ft', '4×8 ft', 'Custom hoarding size'],
-    turnaround: '5–7 working days',
+    turnaround: jobDays('glow-sign-boards'),
     faqs: [
       {
         q: 'How long do the LED strips last?',
@@ -66,12 +74,12 @@ const baseServices: ServiceBase[] = [
   {
     slug: 'acp-led-signage',
     name: 'ACP & LED Signage',
-    tagline: 'Clean, durable faces for modern brands',
+    tagline: 'ACP fronts and 3D LED letters for showrooms and branches',
     description:
       'Aluminium Composite Panel (ACP) cladding combined with LED module lighting creates the clean, premium look demanded by banks, telecom showrooms, and retail chains. We cut, route, and bond ACP to precise dimensions, then back-light or face-light with uniform LED modules. The result is a clean, flat face that reads well from a distance.',
     materials: ['ACP sheet (grade agreed per project)', 'LED modules', 'Aluminium extrusion', 'PVC flex backing', 'Stainless steel fixings'],
     sizes: ['Custom sizing from 2 sq ft to full building facade'],
-    turnaround: '7–10 working days',
+    turnaround: jobDays('acp-led-signage'),
     faqs: [
       {
         q: 'Which ACP brands do you work with?',
@@ -93,16 +101,16 @@ const baseServices: ServiceBase[] = [
   {
     slug: 'flex-printing',
     name: 'Flex Printing',
-    tagline: 'Large-format print for every surface',
+    tagline: 'Printed flex for hoardings, shopfronts and event walls',
     description:
       'High-resolution flex banner and vinyl printing for hoardings, retail backdrops, event walls, and temporary signage. We print on 280 gsm and 440 gsm flex media using UV-resistant solvent inks, then eyelet, hem, or mount to your specification. Confirm the media, finishing and required date with the team before production.',
     materials: ['280 gsm frontlit flex', '440 gsm blockout flex', 'One-way vision vinyl', 'Matte/gloss vinyl sticker'],
     sizes: ['A3 to 40×10 ft continuous roll, custom cut to order'],
-    turnaround: '1–3 working days',
+    turnaround: '1 to 3 working days',
     faqs: [
       {
         q: 'What file format should I send?',
-        a: 'PDF at 1:1 scale (72–100 dpi for large format) or AI/CDR with fonts outlined. We can also work from high-res JPG/PNG.',
+        a: 'PDF at 1:1 scale (72 to 100 dpi for large format) or AI/CDR with fonts outlined. We can also work from high-res JPG/PNG.',
       },
       {
         q: 'Can you design the artwork as well?',
@@ -120,12 +128,12 @@ const baseServices: ServiceBase[] = [
   {
     slug: 'vehicle-branding',
     name: 'Vehicle Branding',
-    tagline: 'Turn every kilometre into an impression',
+    tagline: 'Wraps and lettering for vans, autos, buses and fleets',
     description:
-      'Full and partial vehicle wraps that transform cars, auto-rickshaws, buses, and delivery vans into moving billboards. We use calendered and cast vinyl films, cut-vinyl lettering, and printed wraps, applied by hand across the vehicle\'s curves and edges. Ideal for fleet owners, FMCG brands, and election campaigns across North Bengal.',
+      'Full and partial vehicle wraps that turn cars, auto-rickshaws, buses and delivery vans into moving advertising. We use calendered and cast vinyl films, cut-vinyl lettering, and printed wraps, applied by hand across the vehicle\'s curves and edges. Ideal for fleet owners, FMCG brands, and election campaigns across North Bengal.',
     materials: ['Cast vinyl wrap film', 'Calendered vinyl', 'Cut vinyl lettering', 'Laminate (matte/gloss)'],
     sizes: ['Auto-rickshaw panels', 'Car partial/full', 'Bus full-wrap', 'Truck side panels'],
-    turnaround: '2–5 working days per vehicle',
+    turnaround: '2 to 5 working days per vehicle',
     faqs: [
       {
         q: 'Will the wrap damage my vehicle\'s original paint?',
@@ -149,12 +157,12 @@ const baseServices: ServiceBase[] = [
     // "Advertising" is part of the name: searches for house painting were
     // landing on this page, and it is brand advertising, not decorating.
     name: 'Wall Painting Advertising',
-    tagline: 'Durable outdoor advertising on any wall',
+    tagline: 'Hand-painted brand walls for towns, highways and villages',
     description:
       'Hand-painted and stencil-painted wall advertising for rural markets, highways, and peri-urban areas where flex and backlit signs are impractical. Our painters use exterior-grade enamel and weather-shield paints that withstand monsoon rain and humidity. The wall location, surface condition, owner permission and any applicable local requirements should be checked before a campaign is scheduled.',
     materials: ['Exterior enamel paint', 'Weather-shield emulsion', 'Primer', 'Stencil film'],
     sizes: ['10 sq ft to 500+ sq ft wall area'],
-    turnaround: '3–7 working days (site-dependent)',
+    turnaround: jobDays('wall-painting'),
     faqs: [
       {
         q: 'Do you obtain wall permission from owners?',
@@ -176,12 +184,12 @@ const baseServices: ServiceBase[] = [
   {
     slug: 'f-pole-installation',
     name: 'F-Pole Installation',
-    tagline: 'High-visibility roadside display structures',
+    tagline: 'Roadside pole signs for outlets, fuel stations and hospitals',
     description:
-      'Fabrication and installation of F-pole (flag pole) sign structures that elevate your branding to eye-catching height along highways, commercial corridors, and roundabouts. We design and weld custom MS/GI pole structures, anchor them with concrete foundations sized for local wind loads, and mount illuminated or non-illuminated sign faces. Suitable applications include entrance and roadside identification for fuel stations, hospitals, hotels and shops, subject to a site assessment.',
+      'Fabrication and installation of F-pole (flag pole) sign structures that hold a brand name high above the road along highways, commercial corridors, and roundabouts. We design and weld custom MS/GI pole structures, anchor them with concrete foundations sized for local wind loads, and mount illuminated or non-illuminated sign faces. Suitable applications include entrance and roadside identification for fuel stations, hospitals, hotels and shops, subject to a site assessment.',
     materials: ['MS hollow section (pole)', 'GI pipe', 'RCC foundation', 'ACP/flex sign face', 'LED floodlight (optional)'],
     sizes: ['10 ft to 40 ft pole height, single or double arm'],
-    turnaround: '10–15 working days (includes foundation curing)',
+    turnaround: jobDays('f-pole-installation'),
     faqs: [
       {
         q: 'Do you handle permissions for roadside structures?',
@@ -203,12 +211,12 @@ const baseServices: ServiceBase[] = [
   {
     slug: 'in-shop-branding',
     name: 'In-Shop Branding',
-    tagline: 'Turn your interior into a brand experience',
+    tagline: 'Counter, wall and display branding inside outlets',
     description:
-      'Complete interior branding solutions for retail outlets, showrooms, restaurants, and offices, from wall graphics and product display headers to hanging banners, directional signage, and branded counter fascias. We handle concept-to-installation so the finished space is consistent with your brand guidelines. Discuss a single outlet or a multi-site rollout with the team, including access, artwork and installation scope.',
+      'Interior branding for retail outlets, showrooms, restaurants, and offices, from wall graphics and product display headers to hanging banners, directional signage, and branded counter fascias. We handle concept-to-installation so the finished space is consistent with your brand guidelines. Discuss a single outlet or a multi-site rollout with the team, including access, artwork and installation scope.',
     materials: ['ACP panels', 'Backlit acrylic', 'Vinyl wall graphics', 'Foam board', 'Hanging display systems'],
     sizes: ['Single counter to full-store rollout'],
-    turnaround: '7–14 working days (scope-dependent)',
+    turnaround: jobDays('in-shop-branding'),
     faqs: [
       {
         q: 'Can you work outside business hours to avoid disruption?',
@@ -230,12 +238,12 @@ const baseServices: ServiceBase[] = [
   {
     slug: 'events-and-puja',
     name: 'Events & Puja Decoration',
-    tagline: 'Make every celebration unforgettable',
+    tagline: 'Puja gates, stage backdrops and event branding',
     description:
-      'End-to-end signage and decoration for Durga Puja pandals, corporate events, product launches, and public celebrations across North Bengal. We supply stage backdrops, entrance arches, flex banners, directional signage, LED flex borders, and themed props, all fabricated in our Siliguri workshop and installed on-site. Share the venue, event date and setup requirements to discuss a coordinated production and installation plan.',
+      'Signage and decoration for Durga Puja pandals, corporate events, product launches, and public celebrations across North Bengal. We supply stage backdrops, entrance arches, flex banners, directional signage, LED flex borders, and themed props, all fabricated in our Siliguri workshop and installed on-site. Share the venue, event date and setup requirements to discuss a coordinated production and installation plan.',
     materials: ['Flex print backdrop', 'MS arch frame', 'LED pixel strip', 'Thermocol prop', 'Fabric draping'],
     sizes: ['10×10 ft stall to full pandal/stage setup'],
-    turnaround: '3–10 working days (varies by event scale)',
+    turnaround: '3 to 10 working days (varies by event scale)',
     faqs: [
       {
         q: 'Do you handle Durga Puja pandal decoration?',
@@ -257,16 +265,16 @@ const baseServices: ServiceBase[] = [
   {
     slug: 'one-way-vision',
     name: 'One-Way Vision',
-    tagline: 'Brand your glass without blocking the view',
+    tagline: 'Printed window film that can be seen through from inside',
     description:
       'Perforated vinyl film that lets your brand show prominently from outside while retaining a view through the perforations from inside, ideal for shopfront glazing, vehicle rear windows, and glass partition branding. We print on 50/50 perforation vinyl (50% ink, 50% clear holes) using high-resolution solvent printing, then cut and apply to glass surfaces. Visibility depends on the film, lighting and placement. Discuss the intended view and any restrictions before application.',
     materials: ['50/50 perforated vinyl', 'Window application film', 'Solvent print ink'],
     sizes: ['Custom cut to glass dimensions'],
-    turnaround: '3–5 working days',
+    turnaround: '3 to 5 working days',
     faqs: [
       {
         q: 'How visible is the image from outside?',
-        a: 'On 50/50 perf vinyl, the image is bold and legible at 1–2 metres distance in normal daylight. At night, interior lighting can reduce exterior visibility. We can advise on placement.',
+        a: 'On 50/50 perf vinyl, the image is bold and legible at 1 to 2 metres distance in normal daylight. At night, interior lighting can reduce exterior visibility. We can advise on placement.',
       },
       {
         q: 'Can one-way vision be applied to curved glass?',
@@ -284,12 +292,12 @@ const baseServices: ServiceBase[] = [
   {
     slug: 'product-display',
     name: 'Product Display',
-    tagline: 'Showcase products that sell themselves',
+    tagline: 'Standees, shelf talkers and display units for retail',
     description:
-      'Custom point-of-sale (POS) and point-of-purchase (POP) display units, such as standees, wobbler holders, shelf talkers, product glorifiers, and freestanding display units (FSDUs). We fabricate in acrylic, foam board, ACP, and MS/GI metal, then print and finish in-house for a single-vendor, fast-turnaround solution. Widely used by FMCG brands, electronics retailers, and pharma companies for product launches and seasonal promotions across North Bengal distribution channels.',
+      'Custom point-of-sale (POS) and point-of-purchase (POP) display units, such as standees, wobbler holders, shelf talkers, product glorifiers, and freestanding display units (FSDUs). We fabricate in acrylic, foam board, ACP, and MS/GI metal, then print and finish in-house, so one vendor makes the whole unit. Widely used by FMCG brands, electronics retailers, and pharma companies for product launches and seasonal promotions across North Bengal distribution channels.',
     materials: ['Acrylic sheet', 'Foam board (5/10 mm)', 'ACP', 'MS/GI metal frame', 'UV-print laminate'],
     sizes: ['A5 shelf talker to 6 ft freestanding unit'],
-    turnaround: '5–10 working days',
+    turnaround: '5 to 10 working days',
     faqs: [
       {
         q: 'Can you manufacture 500 identical standees for a pan-Bengal campaign?',

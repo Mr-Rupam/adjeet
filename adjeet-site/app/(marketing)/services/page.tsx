@@ -9,10 +9,11 @@ import { CommissionCTA } from '@/components/street/CommissionCTA'
 import { SignComparison } from '@/components/sections/SignComparison'
 import { BrandTeamsLink } from '@/components/sections/BrandTeamsLink'
 import styles from './Services.module.css'
+import { FOUNDED_YEAR } from '@/lib/coverage'
 
 const PAGE = {
-  title: "Sign Board, Signage & Printing Services in Siliguri",
-  description: "All 10 AD JEET services in Siliguri: glow sign boards, ACP and 3D LED letters, flex printing, vehicle branding, wall painting and more.",
+  title: "Advertising, Signage & Printing Services in Siliguri",
+  description: "AD JEET's services in Siliguri: glow sign boards, ACP and 3D LED letters, flex, vehicle branding, wall painting, hoardings and brand rollouts.",
   path: "/services",
 }
 
@@ -53,12 +54,12 @@ export default function ServicesPage() {
       <PageMasthead
         title={
           <>
-            Signage & printing.
+            Advertising & signage.
             <br />
             <span className="text-signal">Made in Siliguri.</span>
           </>
         }
-        lead="Ten ways to put your business in view. From a single shopfront to a campaign across North Bengal."
+        lead={`An advertising agency in Siliguri since ${FOUNDED_YEAR}, with its own workshop and crews. From a single shopfront to a brand rollout across North Bengal and Sikkim.`}
       >
         <QuoteCTA source="services" label="WhatsApp your project" tone="yellow" />
         <Link href="/contact" className="action-quiet">Or send a project brief <ArrowUpRight size={17} aria-hidden="true" /></Link>

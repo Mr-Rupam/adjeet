@@ -39,6 +39,17 @@ describe('Content-Security-Policy', () => {
   })
 })
 
+describe('Microsoft Clarity', () => {
+  it('may load its tag and send its data to the hosts Microsoft documents, and nowhere wider', async () => {
+    const map = await directives()
+    expect(map.get('script-src')).toContain('https://*.clarity.ms')
+    expect(map.get('connect-src')).toContain('https://*.clarity.ms')
+    expect(map.get('connect-src')).toContain('https://c.bing.com')
+    expect(map.get('script-src')).not.toContain('https://c.bing.com')
+    expect(map.get('default-src')).toEqual(["'self'"])
+  })
+})
+
 describe('script-src and img-src', () => {
   it('does not allow scripts from google-analytics.com, which serves no script the site loads', async () => {
     expect((await directives()).get('script-src')).not.toContain('https://www.google-analytics.com')

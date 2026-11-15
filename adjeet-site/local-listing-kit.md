@@ -56,9 +56,9 @@ Sign in with the Google account that manages the listing, then open https://busi
 
 **Services:** Glow sign boards, ACP sign boards and 3D LED letters, Flex and hoarding printing, Vehicle branding, Wall painting advertising, F-pole signs, In-shop branding, Durga Puja and event branding, One way vision film, POP displays.
 
-**Description (717 of 750 characters):**
+**Description (729 of 750 characters):**
 
-> AD JEET is a sign board and outdoor advertising company in Siliguri, founded in 1990 by Ranjit Das. We design, fabricate and install glow sign boards, LED sign boards, ACP sign boards with 3D LED letters, flex and hoarding prints, vehicle branding and wall painting advertisements from our own Siliguri workshop. We also make F-pole signs, in-shop and dealer outlet branding, Durga Puja gate and event branding, one way vision window film and POP displays. We work for shops, showrooms, hospitals, schools and national brands across North Bengal, including Jalpaiguri, Darjeeling, Cooch Behar, Alipurduar and Malda, and in Sikkim. Send a photo of your site, the size and your location on WhatsApp for a project quote.
+> AD JEET is an advertising agency in Siliguri, founded in 1990 by Ranjit Das. We do outdoor advertising, signage and brand rollouts across North Bengal and Sikkim, made at our own workshop and put up by our own crews. We make glow sign boards, LED sign boards, ACP sign boards with 3D LED letters, flex prints, vehicle branding and wall painting advertisements, plus F-pole signs, in-shop and dealer outlet branding, Puja and event branding, one way vision film and POP displays. We also do hoardings, exhibitions, dealer meets, activations and road shows. We work for shops and national brands across North Bengal, including Jalpaiguri, Darjeeling, Cooch Behar and Malda, and in Sikkim. Send a site photo on WhatsApp for a quote.
 
 Name photo files descriptively before upload, for example `acp-sign-board-jalpaiguri.jpg`.
 

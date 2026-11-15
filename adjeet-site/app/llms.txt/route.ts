@@ -7,6 +7,8 @@ import { formatReviewDate, newestReview } from '@/content/page-reviews'
 import { BRAND_TRADES, FOR_BRANDS_FAQS, FOR_BRANDS_PATH } from '@/content/for-brands'
 import { LANGUAGES_LINE } from '@/content/enquiry'
 import { COMPARED_BOARDS, COMPARISON_COLUMNS, COMPARISON_HEADING, COMPARISON_NOTE } from '@/content/sign-comparison'
+import { ALSO_SERVICES, COMPANIES_SERVED, CREW_NETWORK, GPS_PHOTO_LINE, JOB_DAYS_CAPTION, VEHICLES, WORKSHOP, brandTenureLines, jobDaysLabel } from '@/content/company-figures'
+import type { ServiceSlug } from '@/content/services'
 
 export const dynamic = 'force-static'
 
@@ -17,7 +19,7 @@ export function GET() {
   const lines = [
     `# ${business.name}`,
     '',
-    `> ${business.name} is a sign board, printing and outdoor advertising company in ${business.city}, West Bengal, India. Founded in ${business.foundingYear} by ${business.founder}. It designs, fabricates and installs signage from its own Siliguri workshop for businesses across North Bengal and Sikkim.`,
+    `> ${business.name} is an advertising agency in ${business.city}, West Bengal, India, founded in ${business.foundingYear} by ${business.founder}. It does outdoor advertising, signage and brand rollouts across North Bengal and Sikkim, made at its own workshop and put up by its own crews, for brands' regional and trade marketing teams and for local businesses.`,
     '',
     // The newest review date on the site, so this file never trails the pages.
     `Last reviewed: ${formatReviewDate(newestReview())}.`,
@@ -35,10 +37,14 @@ export function GET() {
     `- Google Maps: ${business.mapsUrl}`,
     `- Founded: ${business.foundingYear}, by ${business.founder}`,
     `- Service areas: ${COVERAGE_AREAS.map(area => area.name).join(', ')}`,
+    `- Track record: ${COMPANIES_SERVED}. ${brandTenureLines().join('; ')}.`,
+    `- Workshop: ${WORKSHOP.area}, at ${WORKSHOP.place}. Fitting: ${CREW_NETWORK.line}, with ${VEHICLES.line}.`,
+    `- ${GPS_PHOTO_LINE}`,
     '- Site visits, installation schedules, prices, material specifications and warranty terms are confirmed for each project. Town pages do not represent separate offices.',
     '',
     '## Services',
-    ...services.map(service => `- [${service.name}](${business.url}/services/${service.slug}): ${service.answer} Also called: ${service.alternateNames.join(', ')}. Planning lead time: ${service.turnaround}.`),
+    ...services.map(service => `- [${service.name}](${business.url}/services/${service.slug}): ${service.answer} Also called: ${service.alternateNames.join(', ')}. ${jobDaysLabel(service.slug as ServiceSlug) ? `Job time: ${service.turnaround}. ${JOB_DAYS_CAPTION}` : `Planning lead time: ${service.turnaround}.`}`),
+    `- Also offered by AD JEET: ${ALSO_SERVICES.join(', ')}. Ask with the town and the dates.`,
     '',
     `## ${COMPARISON_HEADING}`,
     ...COMPARED_BOARDS.map(board => `- [${board.name}](${business.url}/services/${board.slug}): ${board.cells.map((cell, index) => `${COMPARISON_COLUMNS[index]}: ${cell}`).join('. ')}.`),

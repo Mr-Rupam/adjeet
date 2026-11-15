@@ -10,17 +10,12 @@ describe('page review dates', () => {
     expect(new Date(SITE_REVIEWED).getTime()).toBeLessThanOrEqual(Date.now() + 24 * 60 * 60 * 1000)
   })
 
-  // 15 November 2026 was a review of the whole site, privacy policy included.
-  it('dates every page from the 15 November 2026 site review', () => {
-    expect(SITE_REVIEWED).toBe('2026-11-15')
-    for (const path of ['/about', '/contact', '/privacy', '/for-brands', '/services/flex-printing', '/areas/cooch-behar']) {
-      expect(reviewedOn(path), path).toBe('2026-11-15')
+  // 16 November 2026 was a review of the whole site's words (the agency rewrite).
+  it('dates every page from the 16 November 2026 site review', () => {
+    expect(SITE_REVIEWED).toBe('2026-11-16')
+    for (const path of ['/', '/about', '/contact', '/privacy', '/for-brands', '/services/flex-printing', '/areas/cooch-behar']) {
+      expect(reviewedOn(path), path).toBe('2026-11-16')
     }
-  })
-
-  // The home hero changed on 16 November 2026 (the day and night visualisation).
-  it('dates the home page from its hero change', () => {
-    expect(reviewedOn('/')).toBe('2026-11-16')
   })
 
   it('gives summaries the newest review on the site', () => {

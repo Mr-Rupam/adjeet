@@ -19,13 +19,13 @@ export default function PrivacyPage() {
       <h1 className="display text-ink" style={{ fontSize: 'var(--text-display-2)' }}>
         Privacy Policy
       </h1>
-      <p className="mb-12 mt-3 text-sm text-ink-muted">Last updated: 15 November 2026</p>
+      <p className="mb-12 mt-3 text-sm text-ink-muted">Last updated: 16 November 2026</p>
 
       <div className="prose prose-sm max-w-2xl space-y-8 text-ink-muted">
         <section>
           <h2 className={h2}>1. Who we are</h2>
           <p>
-            This website belongs to {business.name}, a sign-board maker in {business.city}, {business.region}, India.
+            This website belongs to {business.name}, an advertising agency in {business.city}, {business.region}, India.
             The ways to reach us are at the end of this page.
           </p>
         </section>
@@ -69,7 +69,10 @@ export default function PrivacyPage() {
               <strong>Vercel</strong> hosts this website, so it handles every request to it, including your
               network address.
             </li>
-            <li>Google Analytics, Vercel Web Analytics and Vercel Speed Insights measure visits (see section 5).</li>
+            <li>
+              Google Analytics, <strong>Microsoft Clarity</strong>, Vercel Web Analytics and Vercel Speed
+              Insights measure visits (see section 5).
+            </li>
           </ul>
           <p className="mt-2">
             Some of these companies are based outside India, so your details may be handled outside India.
@@ -98,6 +101,17 @@ export default function PrivacyPage() {
             off. Advertising storage and ad personalisation are always off. You can change your choice at any
             time by clearing your browser storage for this site. We do not use analytics data to identify
             individual visitors.
+          </p>
+          <p className="mt-2">
+            We also use Microsoft Clarity, a service from Microsoft, to see how visitors use our pages. It records
+            clicks, taps, scrolls, mouse movement and page views, and turns them into session replays and
+            heatmaps that our team can watch. Text you type is masked, and we mark the enquiry form and the
+            chat assistant so that what you type there is never recorded. Clarity follows the same consent
+            banner as Google Analytics. Until you choose, it runs without cookies and treats each page view as
+            a separate visit. If you accept, it may set cookies so that pages you open in one visit are joined
+            into a single session. If you decline, it is not loaded, and if it had already loaded it is told to
+            delete its cookies and end the session. Microsoft handles this data under its own privacy
+            statement.
           </p>
           <p className="mt-2">
             We also use Vercel Web Analytics, provided by our hosting company, to count page views in

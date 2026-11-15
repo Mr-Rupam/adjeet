@@ -14,9 +14,9 @@ test.describe('Home page', () => {
   // a street visualisation; real shopfronts start in the next section.
   test('uses one clear hero proposition on the street scene', async ({ page }) => {
     const hero = page.locator('#hero-section')
-    await expect(hero.getByRole('heading', { level: 1, name: /sign boards that get you noticed/i })).toBeVisible()
+    await expect(hero.getByRole('heading', { level: 1, name: /advertising that gets you noticed/i })).toBeVisible()
     await expect(page.getByRole('heading', { level: 1 })).toHaveCount(1)
-    await expect(hero.getByText('Sign board makers in Siliguri, since 1990.', { exact: true })).toBeVisible()
+    await expect(hero.getByText('Advertising agency in Siliguri, since 1990.', { exact: true })).toBeVisible()
     await expect(hero.getByText(/send a photo of your shop to start/i)).toHaveCount(0)
     await expect(hero.getByRole('img', { name: /^visualisation: a small market street on a misty morning/i })).toBeVisible()
   })
@@ -138,7 +138,7 @@ test.describe('Home page', () => {
   })
 
   test('keeps one direct enquiry close', async ({ page }) => {
-    const enquiry = page.getByRole('heading', { name: /what are we putting your name on/i })
+    const enquiry = page.getByRole('heading', { name: /one shopfront, or every outlet you have/i })
     await enquiry.scrollIntoViewIfNeeded()
     const section = page.locator('section').filter({ has: enquiry })
     const link = section.getByRole('link', { name: /whatsapp your project/i })

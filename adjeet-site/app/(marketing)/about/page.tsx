@@ -6,7 +6,7 @@ import { buildBreadcrumbJsonLd, buildFounderJsonLd, buildWebPageJsonLd, jsonLdSt
 import { CommissionCTA } from '@/components/street/CommissionCTA'
 import { FasciaCaption } from '@/components/street/FasciaCaption'
 import { QuoteCTA } from '@/components/ui/QuoteCTA'
-import { FOUNDED_YEAR } from '@/lib/coverage'
+import { FOUNDED_YEAR, YEARS_ACTIVE } from '@/lib/coverage'
 import { CoverageMapProvider } from '@/components/coverage/CoverageMapContext'
 import { CoveragePlaceList } from '@/components/coverage/CoveragePlaceList'
 import { CoverageStage } from '@/components/coverage/CoverageStage'
@@ -16,13 +16,16 @@ import styles from './About.module.css'
 import extras from './AboutExtras.module.css'
 import { business } from '@/lib/business'
 import { LANGUAGES_LINE } from '@/content/enquiry'
+import { COMPANIES_SERVED, CREW_NETWORK, VEHICLES, WORKSHOP, brandTenureLines } from '@/content/company-figures'
 
 const PAGE = {
-  title: "About Our Siliguri Signage Workshop",
-  description: "Founded by Ranjit Das in 1990, AD JEET grew from one room to its own workshop in Siliguri. Meet the business behind our North Bengal signage work.",
+  title: "About AD JEET, an Advertising Agency in Siliguri",
+  description: `Founded by Ranjit Das in ${FOUNDED_YEAR}, AD JEET is an advertising agency in Siliguri with its own ${WORKSHOP.area} workshop, working across North Bengal.`,
   path: "/about",
 }
 export const metadata = buildPageMetadata(PAGE)
+/** "a, b and c". */
+const listSentence = (items: string[]) => items.length > 1 ? `${items.slice(0, -1).join(', ')} and ${items.at(-1)}` : (items[0] ?? '')
 const webPage = buildWebPageJsonLd({ ...PAGE, type: 'AboutPage' })
 const founder = buildFounderJsonLd()
 const breadcrumb = buildBreadcrumbJsonLd([{ name: 'Home', url: '/' }, { name: 'About', url: '/about' }])
@@ -49,8 +52,8 @@ export default function AboutPage() {
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLdString(breadcrumb) }} />
       <section className={styles.intro} aria-labelledby="about-heading">
         <div className={styles.introCopy}>
-          <h1 id="about-heading" data-site-reveal="title">AD JEET. <br />A Siliguri workshop, <br /><span>since {FOUNDED_YEAR}.</span></h1>
-          <p>Ranjit Das was 20 when he started AD JEET. More than 35 years later, the space has changed. The belief in doing good work has stayed.</p>
+          <h1 id="about-heading" data-site-reveal="title">AD JEET. <br />A Siliguri agency, <br /><span>since {FOUNDED_YEAR}.</span></h1>
+          <p>Ranjit Das was 20 when he started AD JEET. {YEARS_ACTIVE} years later it is an advertising agency with its own workshop. The belief in doing good work has stayed.</p>
           <div className={styles.introActions}>
             <QuoteCTA source="about" label="WhatsApp your project" tone="yellow" />
             <a href="#our-story" className={styles.storyLink}>Follow our story <ArrowDown size={18} aria-hidden="true" /></a>
@@ -64,7 +67,7 @@ export default function AboutPage() {
       <section id="our-story" className={styles.story} aria-labelledby="story-heading">
         <div className={styles.sectionHeading}>
           <h2 id="story-heading" data-site-reveal="title">A little more room.<br /><span>The same ambition.</span></h2>
-          <p>Built over more than 35 years, one move at a time.</p>
+          <p>Built over {YEARS_ACTIVE} years, one move at a time.</p>
         </div>
         <ol className={styles.journey}>
           {JOURNEY.map(step => <li key={step.marker} data-site-reveal><p className={styles.marker}>{step.marker}</p><div><h3>{step.title}</h3><p>{step.body}</p></div></li>)}
@@ -72,7 +75,7 @@ export default function AboutPage() {
         {/* Recorded facts only (content audit C4): no team names until the owner supplies them. */}
         <div className={extras.dealWith}>
           <h3>Who you will deal with</h3>
-          <p>AD JEET was founded in {FOUNDED_YEAR} by {business.founder}. He started it at 20 in a small room in his own flat. Today the work is made at our own workshop in {business.city}, at {business.workshop}. Walk-ins are welcome {business.hours.replace(', walk-ins welcome', '')}. {LANGUAGES_LINE}</p>
+          <p>AD JEET was founded in {FOUNDED_YEAR} by {business.founder}. He started it at 20 in a small room in his own flat. Today the work is made at our own {WORKSHOP.area} workshop at {WORKSHOP.place}, and put up by {CREW_NETWORK.line}, with {VEHICLES.line}. Walk-ins are welcome {business.hours.replace(', walk-ins welcome', '')}. {LANGUAGES_LINE}</p>
         </div>
       </section>
       <section className={styles.workshopBand} aria-labelledby="workshop-heading">
@@ -94,6 +97,7 @@ export default function AboutPage() {
           <h2 id="trust-heading" data-site-reveal="title">Quality, every time.<br /><span>Trust, over time.</span></h2>
           <div className={styles.trustCopy}>
             <p>Our client history includes national brands such as Airtel, Havells, Supreme Pipe and Star Cement. Their work is photographed on the portfolio page. What matters most to us is the trust that continues beyond the first project.</p>
+            <p>{COMPANIES_SERVED}. Brands stay for years: {listSentence(brandTenureLines())}.</p>
             <p>That trust rests on the quality of the work and the consistency we bring to it. It is how we have grown, and how we intend to keep growing.</p>
             <Link href="/portfolio" className="cta cta--md cta--yellow">See our work <ArrowUpRight size={18} aria-hidden="true" /></Link>
           </div>

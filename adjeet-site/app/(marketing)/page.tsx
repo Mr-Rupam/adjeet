@@ -3,7 +3,7 @@ import { buildPageMetadata, buildFaqJsonLd, buildWebPageJsonLd, jsonLdString, si
 import { homeFaqs } from '@/content/home-faqs'
 
 const PAGE = {
-  title: 'Sign Board Makers & Outdoor Advertising in Siliguri',
+  title: 'Advertising Agency in Siliguri: Sign Boards & Outdoor Ads',
   description: siteConfig.description,
   path: '/',
 }

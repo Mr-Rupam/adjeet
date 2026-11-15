@@ -77,6 +77,34 @@ test('Back restores the reading position on pages without a fragment', async ({ 
   await expect.poll(() => page.evaluate(y => Math.abs(scrollY - y), previousY)).toBeLessThan(5)
 })
 
+test('the desktop bar reaches Home and For Brands from any page and marks the current one', async ({ page }) => {
+  await page.setViewportSize({ width: 1280, height: 900 })
+  await page.goto('/about', { waitUntil: 'domcontentloaded' })
+  const bar = page.getByRole('navigation', { name: 'Main navigation' })
+  await expect(bar.locator('li a')).toHaveText(['Home', 'Services', 'For Brands', 'Areas', 'Portfolio', 'About', 'Contact'])
+  await expect(bar.getByRole('link', { name: 'About', exact: true })).toHaveAttribute('aria-current', 'page')
+  await expect(bar.getByRole('link', { name: 'Home', exact: true })).not.toHaveAttribute('aria-current', 'page')
+  await bar.getByRole('link', { name: 'For Brands', exact: true }).click()
+  await expect(page).toHaveURL('/for-brands')
+  await expect(bar.getByRole('link', { name: 'For Brands', exact: true })).toHaveAttribute('aria-current', 'page')
+  await bar.getByRole('link', { name: 'Home', exact: true }).click()
+  await expect(page).toHaveURL('/')
+  await expect(bar.getByRole('link', { name: 'Home', exact: true })).toHaveAttribute('aria-current', 'page')
+  await expect(bar.locator('[aria-current="page"]')).toHaveCount(1)
+})
+
+test('the phone menu lists Home first and For Brands, and marks the current page', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 })
+  await page.goto('/for-brands', { waitUntil: 'domcontentloaded' })
+  await page.getByRole('button', { name: 'Open navigation menu' }).click()
+  const drawer = page.getByRole('dialog', { name: 'Navigation menu' })
+  const top = drawer.getByRole('navigation', { name: 'Mobile navigation' }).locator('> div > a')
+  await expect(top).toHaveText(['Home', 'Services', 'For Brands', 'Areas we cover', 'Portfolio', 'About', 'Contact'])
+  await expect(drawer.getByRole('link', { name: 'For Brands', exact: true })).toHaveAttribute('aria-current', 'page')
+  await drawer.getByRole('link', { name: 'Home', exact: true }).click()
+  await expect(page).toHaveURL('/')
+})
+
 for (const width of [320, 390, 768]) {
   test(`footer groups share a row without overflow at ${width}px`, async ({ page }) => {
     await page.setViewportSize({ width, height: 844 })
@@ -84,7 +112,7 @@ for (const width of [320, 390, 768]) {
     const footer = page.getByRole('contentinfo')
     await footer.scrollIntoViewIfNeeded()
     const nav = await footer.getByText('Find your way').boundingBox()
-    const contact = await footer.getByText('Talk to the workshop').boundingBox()
+    const contact = await footer.getByText('Talk to us', { exact: true }).boundingBox()
     expect(Math.abs(nav!.y - contact!.y)).toBeLessThan(2)
     const whatsapp = await footer.getByRole('link', { name: 'WhatsApp', exact: true }).boundingBox()
     const call = await footer.getByRole('link', { name: /^Call/ }).boundingBox()

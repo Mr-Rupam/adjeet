@@ -19,9 +19,19 @@ describe('ServicesBoard', () => {
     })
   })
 
-  it('shows the tagline and turnaround for each trade', () => {
+  it('shows the tagline and the approved job time for each trade', () => {
     render(<ServicesBoard />)
-    expect(screen.getByText('Illuminate your brand 24/7')).toBeTruthy()
-    expect(screen.getAllByText('5–7 working days').length).toBeGreaterThan(0)
+    expect(screen.getByText('Lit name boards for shops, clinics and dealer outlets')).toBeTruthy()
+    expect(screen.getAllByText('1 to 3 days from the order').length).toBe(3)
+    expect(screen.getByText('2 to 5 days from the order')).toBeTruthy()
+    expect(screen.getByText('3 to 5 days from the order')).toBeTruthy()
+  })
+
+  it('names the services that have no page yet, each with a WhatsApp action', () => {
+    render(<ServicesBoard />)
+    for (const name of ['Hoardings and billboards', 'Exhibitions and dealer meets', 'Activations and road shows']) {
+      const link = screen.getByText(name).closest('a')
+      expect(link?.getAttribute('href'), name).toMatch(/^https:\/\/wa\.me\//)
+    }
   })
 })

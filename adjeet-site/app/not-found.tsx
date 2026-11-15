@@ -4,7 +4,7 @@ import { PageMasthead } from '@/components/street/PageMasthead'
 import { DEFAULT_SHARE_IMAGE, siteConfig } from '@/lib/seo'
 
 const TITLE = `Page not found | ${siteConfig.name}`
-const DESCRIPTION = "This address has no page on adjeet.in. Find AD JEET's sign board services, project photographs and contact details for Siliguri and North Bengal."
+const DESCRIPTION = "This address has no page on adjeet.in. Find the AD JEET advertising agency's services, project photographs and contact details for Siliguri."
 
 // Its own title and description, instead of inheriting the home page's. No
 // canonical and no og:url: a missing page is not the home page. Next marks the

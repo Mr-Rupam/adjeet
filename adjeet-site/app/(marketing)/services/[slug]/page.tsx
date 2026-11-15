@@ -29,6 +29,7 @@ import { formatReviewDate, reviewedOn } from '@/content/page-reviews'
 import { COMPARED_SLUGS } from '@/content/sign-comparison'
 import { SILIGURI_BRIEFS, SILIGURI_NEARBY, SILIGURI_SEND_US_BN } from '@/content/service-local'
 import { FOUNDED_YEAR } from '@/lib/coverage'
+import { JOB_DAYS_CAPTION, jobDaysLabel } from '@/content/company-figures'
 import { business } from '@/lib/business'
 import detailStyles from './ServiceDetail.module.css'
 import { TOWNS, townPath } from '@/content/areas'
@@ -210,7 +211,7 @@ export default async function ServiceDetailPage({
             <div className="plate-signal p-6">
               <h2 className="service-spec-title">Turnaround</h2>
               <p className="display m-0 mt-4 text-4xl text-ink">{service.turnaround}</p>
-              <p className="m-0 mt-3 text-sm text-ink-muted">Planning estimate. Confirm your schedule before ordering.</p>
+              <p className="m-0 mt-3 text-sm text-ink-muted">{jobDaysLabel(service.slug as ServiceSlug) ? JOB_DAYS_CAPTION : 'Planning estimate. Confirm your schedule before ordering.'}</p>
             </div>
           </div>
         </div>
@@ -297,7 +298,7 @@ export default async function ServiceDetailPage({
         <div className="field-container">
           <h2 id="service-why-heading" className={areaStyles.heading}>Why AD JEET</h2>
           <ul className={detailStyles.why}>
-            <li>Working in Siliguri since {FOUNDED_YEAR}.</li>
+            <li>An advertising agency, working in Siliguri since {FOUNDED_YEAR}, for shops and for brands rolling out across North Bengal.</li>
             <li>Our own workshop is in Siliguri, at {business.workshop}.</li>
             <li>Finished jobs are photographed on site, many with the place and year, on the <Link href="/portfolio" className={detailStyles.whyLink}>portfolio</Link>.</li>
           </ul>

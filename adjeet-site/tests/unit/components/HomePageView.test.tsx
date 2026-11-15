@@ -24,10 +24,10 @@ describe('storefront homepage', () => {
 
   it('names the trade and the town under a strong headline, in one line', () => {
     const doc = render()
-    expect(doc.querySelector('h1')?.textContent).toBe('Sign boards that get you noticed.')
+    expect(doc.querySelector('h1')?.textContent).toBe('Advertising that gets you noticed.')
     expect(doc.querySelector('h1 em')?.textContent).toBe('noticed.')
     // 15 November 2026: the lead's second sentence left the hero.
-    expect(doc.querySelector('[data-hero-lead]')?.textContent).toBe('Sign board makers in Siliguri, since 1990.')
+    expect(doc.querySelector('[data-hero-lead]')?.textContent).toBe('Advertising agency in Siliguri, since 1990.')
     expect(doc.querySelector('#hero-section')?.textContent).not.toContain('Send a photo of your shop to start.')
   })
 

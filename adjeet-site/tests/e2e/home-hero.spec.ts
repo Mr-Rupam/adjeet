@@ -329,7 +329,7 @@ test.describe('home hero', () => {
       await page.evaluate(() => document.fonts.ready)
       const board = page.locator('[data-hero-board]')
       await expect(board).toHaveAttribute('aria-hidden', 'true')
-      await expect(page.getByRole('heading', { level: 1 })).toHaveAccessibleName('Sign boards that get you noticed.')
+      await expect(page.getByRole('heading', { level: 1 })).toHaveAccessibleName('Advertising that gets you noticed.')
       // The words fit inside the board's rectangle, which sits on the artwork.
       const fit = await board.evaluate(element => {
         const range = document.createRange()
