@@ -70,7 +70,8 @@ const nextConfig: NextConfig = {
       // deployments and localhost are untouched.
       {
         source: '/:path*',
-        has: [{ type: 'host' as const, value: 'adjeet.vercel.app' }],
+        // `value` is a regular expression, so the dots are escaped.
+        has: [{ type: 'host' as const, value: 'adjeet\\.vercel\\.app' }],
         destination: 'https://adjeet.in/:path*',
         permanent: true,
       },

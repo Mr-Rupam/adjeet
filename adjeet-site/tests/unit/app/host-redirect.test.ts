@@ -27,6 +27,9 @@ describe('adjeet.vercel.app', () => {
       'https://adjeet-abc123-mr-rupams-projects.vercel.app/contact',
       'https://adjeet-git-some-branch-mr-rupams-projects.vercel.app/',
       'http://localhost:3000/contact',
+      // The matcher is a regex: unescaped dots would let these through.
+      'https://adjeet-vercel.app/contact',
+      'https://adjeetxvercelxapp/contact',
     ]) {
       expect(getRedirectUrl(await at(url)), url).toBeNull()
     }
