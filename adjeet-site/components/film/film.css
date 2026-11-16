@@ -6,14 +6,11 @@
 
    Modes, set on <html> before first paint (film-boot.ts):
      (none)                no JavaScript or reduced motion: still frames, stacked
-     .story                the film plays
-     .drv-native/.drv-js   which driver feeds --p (scroll timeline or rAF)
+     .story                the film plays (story.ts sets the keyframes' time)
      .settled              the current chapter is past its light handoff
      .has-cta              a chapter's own gold action is on screen
    <html data-film-ch> is the current chapter and data-film-tone its stage's
    tone, so the header, the rail and the dock can follow it. */
-
-@property --p { syntax: "<number>"; inherits: true; initial-value: 0; }
 
 /* Tokens: the site's own (design/tokens.css), plus the handoff colours. A
    chapter that ends or starts on a flat colour uses one of these, and only
@@ -101,72 +98,44 @@
 :root:not(.story) .film .ch { --p: var(--still, 1); }
 :root:not(.story) .film :is(.cam, .tl, .pl) { animation: none !important; }
 
-/* The film. */
-.story .film .ch {
-  height: calc((var(--len, 1) + 1) * 100lvh);
-  pointer-events: none;
+/* The film (story.ts): one pinned screen. .film is as tall as the film's
+   scroll length (--film-len screens, set inline from content/home-film.ts)
+   plus one screen; .chs is the screen, sticky at the top for that length,
+   and every chapter is stacked in it. The page scrolls natively; the engine reads the scroll position and sets
+   the keyframes' time. */
+.story .film { height: calc((var(--film-len, 14.3) + 1) * 100lvh); }
+.story .film .chs { position: sticky; top: 0; height: 100lvh; overflow: clip; }
+.story .film .ch { position: absolute; inset: 0; margin: 0; height: auto; pointer-events: none; }
+.story .film .stage { min-height: 0; opacity: 0; }
+/* .cur: the one stage shown (opacity, never visibility, so its links stay in
+   the tab order). The hero is rendered .cur and .live, so before the engine
+   starts the first chapter is shown by CSS alone. */
+.story .film .ch.cur .stage { opacity: 1; pointer-events: auto; }
+/* .live: the chapter shown and the ones before and after it are rendered;
+   the browser skips every other chapter, with no animations. */
+.story .film .ch:not(.live) { content-visibility: hidden; }
+.story .film .ch.live { content-visibility: visible; }
+.story .film .ch:not(.live) :is(.cam, .tl, .pl) { animation: none; }
+/* Keyframes: give .cam (or any .tl) an animation-name, never the animation
+   shorthand. Each is a paused one-second animation; the engine sets its time
+   to p seconds (0% is the chapter's start, 100% its end). */
+.story .film :is(.cam, .tl, .pl) {
+  animation-duration: 1s;
+  animation-timing-function: linear;
+  animation-fill-mode: both;
+  animation-play-state: paused;
 }
-.story .film .ch + .ch { margin-top: calc((1 + var(--over, 0)) * -100lvh); }
-.story .film .stage { position: sticky; top: 0; min-height: 0; }
-.story .film .ch.pin .stage { pointer-events: auto; }
-/* Invisible until pinned (opacity, never visibility, so its links stay in
-   the tab order). The first chapter is pinned from the start. */
-.story .film .ch:not(:first-child) .stage { opacity: 0; }
-.story.drv-js .film .ch.pin .stage { opacity: 1; }
-.story.drv-native .film .ch { view-timeline: --ch block; }
-/* --p costs a style pass over the whole chapter every frame, so in the native
-   driver only a chapter that asks for it (class "p") gets it. */
-.story.drv-native .film .ch.p { animation: story-p linear both; animation-timeline: --ch; animation-range: contain 0% contain 100%; }
-.story.drv-native .film .ch:not(:first-child) .stage { animation: story-show step-end both; animation-timeline: --ch; animation-range: cover 0% contain 0%; }
-@keyframes story-p { from { --p: 0; } to { --p: 1; } }
-@keyframes story-show { from { opacity: 0; } to { opacity: 1; } }
+/* Setting the time moves layers on the compositor and never repaints. */
+.story .film .ch.live :is(.cam, .tl, .pl) { will-change: transform, opacity; }
 
-/* Scroll-bound keyframes: give .cam (or any .tl) an animation-name, never the
-   animation shorthand. 0% is the start of the chapter's pin, 100% its end. */
-.story.drv-native .film :is(.cam, .tl, .pl) {
-  animation-duration: auto;
-  animation-timing-function: linear;
-  animation-fill-mode: both;
-  animation-timeline: --ch;
-  animation-range: contain 0% contain 100%;
-}
-.story.drv-js .film :is(.cam, .tl, .pl) {
-  animation-duration: 1s;
-  animation-timing-function: linear;
-  animation-fill-mode: both;
-  animation-play-state: paused;
-  animation-delay: calc(var(--p) * -1s);
-}
-/* The player (story.ts): once the stepper runs, the keyframes are paused
-   one-second animations that each move plays from one stop to the next on
-   the compositor. Only the playing chapters' stages are rendered (.live); a
-   stage shows once its chapter is pinned. */
-.story.drv-play .film :is(.cam, .tl, .pl) {
-  animation-duration: 1s;
-  animation-timing-function: linear;
-  animation-fill-mode: both;
-  animation-play-state: paused;
-}
-.story.drv-play .film .ch .stage { opacity: 0; }
-.story.drv-play .film .ch.cur .stage { opacity: 1; }
-.story.drv-play .film .ch:not(.live) .stage { visibility: hidden; }
-/* The stages beside the one shown (.cur) stay rendered (styled and laid out)
-   at opacity 0, so a move never starts in the frame that makes one visible. */
-/* A playing chapter is never skipped, so its animations exist when the move starts. */
-.story.drv-play .film .ch.live { content-visibility: visible; }
-/* The stepper (story.ts) owns the film's scrolling once every listener is
-   attached: the browser keeps pinch zoom but not the pan, and no bounce or
-   pull-to-refresh fights a move. At and past the last stop (.step-end) the
-   page pans natively again, for the questions and the footer. */
-:root.stepper { overscroll-behavior: none; }
-:root.stepper body { overscroll-behavior: none; }
-.stepper:not(.step-end) .film { touch-action: pinch-zoom; }
-/* A chapter far from the screen keeps no animations: every animated layer
-   would otherwise be composited from the first paint, which held the hero's
-   paint back by about half a second on a throttled phone. The engine marks a
-   chapter .near from two screens before it pins to one screen after. */
-.story .film .ch:not(.near) :is(.cam, .tl, .pl) { animation: none; }
-.story.drv-native .film .ch:not(.near):not(:first-child) .stage { animation: none; }
+/* Stop markers: one per stop, a direct child of .film, at its scroll
+   distance (--y screens). They carry each stop's place and data for the
+   engine (no scroll snapping). */
+.film .film-stop { position: absolute; left: 0; top: calc(var(--y, 0) * 100lvh); width: 1px; height: 1px; pointer-events: none; }
+:root:not(.story) .film .film-stop { display: none; }
+/* A spacer for a fling that runs on past the film's end: the pinned screen
+   stays pinned (html.film-run is set and cleared by the stops module). */
+html.film-run .film { height: calc((var(--film-len) + 41) * 100lvh); }
 
 
 /* ---------- The camera and the plate ---------- */
@@ -1547,8 +1516,6 @@
    of the plate), by default the camera's --ox --oy. */
 .film .planes { position: absolute; inset: 0; display: none; pointer-events: none; }
 .story .film .planes.ready.on:not(.late) { display: block; }
-/* Never under the requestAnimationFrame driver (story.ts does not fetch them there). */
-.story.drv-js .film .planes { display: none !important; }
 .film .pl {
   position: absolute; inset: 0; width: 100%; height: 100%; max-width: none;
   transform-origin: calc(var(--px, var(--ox, 50)) * 1%) calc(var(--py, var(--oy, 50)) * 1%);

@@ -3,7 +3,7 @@ import { renderToStaticMarkup } from 'react-dom/server'
 import { HomePageView } from '@/components/home/HomePageView'
 import { getPhotoById } from '@/content/gallery'
 import { homeFaqs } from '@/content/home-faqs'
-import { CHAPTERS, MALDA_BOARDS, MALDA_DAYS, MALDA_NORMAL, MALDA_ROWS, ROAD, WALL, WORK_PICKS, stopsAttr, tenureLine } from '@/content/home-film'
+import { CHAPTERS, MALDA_BOARDS, MALDA_DAYS, MALDA_NORMAL, MALDA_ROWS, ROAD, WALL, WORK_PICKS, filmLength, filmStops, stopsAttr, tenureLine } from '@/content/home-film'
 import { MALDA_STORY } from '@/content/company-figures'
 import { SERVICE_SLUGS } from '@/content/services'
 import { FILM_BOOT } from '@/components/film/film-boot'
@@ -132,7 +132,7 @@ describe('home page: the film, then the questions', () => {
     expect(input.closest('label')?.textContent).toContain("Type your shop's name")
   })
 
-  it('declares the stepper stops on every chapter, with the showpiece durations', () => {
+  it('declares the stops on every chapter, and one marker per stop with its designed time', () => {
     const doc = render()
     expect(doc.querySelector('#hero')?.getAttribute('data-stops')).toBe('0')
     expect(doc.querySelector('#brands')?.getAttribute('data-stops')).toBe('0.5:2500!')
@@ -140,6 +140,11 @@ describe('home page: the film, then the questions', () => {
     for (const chapter of CHAPTERS) {
       expect(doc.querySelector(`#${chapter.id}`)?.getAttribute('data-stops') ?? undefined, chapter.id).toBe(stopsAttr(chapter.stops))
     }
+    // The stop markers are direct children of the film, one per stop in order.
+    const marks = [...doc.querySelectorAll<HTMLElement>('#film > .film-stop[data-i]')]
+    expect(marks.map(mark => `${mark.dataset.i} ${mark.dataset.ch} ${mark.dataset.p} ${mark.dataset.ms}`)).toEqual(filmStops().map(stop => `${stop.i} ${stop.ch} ${stop.p} ${stop.ms}`))
+    expect(marks.filter(mark => mark.hasAttribute('data-gate'))).toHaveLength(8)
+    expect(doc.querySelector<HTMLElement>('#film')?.style.getPropertyValue('--film-len')).toBe(String(+filmLength().toFixed(4)))
   })
 
   it('puts one brand on each of the 22 boards, logos as plain images, the years in the words and none on the boards', () => {

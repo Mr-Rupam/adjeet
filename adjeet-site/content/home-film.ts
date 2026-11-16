@@ -34,25 +34,25 @@ export { DEFAULT_SHOP_NAME, SHOP_NAME_MAX } from '@/content/shop-name'
 export type ChapterId = 'hero' | 'brands' | 'work' | 'brief' | 'workshop' | 'road' | 'hills' | 'junction' | 'finale'
 
 /**
- * A stop: where the film rests (a p value, 0 to 1 of the chapter's pinned
- * scroll), and for the showpieces how long the move into it takes, in ms.
+ * A stop: where the film rests (a p value, 0 to 1 of the chapter's timeline),
+ * and for the showpieces how long the move into it takes, in ms.
  */
 export type Stop = number | { readonly p: number; readonly ms?: number; readonly gate?: boolean }
 export const stopP = (stop: Stop) => (typeof stop === 'number' ? stop : stop.p)
-/** A gate holds the film: a gesture never carries past it (the other stops are soft). */
+/** A gate holds the film: one fling never carries past it (the other stops are soft). */
 export const isGate = (stop: Stop) => typeof stop !== 'number' && !!stop.gate
 /** `data-stops` on the section: "0.14 0.78:3500" (p, or p:ms for a showpiece). */
 export const stopsAttr = (stops?: readonly Stop[]) =>
   stops?.map(stop => (typeof stop === 'number' ? String(stop) : `${stop.p}${stop.ms ? `:${stop.ms}` : ''}${stop.gate ? '!' : ''}`)).join(' ')
 
 /**
- * Each chapter: how long it stays pinned (`len`, in screens), how far its
- * start overlaps the one before (`over`), where an anchor or a skip link lands
- * (`rest`, one of its stops), the camera frame for the still version (`still`,
- * default 1), its heading, and its stops. The film is stepped
- * (stepper-contract.md): one gesture moves exactly one stop, every move is
- * timed, and the film rests only on stops, so every frame meant to be read is
- * a stop. The rail labels each chapter with its heading, without the full stop.
+ * Each chapter: `len` and `over` (its scroll length and overlap in screens
+ * under the old engine; the film no longer reads them, only the tests'
+ * length budget does), where an anchor or a skip link lands (`rest`, one of
+ * its stops), the camera frame for the still version (`still`, default 1),
+ * its heading, and its stops (filmStops below gives the film's 23 in
+ * order), so every frame meant to be read is a stop. The rail
+ * labels each chapter with its heading, without the full stop.
  */
 export interface Chapter {
   id: ChapterId
@@ -63,21 +63,20 @@ export interface Chapter {
   still?: number
   stops: readonly Stop[]
   /**
-   * Seconds the chapter's whole timeline (p 0 to 1) takes when the stepper
-   * plays it: a move from stop a to stop b takes (b - a) times this, held to
-   * 0.8 to 1.6 s, unless the stop it goes into is a showpiece with its own ms.
+   * Seconds the chapter's whole timeline (p 0 to 1) takes: a move from stop a
+   * to stop b is designed to take (b - a) times this, held to 0.8 to 1.6 s,
+   * unless the stop it goes into is a showpiece with its own ms (filmStops).
    */
   dur: number
 }
 
 /**
  * Proof first (storyboard-v2, section 2): the brands, then the real
- * photographs, then the story. 23 stops (stepper-contract.md). Eight are
- * gates (gate: true), one per chapter after the hero, on the frame that
- * carries its message (the owner's 5 to 8 hard blocks, film diagnosis of
- * 17fe3e4): a gesture is spent there and never carries past one. The others
- * are soft: still the only frames the film rests on, but a quick swipe, or
- * input during a move, carries the film on through them to the next gate.
+ * photographs, then the story. 23 stops. Eight are gates (gate: true), one
+ * per chapter after the hero, on the frame that carries its message (the
+ * owner's 5 to 8 hard blocks, film diagnosis of 17fe3e4): one fling never
+ * carries past a gate. The others are soft: a fling can pass through them
+ * to the next gate.
  * - hero: at rest.
  * - brands: the wall lit, the title, the figure and the actions (the hero's
  *   push and the wave are the move into it, a showpiece).
@@ -106,6 +105,51 @@ export const CHAPTERS: readonly Chapter[] = [
   { id: 'junction', title: 'Shopfronts, walls, vehicles, events.', len: 3.4, over: 0, rest: 0.8, stops: [0.13, 0.25, 0.37, 0.49, 0.6, { p: 0.8, gate: true }], dur: 9 },
   { id: 'finale', title: 'Your name is next.', len: 2.1, over: 0, rest: 0.72, stops: [{ p: 0.72, gate: true }], dur: 3 },
 ]
+
+/**
+ * The scroll distance of one move between neighbouring stops, in screens
+ * (100lvh). One constant for now: it will be tuned.
+ */
+export const FILM_STEP_SCREENS = 0.65
+/** A move's designed time when no showpiece sets its own, in ms. */
+const MOVE_MIN = 800
+const MOVE_MAX = 1600
+
+/**
+ * One stop of the whole film. i: its index; ch and ci: its chapter and the
+ * chapter's index; ms: the designed time of the move into it from the stop
+ * before (the stop's own ms, or the time of the chapters it crosses held to
+ * 0.8 to 1.6 s; 0 for the first); dy: that move's scroll distance in screens.
+ */
+export type FilmStop = { i: number; ch: ChapterId; ci: number; p: number; gate: boolean; ms: number; dy: number }
+
+/** The film's 23 stops in order (HomeFilm renders a marker for each). */
+export function filmStops(chapters: readonly Chapter[] = CHAPTERS): FilmStop[] {
+  const out: FilmStop[] = []
+  chapters.forEach((entry, ci) => {
+    for (const stop of entry.stops) {
+      const p = stopP(stop)
+      const own = typeof stop === 'number' ? 0 : stop.ms ?? 0
+      const prev = out[out.length - 1]
+      let ms = 0
+      if (prev) {
+        // The time of each chapter crossed: the old one to its end, any between whole, this one from 0.
+        let sum = 0
+        for (let k = prev.ci; k <= ci; k++) {
+          const from = k === prev.ci ? prev.p : 0
+          const to = k === ci ? p : 1
+          sum += (to - from) * chapters[k].dur * 1000
+        }
+        ms = own || Math.min(MOVE_MAX, Math.max(MOVE_MIN, sum))
+      }
+      out.push({ i: out.length, ch: entry.id, ci, p, gate: isGate(stop), ms, dy: prev ? FILM_STEP_SCREENS : 0 })
+    }
+  })
+  return out
+}
+
+/** The film's scroll length in screens: the sum of every stop's dy. */
+export const filmLength = (stops: readonly FilmStop[] = filmStops()) => stops.reduce((sum, stop) => sum + stop.dy, 0)
 
 export function chapter(id: ChapterId): Chapter {
   const found = CHAPTERS.find(entry => entry.id === id)

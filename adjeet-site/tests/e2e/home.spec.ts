@@ -12,42 +12,43 @@ async function seenIntro(page: Page) {
   })
 }
 
+type Film = { yAt: (ch: string, p: number) => number; now: () => { moving: boolean } }
+
 /**
- * The engine starts after hydration and writes the current chapter on <html>.
- * With the proof first, the first chapter a test scrolls to is the one right
- * after the hero, so a scroll made before the engine runs would see its beats late.
+ * The engine starts after hydration, writes the current chapter on <html> and
+ * publishes window.__film. With the proof first, the first chapter a test
+ * scrolls to is the one right after the hero, so a scroll made before the
+ * engine runs would see its beats late.
  */
 async function engineReady(page: Page) {
   await page.locator('html[data-film-ch]').waitFor({ state: 'attached' })
+  await page.waitForFunction(() => !!(window as unknown as { __film?: Film }).__film)
 }
 
 /**
- * Scrolls to progress p of a chapter's pinned scroll and waits for the engine's
- * frame. The film rests only on stops (stepper-contract.md), so the stepper
- * settles a jump on the nearest stop; `free` holds a frame between two stops,
- * for a check of a move's middle.
+ * Scrolls to progress p of a chapter (window.__film.yAt) and waits for the
+ * film to catch up. A p between two stops shows that frame of the move.
  */
-async function scrollToChapter(page: Page, id: string, p: number, free = false) {
+async function scrollToChapter(page: Page, id: string, p: number) {
   await engineReady(page)
-  await page.evaluate(([id, p, free]) => {
-    document.documentElement.toggleAttribute('data-film-free', free as boolean)
-    const chapter = document.getElementById(id as string)!
-    const top = chapter.getBoundingClientRect().top + scrollY
-    const pin = chapter.offsetHeight - chapter.querySelector<HTMLElement>('.stage')!.offsetHeight
-    scrollTo({ top: Math.round(top + pin * (p as number)) + 2, behavior: 'instant' })
-  }, [id, p, free] as const)
-  await page.waitForTimeout(700)
+  await page.evaluate(([id, p]) => {
+    const film = (window as unknown as { __film: Film }).__film
+    scrollTo({ top: film.yAt(id as string, p as number), behavior: 'instant' })
+  }, [id, p] as const)
+  await page.waitForTimeout(200)
+  await moveEnded(page)
+  await page.waitForTimeout(500)
   // A first visit to a chapter decodes its pictures, which can hold a beat's
   // light back on a busy machine: let the lights finish switching on.
   await page.waitForFunction(() => document.getAnimations().every(animation => !(animation instanceof CSSTransition) || animation.playState !== 'running'), undefined, { timeout: 4000 }).catch(() => {})
 }
 
-/** Waits for a timed move to end: the player has finished and the page has not scrolled for 600 ms. */
+/** Waits for the film to catch up with the scroll: not moving, and the page has not scrolled, for 600 ms. */
 async function moveEnded(page: Page) {
   let last = await page.evaluate(() => scrollY)
   for (let still = 0, i = 0; still < 6 && i < 120; i++) {
     await page.waitForTimeout(100)
-    const [y, moving] = await page.evaluate(() => [scrollY, document.documentElement.hasAttribute('data-film-moving')] as const)
+    const [y, moving] = await page.evaluate(() => [scrollY, (window as unknown as { __film: Film }).__film.now().moving] as const)
     still = y === last && !moving ? still + 1 : 0
     last = y
   }
@@ -114,7 +115,8 @@ test.describe('Home page', () => {
   })
 
   test('every chapter\'s heading and actions are reached by scrolling, at 390 and 1440 wide', async ({ page }) => {
-    test.slow()
+    // Each scroll waits for the film to catch up (about 1 to 2 s) and to be still.
+    test.setTimeout(240000)
     for (const [width, height] of [[390, 844], [1440, 900]] as const) {
       await page.setViewportSize({ width, height })
       await page.goto('/')
@@ -152,7 +154,7 @@ test.describe('Home page', () => {
       await expect(road.locator('.m-field .m-row > i')).toHaveCount(MALDA_BOARDS)
       await expect(road.locator('.m-strip i')).toHaveCount(MALDA_NORMAL.max)
       // Mid count (a frame of the move into the hold): some rows lit, some not, and the gold days with them.
-      await scrollToChapter(page, 'road', 0.5, true)
+      await scrollToChapter(page, 'road', 0.5)
       const lit = await road.locator('.m-row.on').count()
       expect(lit, `${width}: rows lit mid count`).toBeGreaterThan(0)
       expect(lit, `${width}: rows lit mid count`).toBeLessThan(MALDA_ROWS)
@@ -226,11 +228,12 @@ test.describe('Home page', () => {
     }
   })
 
-  test('with the keyboard the keys step the film to a chapter and Tab reaches its links', async ({ page }) => {
+  test('with the keyboard the keys move the film towards a chapter and its links can take focus', async ({ page }) => {
+    // Each key press waits for the film to catch up and be still.
+    test.setTimeout(120000)
     await page.setViewportSize({ width: 390, height: 844 })
     await page.goto('/')
     await engineReady(page)
-    await page.locator('html.stepper').waitFor({ state: 'attached' })
     // Only the chapter on screen is rendered, so its links are the ones in the tab order.
     for (const [id, selector, extra] of [['brands', '#brands a[href="/for-brands"]', 0], ['work', '#work a[href="/portfolio"]', 5]] as const) {
       for (let i = 0; i < 12 && await page.evaluate(() => document.documentElement.dataset.filmCh) !== id; i++) {
@@ -243,6 +246,9 @@ test.describe('Home page', () => {
       await expect(page.locator('html')).toHaveAttribute('data-film-ch', id)
       await page.locator(selector).focus()
       await expect(page.locator(selector)).toBeFocused()
+      // Focus moves the page to the chapter's stop for that link; the film then catches up.
+      await page.waitForTimeout(200)
+      await moveEnded(page)
       expect(await seen(page, selector), selector).toBe(true)
     }
   })
@@ -338,7 +344,7 @@ test.describe('Home page', () => {
     await expect(page.locator('html')).toHaveClass(/\bstory\b/)
     await page.getByRole('banner').getByRole('link', { name: 'About', exact: true }).click()
     await expect(page).toHaveURL(/\/about$/)
-    await expect(page.locator('html')).not.toHaveClass(/\bstory\b|\bsettled\b|\bhas-cta\b|\bdrv-/)
+    await expect(page.locator('html')).not.toHaveClass(/\bstory\b|\bsettled\b|\bhas-cta\b/)
     await expect(page.locator('html')).not.toHaveAttribute('data-film-ch')
     await expect(page.locator('html')).not.toHaveAttribute('data-film-tone')
     await page.getByRole('banner').getByRole('link', { name: 'Home', exact: true }).click()
@@ -409,10 +415,10 @@ test.describe('Home page', () => {
       expect(shown, slug).toEqual(pages.map((_, other) => other === index))
     }
     // The names step off before the push, so no giant cropped letters show.
-    await scrollToChapter(page, 'junction', 0.86, true)
+    await scrollToChapter(page, 'junction', 0.86)
     expect(Number(await page.locator('#junction .j-name-out').evaluate(element => getComputedStyle(element).opacity))).toBeLessThan(0.05)
     // The chapter leaves on the film's flat white, the colour the next chapter opens on.
-    await scrollToChapter(page, 'junction', 1, true)
+    await scrollToChapter(page, 'junction', 1)
     const out = await page.locator('#junction .j-out').evaluate(element => {
       const style = getComputedStyle(element)
       const probe = document.createElement('i')

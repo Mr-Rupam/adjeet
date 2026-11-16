@@ -7,9 +7,8 @@ import { startStory, type StopStory } from './story'
 /**
  * Sets the film's mode before the browser paints (a layout effect, for a
  * visit that arrives by client-side navigation; on a full load the hero's
- * inline script has already done it), then starts the engine and its stepper
- * just after the first paint. The teardown takes every listener, class and
- * attribute off.
+ * inline script has already done it), then starts the engine just after the
+ * first paint. The teardown takes every listener, class and attribute off.
  */
 export function FilmEngine() {
   useLayoutEffect(() => {
@@ -23,7 +22,7 @@ export function FilmEngine() {
       cancelAnimationFrame(frame)
       clearTimeout(timer)
       if (stop) stop()
-      else document.documentElement.classList.remove('story', 'drv-native', 'drv-js')
+      else document.documentElement.classList.remove('story')
     }
   }, [])
   return null

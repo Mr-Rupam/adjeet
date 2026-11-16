@@ -1,84 +1,90 @@
 /**
- * The home film's engine (DESIGN.md, "Home film"), ported from the storyboard
- * prototype's engine/story.js. It switches beats (`.on` once a chapter's
- * progress passes an element's `--at`), loads and decodes the pictures ahead,
- * fits the visitor's name to every board, and writes the current chapter and
- * its tone on <html> for the header, the rail and the dock.
+ * The home film's engine (DESIGN.md, "Home film").
  *
- * The stepper (stepper-contract.md) is its input layer: a gesture is an
- * intent, never a distance. One swipe, one wheel gesture or one key press
- * moves the film to the next stop (a chapter's `data-stops`); input during a
- * move is ignored, and the film rests only on stops.
+ * The browser scrolls the page natively; the engine has no wheel, touch or
+ * key listeners, no timers that end a move and no lock. The film is a
+ * function of the scroll position: the stop markers (HomeFilm, one per stop)
+ * give each stop its scroll position and film time, the scroll position gives
+ * a target film time (readTarget), and one requestAnimationFrame loop follows that target
+ * with a speed-limited spring (timeline.ts, `chase`). The film time gives the
+ * chapter on screen and its progress p; the chapter's keyframes are paused
+ * one-second animations whose time the loop sets to p seconds.
  *
- * The player. A move does not scroll the page. Each chapter's keyframes are
- * paused one-second animations (`drv-play`); a move from stop a to stop b over
- * T ms sets every animation's time to a, its rate to (b - a) / T and plays it,
- * so transforms and opacity run on the compositor with no script per frame.
- * Beats fire from timers at their place in the move, each once. The page
- * scroll is the source of truth between moves: at the end of a move (and at
- * the flat light where one chapter hands over to the next) the page jumps to
- * the stop's place, so anchors, the rail, restored positions and the native
- * scroll after the film work as before. Only the playing chapters' stages are
- * rendered.
+ * Around that: beats (`.on` between an element's `--at` and `--off`), the
+ * root marks the header, the rail and the dock read (`data-film-ch`,
+ * `data-film-tone`, `.settled`, `.has-cta`), the pictures loaded ahead with
+ * no hold, the visitor's name lettered on every board, the depth planes,
+ * anchors and focus, and `window.__film`, a read-only view for tests and
+ * tools.
  *
- * Before the engine starts, and with no stepper, the native scroll timelines
- * (or the requestAnimationFrame driver) drive the same keyframes.
- *
- * `startStory` returns its teardown: every listener and timer removed and
+ * `startStory` returns its teardown: every listener and frame removed and
  * everything it set on <html> taken off, so leaving the page and coming back
  * starts clean.
  */
 
 import { DEFAULT_SHOP_NAME, SHOP_NAME_MAX } from '@/content/shop-name'
+import { buildTimeline, chase, chaseOptions, type ChaseState } from './timeline'
 
 /** Classes and attributes the film sets on <html>. */
-export const FILM_ROOT_CLASSES = ['story', 'drv-native', 'drv-js', 'drv-play', 'stepper', 'step-end', 'settled', 'has-cta'] as const
-export const FILM_ROOT_ATTRIBUTES = ['data-film-ch', 'data-film-tone', 'data-film-moving'] as const
+export const FILM_ROOT_CLASSES = ['story', 'settled', 'has-cta'] as const
+export const FILM_ROOT_ATTRIBUTES = ['data-film-ch', 'data-film-tone'] as const
 /** Session storage only: the name never leaves the device. */
 export const NAME_KEY = 'adj-name'
-/** Elements whose own scrolling the stepper leaves alone. */
-const NATIVE = '[role="dialog"], .chatbot-window, [data-native-scroll]'
 
 export type StopStory = () => void
 
+/** The page-side contract (read-only), for tests and tools. */
+export type FilmView = {
+  version: 2
+  /** y: the scrollY at which each stop rests. */
+  readonly stops: ReadonlyArray<{ i: number; ch: string; p: number; y: number; gate: boolean }>
+  /**
+   * ch, p: what is on screen. moving: the film has not caught up with the
+   * scroll, or the page scrolled in the last 120 ms. rest: the index of the
+   * stop both the scroll (within 2 px) and the film sit on, else -1.
+   */
+  now: () => { y: number; ch: string; p: number; moving: boolean; rest: number; targetCh: string; targetP: number }
+  /** The scrollY at which the film rests on chapter ch at progress p (for tools that need a frame between stops). */
+  yAt: (ch: string, p: number) => number
+}
+declare global {
+  interface Window { __film?: FilmView }
+}
+
 type Beat = { b: HTMLElement; at: number; off: number; on: boolean; cta: boolean; pl: boolean }
 type Stack = HTMLElement & { t?: number }
-type Stop = { p: number; ms: number; gate: boolean }
 type Chapter = {
-  el: HTMLElement; id: string; i: number; st: HTMLElement; rest: number; dur: number; stops: Stop[]; beats: Beat[]
-  marks: number[]; top: number; pin: number; H: number; ld?: boolean; was?: boolean; near?: boolean; ok?: boolean
-  im?: HTMLImageElement[]; an?: Animation[] | null
-  /** The p its keyframes are seated on (NaN while a move plays them). */
-  sp?: number
+  el: HTMLElement; id: string; i: number; st: HTMLElement; rest: number; dur: number; beats: Beat[]
+  ld?: boolean; an?: Animation[] | null
+  /** The p its keyframes are seated on; `want`: the p to seat once it has animations. */
+  sp?: number; want?: number; tries?: number
 }
-/** A rest in page pixels, its chapter and p; ms: a showpiece's own duration
-    for the move into it; gate: a gesture is spent there and never carries past it. */
-type Rest = { y: number; ms: number; c: Chapter; p: number; gate: boolean }
-/** One chapter's part of a move: p from a to b over ms. */
-type Seg = { c: Chapter; a: number; b: number; ms: number }
+/** A stop as the engine uses it: its marker and its scroll position in page pixels. */
+type Mark = { el: HTMLElement; i: number; c: Chapter; p: number; gate: boolean; ms: number; ys: number; y: number }
 
 const clamp = (v: number, a: number, b: number) => Math.max(a, Math.min(b, v))
-/** A move's ease (sine in and out), and its inverse for the beats' times. */
-const ease = (x: number) => (1 - Math.cos(Math.PI * x)) / 2
-const unease = (f: number) => Math.acos(1 - 2 * clamp(f, 0, 1)) / Math.PI
-/** The ease for the rest of a move that was carried on (it is already at speed). */
-const easeOut = (x: number) => Math.sin((Math.PI * x) / 2)
-const uneaseOut = (f: number) => (2 * Math.asin(clamp(f, 0, 1))) / Math.PI
-/** Rate changes along a move: the compositor holds each until the next. */
-const SLICES = 10
-/** An ordinary move takes 0.8 to 1.6 s (a showpiece sets its own). */
-const MOVE_MIN = 800
-const MOVE_MAX = 1600
+
+/**
+ * Whether a picture is the copy for this theme and screen shape (film.css:
+ * only `.day` or `.night`, and only `.tall-only` or `.wide-only`, is laid out).
+ */
+export function wantedCopy(el: Element, { dark, wide }: { dark: boolean; wide: boolean }): boolean {
+  if (el.closest('.night') && !dark) return false
+  if (el.closest('.day') && dark) return false
+  if (el.closest('.wide-only') && !wide) return false
+  if (el.closest('.tall-only') && wide) return false
+  return true
+}
+/** The page counts as on a stop within this many pixels. */
+const ON = 2
 
 export function startStory(film: HTMLElement): StopStory {
   const d = document
   const h = d.documentElement
   const all = <T extends Element = HTMLElement>(s: string, e: ParentNode = film) => [...e.querySelectorAll<T>(s)]
   const story = h.classList.contains('story')
-  const js = h.classList.contains('drv-js')
-  // The stepper and the player run with the film; reduced motion and still mode have neither.
-  const on = story
-  const touch = matchMedia('(pointer: coarse)').matches
+  const coarse = matchMedia('(pointer: coarse)').matches
+  const opts = chaseOptions(coarse)
   // Beats are written inline, so they are read from the style attribute: no style recalculation.
   const num = (e: HTMLElement, k: string) => parseFloat(e.style.getPropertyValue(k))
   const C: Chapter[] = all('.ch').map((el, i) => {
@@ -86,40 +92,72 @@ export function startStory(film: HTMLElement): StopStory {
     const beats = all('[style*="--at"]', el).map(b => ({
       b, at: num(b, '--at') || 0, off: num(b, '--off') || 9, on: false, cta: !!b.querySelector('.cta'), pl: b.classList.contains('planes'),
     }))
-    // Every p where something changes on screen besides the keyframes: beats, tones, .settled.
-    const marks = [...new Set([0.06, ...beats.flatMap(t => [t.at, t.off]), ...(st.dataset.toneAt || '').split(' ').filter(Boolean).map(Number)])]
-      .filter(x => x > 0 && x <= 1)
     return {
-      el, id: el.id, i, st, beats, marks,
+      el, id: el.id, i, st, beats,
       rest: parseFloat(el.dataset.rest ?? ''),
-      dur: (parseFloat(el.dataset.dur ?? '') || 4) * 1000,
-      // "0.14 0.78:3500!": a stop's p, a showpiece's duration, and "!" for a gate.
-      stops: (el.dataset.stops || '').split(' ').filter(Boolean).map(s => {
-        const [p, ms] = s.replace('!', '').split(':')
-        return { p: +p, ms: +ms || 0, gate: s.endsWith('!') }
-      }),
-      top: 0, pin: 1, H: 1,
+      dur: parseFloat(el.dataset.dur ?? '') || 4,
     }
   })
+  const byId = (id: string) => C.find(c => c.id === id)
+  const M: Mark[] = all('.film-stop[data-i]').map(el => ({
+    el, i: +el.dataset.i!, c: byId(el.dataset.ch || '') || C[0], p: +(el.dataset.p || 0), gate: el.hasAttribute('data-gate'),
+    ms: +(el.dataset.ms || 0), ys: num(el, '--y') || 0, y: 0,
+  }))
+  const TL = buildTimeline(
+    M.map((m, k) => ({ i: m.i, ch: m.c.id, ci: m.c.i, p: m.p, gate: m.gate, ms: m.ms, dy: k ? m.ys - M[k - 1].ys : 0 })),
+    C.map(c => ({ dur: c.dur })),
+  )
+  const T = TL.stops.map(s => s.t)
   const rail = all<HTMLAnchorElement>('.rail a')
-  let raf = 0
-  let cur: Chapter | null | undefined
-  let idle = false
-  let tok = 0
-  let idleId = 0
-  let R: Rest[] = []
   const timers = new Set<number>()
   const later = (f: () => void, ms: number) => { const t = window.setTimeout(() => { timers.delete(t); f() }, ms); timers.add(t) }
+  let idleId = 0
+  const idleCb = (f: () => void, timeout: number) => {
+    if (typeof requestIdleCallback === 'function') idleId = requestIdleCallback(f, { timeout })
+    else later(f, 200)
+  }
 
-  /* Depth planes: fetched only in the film, never with Save-Data or on a
-     touch screen (for now: a phone's frames go to the scenes); the hero's only
-     once the page has loaded and gone idle. .ready once all decoded. */
+  /* ---------- Where the stops are ---------- */
+  /** The scroll position at which the pinned screen has wholly left the top of the screen. */
+  let exitY = Infinity
+  let H = innerHeight
+  const measure = () => {
+    const y = scrollY
+    for (const m of M) m.y = Math.round(m.el.getBoundingClientRect().top + y)
+    exitY = Math.round(film.getBoundingClientRect().bottom + y)
+    H = C[0]?.st.offsetHeight || innerHeight
+  }
+  const lastY = () => (M.length ? M[M.length - 1].y : 0)
+  /** The film time for a scroll position: linear in pixels between two stops, exact on a stop. */
+  const targetAt = (y: number) => {
+    if (!M.length) return 0
+    if (y <= M[0].y + ON) return T[0]
+    const n = M.length - 1
+    if (y >= M[n].y - ON) return T[n]
+    let k = 1
+    while (k < n && M[k].y < y) k++
+    if (Math.abs(y - M[k].y) <= ON) return T[k]
+    if (Math.abs(y - M[k - 1].y) <= ON) return T[k - 1]
+    const u = (y - M[k - 1].y) / (M[k].y - M[k - 1].y)
+    return TL.timeAt(M[k - 1].ys + u * (M[k].ys - M[k - 1].ys))
+  }
+  /**
+   * The chase's target film time: the one place the loop asks where the film
+   * should go. Today it is the time of the scroll position; `now` (the frame's
+   * timestamp) is there for a module that holds stops and gates.
+   */
+  const readTarget: (now: number) => number = () => targetAt(scrollY)
+
+  /* ---------- Pictures: loaded ahead, never waited for ---------- */
   const WIDE = matchMedia('(min-width: 1024px) and (min-aspect-ratio: 5/4)')
   const save = !!(navigator as Navigator & { connection?: { saveData?: boolean } }).connection?.saveData
+  let idle = false
+  /* Depth planes: fetched only in the film, never with Save-Data or on a
+     touch screen (for now: a phone's frames go to the scenes); the hero's only
+     once its picture is in and the page has gone idle. .ready once all decoded. */
+  let tok = 0
   const planes = (c?: Chapter) => {
-    // Never under the requestAnimationFrame driver: there the planes cost more
-    // frames than they add depth, so the flat plate does every move.
-    if (!story || js || touch || save || !c || (c === C[0] && !idle)) return
+    if (!story || coarse || save || !c || (c === C[0] && !idle)) return
     for (const s of all<Stack>('.planes', c.el)) {
       if (s.t) continue
       const k = WIDE.matches ? 'srcw' : 'src'
@@ -127,53 +165,54 @@ export function startStory(film: HTMLElement): StopStory {
       const t = (s.t = ++tok)
       const imgs = all<HTMLImageElement>('.pl', s)
       for (const i of imgs) i.src = (n && i.dataset[k + 'N']) || i.dataset[k] || ''
-      Promise.all(imgs.map(i => i.decode())).then(() => { if (s.t === t) { s.classList.add('ready'); c.an = null } }, () => {})
+      Promise.all(imgs.map(i => i.decode())).then(() => { if (s.t === t) { s.classList.add('ready'); c.an = null; c.sp = undefined; want(c) } }, () => {})
     }
   }
   const reset = () => {
     for (const s of all<Stack>('.planes')) { s.t = 0; s.classList.remove('ready') }
-    for (const c of C) { c.an = null; if (c.ld) planes(c) }
+    for (const c of C) { c.an = null; c.sp = undefined; if (c.ld) planes(c) }
   }
-
-  /* A stop's place on the page: a pixel past the exact frame, so a beat that
-     starts on the stop is on (the hero's stop is the top of the page). */
-  const at = (c: Chapter, p: number) => (c === C[0] && p === 0 ? 0 : Math.ceil(c.top + c.pin * p) + 1)
-  const measure = () => {
-    const y = scrollY
-    for (const c of C) {
-      c.top = c.el.getBoundingClientRect().top + y
-      // Every stage is one screen; a chapter the browser is skipping
-      // (content-visibility) reports no layout inside it, so the first
-      // chapter's stage gives the height for all.
-      c.H = C[0].st.offsetHeight
-      c.pin = Math.max(1, c.el.offsetHeight - c.H)
+  /** The theme the pictures are for: html[data-theme], else the system's. */
+  const dark = () => (h.dataset.theme ? h.dataset.theme === 'dark' : matchMedia('(prefers-color-scheme: dark)').matches)
+  /** Lazy pictures for this theme and screen shape load now, chosen by rule
+      (a skipped chapter has no boxes to measure): the other copy stays unfetched. */
+  const eager = (c: Chapter) => {
+    const want = { dark: dark(), wide: WIDE.matches }
+    // A rendered chapter can also be measured: a copy hidden some other way (the hero's other scene) stays lazy.
+    const live = c.el.classList.contains('live')
+    for (const i of all<HTMLImageElement>('img[loading=lazy]:not([data-keep-lazy]):not(.pl)', c.el)) {
+      if (wantedCopy(i, want) && (!live || i.getClientRects().length)) i.loading = 'eager'
     }
-    R = []
-    for (const c of C) for (const s of c.stops) R.push({ y: at(c, s.p), ms: s.ms, c, p: s.p, gate: s.gate })
-    R.sort((a, b) => a.y - b.y)
-    frame()
   }
-  // Pictures are fetched and decoded ahead. .ok: decoded, or 4 s passed; a
-  // move into a chapter waits for it (the stepper's gate).
   const load = (c?: Chapter) => {
-    // Nothing after the hero starts loading before the page has: the hero's
-    // picture keeps the network to itself (the load event measures again).
-    if (!c || c.ld || (c !== C[0] && d.readyState !== 'complete')) return
+    if (!c || c.ld) return
     c.ld = true
     c.el.classList.add('ld')
-    // Only pictures that are laid out: the other theme's or size's copy stays unfetched.
-    const im = (c.im = all<HTMLImageElement>('img[loading=lazy]:not([data-keep-lazy]):not(.pl)', c.el).filter(i => i.getClientRects().length))
-    for (const i of im) i.loading = 'eager'
-    // The lit plate the hills' and the junction's lamps paint as a background:
-    // decoded with the pictures, so a move never waits on it mid-frame.
+    eager(c)
+    // The lit plate the hills' and the junction's lamps paint as a background, fetched with the pictures.
     const lit = c.st.style.getPropertyValue(WIDE.matches ? '--lit-w' : '--lit-t').match(/url\("?([^")]+)/)?.[1]
-    if (lit) { const i = new Image(); i.src = lit; im.push(i) }
+    if (lit) { const i = new Image(); i.src = lit }
     planes(c)
-    Promise.race([Promise.all(im.map(i => i.decode().catch(() => undefined))), new Promise(r => setTimeout(r, 4000))])
-      .then(() => { c.ok = true })
+  }
+  /** After the hero's picture (or 2.5 s): the next two chapters, then one more each time the browser is idle. */
+  let ahead = 1
+  let aheadOn = true
+  const fetchAhead = () => {
+    if (!aheadOn || save) return
+    load(C[1])
+    load(C[2])
+    ahead = 3
+    const next = () => {
+      if (!aheadOn) return
+      while (ahead < C.length && C[ahead].ld) ahead++
+      if (ahead >= C.length) return
+      load(C[ahead++])
+      idleCb(next, 2000)
+    }
+    idleCb(next, 2000)
   }
 
-  /* Beats: on from --at until --off. */
+  /* ---------- Beats, marks, seats ---------- */
   const beats = (c: Chapter, pr: number) => {
     let changed = false
     for (const t of c.beats) {
@@ -181,7 +220,7 @@ export function startStory(film: HTMLElement): StopStory {
       if (on !== t.on) {
         t.on = on
         changed = true
-        // A stack that is not ready when its move begins sits this pass out.
+        // A stack that is not ready when its beat starts sits this pass out.
         if (on && t.pl) t.b.classList.toggle('late', !t.b.classList.contains('ready'))
         t.b.classList.toggle('on', on)
         if (!on) t.b.classList.remove('lit-in')
@@ -190,53 +229,12 @@ export function startStory(film: HTMLElement): StopStory {
     return changed
   }
 
-  /* The chapter's CSS animations (only on a chapter that is near: film.css),
-     each set to the frame for progress p and paused. */
-  const anims = (c: Chapter) => {
-    // A chapter the browser is still skipping (content-visibility) has none
-    // yet, so an empty list is never kept.
-    // Only the film's keyframes (.cam, .tl, .pl): a loading shimmer, a light's
-    // own loop or the Malda days that run on by themselves keep their time.
-    if (!c.an?.length) {
-      c.an = c.el.getAnimations({ subtree: true }).filter(a => 'animationName' in a && !(a.effect as KeyframeEffect | null)?.pseudoElement
-        && !!((a.effect as KeyframeEffect | null)?.target as Element | null)?.matches?.('.cam, .tl, .pl'))
-    }
-    return c.an
-  }
-  const seat = (c: Chapter, p: number) => {
-    if (!h.classList.contains('drv-play')) return
-    p = clamp(p, 0, 1)
-    // Already on that frame (a move ends on it by the animations' own clamp): untouched.
-    if (c.sp === p) return
-    for (const a of anims(c)) {
-      a.pause()
-      a.effect?.updateTiming({ iterationStart: 0, iterations: 1, direction: 'normal' })
-      a.currentTime = p * 1000
-    }
-    c.sp = p
-  }
-  /* The rest: the stop the film is on. It is the one source of truth for the
-     frame at rest; the scroll position only says where the page is. */
-  let restC: Chapter | null = null
-  let restP = 0
-  const free = () => h.hasAttribute('data-film-free')
-  /** The page is on the rest (an outside scroll moves it off until it settles). */
-  const onRest = () => !!restC && !free() && Math.abs(scrollY - at(restC, restP)) <= 2
-  /** The frame a chapter shows at rest: its stop, or 0 or 1 beside it. */
-  const pOf = (c: Chapter) => {
-    if (!onRest()) return clamp((scrollY - c.top) / c.pin, 0, 1)
-    return c === restC ? restP : c.i < restC!.i ? 1 : 0
-  }
-
-  /* Root attributes are written only when they change. */
+  /* Root attributes and classes are written only when they change. */
   const set = (k: string, v: string) => { if (h.getAttribute(k) !== v) h.setAttribute(k, v) }
-  const last = () => (R.length ? R[R.length - 1].y : 0)
-  /** The header's, the rail's and the dock's view of the film: chapter c at progress pr. */
+  let marked = ''
+  let railCur: Chapter | null | undefined
+  /** The header's, the rail's and the dock's view of the film: chapter c at progress pr (null: past the film). */
   const mark = (now: Chapter | null, pr: number) => {
-    // Nothing on <html> changes during a move: a class or an attribute there
-    // restyles the whole page, and the header's and dock's tone transitions
-    // would run on the main thread. The move's end writes them all at once.
-    if (moving) return
     let tone: string | undefined
     if (now) {
       const s = now.st.dataset
@@ -245,526 +243,56 @@ export function startStory(film: HTMLElement): StopStory {
       const late = (s.toneLate || '').split(' ')
       marks.forEach((a, i) => { if (a && pr >= +a) tone = late[i] })
     }
+    const settled = !now || pr >= 0.06
+    const cta = !!now && now.beats.some(t => t.on && t.cta)
+    const key = `${now ? now.id : 'after'}|${tone || 'page'}|${settled}|${cta}`
+    if (key === marked) return
+    marked = key
     set('data-film-ch', now ? now.id : 'after')
     set('data-film-tone', tone || 'page')
     // .settled: past the first moments of a chapter (its light handoff);
     // .has-cta: a gold action of the chapter's own is showing.
-    h.classList.toggle('settled', !now || pr >= 0.06)
-    h.classList.toggle('has-cta', !!now && now.beats.some(t => t.on && t.cta))
-    if (now !== cur) {
-      cur = now
+    h.classList.toggle('settled', settled)
+    h.classList.toggle('has-cta', cta)
+    if (now !== railCur) {
+      railCur = now
       for (const a of rail) a.toggleAttribute('aria-current', !!now && a.hash === '#' + now.id)
     }
   }
 
-  /* Live: the chapters whose stages are rendered (film.css). At rest, the one
-     on screen; during a move, the ones it plays. */
-  const live = (ks: Chapter[]) => { for (const c of C) c.el.classList.toggle('live', ks.includes(c)) }
-  /** .cur: the one stage shown (film.css); the live ones beside it wait at opacity 0. */
-  const show = (c: Chapter | null) => { for (const k of C) k.el.classList.toggle('cur', k === c) }
-  const around = (c: Chapter | null) => (c ? C.filter(k => Math.abs(k.i - c.i) <= 1) : [])
-
-  const frame = () => {
-    raf = 0
-    const y = scrollY
-    const rested = onRest()
-    let now: Chapter | null = null
-    for (let i = 0; i < C.length; i++) {
-      const c = C[i]
-      const r = y - c.top
-      const pr = r / c.pin
-      const p = Math.min(1, Math.max(0, pr))
-      if (r >= 0) now = c
-      const near = r > -2 * c.H && r < c.pin + c.H
-      c.el.classList.toggle('pin', story ? r >= 0 && r < c.pin + c.H : true)
-      // Scroll-bound animations exist only on chapters near the screen (film.css);
-      // under the player a chapter that comes near is seated on its frame.
-      if (near !== c.near) {
-        c.near = near
-        c.el.classList.toggle('near', near)
-        c.an = null
-        c.sp = undefined
-        if (near && !moving) requestAnimationFrame(() => { if (!moving) seat(c, pOf(c)) })
-      }
-      if (!near && !c.was) continue
-      c.was = near
-      if (story && js && !h.classList.contains('drv-play')) c.el.style.setProperty('--p', p.toFixed(4))
-      if (near) { load(c); if (r >= 0) { load(C[i + 1]); load(C[i + 2]) } }
-      if (!moving) beats(c, c === restC && rested ? restP : pr)
+  /** The chapter's keyframes (.cam, .tl, .pl): a loading shimmer or a light's own loop keep their time. */
+  const anims = (c: Chapter) => {
+    if (!c.an?.length) {
+      c.an = c.el.getAnimations({ subtree: true }).filter(a => 'animationName' in a && !(a.effect as KeyframeEffect | null)?.pseudoElement
+        && !!((a.effect as KeyframeEffect | null)?.target as Element | null)?.matches?.('.cam, .tl, .pl'))
     }
-    const end = C[C.length - 1]
-    if (now === end && y - end.top > end.pin + end.H * 0.5) now = null
-    if (!moving) {
-      mark(now, now === restC && rested ? restP : now ? (y - now.top) / now.pin : 1)
-      if (h.classList.contains('drv-play')) { live(around(now)); show(now) }
-    }
-    if (on) h.classList.toggle('step-end', y >= last() - 2)
+    return c.an
   }
-  const tick = () => { if (!raf) raf = requestAnimationFrame(frame) }
-
-  /* ---------- The player ---------- */
-  let moving = false
-  let ended = 0 // when the last move ended
-  let past = false // the page went below the last stop
-  let settleT = 0
-  const jump = (y: number) => { past = false; scrollTo({ top: y, behavior: 'instant' }) }
-  const nearest = (y: number) => R.reduce((a, b) => (Math.abs(b.y - y) < Math.abs(a.y - y) ? b : a), R[0])
-  // The page is in the stepper's hands up to the last stop.
-  const inFilm = (y: number) => y <= last() + 2
-  /** The chapter on top at a scroll position, and its progress. */
-  const where = (y: number) => {
-    let c = C[0]
-    for (const k of C) if (k.top <= y + 0.5) c = k
-    return { c, p: clamp((y - c.top) / c.pin, 0, 1) }
-  }
-
-  /** The chapter part playing now: it can be carried on to a further p. */
-  type Play = { c: Chapter; a: number; now: () => number; extend: (b: number, ms: number) => boolean }
-  let playing: Play | null = null
-
-  /** Plays one chapter from a to b over ms, eased, and calls done once its
-      keyframes reach b by their own clamp. Each animation's timing is set to
-      the stretch [a, b] (iterationStart, iterations, and direction "reverse"
-      going back, so the rate stays positive), and the speed follows the ease
-      by a few rate changes; the compositor carries each until the next, so a
-      late timer never stops the picture. `fresh`: the stage was just shown or
-      woken, so the play waits two frames for it to be composited first.
-      Input during the move can carry it on to a further p in the same
-      direction (extend): the stretch grows, and the rest of it eases out. */
-  const play = (s: Seg, done: () => void, fresh: boolean) => {
-    const { c, a } = s
-    let b = s.b
-    let ms = s.ms
-    const fwd = b > a
-    if (!c.near) { c.near = true; c.el.classList.add('near'); c.an = null; c.sp = undefined; fresh = true }
-    // .rev: the chapter plays backwards (film.css: the hills' lights go out together).
-    c.el.classList.toggle('rev', !fwd)
-    const mine = new Set<number>()
-    const lt = (f: () => void, t: number) => {
-      const id = window.setTimeout(() => { mine.delete(id); timers.delete(id); f() }, t)
-      mine.add(id)
-      timers.add(id)
-    }
-    const drop = () => { for (const id of mine) { clearTimeout(id); timers.delete(id) } mine.clear() }
-    let list: Animation[] = []
-    let started = false
-    let over = false
-    const finish = () => {
-      if (over) return
-      over = true
-      drop()
-      if (playing === handle) playing = null
-      c.sp = b
-      beats(c, b)
-      done()
-    }
-    /** Rates and beats from progress x to b over t ms, along a shape. */
-    const plan = (x: number, t: number, shape: (u: number) => number, inv: (f: number) => number) => {
-      const span = Math.abs(b - x)
-      const base = (span * 1000) / t
-      const rate = (k: number) => Math.max(0.02, base * SLICES * (shape((k + 1) / SLICES) - shape(k / SLICES)))
-      for (const y of list) y.updatePlaybackRate(rate(0))
-      for (let k = 1; k < SLICES; k++) lt(() => { for (const y of list) y.updatePlaybackRate(rate(k)) }, (t * k) / SLICES)
-      // Every mark crossed fires once, at its place in the eased move, in order.
-      for (const m of c.marks) {
-        if (fwd ? !(m > x && m <= b) : !(m > b && m <= x)) continue
-        const after = fwd ? m : m - 1e-4
-        lt(() => { beats(c, after); mark(c, after) }, inv(Math.abs(m - x) / span) * t)
-      }
-      // A safety net, should the clamp never be reached.
-      lt(finish, list.length ? t * 1.5 + 400 : t)
-    }
-    const start = () => {
-      list = anims(c)
-      for (const x of list) {
-        x.pause()
-        x.effect?.updateTiming({ iterationStart: Math.min(a, b), iterations: Math.abs(b - a), direction: fwd ? 'normal' : 'reverse' })
-        x.currentTime = 0
-        x.playbackRate = 1
-        x.play()
-      }
-      c.sp = NaN
-      started = true
-      if (list.length) list[0].finished.then(finish, () => undefined)
-      plan(a, ms, ease, unease)
-    }
-    const now = () => {
-      if (!started || !list.length) return a
-      const t = Number(list[0].currentTime) || 0
-      return clamp(fwd ? a + t / 1000 : a - t / 1000, Math.min(a, b), Math.max(a, b))
-    }
-    const handle: Play = {
-      c, a, now,
-      extend: (b2, t) => {
-        if (over || (b2 - a) * (b - a) <= 0) return false
-        if (!started) { b = b2; ms = t; return true }
-        const x = now()
-        drop()
-        b = b2
-        for (const y of list) y.effect?.updateTiming({ iterationStart: Math.min(a, b), iterations: Math.abs(b - a) })
-        plan(x, t, easeOut, uneaseOut)
-        return true
-      },
-    }
-    playing = handle
-    if (fresh) requestAnimationFrame(() => requestAnimationFrame(start))
-    else start()
-  }
-
-  /** The move from where the page is to a rest, as a list of chapter parts. */
-  const route = (r: Rest, fromP?: number) => {
-    const from = where(scrollY)
-    if (fromP !== undefined) from.p = fromP
-    const i = from.c.i
-    const j = r.c.i
-    const segs: Array<Omit<Seg, 'ms'>> = []
-    // Jumps: [y to jump to before the part] for each part.
-    const jumps: Array<number | null> = []
-    if (i === j) { segs.push({ c: r.c, a: from.p, b: r.p }); jumps.push(null) }
-    else if (j === i + 1) {
-      segs.push({ c: from.c, a: from.p, b: 1 }, { c: r.c, a: 0, b: r.p })
-      jumps.push(null, r.c.top)
-    } else if (j === i - 1) {
-      segs.push({ c: from.c, a: from.p, b: 0 }, { c: r.c, a: 1, b: r.p })
-      // The flat light at the boundary is the same place for both chapters.
-      jumps.push(null, from.c.top)
-    } else {
-      // Further: cut to the target chapter's handoff light, then play into it.
-      const a = j > i ? 0 : 1
-      segs.push({ c: r.c, a, b: r.p })
-      jumps.push(j > i ? r.c.top : r.c.top + r.c.pin)
-    }
-    return { segs: segs.map((s, k) => ({ ...s, jump: jumps[k] })).filter(s => Math.abs(s.b - s.a) > 1e-4 || s.jump !== null) }
-  }
-
-  /** The move under way, which input in its direction can carry on. */
-  let mv: { dir: number; r: Rest; extend: (r2: Rest) => void } | null = null
-
-  /** One timed move to a rest. It holds where it is (a stop, or the
-      handoff light) until every chapter it plays has its pictures decoded,
-      4 s at most, then plays the chapters in turn and lands on the stop.
-      `fromP`: the move starts from that p of the chapter on screen (the work
-      wall let go between two stops). */
-  const go = (r: Rest, ms?: number, fromP?: number) => {
-    if (moving) return
-    moving = true
-    // data-film-moving: for tools and tests (nothing styles it): "hold" while
-    // the pictures decode, "play" while the move plays.
-    h.setAttribute('data-film-moving', 'hold')
-    clearTimeout(settleT)
-    let target = r
-    const timed = (segs: ReturnType<typeof route>['segs'], own: number) => {
-      const base = segs.map(s => Math.abs(s.b - s.a) * s.c.dur)
-      const sum = base.reduce((x, y) => x + y, 0)
-      const total = own || clamp(sum, MOVE_MIN, MOVE_MAX)
-      return { scale: sum ? total / sum : 1, parts: segs.map((s, k) => ({ ...s, ms: sum ? (base[k] / sum) * total : total / segs.length })) }
-    }
-    const first = timed(route(r, fromP).segs, ms === undefined ? r.ms : ms)
-    let parts: Array<Seg & { jump: number | null }> = first.parts
-    const scale = first.scale
-    let k = -1
-    const ks = [...new Set(parts.map(s => s.c))]
-    for (const c of ks) load(c)
-    live([...new Set([...around(where(scrollY).c), ...ks])])
-    let ready = false
-    Promise.race([
-      Promise.all(ks.flatMap(c => (c.im || []).map(i => i.decode().catch(() => undefined)))),
-      new Promise(done => setTimeout(done, 4000)),
-    ]).then(() => { ready = true })
-    const asked = performance.now()
-    const dir = Math.sign(r.y - scrollY) || 1
-    // Input during the move carries it on to a further stop, never past a gate.
-    const extend = (r2: Rest) => {
-      const segs2 = route(r2, k <= 0 ? fromP : undefined).segs
-      if (k < 0) {
-        // Still holding for pictures: the plan is simply longer.
-        parts = timed(segs2, r2.ms).parts
-      } else {
-        const cur = parts[k]
-        const lead = segs2[0]
-        if (!cur || !lead || lead.c !== cur.c || Math.abs(lead.a - cur.a) > 1e-6 || !playing || playing.c !== cur.c) return
-        const x = playing.now()
-        const rest = segs2.slice(1)
-        const base = [Math.abs(lead.b - x) * cur.c.dur, ...rest.map(s => Math.abs(s.b - s.a) * s.c.dur)]
-        const sum = base.reduce((p, q) => p + q, 0)
-        const total = clamp(sum * scale, 500, r2.ms || MOVE_MAX)
-        const lms = sum ? (base[0] / sum) * total : total
-        if (!playing.extend(lead.b, Math.max(200, lms))) return
-        parts = [...parts.slice(0, k), { ...cur, b: lead.b, ms: lms }, ...rest.map((s, n) => ({ ...s, ms: sum ? (base[n + 1] / sum) * total : 0 }))]
-        for (const c of rest.map(s => s.c)) { load(c); c.el.classList.add('live') }
-      }
-      target = r2
-      mv!.r = r2
-    }
-    mv = { dir, r, extend }
-    const wait = () => {
-      // Before the page has loaded a chapter may not have started loading: wait for it too.
-      if (!ready || (ks.some(c => c !== C[0] && !c.ok) && performance.now() - asked < 4000)) { later(wait, 50); return }
-      h.setAttribute('data-film-moving', 'play')
-      next(0)
-    }
-    const next = (n: number) => {
-      k = n
-      if (n === parts.length) {
-        // The move ends once the compositor has drawn its last frame (two frames on).
-        requestAnimationFrame(() => requestAnimationFrame(land))
-        return
-      }
-      const s = parts[n]
-      let fresh = false
-      if (s.jump !== null) { jump(s.jump); seat(s.c, s.a); beats(s.c, s.a); mark(s.c, s.a); fresh = true }
-      if (!s.c.el.classList.contains('cur')) { show(s.c); fresh = true }
-      if (s.ms < 1 || Math.abs(s.b - s.a) < 1e-4) { next(n + 1); return }
-      play(s, () => next(n + 1), fresh)
-    }
-    const land = () => {
-      {
-        // The rest is the stop; the page jumps to its place, and nothing is re-seated.
-        mv = null
-        restC = target.c
-        restP = target.p
-        jump(target.y)
-        live(around(target.c))
-        show(target.c)
-        for (const c of C) c.el.classList.remove('rev')
-        moving = false
-        h.removeAttribute('data-film-moving')
-        ended = performance.now()
-        tick()
-        // A chapter that came near during the move is seated (0 or 1) once the frame has run.
-        requestAnimationFrame(() => requestAnimationFrame(seatAll))
-      }
-    }
-    wait()
-  }
-  /** Carries the move under way on by n stops in its direction, up to the next gate. */
-  const carry = (dir: number, n: number) => {
-    if (!mv || mv.dir !== dir || mv.r.gate) return
-    let i = R.indexOf(mv.r)
-    let r2 = mv.r
-    for (let k = 0; k < n; k++) {
-      const nx = R[i + dir]
-      if (!nx) break
-      i += dir
-      r2 = nx
-      if (nx.gate) break
-    }
-    if (r2 !== mv.r) mv.extend(r2)
-  }
-  /** The next stop in a direction, from where the page is (stateless); during
-      a move, the move is carried on instead. */
-  const step = (dir: number) => {
-    if (moving) { carry(dir, 1); return }
-    if (!R.length) return
-    const y = scrollY
-    if (dir > 0) {
-      const r = R.find(r => r.y > y + 2)
-      if (r) go(r)
-    } else {
-      let i = -1
-      for (let k = 0; k < R.length; k++) if (R[k].y < y - 2) i = k
-      // A move up takes the time of the showpiece it leaves.
-      if (i >= 0) go(R[i], R[i + 1] && Math.abs(R[i + 1].y - y) <= 2 ? R[i + 1].ms : 0)
-    }
-  }
-  const skip = (t: EventTarget | null) =>
-    d.body.style.overflow === 'hidden' || !!(t as Element | null)?.closest?.(NATIVE)
-
-  /* Wheel: one step per gesture. Disarmed after a step until the move has
-     ended and either the wheel went quiet (150 ms) and a delta did not
-     shrink, or three deltas in a row did not shrink (a notched wheel held
-     spinning), or it turned round, or 600 ms passed. A trackpad's inertia
-     tail decays, so it never fires a second step. */
-  let armed = true
-  let acc = 0
-  let wDir = 0
-  let wT = 0
-  let wAbs = 0
-  let grow = 0
-  const onWheel = (e: WheelEvent) => {
-    if (e.ctrlKey || skip(e.target)) return
-    const dy = e.deltaY * (e.deltaMode === 1 ? 40 : e.deltaMode === 2 ? innerHeight : 1)
-    if (!dy) return
-    const dir = Math.sign(dy)
-    const y = scrollY
-    const end = last()
-    // Past the last stop the page is native; coming back up into the film lands on the last stop.
-    if (y > end + 2) {
-      if (dir < 0 && y + dy < end + 2) { e.preventDefault(); if (!moving) go(R[R.length - 1]) }
+  /** Chapters that are live but have no animations yet (the browser has not rendered them): seated on a later frame. */
+  const pending = new Set<Chapter>()
+  const seat = (c: Chapter, p: number) => {
+    p = clamp(p, 0, 1)
+    c.want = p
+    if (c.sp === p) return
+    const list = anims(c)
+    if (!list.length) {
+      // Tried on the next frames; a chapter with no keyframes at all stops being tried.
+      if ((c.tries = (c.tries || 0) + 1) < 30) pending.add(c)
       return
     }
-    if (y >= end - 2 && dir > 0 && !moving) return
-    e.preventDefault()
-    const t = e.timeStamp
-    const abs = Math.abs(dy)
-    const gap = t - wT
-    // Only events made after the move count towards re-arming (a busy page
-    // can hand over a burst late, stamped with when it was made).
-    grow = abs >= wAbs ? grow + 1 : 0
-    // A new gesture (not a trackpad's tail) arms again, after a move or during one.
-    if (!armed && (moving || t > ended)) {
-      if (dir !== wDir || gap > 600 || (gap >= 150 && abs >= wAbs) || grow >= 3) armed = true
+    for (const a of list) {
+      a.pause()
+      a.currentTime = p * 1000
     }
-    if (dir !== wDir) acc = 0
-    wDir = dir
-    wT = t
-    wAbs = abs
-    if (!armed) return
-    acc += dy
-    if (Math.abs(acc) >= 40) { armed = false; acc = 0; grow = 0; step(dir) }
+    c.sp = p
+    c.tries = 0
+    pending.delete(c)
   }
-
-  /* Touch: the first move past 24 px that is more vertical than horizontal
-     fires one step. A finger that keeps going carries the move on by a stop
-     each 110 px, and a quick swipe carries it on to the next gate; never past
-     one. In the work chapter the wall follows the finger between its first
-     stop and its gate, and is let go to a stop. The browser's own pan is
-     cancelled from the first cancelable move. */
-  type Touch = {
-    x: number; y: number; done: boolean; nat: boolean; dir: number; at: number; ext: number
-    q: Array<[number, number]>; follow?: { p0: number; k: number; p: number }
-  }
-  let g: Touch | null = null
-  const work = C.find(c => c.id === 'work')
-  const workStops = () => R.filter(r => r.c === work)
-  const onStart = (e: TouchEvent) => {
-    g = null
-    if (e.touches.length !== 1 || skip(e.target)) return
-    g = { x: e.touches[0].clientX, y: e.touches[0].clientY, done: false, nat: false, dir: 0, at: 0, ext: 0, q: [[e.timeStamp, e.touches[0].clientY]] }
-  }
-  const onMove = (e: TouchEvent) => {
-    if (!g || g.nat || e.touches.length !== 1) return
-    const dx = g.x - e.touches[0].clientX
-    const dy = g.y - e.touches[0].clientY
-    const y = scrollY
-    const end = last()
-    g.q.push([e.timeStamp, e.touches[0].clientY])
-    if (g.q.length > 6) g.q.shift()
-    if (!g.done && !moving) {
-      // Past the last stop, or at it and going on down: the page's own scroll.
-      if (y > end + 2 || (y >= end - 2 && dy > 0)) { g.nat = true; return }
-      if (y >= end - 2 && dy === 0) return
-    }
-    if (e.cancelable) e.preventDefault()
-    if (g.follow) {
-      const f = g.follow
-      const ws = workStops()
-      f.p = clamp(f.p0 + dy / f.k, ws[0].p, ws[ws.length - 1].p)
-      seat(work!, f.p)
-      beats(work!, f.p)
-      mark(work!, f.p)
-      return
-    }
-    if (g.done) {
-      // The same finger going on: one more stop each 110 px.
-      if (moving && g.dir && Math.sign(dy) === g.dir && Math.abs(dy) - g.at > 110 * (g.ext + 1)) { g.ext++; carry(g.dir, 1) }
-      return
-    }
-    if (Math.abs(dy) > 24 && Math.abs(dy) > Math.abs(dx)) {
-      g.done = true
-      g.dir = Math.sign(dy)
-      g.at = Math.abs(dy)
-      // The work wall at rest between its first stop and its gate: under the finger.
-      const ws = workStops()
-      if (!moving && work && restC === work && onRest() && ws.length > 1 && !(g.dir < 0 && restP <= ws[0].p + 1e-6) && !(g.dir > 0 && restP >= ws[ws.length - 1].p - 1e-6)) {
-        const wall = work.el.querySelector<HTMLElement>('.w-rise')
-        const travel = wall ? wall.offsetHeight - work.H : 0
-        if (travel > 0) {
-          // The wall rises over 6 to 78% of the chapter (film.css, work-rise): 1 px of finger, 1 px of wall.
-          g.follow = { p0: restP, k: travel / 0.72, p: restP }
-          return
-        }
-      }
-      step(g.dir)
-    }
-    else if (Math.abs(dx) > 24) g.done = true
-  }
-  /** The finger's speed at the end, px per ms (down the page is positive). */
-  const speed = (t: Touch) => {
-    const a = t.q[0]
-    const b = t.q[t.q.length - 1]
-    return b[0] > a[0] ? (a[1] - b[1]) / (b[0] - a[0]) : 0
-  }
-  const onEnd = () => {
-    const t = g
-    g = null
-    if (t?.follow) {
-      // Let go: on to the stop the wall is heading for (a flick carries it further), never past the gate.
-      const f = t.follow
-      const v = speed(t) / f.k
-      const aim = clamp(f.p + v * 300, workStops()[0].p, workStops()[workStops().length - 1].p)
-      const ws = workStops()
-      let r2 = ws.reduce((a, b) => (Math.abs(b.p - aim) < Math.abs(a.p - aim) ? b : a), ws[0])
-      if (Math.abs(v) > 0.0004 && Math.sign(r2.p - f.p) !== Math.sign(v)) r2 = (v > 0 ? ws.find(r => r.p > f.p) : [...ws].reverse().find(r => r.p < f.p)) || r2
-      // A quick flick goes on to the end of the wall that way (the gate, or the first stop).
-      if (Math.abs(speed(t)) > 1.0) r2 = v > 0 ? ws[ws.length - 1] : ws[0]
-      // A drag of more than 40 px always goes on to the next stop its way.
-      const moved = (f.p - f.p0) * f.k
-      if (Math.abs(moved) > 40 && (r2.p - f.p0) * Math.sign(moved) <= 1e-6) {
-        r2 = (moved > 0 ? ws.find(r => r.p > f.p0 + 1e-6) : [...ws].reverse().find(r => r.p < f.p0 - 1e-6)) || r2
-      }
-      go(r2, 0, f.p)
-      return
-    }
-    if (t?.done && moving && t.dir) {
-      // A quick swipe carries the move on to the next gate.
-      const v = Math.abs(speed(t))
-      if (Math.sign(speed(t)) === t.dir) { if (v > 1.0) carry(t.dir, Infinity); else if (v > 0.55) carry(t.dir, 1) }
-    }
-    // A native pan that brought the page back up into the film lands on the last stop.
-    if (past && !moving && scrollY < last() - 2) settle()
-  }
-
-  /* Keys go through the same step and lock. */
-  const onKey = (e: KeyboardEvent) => {
-    const t = e.target as HTMLElement
-    const k = e.key
-    if (e.altKey || e.ctrlKey || e.metaKey || skip(t) || /INPUT|TEXTAREA|SELECT/.test(t.tagName) || t.isContentEditable) return
-    if (k === ' ' && /BUTTON|A|SUMMARY/.test(t.tagName)) return
-    const dn = k === 'ArrowDown' || k === 'PageDown' || (k === ' ' && !e.shiftKey)
-    const up = k === 'ArrowUp' || k === 'PageUp' || (k === ' ' && e.shiftKey)
-    if (!dn && !up) return
-    const y = scrollY
-    const end = last()
-    if (y > end + 2 || (dn && y >= end - 2 && !moving)) return
-    e.preventDefault()
-    step(dn ? 1 : -1)
-  }
-
-  /* Any other scroll (a scrollbar drag, find in page, a restored position, a
-     script): coming up from below the film lands on the last stop; inside the
-     film, once it is quiet, the page settles at once on the nearest stop. */
-  const settle = () => {
-    settleT = 0
-    // data-film-free on <html>: a tool or a test that needs a frame between stops.
-    if (moving || g || !R.length) return
-    if (free()) { seatAll(); return }
-    const y = scrollY
-    if (!inFilm(y)) return
-    if (past) { go(R[R.length - 1]); return }
-    const r = nearest(y)
-    restC = r.c
-    restP = r.p
-    if (Math.abs(r.y - y) > 2) jump(r.y)
-    else { tick(); seatAll() }
-  }
-  /** Every near chapter on its frame at rest (after a jump that was not a move). */
-  const seatAll = () => { for (const c of C) if (c.near) seat(c, pOf(c)) }
-  const onScroll = () => {
-    tick()
-    if (!on || moving) return
-    const y = scrollY
-    const end = last()
-    if (y > end + 2) past = true
-    // Back up from below the film (after the finger has lifted): the last stop.
-    else if (past && y < end - 2 && R.length && !g) { go(R[R.length - 1]); return }
-    clearTimeout(settleT)
-    settleT = window.setTimeout(settle, 150)
-  }
+  const want = (c: Chapter) => { if (c.want !== undefined && c.el.classList.contains('live')) { pending.add(c); kick() } }
 
   /* Lettering: --em is the name's width in em, measured on its own line. */
-  const fit = () => {
-    for (const e of all('[data-name]')) {
+  const fit = (scope: ParentNode = film) => {
+    for (const e of all('[data-name]', scope)) {
       const n = e.firstElementChild as HTMLElement | null
       if (!n) continue
       const w = n.offsetWidth
@@ -781,18 +309,107 @@ export function startStory(film: HTMLElement): StopStory {
   const inputs = all<HTMLInputElement>('[data-name-input]')
   const onInput = (e: Event) => name((e.target as HTMLInputElement).value)
 
-  /* Anchors land on the chapter's rest, focus on the first stop at or after
-     its beat; both through the same move and lock. */
-  const restOf = (c: Chapter) => (isNaN(c.rest) ? 0 : c.rest)
-  const stopIn = (c: Chapter, p: number) => {
-    const s = c.stops.find(s => s.p >= p - 0.001) || c.stops[c.stops.length - 1]
-    return R.find(r => r.c === c && s && r.p === s.p)
+  /* ---------- The loop ---------- */
+  let s: ChaseState = { t: 0, v: 0 }
+  let shown: Chapter | null = null
+  let shownP = 0
+  let raf = 0
+  let lastT = 0
+  let lastScroll = -1e9
+  let revOn: Chapter | null = null
+  const fresh = new Set<Chapter>()
+
+  /** Shows chapter c: .cur on it, .live on it and its neighbours, the neighbours seated at their ends. */
+  const show = (c: Chapter) => {
+    const was = shown
+    shown = c
+    for (const k of C) {
+      const live = Math.abs(k.i - c.i) <= 1
+      if (live !== k.el.classList.contains('live')) {
+        k.el.classList.toggle('live', live)
+        // Its animations come and go with .live (film.css).
+        k.an = null
+        k.sp = undefined
+        k.tries = 0
+        if (live) fresh.add(k)
+        else pending.delete(k)
+      }
+      k.el.classList.toggle('cur', k === c)
+      if (live) load(k)
+    }
+    for (const k of C) {
+      if (k === c || Math.abs(k.i - c.i) > 1) continue
+      const p = k.i < c.i ? 1 : 0
+      seat(k, p)
+      beats(k, p)
+    }
+    if (was && revOn) { revOn.el.classList.remove('rev'); revOn = null }
   }
-  const goto = (c: Chapter, p: number, instant = false) => {
-    const r = stopIn(c, p)
-    if (!r) return jump(at(c, p))
-    if (instant) { restC = r.c; restP = r.p; jump(r.y); requestAnimationFrame(seatAll) }
-    else go(r)
+
+  /** Puts the film on film time t. */
+  const render = (t: number) => {
+    const f = TL.frameAt(t)
+    const c = C[f.ci]
+    if (c !== shown) show(c)
+    shownP = f.p
+    seat(c, f.p)
+    beats(c, f.p)
+    const past = scrollY > lastY() + H * 0.5
+    mark(past ? null : c, f.p)
+  }
+
+  const frame = (now: number) => {
+    raf = 0
+    const dt = lastT ? (now - lastT) / 1000 : 1 / 60
+    lastT = now
+    const y = scrollY
+    const target = readTarget(now)
+    const tf = TL.frameAt(target)
+    if (y >= exitY || !shown) {
+      // The pinned screen is out of view below the film (or the film is starting): no chase.
+      s = { t: target, v: 0 }
+    } else if (Math.abs(tf.ci - shown.i) >= 2) {
+      // A far jump (a rail link, a scrollbar drag, Home or End): cut to the
+      // target chapter's opening going down, or its end going up, then chase.
+      s = { t: tf.ci > shown.i ? TL.timeOf(tf.ci, 0) + 1e-6 : TL.timeOf(tf.ci, 1), v: 0 }
+    }
+    s = chase(s, target, dt, opts)
+    render(s.t)
+    // .rev: the chapter plays backwards (film.css: the hills' lights go out together).
+    const rev = s.v < -1e-3 && shown ? shown : null
+    if (rev !== revOn) { revOn?.el.classList.remove('rev'); rev?.el.classList.add('rev'); revOn = rev }
+    // A chapter that has just become live: its lettering and its frame once the browser has rendered it.
+    for (const c of fresh) { fresh.delete(c); fit(c.el); eager(c); if (c.want !== undefined) pending.add(c) }
+    for (const c of [...pending]) seat(c, c.want ?? 0)
+    if (s.t !== target || s.v !== 0 || pending.size || fresh.size) kick()
+    else lastT = 0
+  }
+  const kick = () => { if (!raf) raf = requestAnimationFrame(frame) }
+
+  /* The loop is started here, by scroll and resize (onResize), and stops itself once the film has caught up. */
+  const onScroll = () => {
+    lastScroll = performance.now()
+    kick()
+  }
+  const settleNow = () => { s = { t: readTarget(performance.now()), v: 0 }; render(s.t) }
+  const onResize = () => {
+    const atRest = s.v === 0 && s.t === readTarget(performance.now())
+    measure()
+    fit()
+    if (atRest) settleNow()
+    kick()
+  }
+
+  /* ---------- Anchors and focus ---------- */
+  const restOf = (c: Chapter) => (isNaN(c.rest) ? 0 : c.rest)
+  /** The stop of chapter c at or after p. */
+  const stopIn = (c: Chapter, p: number) => {
+    const own = M.filter(m => m.c === c)
+    return own.find(m => m.p >= p - 0.001) || own[own.length - 1]
+  }
+  const goto = (c: Chapter, p: number) => {
+    const m = stopIn(c, p)
+    if (m) scrollTo({ top: m.y, behavior: 'instant' })
   }
   const byHash = (hash: string) => C.find(c => '#' + c.id === hash)
   const onClick = (e: MouseEvent) => {
@@ -809,102 +426,120 @@ export function startStory(film: HTMLElement): StopStory {
     if (!c) return
     const b = c.beats.filter(t => t.b.contains(target)).pop()
     const p = b ? b.at : restOf(c)
-    const pr = (scrollY - c.top) / c.pin
-    if (pr < p - 0.001 || pr > 1) requestAnimationFrame(() => goto(c, Math.min(1, p)))
+    if (shown !== c || shownP < p - 0.001) goto(c, Math.min(1, p))
   }
 
-  const stopMove = () => { for (const t of timers) clearTimeout(t); timers.clear(); for (const c of C) c.el.classList.remove('rev'); moving = false; h.removeAttribute('data-film-moving') }
-  const onResize = () => {
-    if (moving) stopMove()
+  // A theme change lays out the other theme's pictures and swaps the planes; every live chapter is seated again.
+  const themes = new MutationObserver(() => requestAnimationFrame(() => {
     measure()
     fit()
-    if (on) settle()
-  }
-  const onIdle = () => { idle = true; planes(C[0]) }
-  const onLoad = () => {
-    measure()
-    if (on) settle()
-    idleId = typeof requestIdleCallback === 'function' ? requestIdleCallback(onIdle, { timeout: 3000 }) : window.setTimeout(onIdle, 1500)
-  }
-  // A theme change lays out the other theme's pictures and swaps the hero's planes.
-  const themes = new MutationObserver(() => requestAnimationFrame(() => { measure(); fit(); reset(); seatAll() }))
-
+    reset()
+    for (const c of C) if (c.el.classList.contains('live')) want(c)
+    kick()
+  }))
   // A whole lit plate that has finished fading in marks itself (.lit-in): the
   // light windows under it then leave rendering (film.css), with no transition.
   const onFaded = (e: TransitionEvent) => {
     const t = e.target as HTMLElement
     if (e.propertyName === 'opacity' && t.matches?.('.lit-all, .h-lit')) t.classList.toggle('lit-in', t.classList.contains('on'))
   }
-  // A chapter the browser had skipped letters its boards once it renders.
-  const onShown = (e: Event) => {
-    if ((e as Event & { skipped?: boolean }).skipped) return
-    fit()
-    const c = C.find(c => c.el === e.currentTarget)
-    if (c) { c.an = null; c.sp = undefined; if (!moving) seat(c, pOf(c)) }
-  }
-  for (const c of C) c.el.addEventListener('contentvisibilityautostatechange', onShown)
+
+  /* ---------- Start ---------- */
   for (const i of inputs) i.addEventListener('input', onInput)
   d.addEventListener('click', onClick)
+  // A hash changed some other way (typed, or history): the browser's own jump goes to the pinned screen, so put the page on the stop.
+  const onHash = () => { const c = byHash(location.hash); if (c && story) goto(c, restOf(c)) }
+  addEventListener('hashchange', onHash)
   d.addEventListener('focusin', onFocus)
   film.addEventListener('transitionend', onFaded)
   addEventListener('scroll', onScroll, { passive: true })
   addEventListener('resize', onResize)
-  addEventListener('load', onLoad)
   WIDE.addEventListener('change', reset)
   themes.observe(h, { attributes: true, attributeFilter: ['data-theme'] })
-  let live0 = true
-  d.fonts?.ready.then(() => { if (live0) onResize() })
+  let alive = true
+  d.fonts?.ready.then(() => { if (alive) { measure(); fit(); kick() } })
 
   measure()
   load(C[0])
-  if (d.readyState === 'complete') onLoad()
   let saved = ''
   try { saved = sessionStorage.getItem(NAME_KEY) || '' } catch {}
   if (saved) { for (const i of inputs) i.value = saved; name(saved) } else fit()
 
-  if (on) {
-    addEventListener('wheel', onWheel, { passive: false })
-    addEventListener('touchstart', onStart, { passive: true })
-    addEventListener('touchmove', onMove, { passive: false })
-    addEventListener('touchend', onEnd, { passive: true })
-    addEventListener('touchcancel', onEnd, { passive: true })
-    addEventListener('keydown', onKey)
-    // Last, with every listener in place: the player takes over the
-    // keyframes from the scroll, and the page's panning from the browser
-    // (film.css: .drv-play, .stepper). If anything above threw, neither class
-    // is set and the page keeps native scrolling on the scroll timelines.
-    h.classList.remove('drv-native', 'drv-js')
-    h.classList.add('drv-play', 'stepper')
-    for (const c of C) c.an = null
-    frame()
-    seatAll()
+  // The hero's picture first; then the next chapters, and the hero's planes once the page is idle.
+  const hero = all<HTMLImageElement>('img', C[0]?.el || film).find(i => i.getClientRects().length && (i.hasAttribute('data-hero-image') || i.closest('[data-hero-image]')))
+  let started = false
+  const afterHero = () => {
+    if (started || !alive) return
+    started = true
+    fetchAhead()
+    idleCb(() => { idle = true; planes(C[0]) }, 3000)
   }
+  if (!hero || hero.complete) afterHero()
+  else { hero.addEventListener('load', afterHero, { once: true }); hero.addEventListener('error', afterHero, { once: true }) }
+  later(afterHero, 2500)
+
   const hash = byHash(location.hash)
-  if (hash && story) goto(hash, restOf(hash), true)
-  else if (on) settle()
+  // The browser's own scroll to the hash can come after this (the section is
+  // inside the pinned screen, near the top): put the page on the stop again
+  // then, unless the visitor has scrolled away from the top meanwhile.
+  const onLoad = () => { if (alive && hash && M.length > 1 && scrollY < M[1].y / 2) goto(hash, restOf(hash)) }
+  if (story && hash && d.readyState !== 'complete') addEventListener('load', onLoad, { once: true })
+  if (story) {
+    if (hash) goto(hash, restOf(hash))
+    settleNow()
+    kick()
+  } else {
+    for (const c of C) beats(c, 1)
+  }
+
+  const view: FilmView = Object.freeze({
+    version: 2 as const,
+    get stops() { return M.map(m => ({ i: m.i, ch: m.c.id, p: m.p, y: m.y, gate: m.gate })) },
+    now: () => {
+      const y = scrollY
+      const target = readTarget(performance.now())
+      const tf = TL.frameAt(target)
+      const caught = s.t === target && s.v === 0
+      let rest = -1
+      if (caught) for (let k = 0; k < M.length; k++) if (Math.abs(y - M[k].y) <= ON) rest = k
+      return {
+        y, ch: shown?.id ?? C[0].id, p: shownP,
+        moving: !caught || performance.now() - lastScroll < 120,
+        rest, targetCh: C[tf.ci].id, targetP: tf.p,
+      }
+    },
+    yAt: (ch: string, p: number) => {
+      const c = byId(ch)
+      if (!c || !M.length) return 0
+      const t = TL.timeOf(c.i, clamp(p, 0, 1))
+      let k = 1
+      while (k < M.length - 1 && T[k] < t) k++
+      const u = T[k] > T[k - 1] ? clamp((t - T[k - 1]) / (T[k] - T[k - 1]), 0, 1) : 0
+      return Math.round(M[k - 1].y + u * (M[k].y - M[k - 1].y))
+    },
+  })
+  if (story) window.__film = view
 
   return () => {
-    live0 = false
+    alive = false
+    aheadOn = false
     if (raf) cancelAnimationFrame(raf)
-    stopMove()
-    clearTimeout(settleT)
-    for (const c of C) { c.el.removeEventListener('contentvisibilityautostatechange', onShown); c.el.classList.remove('live', 'cur', 'rev') }
+    for (const t of timers) clearTimeout(t)
+    timers.clear()
+    if (idleId && typeof cancelIdleCallback === 'function') cancelIdleCallback(idleId)
+    if (hero) { hero.removeEventListener('load', afterHero); hero.removeEventListener('error', afterHero) }
+    removeEventListener('load', onLoad)
+    for (const c of C) c.el.classList.remove('live', 'cur', 'rev')
     for (const i of inputs) i.removeEventListener('input', onInput)
     d.removeEventListener('click', onClick)
+    removeEventListener('hashchange', onHash)
     d.removeEventListener('focusin', onFocus)
     film.removeEventListener('transitionend', onFaded)
     removeEventListener('scroll', onScroll)
     removeEventListener('resize', onResize)
-    removeEventListener('load', onLoad)
-    removeEventListener('wheel', onWheel)
-    removeEventListener('touchstart', onStart)
-    removeEventListener('touchmove', onMove)
-    removeEventListener('touchend', onEnd)
-    removeEventListener('touchcancel', onEnd)
-    removeEventListener('keydown', onKey)
     WIDE.removeEventListener('change', reset)
-    if (idleId) { if (typeof cancelIdleCallback === 'function') cancelIdleCallback(idleId); clearTimeout(idleId) }
     themes.disconnect()
+    if (window.__film === view) delete window.__film
     h.classList.remove(...FILM_ROOT_CLASSES)
     for (const a of FILM_ROOT_ATTRIBUTES) h.removeAttribute(a)
   }

@@ -5,7 +5,7 @@ import path from 'node:path'
 import sharp from 'sharp'
 import {
   BRANDS, BRIEF, CHAPTERS, FINALE, HILLS, JUNCTION, MALDA_BOARDS, MALDA_DAYS, MALDA_NORMAL, MALDA_ROWS, ROAD, WALL,
-  WORK, WORK_PICKS, WORKSHOP_CHAPTER, FILM_SOURCES, SKIP_LABEL, DEFAULT_SHOP_NAME, isGate, stopP, stopsAttr, tenureLine, workPicks,
+  WORK, WORK_PICKS, WORKSHOP_CHAPTER, FILM_SOURCES, SKIP_LABEL, DEFAULT_SHOP_NAME, FILM_STEP_SCREENS, filmStops, isGate, stopP, stopsAttr, tenureLine, workPicks,
 } from '@/content/home-film'
 import {
   ALSO_SERVICES, BRAND_TENURES, COMPANIES_SERVED, CREW_NETWORK, GPS_PHOTO_LINE, JOB_DAYS, JOB_DAYS_CAPTION, MALDA_STORY,
@@ -332,5 +332,39 @@ describe('scene art', () => {
     const alts = sources.flatMap(source => [...source.matchAll(/alt="([^"]*)"/g), ...source.matchAll(/const ALT = '([^']*)'/g)].map(match => match[1]))
     for (const alt of alts) expect(alt === '' || alt.startsWith('Visualisation:'), alt).toBe(true)
     expect(sources.join('\n')).not.toMatch(/images\/work/)
+  })
+})
+
+describe('filmStops', () => {
+  const stops = filmStops()
+
+  it('lists the 23 stops in order, eight of them gates', () => {
+    expect(stops).toHaveLength(23)
+    expect(stops.map(s => s.i)).toEqual(stops.map((_, i) => i))
+    expect(stops.filter(s => s.gate).map(s => `${s.ch} ${s.p}`)).toEqual(['brands 0.5', 'work 0.8', 'brief 0.57', 'workshop 0.66', 'road 0.78', 'hills 0.8', 'junction 0.8', 'finale 0.72'])
+    expect(stops[0]).toMatchObject({ i: 0, ch: 'hero', ci: 0, p: 0, ms: 0, dy: 0, gate: false })
+    for (let k = 1; k < stops.length; k++) {
+      expect(stops[k].ci * 2 + stops[k].p).toBeGreaterThan(stops[k - 1].ci * 2 + stops[k - 1].p)
+      expect(CHAPTERS[stops[k].ci].id).toBe(stops[k].ch)
+    }
+  })
+
+  it('gives every move a designed time: a showpiece its own, the others 0.8 to 1.6 s from the chapters crossed', () => {
+    for (const stop of stops.slice(1)) {
+      expect(stop.ms, `${stop.ch} ${stop.p}`).toBeGreaterThanOrEqual(800)
+      expect(stop.ms, `${stop.ch} ${stop.p}`).toBeLessThanOrEqual(3500)
+    }
+    expect(stops.find(s => s.ch === 'road' && s.p === 0.78)?.ms).toBe(3500)
+    expect(stops.find(s => s.ch === 'brands')?.ms).toBe(2500)
+    // work 0.2 to 0.34 in one chapter of 8 s: 1.12 s.
+    expect(stops.find(s => s.ch === 'work' && s.p === 0.34)?.ms).toBeCloseTo(1120, 6)
+    // hero 0 to work 0.06 would cross the brands; brief 0.57 to workshop 0.37: 0.43 x 6 + 0.37 x 4.5 = 4.245 s, held to 1.6 s.
+    expect(stops.find(s => s.ch === 'workshop' && s.p === 0.37)?.ms).toBe(1600)
+  })
+
+  it('gives every move one scroll distance, and the film is their sum', () => {
+    expect(FILM_STEP_SCREENS).toBe(0.65)
+    for (const stop of stops.slice(1)) expect(stop.dy).toBe(FILM_STEP_SCREENS)
+    expect(stops.reduce((sum, s) => sum + s.dy, 0)).toBeCloseTo(22 * FILM_STEP_SCREENS, 9)
   })
 })

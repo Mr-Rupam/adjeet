@@ -155,7 +155,8 @@ export function HomeHero() {
 
   return (
     <section
-      className="ch"
+      // Shown (.cur) and rendered (.live) before the film's engine starts (film.css).
+      className="ch cur live"
       id="hero"
       style={{ '--len': entry.len, '--still': entry.still } as CSSProperties}
       data-title={railLabel(entry)}
