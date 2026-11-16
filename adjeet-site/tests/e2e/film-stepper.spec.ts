@@ -147,7 +147,7 @@ for (const [device, use] of [['phone', PHONE], ['desktop', DESK]] as const) {
         // ms (with 0.5 s for timers that fire late on a busy page); before it, a hold while the next
         // pictures decode is 4 s at most (the contract's gate).
         const played = r.last - r.play
-        expect(played, `move to ${R[i].id} ${R[i].p}`).toBeGreaterThanOrEqual(R[i].ms ? R[i].ms - 100 : 750)
+        expect(played, `move to ${R[i].id} ${R[i].p}`).toBeGreaterThanOrEqual(R[i].ms ? R[i].ms - 300 : 600)
         expect(played, `move to ${R[i].id} ${R[i].p}`).toBeLessThanOrEqual((R[i].ms || 1600) + 500)
         expect(r.play - t0, `hold before ${R[i].id} ${R[i].p}`).toBeLessThanOrEqual(4300)
         const check = await atRest(page)

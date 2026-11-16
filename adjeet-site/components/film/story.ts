@@ -213,10 +213,12 @@ export function startStory(film: HTMLElement): StopStory {
   let restC: Chapter | null = null
   let restP = 0
   const free = () => h.hasAttribute('data-film-free')
+  /** The page is on the rest (an outside scroll moves it off until it settles). */
+  const onRest = () => !!restC && !free() && Math.abs(scrollY - at(restC, restP)) <= 2
   /** The frame a chapter shows at rest: its stop, or 0 or 1 beside it. */
   const pOf = (c: Chapter) => {
-    if (!restC || free()) return clamp((scrollY - c.top) / c.pin, 0, 1)
-    return c === restC ? restP : c.i < restC.i ? 1 : 0
+    if (!onRest()) return clamp((scrollY - c.top) / c.pin, 0, 1)
+    return c === restC ? restP : c.i < restC!.i ? 1 : 0
   }
 
   /* Root attributes are written only when they change. */
@@ -254,6 +256,7 @@ export function startStory(film: HTMLElement): StopStory {
   const frame = () => {
     raf = 0
     const y = scrollY
+    const rested = onRest()
     let now: Chapter | null = null
     for (let i = 0; i < C.length; i++) {
       const c = C[i]
@@ -276,12 +279,12 @@ export function startStory(film: HTMLElement): StopStory {
       c.was = near
       if (story && js && !h.classList.contains('drv-play')) c.el.style.setProperty('--p', p.toFixed(4))
       if (near) { load(c); if (r >= 0) { load(C[i + 1]); load(C[i + 2]) } }
-      if (!moving) beats(c, c === restC && !free() ? restP : pr)
+      if (!moving) beats(c, c === restC && rested ? restP : pr)
     }
     const end = C[C.length - 1]
     if (now === end && y - end.top > end.pin + end.H * 0.5) now = null
     if (!moving) {
-      mark(now, now === restC && !free() ? restP : now ? (y - now.top) / now.pin : 1)
+      mark(now, now === restC && rested ? restP : now ? (y - now.top) / now.pin : 1)
       if (h.classList.contains('drv-play')) { live(around(now)); show(now) }
     }
     if (on) h.classList.toggle('step-end', y >= last() - 2)
@@ -555,7 +558,7 @@ export function startStory(film: HTMLElement): StopStory {
     restC = r.c
     restP = r.p
     if (Math.abs(r.y - y) > 2) jump(r.y)
-    else seatAll()
+    else { tick(); seatAll() }
   }
   /** Every near chapter on its frame at rest (after a jump that was not a move). */
   const seatAll = () => { for (const c of C) if (c.near) seat(c, pOf(c)) }
