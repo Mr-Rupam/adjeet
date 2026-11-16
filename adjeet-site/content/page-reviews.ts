@@ -21,7 +21,10 @@
 export const SITE_REVIEWED = '2026-11-16'
 
 /** Paths reviewed on a different day from the rest of the site, e.g. `'/services/flex-printing': '2026-10-02'`. */
-const PAGE_REVIEWED: Record<string, string> = {}
+const PAGE_REVIEWED: Record<string, string> = {
+  // The home page became one film (DESIGN.md, "Home film").
+  '/': '2026-11-16',
+}
 
 export function reviewedOn(path: string): string {
   return PAGE_REVIEWED[path] ?? SITE_REVIEWED

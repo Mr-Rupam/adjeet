@@ -48,7 +48,11 @@ function useOverHero(isHome: boolean, pathname: string, header: RefObject<HTMLEl
     let frame = 0
     const update = () => {
       frame = 0
-      const hero = document.getElementById('hero-section')
+      // While the home film plays the header stays on the artwork through the
+      // whole film, taking its ink from each stage (components/film/film.css);
+      // in the still frames it is over the hero only, as before the film.
+      const film = document.documentElement.classList.contains('story')
+      const hero = document.getElementById(film ? 'film' : 'hero-section')
       const over = Boolean(hero && header.current && hero.getBoundingClientRect().bottom > header.current.offsetHeight)
       setState(current => (current.path === pathname && current.over === over ? current : { path: pathname, over }))
     }

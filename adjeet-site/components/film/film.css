@@ -1,0 +1,1334 @@
+/* The home film (DESIGN.md, "Home film"). Ported from the storyboard
+   prototype's engine/story.css and chapters/ch1 to ch7 on 16 November 2026.
+   Only the home page imports this file. Next keeps a global stylesheet after
+   navigating away, so every rule is scoped under .film, or under a mode class
+   on <html> that the film's engine removes when the page unmounts.
+
+   Modes, set on <html> before first paint (film-boot.ts):
+     (none)                no JavaScript or reduced motion: still frames, stacked
+     .story                the film plays
+     .drv-native/.drv-js   which driver feeds --p (scroll timeline or rAF)
+     .settled              the current chapter is past its light handoff
+     .has-cta              a chapter's own gold action is on screen
+   <html data-film-ch> is the current chapter and data-film-tone its stage's
+   tone, so the header, the rail and the dock can follow it. */
+
+@property --p { syntax: "<number>"; inherits: true; initial-value: 0; }
+
+/* Tokens: the site's own (design/tokens.css), plus the handoff colours. A
+   chapter that ends or starts on a flat colour uses one of these, and only
+   these, so the two sides of a handoff match exactly. */
+.film {
+  --cream: #F6F0E3;
+  --marine: #172229;
+  --night-ground: #051523;
+  --light-board: #FEF4C5;           /* the hero board's lit face: hero ends, brief begins */
+  --light-gold: #F2B04C;            /* the workshop doorway: workshop ends, road begins */
+  --light-white: #FFF8E7;           /* hills and junction end on it */
+  --light-night: #051523;           /* proof ends on it, the finale rises out of it */
+  --light: var(--light-board);
+  --gutter: var(--page-gutter);
+  --f-head: var(--font-outfit), system-ui, sans-serif;
+  --f-body: var(--font-hind-siliguri), system-ui, sans-serif;
+  --ease: cubic-bezier(.22, 1, .36, 1);
+  --beat: 420ms;                    /* lights switch on over 300 to 500ms */
+  /* The part of a 100lvh stage hidden under a phone's browser bar at the top
+     of the page: anything pinned to the bottom of a stage adds this. */
+  --bar: calc(100lvh - 100svh);
+  /* The consent banner's height while it shows (ConsentBanner): words pinned
+     to a stage's bottom edge lift by it, with a transform. */
+  --consent-up: calc(-1 * var(--consent-h, 0px));
+  position: relative;
+  /* The hero runs up under the header, as it did before the film. */
+  margin-top: -80px;
+}
+@media (min-width: 768px) { .film { margin-top: -88px; } }
+/* Only chapters live in .chs, so :first-child and + mean chapters. */
+.film .chs { position: relative; }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* Day and night copies of a picture: only the one for the theme is laid out,
+   so the other (loading="lazy") is not fetched. */
+.film .night { display: none !important; }
+:root[data-theme="dark"] .film .day { display: none !important; }
+:root[data-theme="dark"] .film .night { display: block !important; }
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme]) .film .day { display: none !important; }
+  :root:not([data-theme]) .film .night { display: block !important; }
+}
+
+/* Tall or wide art: only one of the two is laid out (and fetched). The wide
+   one is used where the camera switches to the wide plate (same query). */
+.film .wide-only { display: none !important; }
+@media (min-width: 1024px) and (min-aspect-ratio: 5/4) {
+  .film .tall-only { display: none !important; }
+  .film .wide-only { display: block !important; }
+}
+
+/* ---------- Chapters ---------- */
+.film .ch { position: relative; }
+.film .stage {
+  position: relative;
+  height: 100lvh;
+  min-height: 520px;
+  overflow: hidden;
+  isolation: isolate;
+  container-type: size;
+  background: var(--ground, var(--night-ground));
+}
+/* Still frames (no script, reduced motion, ?still): each chapter is one
+   screen at its fully lit state. --still picks the camera frame for it. */
+:root:not(.story) .film .ch { --p: var(--still, 1); }
+:root:not(.story) .film :is(.cam, .tl, .pl) { animation: none !important; }
+
+/* The film. */
+.story .film .ch {
+  height: calc((var(--len, 1) + 1) * 100lvh);
+  pointer-events: none;
+}
+.story .film .ch + .ch { margin-top: calc((1 + var(--over, 0)) * -100lvh); }
+.story .film .stage { position: sticky; top: 0; min-height: 0; }
+.story .film .ch.pin .stage { pointer-events: auto; }
+/* Invisible until pinned (opacity, never visibility, so its links stay in
+   the tab order). The first chapter is pinned from the start. */
+.story .film .ch:not(:first-child) .stage { opacity: 0; }
+.story.drv-js .film .ch.pin .stage { opacity: 1; }
+.story.drv-native .film .ch { view-timeline: --ch block; }
+/* --p costs a style pass over the whole chapter every frame, so in the native
+   driver only a chapter that asks for it (class "p") gets it. */
+.story.drv-native .film .ch.p { animation: story-p linear both; animation-timeline: --ch; animation-range: contain 0% contain 100%; }
+.story.drv-native .film .ch:not(:first-child) .stage { animation: story-show step-end both; animation-timeline: --ch; animation-range: cover 0% contain 0%; }
+@keyframes story-p { from { --p: 0; } to { --p: 1; } }
+@keyframes story-show { from { opacity: 0; } to { opacity: 1; } }
+
+/* Scroll-bound keyframes: give .cam (or any .tl) an animation-name, never the
+   animation shorthand. 0% is the start of the chapter's pin, 100% its end. */
+.story.drv-native .film :is(.cam, .tl, .pl) {
+  animation-duration: auto;
+  animation-timing-function: linear;
+  animation-fill-mode: both;
+  animation-timeline: --ch;
+  animation-range: contain 0% contain 100%;
+}
+.story.drv-js .film :is(.cam, .tl, .pl) {
+  animation-duration: 1s;
+  animation-timing-function: linear;
+  animation-fill-mode: both;
+  animation-play-state: paused;
+  animation-delay: calc(var(--p) * -1s);
+}
+/* A chapter far from the screen keeps no animations: every animated layer
+   would otherwise be composited from the first paint, which held the hero's
+   paint back by about half a second on a throttled phone. The engine marks a
+   chapter .near from two screens before it pins to one screen after. */
+.story .film .ch:not(.near) :is(.cam, .tl, .pl) { animation: none; }
+.story.drv-native .film .ch:not(.near):not(:first-child) .stage { animation: none; }
+
+
+/* ---------- The camera and the plate ---------- */
+/* .cam covers the stage at the plate's shape (--ar), cropped about the focus
+   point (--fx, --fy, 0 to 1). Everything inside is placed in percentages of
+   the plate, and 1cqw/1cqh inside are 1% of the plate. */
+.film .cam {
+  --ar: 941 / 1672;
+  --cw: max(100cqw, 100cqh * (var(--ar)));
+  --chh: calc(var(--cw) / (var(--ar)));
+  position: absolute;
+  left: calc((100cqw - var(--cw)) * var(--fx, .5));
+  top: calc((100cqh - var(--chh)) * var(--fy, .5));
+  width: var(--cw);
+  height: var(--chh);
+  container-type: size;
+  transform-origin: calc(var(--ox, 50) * 1%) calc(var(--oy, 50) * 1%);
+  will-change: transform;
+}
+.film .cam picture, .film .cam picture > img, .film .cam .f-plate { position: absolute; inset: 0; width: 100%; height: 100%; }
+.film .cam img { object-fit: cover; }
+@media (min-width: 1024px) and (min-aspect-ratio: 5/4) {
+  .film .cam { --ar: 1672 / 941; --pr: 1.7768; --fx: var(--fxw, .5); --fy: var(--fyw, .5); --ox: var(--oxw, 50); --oy: var(--oyw, 50); }
+}
+
+/* Anything placed on the plate: --l --t --w --h in percent of the plate
+   (tall art), --lw --tw --ww --hw for the wide art. */
+.film .on-plate, .film .face, .film .light, .film .glow {
+  position: absolute;
+  left: calc(var(--l, 0) * 1%);
+  top: calc(var(--t, 0) * 1%);
+  width: calc(var(--w, 100) * 1%);
+  height: calc(var(--h, 100) * 1%);
+}
+@media (min-width: 1024px) and (min-aspect-ratio: 5/4) {
+  .film .on-plate, .film .face, .film .light, .film .glow {
+    left: calc(var(--lw, var(--l, 0)) * 1%);
+    top: calc(var(--tw, var(--t, 0)) * 1%);
+    width: calc(var(--ww, var(--w, 100)) * 1%);
+    height: calc(var(--hw, var(--h, 100)) * 1%);
+  }
+}
+
+/* Light patches: a window on to the lit plate (--lit, the same image as the
+   plate unless set), masked to a soft circle at --x --y radius --r (percent
+   of the plate). Only its opacity moves. The image is attached once the
+   chapter is near (.ld), or at once in still frames. */
+.film .light {
+  --l: 0; --t: 0; --w: 100; --h: 100;
+  inset: 0;
+  background: center / 100% 100% no-repeat;
+  -webkit-mask: radial-gradient(calc(var(--rw, var(--r, 20)) * 1cqmax) calc(var(--r, 20) * 1cqmax) at calc(var(--x, 50) * 1%) calc(var(--y, 50) * 1%), #000 var(--core, 35%), transparent 100%);
+  mask: radial-gradient(calc(var(--rw, var(--r, 20)) * 1cqmax) calc(var(--r, 20) * 1cqmax) at calc(var(--x, 50) * 1%) calc(var(--y, 50) * 1%), #000 var(--core, 35%), transparent 100%);
+  pointer-events: none;
+  transition: opacity var(--beat) ease;
+}
+.film .ld .light, :root:not(.story) .film .light { background-image: var(--lit); }
+@media (min-width: 1024px) and (min-aspect-ratio: 5/4) {
+  .film .light { -webkit-mask: radial-gradient(calc(var(--rw, var(--r, 20)) * 1cqmax) calc(var(--r, 20) * 1cqmax) at calc(var(--xw, var(--x, 50)) * 1%) calc(var(--yw, var(--y, 50)) * 1%), #000 var(--core, 35%), transparent 100%); mask: radial-gradient(calc(var(--rw, var(--r, 20)) * 1cqmax) calc(var(--r, 20) * 1cqmax) at calc(var(--xw, var(--x, 50)) * 1%) calc(var(--yw, var(--y, 50)) * 1%), #000 var(--core, 35%), transparent 100%); }
+  .film .ld .light, :root:not(.story) .film .light { background-image: var(--litw, var(--lit)); }
+}
+/* Boxed patches (cheaper: the layer is only as big as its light, not the
+   whole plate). The box --bl --bt --bw --bh is in percent of the plate;
+   the background is sized and offset so the lit plate still registers.
+   .light.rect: a board. The box is the frame's outer edge, feathered
+   outwards by --soft percent of the plate's width (default .8).
+   .light.box: an ellipse inscribed in the box, solid to --core (60%). */
+.film .light.rect, .film .light.box {
+  --s: 0;
+  --x0: calc(var(--bl) - var(--s));
+  --y0: calc(var(--bt) - var(--s) * var(--pr, .5628));
+  --w0: calc(var(--bw) + 2 * var(--s));
+  --h0: calc(var(--bh) + 2 * var(--s) * var(--pr, .5628));
+  inset: auto;
+  left: calc(var(--x0) * 1%);
+  top: calc(var(--y0) * 1%);
+  width: calc(var(--w0) * 1%);
+  height: calc(var(--h0) * 1%);
+  background-size: calc(10000% / var(--w0)) calc(10000% / var(--h0));
+  background-position: calc(var(--x0) / (100 - var(--w0)) * 100%) calc(var(--y0) / (100 - var(--h0)) * 100%);
+}
+.film .light.rect {
+  --s: var(--soft, .8);
+  --mx: calc(var(--s) / var(--w0) * 100%);
+  --my: calc(var(--s) * var(--pr, .5628) / var(--h0) * 100%);
+  -webkit-mask: linear-gradient(90deg, transparent, #000 var(--mx), #000 calc(100% - var(--mx)), transparent), linear-gradient(180deg, transparent, #000 var(--my), #000 calc(100% - var(--my)), transparent);
+  -webkit-mask-composite: source-in;
+  mask: linear-gradient(90deg, transparent, #000 var(--mx), #000 calc(100% - var(--mx)), transparent), linear-gradient(180deg, transparent, #000 var(--my), #000 calc(100% - var(--my)), transparent);
+  mask-composite: intersect;
+}
+.film .light.box {
+  -webkit-mask: radial-gradient(closest-side, #000 var(--core, 60%), transparent);
+  mask: radial-gradient(closest-side, #000 var(--core, 60%), transparent);
+}
+
+/* Lettering on a blank face. The name is fitted to the face: --em is the
+   name's width in em (story.js measures it; the CSS default is for "Your shop
+   name" in Outfit 700), --fh the share of the face's height the letters may
+   use, --fw the share of its width. --fmax caps it (a length). */
+.film .face {
+  display: grid;
+  place-items: center;
+  color: var(--face-ink, #172229);
+  font-family: var(--f-head);
+  font-weight: 700;
+  letter-spacing: -.012em;
+  line-height: 1;
+  white-space: nowrap;
+  pointer-events: none;
+  user-select: none;
+  font-size: min(var(--fmax, 999px), var(--h) * 1cqh * var(--fh, .6), var(--w) * 1cqw * var(--fw, .86) / var(--em, 6.6));
+  transition: opacity var(--beat) ease;
+}
+@media (min-width: 1024px) and (min-aspect-ratio: 5/4) {
+  .film .face { font-size: min(var(--fmaxw, var(--fmax, 999px)), var(--hw, var(--h)) * 1cqh * var(--fh, .6), var(--ww, var(--w)) * 1cqw * var(--fw, .86) / var(--em, 6.6)); }
+}
+
+/* ---------- Beats ----------
+   Write the lit, final state as the element's normal style. Write the
+   unlit state under .story ... :not(.on). story.js adds .on once --p passes
+   --at; the change runs over --beat whatever the scroll speed. */
+.story .film [style*="--at"]:not(.on).light, .story .film [style*="--at"]:not(.on).face { opacity: 0; }
+/* .lit-all: a whole lit plate (an img.f-plate) that fades in over 1s at its
+   beat, to finish a lights sequence. */
+.film .lit-all { transition: opacity 1s ease; }
+.story .film .lit-all[style*="--at"]:not(.on) { opacity: 0; }
+.story .film .fade[style*="--at"] { transition: opacity var(--beat) ease, transform 700ms var(--ease); }
+.story .film .fade[style*="--at"]:not(.on) { opacity: 0; transform: translateY(14px); }
+
+/* ---------- Words over a scene ---------- */
+.film .card { position: absolute; z-index: 5; left: var(--gutter); right: var(--gutter); color: var(--card-ink, var(--night-ink)); }
+.film .card h2 { font-family: var(--f-head); font-weight: 600; font-size: clamp(36px, min(11.4cqw, 8cqh), 96px); line-height: 1.02; letter-spacing: -.03em; text-wrap: balance; }
+.film .card p { margin-top: 14px; max-width: 34ch; font-size: 17px; line-height: 1.45; color: var(--card-soft, color-mix(in srgb, currentColor 84%, transparent)); text-wrap: pretty; }
+.film .card .acts { display: flex; flex-wrap: wrap; align-items: center; gap: 12px 26px; margin-top: 22px; }
+
+
+
+
+.film .quiet { display: inline-flex; min-height: 44px; align-items: center; gap: 10px; border-bottom: 1px solid currentColor; font-size: 15px; font-weight: 500; text-decoration: none; }
+
+/* A flat light: the colour every light handoff passes through. */
+.film .flash { position: absolute; inset: 0; z-index: 9; background: var(--light); opacity: 0; pointer-events: none; }
+
+/* ===== ch1-brief.css ===== */
+/* Chapter 1, the brief: "It starts with a photo."
+   The light that filled the screen is a phone's screen. The camera pulls back
+   to a phone in front of the same street, out of focus; a photo goes out, the
+   artwork comes back with the visitor's name on it; then the words. It leaves
+   by pushing into the lit board in the reply until its light fills the
+   screen (--light-board): the workshop opens on its own nearest board. */
+.film .brief {
+  --ground: light-dark(#F6F0E3, #051523);
+  --card-ink: light-dark(#172229, #F4EDDF);
+  --card-soft: light-dark(#4F5655, color-mix(in srgb, #F4EDDF 86%, transparent));
+  /* The phone: its height, width and resting place on the stage. */
+  --ph: min(60cqh, 150cqw);
+  --pw: calc(var(--ph) * .49);
+  --rx: calc(50cqw - var(--pw) / 2);
+  --ry: calc(100cqh - var(--ph) - 1.6cqh);
+  /* The centre of the lit board in the reply's picture, as a fraction of
+     the phone (worked out from the thread's cqw layout below). The camera
+     leaves the brief by pushing into that board. */
+  --ox: .399; --oy: .430;
+  --s0: 2;                       /* scale at which the screen fills the stage */
+  --smid: 1.22;                  /* the phone while the chat plays */
+  --ymid: 52cqh;                 /* where the phone's centre sits then */
+  --cx: calc(50cqw - var(--rx) - var(--ox) * var(--pw));
+  --cy: calc(50cqh - var(--ry) - var(--oy) * var(--ph));
+  --t0x: calc(var(--cx) - var(--s0) * (.5 - var(--ox)) * var(--pw));
+  --t0y: calc(var(--cy) - var(--s0) * (.5 - var(--oy)) * var(--ph));
+  --tmx: calc(var(--cx) - var(--smid) * (.5 - var(--ox)) * var(--pw));
+  --tmy: calc(var(--ymid) - var(--ry) - var(--oy) * var(--ph) - var(--smid) * (.5 - var(--oy)) * var(--ph));
+  /* The screen is lit in both themes: the board's own cream light, marine
+     text, bubbles in soft tints of cream and cerulean. In the dark theme it
+     is the one bright thing in the street, as the board was. */
+  --wall: #F8EFD2;
+  --bub-out: #D6EAEC;
+  --bub-in: #FFFBEF;
+  --chat-ink: #172229;
+  --chat-soft: #4F5655;
+  color: var(--card-ink);
+}
+.film .brief-bd img { image-rendering: auto; }
+.film .brief-veil { position: absolute; inset: 0; z-index: 1; pointer-events: none;
+  background: linear-gradient(180deg, color-mix(in srgb, var(--ground) 82%, transparent) 0, color-mix(in srgb, var(--ground) 55%, transparent) 30%, transparent 52%); }
+
+/* ---------- The phone, in real 3D ---------- */
+.film .rig {
+  position: absolute; z-index: 3;
+  left: var(--rx); top: var(--ry); width: var(--pw); height: var(--ph);
+  perspective: 1500px;
+  transform-origin: calc(var(--ox) * 100%) calc(var(--oy) * 100%);
+  will-change: transform;
+}
+.film .phone {
+  position: absolute; inset: 0;
+  border-radius: calc(var(--pw) * .14);
+  background: linear-gradient(135deg, #2A3238, #0B1014 40%, #161D22);
+  box-shadow: 0 2.5cqh 6cqh rgb(0 0 0 / 34%), inset 0 0 0 1px rgb(255 255 255 / 10%);
+  transform-origin: 50% 55%;
+  will-change: transform;
+}
+.film .screen {
+  position: absolute; left: 3.6%; right: 3.6%; top: 1.8%; bottom: 1.8%;
+  overflow: hidden; container-type: size;
+  border-radius: calc(var(--pw) * .115);
+  background: var(--wall); color: var(--chat-ink);
+  font-family: var(--f-body);
+}
+.film .sbar { position: absolute; inset: 0 0 auto; height: 4.6%; display: flex; align-items: center; justify-content: space-between; padding: 0 9%; font-size: 4.9cqw; font-weight: 500; }
+.film .sbar i { width: 7cqw; height: 3.2cqw; border: 1px solid currentColor; border-radius: 1cqw; opacity: .8; }
+.film .chead { position: absolute; inset: 4.6% 0 auto; height: 8.4%; display: flex; align-items: center; padding: 0 7%; border-bottom: 1px solid color-mix(in srgb, var(--chat-ink) 12%, transparent); background: var(--bub-in); }
+.film .chead b { font: 600 6.2cqw/1.1 var(--f-head); letter-spacing: -.01em; }
+
+/* The thread is laid out in cqw (1% of the screen's width; the screen is
+   about 212cqw tall), so the picture in the reply has a known centre
+   (--ox, --oy above). When the reply lands the thread scrolls up by 61cqw,
+   as a chat does. */
+.film .view { position: absolute; left: 0; right: 0; top: 27.6cqw; bottom: 9.8%; overflow: hidden; }
+.film .thread { position: absolute; inset: 0; transition: transform 600ms var(--ease); }
+.film .screen:has(.msg.in.on) .thread, :root:not(.story) .film .thread { transform: translateY(-61cqw); }
+.film .msg { position: absolute; width: 62cqw; margin: 0; padding: 2.2cqw; border-radius: 3cqw; font-size: 5.3cqw; line-height: 1.32; }
+.film .msg img { width: 100%; height: auto; border-radius: 2cqw; }
+.film .msg figcaption { margin-top: 1.8cqw; padding: 0 1cqw; }
+.film .msg.out { right: 4cqw; top: 4cqw; background: var(--bub-out); }
+.film .msg.in { left: 4cqw; top: 105cqw; width: 70cqw; background: var(--bub-in); }
+.film .pic { position: relative; container-type: size; aspect-ratio: 480 / 640; }
+.film .pic img { position: absolute; inset: 0; height: 100%; }
+.film .pic .face { --l: 6.21; --t: 12.63; --w: 87.94; --h: 13.16; --fh: .62; --fw: .9; mix-blend-mode: multiply; opacity: .9; }
+/* The board's light, laid over its face as the camera goes into it. */
+.film .pic .glow { --l: 6.21; --t: 12.63; --w: 87.94; --h: 13.16; background: var(--light-board); box-shadow: 0 0 3cqw 1cqw var(--light-board); opacity: 0; }
+.film .typing { position: absolute; left: 4cqw; top: 105cqw; display: flex; gap: 1.6cqw; padding: 3.2cqw 4cqw; border-radius: 3cqw; background: var(--bub-in); transition: opacity 200ms ease; }
+.film .typing b { width: 2cqw; height: 2cqw; border-radius: 50%; background: var(--chat-soft); }
+.story .film .screen:has(.msg.in.on) .typing { opacity: 0; }
+:root:not(.story) .film .typing { display: none; }
+
+.film .compose {
+  position: absolute; left: 3.5%; right: 3.5%; bottom: 2.4%; height: 7.4%;
+  display: flex; align-items: center; gap: 2cqw; padding: 0 2cqw 0 4cqw;
+  border-radius: 2.5cqw; background: var(--bub-in);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--chat-ink) 14%, transparent);
+}
+.film .compose input {
+  flex: 1; min-width: 0; height: 100%; padding: 0; border: 0; outline: 0; background: transparent; color: var(--chat-ink);
+  font: 500 max(16px, 5.4cqw)/1 var(--f-body);
+}
+.film .compose input::placeholder { color: var(--chat-soft); opacity: 1; }
+.film .compose:focus-within { box-shadow: inset 0 0 0 2px var(--cerulean); }
+.film .compose i { display: grid; width: 9cqw; height: 9cqw; place-items: center; border-radius: 50%; background: var(--cerulean-deep); color: #fff; }
+.film .compose svg { width: 55%; height: 55%; fill: currentColor; }
+.film .sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+.film .screen-light { position: absolute; inset: 0; z-index: 4; background: var(--light); opacity: 0; pointer-events: none; }
+
+/* ---------- The words ---------- */
+.film .brief-out { position: absolute; inset: 0; z-index: 5; pointer-events: none; }
+.film .brief-out .card { pointer-events: auto; }
+.film .brief-card { top: 86px; }
+.film .brief-card h2 { font-size: clamp(30px, min(8.4cqw, 4.4cqh), 96px); }
+.film .brief-card p { margin-top: 8px; font-size: 15px; line-height: 1.38; max-width: 31ch; }
+.film .brief-card .acts { margin-top: 12px; gap: 0 22px; }
+.film .brief-card .cta { min-height: 46px; font-size: 15px; }
+
+@media (min-width: 1024px) and (min-aspect-ratio: 5/4) {
+  .film .brief {
+    --ph: min(80cqh, 60cqw);
+    --rx: calc(100cqw - 13cqw - var(--pw));
+    --ry: calc(50cqh - var(--ph) / 2 + 3cqh);
+    --s0: 5.2;
+    --smid: 1;
+    --ymid: calc(var(--ry) + var(--ph) / 2);
+  }
+  .film .brief-veil { background: linear-gradient(90deg, color-mix(in srgb, var(--ground) 80%, transparent) 0, color-mix(in srgb, var(--ground) 50%, transparent) 38%, transparent 62%); }
+  .film .brief-card { top: 50%; translate: 0 -50%; right: auto; width: min(44cqw, 640px); }
+  .film .brief-card h2 { font-size: min(10.5cqh, 6.4cqw); }
+  .film .brief-card p { margin-top: 18px; font-size: clamp(17px, 2.3cqh, 22px); max-width: 32ch; }
+  .film .brief-card .acts { margin-top: 30px; gap: 12px 30px; }
+  .film .brief-card .cta { min-height: 56px; padding-inline: 26px; font-size: 17px; }
+}
+
+/* ---------- Motion ---------- */
+.film .rig { animation-name: brief-cam; }
+@keyframes brief-cam {
+  0%   { transform: translate(var(--t0x), var(--t0y)) scale(var(--s0)); }
+  12%, 36% { transform: translate(var(--tmx), var(--tmy)) scale(var(--smid)); }
+  46%, 64% { transform: translate(0, 0) scale(1); }
+  73%  { transform: translate(calc(var(--cx) * .8), calc(var(--cy) * .8)) scale(1.9); }
+  82%  { transform: translate(var(--cx), var(--cy)) scale(4); }
+  91%  { transform: translate(var(--cx), var(--cy)) scale(9); }
+  100% { transform: translate(var(--cx), var(--cy)) scale(18); }
+}
+.film .pic .glow { animation-name: brief-glow; }
+@keyframes brief-glow { 0%, 72% { opacity: 0; } 86%, 100% { opacity: 1; } }
+.film .phone { animation-name: brief-tilt; }
+@keyframes brief-tilt {
+  0%   { transform: none; }
+  12%  { transform: rotateY(-18deg) rotateX(9deg); }
+  36%  { transform: rotateY(-10deg) rotateX(5deg); }
+  46%  { transform: rotateY(-8deg) rotateX(4deg); }
+  62%  { transform: rotateY(-6deg) rotateX(3deg); }
+  72%, 100% { transform: none; }
+}
+.film .screen-light { animation-name: brief-screen; }
+@keyframes brief-screen { 0%, 3% { opacity: 1; } 11%, 100% { opacity: 0; } }
+.film .brief .flash { animation-name: brief-flash; }
+@keyframes brief-flash { 0% { opacity: 1; } 4%, 88% { opacity: 0; } 98%, 100% { opacity: 1; } }
+/* As the camera goes into the picture, the rest of the chat falls away. */
+.film .sbar, .film .chead, .film .compose, .film .msg figcaption, .film .outwrap { animation-name: brief-chrome; }
+@keyframes brief-chrome { 0%, 64% { opacity: 1; } 71%, 100% { opacity: 0; } }
+.film .brief-out { animation-name: brief-out; }
+@keyframes brief-out { 0%, 60% { opacity: 1; transform: none; } 66%, 100% { opacity: 0; transform: translateY(-3cqh); } }
+
+/* Still frame: the phone at rest, the chat played, the words beside it. */
+@media (min-width: 1024px) and (min-aspect-ratio: 5/4) {
+  .film .brief .flash { animation-name: brief-flash-w; }
+}
+@keyframes brief-flash-w { 0%, 5% { opacity: 1; } 11%, 88% { opacity: 0; } 98%, 100% { opacity: 1; } }
+:root:not(.story) .film .brief .rig { transform: rotateY(0); }
+:root:not(.story) .film .brief .phone { transform: rotateY(-7deg) rotateX(3deg); }
+
+/* ===== ch2-workshop.css ===== */
+/* Chapter 2, the workshop: "Made in our own workshop."
+   A match cut from the brief: it opens on flat --light-board, the face of the
+   nearest board, and pulls back to the dim workshop where only that board is
+   lit, with the visitor's name on it (one lit sign in the dark, as in the
+   hero). The other four boards come on one by one and the job time moves
+   with them. It leaves by pushing down the workshop into the doorway's
+   evening light (--light-gold), where the road begins.
+   Tall and wide each have their own plate, patches and numbers. */
+.film .workshop { --ground: #031118; }
+.film .workshop .cam {
+  --fx: .25; --fy: .5;
+  --bx: .4093; --by: .668;                       /* the visitor's board, fraction of the plate */
+  --ox: 40.93; --oy: 66.8;
+  --dx: calc(50cqw - (100cqw - var(--cw)) * var(--fx) - var(--bx) * var(--cw));
+  --dy: calc(50cqh - (100cqh - var(--chh)) * var(--fy) - var(--by) * var(--chh));
+}
+.film .dolly { position: absolute; inset: 0; transform-origin: 50.95% 49.73%; will-change: transform; }  /* the doorway */
+.film .dolly > div { position: absolute; inset: 0; }
+.film .workshop .face {
+  --l: 6.8; --t: 62.02; --w: 68.54; --h: 9.57;
+  --lw: 40.13; --tw: 61.64; --ww: 41.39; --hw: 14.13;
+  --fh: .62; --fw: .84;
+  mix-blend-mode: multiply; opacity: .9;
+}
+/* The lights beat ends with the whole lit plate (.lit-all, engine), so the
+   re-rendered dark plate's small differences never show. */
+/* The name only while the camera is still: not during the pull-in, gone
+   before the push into the doorway. */
+.film .workshop .face { animation-name: ws-name; }
+@keyframes ws-name { 0%, 15% { opacity: 0; } 20%, 70% { opacity: .9; } 74%, 100% { opacity: 0; } }
+@media (min-width: 1024px) and (min-aspect-ratio: 5/4) {
+  .film .workshop .cam { --fx: .5; --fy: .5; --bx: .6083; --by: .6871; --ox: 60.83; --oy: 68.71; }
+  .film .dolly { transform-origin: 69.74% 44.47%; }
+}
+/* Depth on the way out: the walls and doorway hold while everything in front
+   grows faster about the doorway (near = (1 + 2.6 (D - 1)) / D for the dolly's
+   scale D). The middle plane moves with the near one. */
+.film .workshop .planes { --px: 50.95; --py: 49.73; }
+.film .workshop .pl.mid, .film .workshop .pl.near { animation-name: ws-near; }
+@keyframes ws-near { 0%, 74% { transform: none; } 84% { transform: scale(1.711); } 92% { transform: scale(2.156); } 100% { transform: scale(2.42); } }
+@media (min-width: 1024px) and (min-aspect-ratio: 5/4) { .film .workshop .planes { --px: 69.74; --py: 44.47; } }
+
+.film .ws-veil { position: absolute; inset: 0; z-index: 2; pointer-events: none;
+  background: linear-gradient(180deg, rgb(3 17 24 / 72%) 0, rgb(3 17 24 / 40%) 30%, transparent 44%); }
+.film .ws-out { position: absolute; inset: 0; z-index: 5; pointer-events: none; }
+.film .ws-card { top: 92px; --card-ink: #F4EDDF; }
+.film .ws-card h2 { font-size: clamp(36px, min(11cqw, 6cqh), 96px); }
+.film .times { margin-top: 18px; }
+.film .times h3 { font: 500 13px/1.3 var(--f-body); letter-spacing: .06em; text-transform: uppercase; color: color-mix(in srgb, #F4EDDF 72%, transparent); }
+.film .times ol { margin: 8px 0 0; padding: 0; list-style: none; }
+.film .times li { position: relative; padding: 2px 0 2px 20px; font: 400 16px/1.35 var(--f-body); color: #F4EDDF; transition: opacity var(--beat) ease, color var(--beat) ease; }
+.film .times li::before { content: ""; position: absolute; left: 0; top: .68em; width: 14px; height: 2px; background: currentColor; opacity: .5; scale: .714 1; transform-origin: left center; transition: background-color var(--beat) ease, scale var(--beat) ease, opacity var(--beat) ease; }
+/* The scroll only moves the highlight: the latest board's time is lit. */
+.story .film .times li { opacity: .5; }
+.story .film .times li.on:not(:has(+ li.on)) { opacity: 1; }
+.story .film .times li.on:not(:has(+ li.on))::before { scale: 1 1; background: var(--gold); opacity: 1; }
+.film .ws-line { position: absolute; z-index: 5; left: var(--gutter); right: var(--gutter); bottom: calc(30px + var(--bar)); color: #F4EDDF; font: 500 16px/1.4 var(--f-body); }
+
+@media (min-width: 1024px) and (min-aspect-ratio: 5/4) {
+  .film .ws-veil { background: linear-gradient(90deg, rgb(3 17 24 / 78%) 0, rgb(3 17 24 / 50%) 26%, transparent 44%), linear-gradient(180deg, rgb(3 17 24 / 70%) 0, transparent 30%); }
+  .film .ws-card { top: 112px; right: auto; width: min(36cqw, 560px); }
+  .film .ws-card h2 { font-size: min(9cqh, 5.6cqw); max-width: 10ch; }
+  .film .times { margin-top: 3.4cqh; }
+  .film .times li { font-size: 18px; }
+  .film .ws-line { left: auto; right: var(--gutter); bottom: 40px; font-size: 18px; }
+}
+
+/* ---------- Motion ---------- */
+/* Open on the board's face, pull back to the room. */
+.film .workshop .cam { animation-name: ws-open; }
+@keyframes ws-open {
+  0%   { transform: translate(var(--dx), var(--dy)) scale(7); }
+  6%   { transform: translate(calc(var(--dx) * .8), calc(var(--dy) * .8)) scale(4.4); }
+  13%  { transform: translate(calc(var(--dx) * .45), calc(var(--dy) * .45)) scale(2.2); }
+  22%, 100% { transform: none; }
+}
+/* Then down the workshop into the doorway. */
+.film .dolly { animation-name: ws-door; }
+@keyframes ws-door {
+  0%, 74% { transform: none; }
+  84%  { transform: scale(1.8); }
+  92%  { transform: scale(3.6); }
+  100% { transform: scale(9); }
+}
+.film .ws-out { animation-name: ws-out; }
+@keyframes ws-out { 0%, 72% { opacity: 1; transform: none; } 78%, 100% { opacity: 0; transform: translateY(-3cqh); } }
+.film .workshop .flash { animation-name: ws-flash; }
+@keyframes ws-flash {
+  0%   { opacity: 1; background: var(--light-board); }
+  6%   { opacity: 0; background: var(--light-board); }
+  80%  { opacity: 0; background: var(--light-gold); }
+  97%, 100% { opacity: 1; background: var(--light-gold); }
+}
+:root:not(.story) .film .workshop .flash { opacity: 0; }
+
+/* ===== ch3-road.css ===== */
+/* Chapter 3, the road. Comes out of the workshop doorway's flat gold, follows
+   the truck down the highway, tells the Malda job in the sky as 100 boards
+   that fill row by row, and leaves by tilting up into the sky until it is
+   the flat night blue the hills open on.
+   Tall: road-empty-tall (vanishing point 48.06, 65.75) with the truck as
+   its own layer (road-golden-tall-truck, full canvas, alpha), which shrinks
+   to the vanishing point. Wide: road-golden-wide with the truck in the
+   plate (vanishing point 60.77, 69.91); the camera pushes the whole plate.
+   data-truck="none" on the stage makes the tall truck ride with the plate. */
+:root .film { --night-sky: #001B31; }        /* hills-dusk-tall topColor: ch3 ends and ch4 begins on it */
+
+.film .road {
+  --ground: #F2E2D3;                   /* the plate's top edge: the sky goes on above it */
+  --card-ink: #172229;
+  --card-soft: #2E3A3C;
+  background: var(--ground);
+}
+.film .road-cam { --ox: 48.06; --oy: 65.75; animation-name: road-cam; }
+/* The plate's top edge melts into the ground, so the camera can lift. */
+.film .road-cam > picture { -webkit-mask-image: linear-gradient(180deg, transparent 0, #000 7%); mask-image: linear-gradient(180deg, transparent 0, #000 7%); }
+@keyframes road-cam {
+  0%   { transform: scale(1.03); }
+  20%  { transform: translateY(0) scale(1.06); }
+  31%  { transform: translateY(13%) scale(1.08); }
+  72%  { transform: translateY(17%) scale(1.1); }
+  87%  { transform: translateY(19%) scale(1.1); }
+  100% { transform: translateY(96%) scale(1.1); }
+}
+/* Still frame: the camera already lifted, as in the hold. */
+:root:not(.story) .film .road-cam { transform: translateY(33%); }
+
+/* The truck layer: the same canvas as the plate, shrinking to the
+   vanishing point as it drives away. The name rides on its biggest board. */
+.film .truck { position: absolute; inset: 0; transform-origin: 48.06% 65.75%; animation-name: road-truck; }
+.film .truck > img { position: absolute; inset: 0; width: 100%; height: 100%; }
+@keyframes road-truck {
+  0%   { transform: scale(1); }
+  26%  { transform: scale(.9); }
+  74%  { transform: scale(.42); }
+  100% { transform: scale(.3); }
+}
+.film .road[data-truck="none"] .truck { animation-name: none; transform: none; }
+:root:not(.story) .film .truck { transform: none; }
+.film .road-name {
+  --l: 36.98; --t: 49.64; --w: 24.55; --h: 4.49;   /* boardStrip: the visible strip of the biggest board */
+  --fh: .62; --fw: .9;
+  --face-ink: #172229;
+  mix-blend-mode: multiply;
+}
+
+/* A soft wash of the sky's own colour behind the words. */
+.film .road-veil {
+  position: absolute; inset: 0 0 auto; height: 62%; z-index: 2; pointer-events: none;
+  background: linear-gradient(180deg, #F4E5D5 0, color-mix(in srgb, #F4E5D5 82%, transparent) 46%, transparent 100%);
+  animation-name: road-veil;
+}
+@keyframes road-veil { 0% { opacity: .55; } 30%, 80% { opacity: 1; } 90%, 100% { opacity: 0; } }
+
+/* ---------- Beat 1: the title in the sky ---------- */
+.film .road-card { top: clamp(96px, 12.5cqh, 124px); max-width: 560px; animation-name: road-card; }
+.film .road-card p { max-width: 30ch; }
+@keyframes road-card { 0%, 22% { opacity: 1; transform: none; } 30%, 100% { opacity: 0; transform: translateY(-5cqh); } }
+
+/* ---------- Beat 2 and 3: Malda, 100 boards in seven days ---------- */
+.film .malda {
+  position: absolute; z-index: 5; left: var(--gutter); right: var(--gutter);
+  top: clamp(96px, 12.5cqh, 124px);
+  max-width: 460px;
+  color: #172229;
+  animation-name: road-malda;
+}
+@keyframes road-malda { 0%, 25% { opacity: 0; transform: translateY(4cqh); } 31%, 84% { opacity: 1; transform: none; } 88%, 100% { opacity: 0; transform: translateY(-4cqh); } }
+.film .m-head { position: relative; height: clamp(40px, 5.4cqh, 58px); }
+.film .m-day, .film .m-hold { position: absolute; inset: 0 auto auto 0; white-space: nowrap; font-family: var(--f-head); font-weight: 600; font-size: clamp(30px, min(8.6cqw, 4.6cqh), 50px); line-height: 1; letter-spacing: -.025em; }
+.film .m-day span { position: absolute; left: 0; top: 0; transition: opacity 320ms ease; }
+.story .film .m-day span:not(.on), .story .film .m-day span.on:has(~ span.on) { opacity: 0; }
+.story .film .m-hold { transition: opacity var(--beat) ease; }
+.story .film .m-hold:not(.on) { opacity: 0; }
+.film .m-head:has(.m-hold.on) .m-day { opacity: 0; transition: opacity 200ms ease; }
+:root:not(.story) .film .m-day { display: none; }
+
+.film .m-grid { display: grid; gap: clamp(4px, .55cqh, 6px); margin-top: clamp(14px, 2cqh, 22px); width: min(100%, 420px); }
+.film .m-row { display: grid; grid-template-columns: repeat(10, 1fr); gap: clamp(4px, 1cqw, 7px); }
+/* Each board: a lit face in a thin cerulean frame, the film's motif. */
+.film .m-row i { display: block; aspect-ratio: 2.5 / 1; border: 1.5px solid #00729E; background: #00729E; box-shadow: inset 0 0 0 1.5px #FFF3C8; transition: background-color 300ms ease, border-color 300ms ease, box-shadow 300ms ease; }
+.story .film .m-row:not(.on) i { background: transparent; border-color: color-mix(in srgb, #172229 26%, transparent); box-shadow: inset 0 0 0 1.5px transparent; }
+.film .m-row i:nth-child(2) { transition-delay: 25ms; } .film .m-row i:nth-child(3) { transition-delay: 50ms; }
+.film .m-row i:nth-child(4) { transition-delay: 75ms; } .film .m-row i:nth-child(5) { transition-delay: 100ms; }
+.film .m-row i:nth-child(6) { transition-delay: 125ms; } .film .m-row i:nth-child(7) { transition-delay: 150ms; }
+.film .m-row i:nth-child(8) { transition-delay: 175ms; } .film .m-row i:nth-child(9) { transition-delay: 200ms; }
+.film .m-row i:nth-child(10) { transition-delay: 225ms; }
+.film .m-text { margin-top: clamp(14px, 2cqh, 22px); max-width: 40ch; font-size: 15px; line-height: 1.5; color: #2A3436; text-wrap: pretty; }
+
+/* Still frame: the title, then the finished grid under it. */
+:root:not(.story) .film .malda { top: calc(clamp(96px, 12.5cqh, 124px) + 2.1 * clamp(38px, min(11.4cqw, 6.4cqh), 92px) + 92px); }
+:root:not(.story) .film .m-grid, :root:not(.story) .film .m-text { margin-top: 10px; }
+:root:not(.story) .film .road-veil { height: 75%; }
+
+/* ---------- Leaving: the sky deepens to night ---------- */
+.film .road-wash { position: absolute; inset: 0; z-index: 8; pointer-events: none; opacity: 0; }
+.film .r-gold { background: var(--light-gold, #F2B04C); animation-name: road-gold; }
+@keyframes road-gold { 0% { opacity: 1; } 8%, 100% { opacity: 0; } }
+/* Night comes down from the top of the sky: a tall band, flat night above,
+   through dusk colours to clear, sliding down at full opacity (so it never
+   greys the sky the way a fade would). */
+.film .r-dusk {
+  inset: 0 0 auto; height: 260%; opacity: 1;
+  background: linear-gradient(180deg, var(--night-sky) 0, var(--night-sky) 61%, #16294A 66%, #4C4560 72%, #B97D5F 80%, color-mix(in srgb, #E9A86A 60%, transparent) 88%, transparent 100%);
+  transform: translateY(-100%);
+  animation-name: road-dusk;
+}
+@keyframes road-dusk { 0%, 87% { transform: translateY(-100%); } 99%, 100% { transform: translateY(0); } }
+:root:not(.story) .film .r-dusk { display: none; }
+.film .r-night { background: var(--night-sky); animation-name: road-night; }
+@keyframes road-night { 0%, 95% { opacity: 0; } 99%, 100% { opacity: 1; } }
+
+/* ---------- Wide screens: road-golden-wide ----------
+   No truck layer for the wide plate: the tall truck is hidden, the name sits
+   on the wide board strip (56.70 48.57 9.51 x 5.42) and rides with the
+   plate, and the camera pushes the whole plate toward the vanishing point.
+   The palm crowns reach into the lower left, so the words sit high. */
+@media (min-width: 1024px) and (min-aspect-ratio: 5/4) {
+  .film .road { --ground: #F0E3D6; }
+  .film .road-cam { --oxw: 60.77; --oyw: 69.91; --fyw: .5; }
+  .film .truck { animation-name: none; transform: none; }
+  .film .truck-layer { display: none; }
+  .film .road-name { --lw: 56.7; --tw: 48.57; --ww: 9.51; --hw: 5.42; }
+  .film .road-veil { height: 100%; width: 55%; background: linear-gradient(90deg, color-mix(in srgb, #F2E4D6 72%, transparent) 0, color-mix(in srgb, #F2E4D6 40%, transparent) 50%, transparent 100%); }
+  .film .road-card, .film .malda { top: 12cqh; right: auto; width: min(40cqw, 560px); }
+  .film .m-grid { width: min(100%, 380px); }
+  .film .m-text { font-size: 17px; }
+  :root:not(.story) .film .road-card { top: 11cqh; }
+  :root:not(.story) .film .malda { top: calc(11cqh + 2.2 * min(11.4cqw, 6.4cqh) + 96px); width: min(36cqw, 420px); }
+  :root:not(.story) .film .road-cam { transform: translateY(16%); }
+}
+
+/* ===== ch4-hills.css ===== */
+/* Chapter 4, the hills. Opens on the flat night blue the road left on, the
+   land rises into frame (peaks, then the ridge town, then the plain), unlit;
+   the lights come on from the plain to the peaks with one place name each;
+   it leaves by pushing into the ridge town's small lit board until its white
+   light fills the screen.
+   Plates: hills-dusk-tall-dark (the base, every light off) and
+   hills-dusk-tall (the lit view, shown through soft windows). */
+.film .hills {
+  --ground: var(--night-sky, #001B31);
+  --lit: var(--lit-t);   /* set from FilmHills: the lit plate, AVIF with a WebP fallback */
+  --card-ink: #F4EDDF;
+  --card-soft: color-mix(in srgb, #F4EDDF 86%, transparent);
+  background: var(--ground);
+}
+
+/* The camera: rises on to the land, rests, then dollies into the board
+   (face 85.33, 47.91, 5.1 x 1.44: centre 87.88, 48.63). */
+.film .hills-cam {
+  --ox: 87.88; --oy: 48.63;
+  --bx: .8788; --by: .4863;
+  --dx: calc(50cqw - (100cqw - var(--cw)) * var(--fx, .5) - var(--bx) * var(--cw));
+  --dy: calc(50cqh - (100cqh - var(--chh)) * var(--fy, .5) - var(--by) * var(--chh));
+  animation-name: hills-cam;
+}
+@keyframes hills-cam {
+  0%   { transform: translateY(76%); }
+  5%   { transform: translateY(44%); }
+  10%  { transform: translateY(14%); }
+  15%  { transform: translateY(0) scale(1); }
+  84%  { transform: translate(0, 0) scale(1.04); }
+  89%  { transform: translate(calc(var(--dx) * .22), calc(var(--dy) * .22)) scale(1.6); }
+  93%  { transform: translate(calc(var(--dx) * .6), calc(var(--dy) * .6)) scale(3.4); }
+  97%  { transform: translate(calc(var(--dx) * .92), calc(var(--dy) * .92)) scale(8); }
+  100% { transform: translate(var(--dx), var(--dy)) scale(15); }
+}
+/* On a phone the whole width of the view is shown, sat on the bottom edge,
+   and the night ground carries on above it (more sky for the words). */
+@container (max-aspect-ratio: 941 / 1672) { .film .hills-cam { --cw: 100cqw; --fy: 1; } }
+/* Depth on the push into the ridge board. */
+.film .hills .planes { -webkit-mask-image: linear-gradient(180deg, transparent 0, #000 14%); mask-image: linear-gradient(180deg, transparent 0, #000 14%); }
+.film .hills .pl.mid { animation-name: hills-mid; }
+.film .hills .pl.near { animation-name: hills-near; }
+@keyframes hills-mid { 0%, 84% { transform: none; } 89% { transform: scale(1.15); } 93% { transform: scale(1.282); } 97% { transform: scale(1.35); } 100% { transform: scale(1.373); } }
+@keyframes hills-near { 0%, 84% { transform: none; } 89% { transform: scale(1.525); } 93% { transform: scale(1.988); } 97% { transform: scale(2.225); } 100% { transform: scale(2.307); } }
+/* The plate's top edge melts into the night ground. */
+.film .hills-cam > picture { -webkit-mask-image: linear-gradient(180deg, transparent 0, #000 14%); mask-image: linear-gradient(180deg, transparent 0, #000 14%); }
+
+/* Lit windows on to the lit plate. The sky and the peaks are always the lit
+   plate's, so the night ground, the sky and the peaks agree. */
+.film .h-sky, .film .lamp { position: absolute; inset: 0; background: center / 100% 100% no-repeat; pointer-events: none; }
+.film .h-sky { background-image: var(--lit); -webkit-mask-image: linear-gradient(180deg, transparent 0, #000 14%, #000 28%, transparent 35%); mask-image: linear-gradient(180deg, transparent 0, #000 14%, #000 28%, transparent 35%); }
+.film .ld .lamp, :root:not(.story) .film .lamp { background-image: var(--lit); }
+.film .lamp {
+  -webkit-mask-image: radial-gradient(ellipse calc(var(--rx, 10) * 1%) calc(var(--ry, 5) * 1%) at calc(var(--x, 50) * 1%) calc(var(--y, 50) * 1%), #000 34%, transparent 100%);
+  mask-image: radial-gradient(ellipse calc(var(--rx, 10) * 1%) calc(var(--ry, 5) * 1%) at calc(var(--x, 50) * 1%) calc(var(--y, 50) * 1%), #000 34%, transparent 100%);
+  transition: opacity 480ms ease;
+}
+/* Once every group is on, the whole lit view settles in under them. */
+.film .lamp.h-lit { -webkit-mask-image: linear-gradient(180deg, transparent 0, #000 30%); mask-image: linear-gradient(180deg, transparent 0, #000 30%); transition-duration: 900ms; }
+.story .film .lamp[style*="--at"]:not(.on) { opacity: 0; }
+
+/* The ridge board's own light, brightening as the camera arrives. */
+.film .h-board {
+  --l: 85.33; --t: 47.91; --w: 5.1; --h: 1.44;
+  background: var(--light-white, #FFF8E7);
+  box-shadow: 0 0 .9cqw .35cqw var(--light-white, #FFF8E7);
+  opacity: 0;
+  animation-name: hills-board;
+}
+@keyframes hills-board { 0%, 86% { opacity: 0; } 95%, 100% { opacity: 1; } }
+
+/* The words: the sky above, the dark tea garden below. */
+.film .h-veil {
+  position: absolute; inset: 0; z-index: 2; pointer-events: none;
+  background:
+    linear-gradient(180deg, color-mix(in srgb, #001B31 70%, transparent) 0, transparent 30%),
+    linear-gradient(0deg, color-mix(in srgb, #03100E 88%, transparent) 0, color-mix(in srgb, #03100E 55%, transparent) 20%, transparent 34%);
+  animation-name: hills-veil;     /* rises with the land, so the chapter opens on flat night */
+}
+@keyframes hills-veil { 0%, 2% { opacity: 0; } 14%, 100% { opacity: 1; } }
+.film .hills-card { top: clamp(92px, 11.5cqh, 120px); max-width: 600px; animation-name: hills-out; }
+@keyframes hills-out { 0%, 83% { opacity: 1; } 88%, 100% { opacity: 0; } }
+
+.film .h-names { position: absolute; z-index: 5; left: var(--gutter); right: calc(var(--gutter) + 52px); bottom: calc(var(--bar) + 30px); max-width: 560px; color: #F4EDDF; animation-name: hills-out; }
+.film .h-now { position: absolute; left: 0; bottom: 0; height: 1.1em; width: 100%; margin: 0; font-family: var(--f-head); font-weight: 600; font-size: clamp(30px, min(8.4cqw, 4.4cqh), 52px); line-height: 1.05; letter-spacing: -.02em; }
+.film .h-now span { position: absolute; left: 0; bottom: 0; white-space: nowrap; transition: opacity 360ms ease, transform 460ms var(--ease); }
+.story .film .h-now span:not(.on) { opacity: 0; transform: translateY(10px); }
+.story .film .h-now span.on:has(~ span.on) { opacity: 0; transform: translateY(-10px); }
+.story .film .h-names:has(.h-all.on) .h-now { opacity: 0; transition: opacity 300ms ease; }
+:root:not(.story) .film .h-now { display: none; }
+.film .h-all .h-list { display: flex; flex-wrap: wrap; max-width: 46ch; margin: 0; padding: 0; list-style: none; font-size: 15px; line-height: 1.55; color: color-mix(in srgb, #F4EDDF 88%, transparent); }
+.film .h-list li:not(:last-child)::after { content: ","; margin-right: .35em; }
+.film .h-list li:last-child::after { content: "."; }
+.film .h-all .quiet { margin-top: 6px; color: #F4EDDF; }
+
+.film .h-wash { position: absolute; inset: 0; z-index: 9; pointer-events: none; opacity: 0; }
+.film .h-white { background: var(--light-white, #FFF8E7); animation-name: hills-white; }
+@keyframes hills-white { 0%, 94% { opacity: 0; } 99.5%, 100% { opacity: 1; } }
+
+/* ---------- Wide screens: the wide plates (hills-dusk-wide, dark and lit) ----------
+   Board 86.0, 49.2, 3.65 x 2.23 (centre 87.83, 50.32). The peaks cross the
+   lower half of the headline zone, so the words sit higher, on one line. */
+@media (min-width: 1024px) and (min-aspect-ratio: 5/4) {
+  .film .hills { --lit: var(--lit-w); }
+  .film .hills-cam { --oxw: 87.83; --oyw: 50.32; --bx: .8783; --by: .5032; --fyw: .5; }
+  .film .lamp {
+    -webkit-mask-image: radial-gradient(ellipse calc(var(--rxw, var(--rx)) * 1%) calc(var(--ryw, var(--ry)) * 1%) at calc(var(--xw, var(--x)) * 1%) calc(var(--yw, var(--y)) * 1%), #000 34%, transparent 100%);
+    mask-image: radial-gradient(ellipse calc(var(--rxw, var(--rx)) * 1%) calc(var(--ryw, var(--ry)) * 1%) at calc(var(--xw, var(--x)) * 1%) calc(var(--yw, var(--y)) * 1%), #000 34%, transparent 100%);
+  }
+  .film .h-sky { -webkit-mask-image: linear-gradient(180deg, transparent 0, #000 14%, #000 25%, transparent 33%); mask-image: linear-gradient(180deg, transparent 0, #000 14%, #000 25%, transparent 33%); }
+  .film .h-board { --lw: 86; --tw: 49.2; --ww: 3.65; --hw: 2.23; }
+  .film .h-veil { background: linear-gradient(180deg, color-mix(in srgb, #001D39 70%, transparent) 0, transparent 22%), linear-gradient(90deg, color-mix(in srgb, #021522 55%, transparent) 0, transparent 40%), linear-gradient(0deg, color-mix(in srgb, #03100E 80%, transparent) 0, transparent 26%); }
+  .film .hills-card { top: 11cqh; right: auto; width: 70cqw; max-width: none; }
+  .film .hills-card h2 { font-size: min(5.6cqh, 3.8cqw); }
+  .film .hills-card p { margin-top: 8px; }
+  .film .h-names { right: auto; width: min(42cqw, 600px); bottom: 7cqh; }
+  .film .h-all .h-list { font-size: 17px; }
+}
+
+/* ===== ch5-junction.css ===== */
+/* Chapter 5, the junction. Opens on the white of the ridge board, which dims
+   to an unlit street corner; the surfaces switch on one at a time and take
+   the visitor's name in their own style while one line at the bottom names
+   the work; then the whole list settles in the sky and the camera pushes
+   into the floodlit hoarding until its white fills the screen.
+   Plates: junction-night-tall-dark (base) and junction-night-tall (lit).
+   Faces (plates.json): hoarding 21.04 26.61 59.3 x 12.56, wall 15.41 49.04
+   39.11 x 9.81, glow sign 18.92 61.72 60.89 x 3.95, pole sign 85.23 63.28
+   11.26 x 4.13, van 4.04 71.05 21.36 x 5.5. No photograph is ever placed
+   on a drawn surface. */
+.film .junction {
+  --ground: #06151D;                   /* between the dark (#031015) and lit (#081A23) plates' top edges */
+  --lit: var(--lit-t);   /* set from FilmJunction */
+  --card-ink: #F4EDDF;
+  background: var(--ground);
+}
+/* Camera: rests on the corner, steps back a little when the list settles
+   (so the sky gains room), then dollies into the hoarding (centre 50.69,
+   32.89). */
+.film .junction-cam {
+  --ox: 50.69; --oy: 32.89;
+  --hx: .5069; --hy: .3289;
+  --dx: calc(50cqw - (100cqw - var(--cw)) * var(--fx, .5) - var(--hx) * var(--cw));
+  --dy: calc(50cqh - (100cqh - var(--chh)) * var(--fy, .5) - var(--hy) * var(--chh));
+  --lift: 9%;
+  animation-name: junction-cam;
+}
+@keyframes junction-cam {
+  0%   { transform: scale(1.06); }
+  10%  { transform: scale(1.02); }
+  61%  { transform: translate(0, 0) scale(1); }
+  66%  { transform: translate(0, var(--lift)) scale(1); }
+  86%  { transform: translate(0, var(--lift)) scale(1); }
+  91%  { transform: translate(calc(var(--dx) * .3), calc(var(--dy) * .3 + var(--lift) * .7)) scale(1.6); }
+  96%  { transform: translate(calc(var(--dx) * .8), calc(var(--dy) * .8 + var(--lift) * .2)) scale(4); }
+  100% { transform: translate(var(--dx), var(--dy)) scale(9); }
+}
+:root:not(.story) .film .junction-cam { transform: translate(0, calc(var(--lift) * 1.8)); }
+/* Still frame: the title, then the line and the list under it. */
+:root:not(.story) .film .j-list { top: calc(clamp(92px, 11.5cqh, 120px) + 2.15 * clamp(38px, min(11.4cqw, 6.4cqh), 92px) + 18px); }
+/* On a phone the whole width of the corner is shown (the van and the pole
+   sign are at its edges), sat on the bottom, with the night sky above. */
+@container (max-aspect-ratio: 941 / 1672) { .film .junction-cam { --cw: 100cqw; --fy: 1; } }
+.film .junction-cam > picture, .film .win.j-lit { -webkit-mask-image: linear-gradient(180deg, transparent 0, #000 12%); mask-image: linear-gradient(180deg, transparent 0, #000 12%); }
+
+/* A soft-edged rectangular window on to the lit plate: --ql --qt --qw --qh
+   (percent of the plate), feathered by --qf across and --qv down. */
+.film .win {
+  position: absolute; inset: 0; pointer-events: none;
+  background: center / 100% 100% no-repeat;
+  -webkit-mask-image:
+    linear-gradient(90deg, transparent calc((var(--ql) - var(--qf)) * 1%), #000 calc(var(--ql) * 1%), #000 calc((var(--ql) + var(--qw)) * 1%), transparent calc((var(--ql) + var(--qw) + var(--qf)) * 1%)),
+    linear-gradient(180deg, transparent calc((var(--qt) - var(--qv)) * 1%), #000 calc(var(--qt) * 1%), #000 calc((var(--qt) + var(--qh)) * 1%), transparent calc((var(--qt) + var(--qh) + var(--qv)) * 1%));
+  -webkit-mask-composite: source-in;
+  mask-image:
+    linear-gradient(90deg, transparent calc((var(--ql) - var(--qf)) * 1%), #000 calc(var(--ql) * 1%), #000 calc((var(--ql) + var(--qw)) * 1%), transparent calc((var(--ql) + var(--qw) + var(--qf)) * 1%)),
+    linear-gradient(180deg, transparent calc((var(--qt) - var(--qv)) * 1%), #000 calc(var(--qt) * 1%), #000 calc((var(--qt) + var(--qh)) * 1%), transparent calc((var(--qt) + var(--qh) + var(--qv)) * 1%));
+  mask-composite: intersect;
+  transition: opacity 440ms ease;
+}
+.film .win.j-lit { -webkit-mask-composite: source-over; mask-composite: add; transition-duration: 900ms; }
+.film .ld .win, :root:not(.story) .film .win { background-image: var(--lit); }
+.story .film .win[style*="--at"]:not(.on) { opacity: 0; }
+
+/* ---------- The lettering ---------- */
+.film .junction .face { transition: opacity 500ms ease 120ms; }
+/* Glow sign: dark marine vinyl letters on the lit face. */
+.film .j-glow { --l: 18.92; --t: 61.72; --w: 60.89; --h: 3.95; --fh: .68; --fw: .8; --face-ink: #172229; }
+/* Painted wall: brush letters that let the plaster show through. */
+.film .j-wall {
+  --l: 15.41; --t: 49.04; --w: 39.11; --h: 9.81; --fh: .5; --fw: .84; --em: 6.2;
+  --face-ink: #00729E;
+  font-family: var(--font-barlow-condensed), var(--f-head); font-weight: 600; text-transform: uppercase; letter-spacing: .02em;
+  mix-blend-mode: multiply; opacity: .92;
+}
+/* Hoarding: very large letters. */
+.film .j-hoard { --l: 21.04; --t: 26.61; --w: 59.3; --h: 12.56; --fh: .5; --fw: .9; --face-ink: #172229; font-weight: 800; letter-spacing: -.03em; }
+/* Pole sign: a small double-sided board; the name wraps. */
+.film .j-pole {
+  --l: 85.23; --t: 63.28; --w: 11.26; --h: 4.13;
+  --face-ink: #00729E;
+  font-size: 2.05cqw; line-height: 1; white-space: normal; text-align: center; padding: 0 .4cqw; letter-spacing: -.01em;
+}
+/* Van: condensed fleet letters on the side panel. */
+.film .j-van { --l: 4.04; --t: 71.05; --w: 21.36; --h: 5.5; --fh: .52; --fw: .9; --em: 5.4; --face-ink: #172229; font-family: var(--font-barlow-condensed), var(--f-head); font-weight: 600; text-transform: uppercase; mix-blend-mode: multiply; }
+
+/* The hoarding's lettering steps off before the push, so the push never
+   shows giant cropped letters (a wrapper, since the face's own opacity is
+   its beat). */
+.film .hoard-out { position: absolute; inset: 0; font-style: normal; pointer-events: none; animation-name: junction-hoard-out; }
+@keyframes junction-hoard-out { 0%, 83% { opacity: 1; } 86.5%, 100% { opacity: 0; } }
+
+/* The hoarding's floodlight, filling the screen as the camera arrives. */
+.film .j-flood {
+  --l: 21.04; --t: 26.61; --w: 59.3; --h: 12.56;
+  background: var(--light-white, #FFF8E7);
+  box-shadow: 0 0 2cqw .8cqw var(--light-white, #FFF8E7);
+  opacity: 0;
+  animation-name: junction-flood;
+}
+@keyframes junction-flood { 0%, 88% { opacity: 0; } 96%, 100% { opacity: 1; } }
+
+/* ---------- The words ---------- */
+.film .j-veil {
+  position: absolute; inset: 0; z-index: 2; pointer-events: none;
+  background:
+    linear-gradient(180deg, color-mix(in srgb, #061620 72%, transparent) 0, transparent 26%),
+    linear-gradient(0deg, color-mix(in srgb, #0A0B09 86%, transparent) 0, color-mix(in srgb, #0A0B09 45%, transparent) 15%, transparent 24%);
+}
+.film .junction-card { top: clamp(92px, 11.5cqh, 120px); max-width: 640px; animation-name: junction-title; }
+@keyframes junction-title { 0%, 62% { opacity: 1; transform: none; } 65%, 100% { opacity: 0; transform: translateY(-4cqh); } }
+
+/* One changing line at the bottom names the work. */
+.film .j-caps { position: absolute; z-index: 5; left: var(--gutter); right: calc(var(--gutter) + 60px); bottom: calc(var(--bar) + 30px); height: 1.2em; font-family: var(--f-head); font-weight: 600; font-size: clamp(26px, min(7.4cqw, 3.9cqh), 46px); line-height: 1.1; letter-spacing: -.02em; color: #F4EDDF; animation-name: junction-caps; }
+@keyframes junction-caps { 0%, 63% { opacity: 1; } 66%, 100% { opacity: 0; } }
+.film .j-cap { position: absolute; left: 0; right: 0; bottom: 0; margin: 0; text-wrap: balance; transition: opacity 360ms ease, transform 460ms var(--ease); }
+.film .j-cap a { text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: .18em; text-decoration-color: color-mix(in srgb, currentColor 45%, transparent); }
+.film .j-cap a::after { content: "\2197"; display: inline-block; margin-left: .3em; text-decoration: none; font-size: .55em; font-weight: 500; opacity: .8; }
+.story .film .j-cap:not(.on) { opacity: 0; transform: translateY(10px); }
+.story .film .j-cap.on:has(~ .j-cap.on) { opacity: 0; transform: translateY(-10px); }
+:root:not(.story) .film .j-caps { display: none; }
+
+/* Then every trade, as type, in the sky. */
+.film .j-list { position: absolute; z-index: 5; left: var(--gutter); right: var(--gutter); top: clamp(88px, 11cqh, 116px); max-width: 620px; color: #F4EDDF; animation-name: junction-list; }
+@keyframes junction-list { 0%, 86% { opacity: 1; } 90%, 100% { opacity: 0; } }
+.film .j-line { font-family: var(--f-head); font-weight: 600; font-size: clamp(22px, min(6.2cqw, 3.2cqh), 36px); line-height: 1.12; letter-spacing: -.02em; text-wrap: balance; }
+.film .j-trades { display: flex; flex-wrap: wrap; margin: 12px 0 0; padding: 0; list-style: none; font-size: 14px; line-height: 1.6; color: color-mix(in srgb, #F4EDDF 80%, transparent); }
+.film .j-trades li:not(:last-child)::after { content: ","; margin-right: .35em; }
+.film .j-trades li:last-child::after { content: "."; }
+.film .j-trades a { color: #F4EDDF; text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 3px; text-decoration-color: color-mix(in srgb, #F4EDDF 40%, transparent); }
+.film .j-trades a:hover { text-decoration-color: currentColor; }
+
+.film .j-wash { position: absolute; inset: 0; z-index: 9; pointer-events: none; opacity: 0; background: var(--light-white, #FFF8E7); }
+.film .j-in { animation-name: junction-in; }
+@keyframes junction-in { 0% { opacity: 1; } 6%, 100% { opacity: 0; } }
+.film .j-out { animation-name: junction-out; }
+@keyframes junction-out { 0%, 95% { opacity: 0; } 99.5%, 100% { opacity: 1; } }
+
+/* ---------- Wide screens: junction-night-wide (dark and lit) ----------
+   Faces: hoarding 54.67 8.18 32.78 x 18.6 (centre 71.06, 17.48), wall
+   51.38 40.81 21.35 x 13.92, glow sign 52.03 59.19 34.09 x 6.16, pole sign
+   89.77 61.74 6.82 x 7.01, van 25.3 72.48 13.82 x 7.86. The left half is
+   night sky and trees: the words sit there. */
+@media (min-width: 1024px) and (min-aspect-ratio: 5/4) {
+  .film .junction { --lit: var(--lit-w); --ground: #06151D; }
+  .film .junction-cam { --oxw: 71.06; --oyw: 17.48; --hx: .7106; --hy: .1748; --fxw: .7; --fyw: .5; --lift: 0%; }
+  .film .win {
+    -webkit-mask-image:
+      linear-gradient(90deg, transparent calc((var(--qlw, var(--ql)) - 2) * 1%), #000 calc(var(--qlw, var(--ql)) * 1%), #000 calc((var(--qlw, var(--ql)) + var(--qww, var(--qw))) * 1%), transparent calc((var(--qlw, var(--ql)) + var(--qww, var(--qw)) + 2) * 1%)),
+      linear-gradient(180deg, transparent calc((var(--qtw, var(--qt)) - 3) * 1%), #000 calc(var(--qtw, var(--qt)) * 1%), #000 calc((var(--qtw, var(--qt)) + var(--qhw, var(--qh))) * 1%), transparent calc((var(--qtw, var(--qt)) + var(--qhw, var(--qh)) + 3) * 1%));
+    mask-image:
+      linear-gradient(90deg, transparent calc((var(--qlw, var(--ql)) - 2) * 1%), #000 calc(var(--qlw, var(--ql)) * 1%), #000 calc((var(--qlw, var(--ql)) + var(--qww, var(--qw))) * 1%), transparent calc((var(--qlw, var(--ql)) + var(--qww, var(--qw)) + 2) * 1%)),
+      linear-gradient(180deg, transparent calc((var(--qtw, var(--qt)) - 3) * 1%), #000 calc(var(--qtw, var(--qt)) * 1%), #000 calc((var(--qtw, var(--qt)) + var(--qhw, var(--qh))) * 1%), transparent calc((var(--qtw, var(--qt)) + var(--qhw, var(--qh)) + 3) * 1%));
+  }
+  .film .j-glow { --lw: 52.03; --tw: 59.19; --ww: 34.09; --hw: 6.16; }
+  .film .j-wall { --lw: 51.38; --tw: 40.81; --ww: 21.35; --hw: 13.92; }
+  .film .j-hoard, .film .j-flood { --lw: 54.67; --tw: 8.18; --ww: 32.78; --hw: 18.6; }
+  .film .j-pole { --lw: 89.77; --tw: 61.74; --ww: 6.82; --hw: 7.01; font-size: 1.15cqw; }
+  .film .j-van { --lw: 25.3; --tw: 72.48; --ww: 13.82; --hw: 7.86; }
+  .film .j-veil { background: linear-gradient(90deg, color-mix(in srgb, #050E14 70%, transparent) 0, color-mix(in srgb, #050E14 35%, transparent) 30%, transparent 46%), linear-gradient(0deg, color-mix(in srgb, #0A0B09 70%, transparent) 0, transparent 22%); }
+  .film .junction-card, .film .j-caps, .film .j-list { right: auto; width: min(40cqw, 580px); }
+  .film .junction-card, .film .j-list { top: 20cqh; }
+  .film .j-caps { bottom: 38cqh; }
+  .film .j-trades { font-size: 16px; }
+  :root:not(.story) .film .junction-card { top: 14cqh; }
+  :root:not(.story) .film .j-list { top: calc(14cqh + 2.2 * min(11.4cqw, 6.4cqh) + 24px); }
+}
+
+/* ===== ch6-proof.css ===== */
+/* Chapter 6, the proof. Everything before was a picture of an idea; this is
+   the record. The hoarding's white dims to the night ground as the first
+   frame switches on like a light box; six real photographs pass as a film
+   strip tied to the scroll (whole, never cropped, never wider than their own
+   pixels, each in a thin cerulean frame like the hero's board, captioned
+   only with the gallery record). On a portrait screen the strip runs
+   upward, each photograph the width of the screen; on a landscape screen it
+   runs sideways. Then the GPS line, then the ledger: one wide lit board
+   carrying the client logos, the years beside it. Leaves on the flat night
+   ground. Order and captions: curation/report.md. */
+.film .proof {
+  --ground: var(--light-night, #051523);
+  --card-ink: #F4EDDF;
+  --top: clamp(92px, 11.5cqh, 120px);
+  --h2: clamp(38px, min(11.4cqw, 6.4cqh), 92px);
+  background: var(--ground);
+  color: #F4EDDF;
+}
+
+.film .proof-card { top: var(--top); max-width: 640px; animation-name: proof-title; }
+@keyframes proof-title { 0%, 90% { opacity: 1; } 96%, 100% { opacity: 0; } }
+
+/* ---------- The film strip (landscape: sideways) ---------- */
+.film .strip {
+  position: absolute; z-index: 3; left: 0; right: 0;
+  top: calc(var(--top) + 2.2 * var(--h2) + 18px);
+  bottom: calc(var(--bar) + 28px);
+  display: flex; flex-direction: column; justify-content: center; padding-bottom: 4cqh;
+  animation-name: proof-strip;
+}
+@keyframes proof-strip { 0%, 50% { opacity: 1; } 54%, 100% { opacity: 0; } }
+/* Each frame is --slot wide, so the next one waits at the right edge, as on
+   a strip of film. */
+.film .reel { --slot: 86%; flex: none; display: flex; margin: 0; padding: 0; list-style: none; animation-name: proof-reel; }
+@keyframes proof-reel {
+  0%, 8%    { transform: translateX(0); }
+  12%, 16%  { transform: translateX(calc(var(--slot) * -1)); }
+  20%, 24%  { transform: translateX(calc(var(--slot) * -2)); }
+  28%, 32%  { transform: translateX(calc(var(--slot) * -3)); }
+  36%, 40%  { transform: translateX(calc(var(--slot) * -4)); }
+  44%, 100% { transform: translateX(calc(var(--slot) * -5)); }
+}
+.film .shot { flex: 0 0 var(--slot); min-width: 0; display: flex; align-items: center; padding-left: var(--gutter); }
+.film .shot figure { margin: 0; display: flex; flex-direction: column; align-items: flex-start; max-width: 100%; max-height: 100%; }
+/* The frame: the hero board's thin cerulean edge, lit from inside. Each
+   frame switches on like a light box when its beat comes (dim to full). */
+.film .frame {
+  position: relative; max-width: 100%;
+  border: 3px solid #0099D0; outline: 1px solid color-mix(in srgb, #0099D0 40%, transparent); outline-offset: 2px;
+  box-shadow: 0 0 38px color-mix(in srgb, #FFF3C8 14%, transparent);
+  line-height: 0;
+  transition: opacity 650ms ease;
+}
+.film .shot figcaption { transition: opacity 650ms ease 150ms; }
+.story .film .shot:not(.on) .frame { opacity: .2; }
+.story .film .shot:not(.on) figcaption { opacity: 0; }
+.film .frame img {
+  display: block; width: auto; height: auto;
+  max-width: min(100%, var(--pw));   /* never wider than its own pixels */
+  max-height: calc(100cqh - var(--top) - 2.2 * var(--h2) - 18px - var(--bar) - 28px - 108px);
+}
+.film .f-lbox { position: absolute; inset: 0; background: var(--light-white, #FFF8E7); opacity: 0; animation-name: proof-lightbox; pointer-events: none; }
+@keyframes proof-lightbox { 0%, 3% { opacity: 1; } 8%, 100% { opacity: 0; } }
+/* The caption, set small like a stamp: only what the record says. */
+.film .shot figcaption { margin-top: 12px; display: flex; flex-wrap: wrap; gap: 2px 14px; font-family: var(--font-barlow-condensed), var(--f-head); font-weight: 500; font-size: 14px; line-height: 1.3; letter-spacing: .09em; text-transform: uppercase; color: color-mix(in srgb, #F4EDDF 74%, transparent); }
+.film .shot figcaption b { font-weight: 600; color: #F4EDDF; }
+.film .count { margin: 10px 0 0; padding-inline: var(--gutter); font-family: var(--font-barlow-condensed), var(--f-head); font-weight: 500; font-size: 14px; letter-spacing: .09em; text-transform: uppercase; color: color-mix(in srgb, #F4EDDF 56%, transparent); }
+.film .count-n { position: relative; display: inline-block; width: .7em; height: 1em; vertical-align: -.12em; color: #F4EDDF; }
+.film .count-n span { position: absolute; left: 0; top: 0; transition: opacity 260ms ease; }
+.story .film .count-n span:not(.on), .story .film .count-n span.on:has(~ span.on) { opacity: 0; }
+
+/* ---------- Portrait: the strip runs upward ----------
+   Each photograph the width of the screen (16px gutter), stacked with its
+   caption; the strip rises through the stage with the scroll, two or more
+   frames in view; the title is there for the first frame, then lifts away. */
+@media (orientation: portrait) {
+  .film .proof-card { animation-name: proof-title-v; }
+  @keyframes proof-title-v { 0%, 7% { opacity: 1; transform: none; } 10.5%, 100% { opacity: 0; transform: translateY(-6cqh); } }
+  .film .strip { top: 0; bottom: 0; display: block; padding: 0; -webkit-mask-image: linear-gradient(180deg, transparent 70px, #000 150px); mask-image: linear-gradient(180deg, transparent 70px, #000 150px); }
+  .film .reel { display: flex; flex-direction: column; gap: 30px; padding-top: calc(var(--top) + 2.2 * var(--h2) + 10px); animation-name: proof-reel-v; }
+  @keyframes proof-reel-v { 0%, 8% { transform: translateY(0); } 50%, 100% { transform: translateY(calc(-100% + 72cqh)); } }
+  .film .shot { display: block; flex: none; padding: 0 16px; }
+  .film .shot figure { display: block; }
+  .film .frame { display: block; }
+  .film .frame img { width: 100%; max-width: var(--pw); max-height: none; }
+  .film .shot figcaption { margin-top: 10px; }
+  .film .count { display: none; }
+}
+
+/* ---------- The GPS line ---------- */
+.film .gps {
+  position: absolute; z-index: 3; left: var(--gutter); right: var(--gutter); top: 50%;
+  max-width: 22ch; margin: 0;
+  font-family: var(--f-head); font-weight: 500; font-size: clamp(24px, min(6.6cqw, 3.6cqh), 40px); line-height: 1.2; letter-spacing: -.015em;
+  color: #F4EDDF; text-wrap: balance;
+  opacity: 0;
+  animation-name: proof-gps;
+}
+@keyframes proof-gps { 0%, 52% { opacity: 0; transform: translateY(calc(-50% + 3cqh)); } 55.5%, 61% { opacity: 1; transform: translateY(-50%); } 64%, 100% { opacity: 0; transform: translateY(calc(-50% - 4cqh)); } }
+
+/* ---------- The ledger ---------- */
+.film .ledger {
+  position: absolute; z-index: 4; left: var(--gutter); right: var(--gutter);
+  top: calc(var(--top) + 2.2 * var(--h2) + 22px);
+  animation-name: proof-ledger;
+}
+@keyframes proof-ledger { 0%, 63% { opacity: 0; } 64.5%, 91% { opacity: 1; } 96%, 100% { opacity: 0; } }
+/* One wide lit board, the film's own motif: cream face, thin cerulean
+   frame. The logos sit on it as if printed (multiply takes their white
+   ground into the cream; they are never drawn larger than their pixels). */
+.film .lboard {
+  display: flex; flex-wrap: wrap; align-items: center; justify-content: space-around; gap: 14px 22px;
+  padding: 18px 20px;
+  background: linear-gradient(180deg, #FFF8E7, #F6F0E3 70%, #EFE6D2);
+  border: 3px solid #0099D0;
+  box-shadow: 0 0 0 1px color-mix(in srgb, #0099D0 30%, transparent), 0 0 48px color-mix(in srgb, #FFF3C8 22%, transparent);
+}
+.film .lboard img { height: var(--lh); width: auto; max-width: 100%; mix-blend-mode: multiply; }
+.film .lside { margin-top: 18px; }
+.film .big { font-family: var(--f-head); font-weight: 500; font-size: 17px; line-height: 1.2; color: color-mix(in srgb, #F4EDDF 86%, transparent); }
+.film .big b { display: block; font-weight: 600; font-size: clamp(56px, min(17cqw, 9cqh), 112px); line-height: .95; letter-spacing: -.04em; color: #F4EDDF; }
+.film .years { margin: 12px 0 0; padding: 0; list-style: none; font-size: 15px; line-height: 1.55; color: color-mix(in srgb, #F4EDDF 84%, transparent); }
+.film .proof .acts { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 24px; margin-top: 16px; }
+.film .proof .acts .cta { flex-basis: 100%; max-width: 360px; }
+
+.film .p-wash { position: absolute; inset: 0; z-index: 9; pointer-events: none; opacity: 0; }
+.film .p-white { background: var(--light-white, #FFF8E7); animation-name: proof-white; }
+@keyframes proof-white { 0% { opacity: 1; } 5%, 100% { opacity: 0; } }
+.film .p-night { background: var(--light-night, #051523); animation-name: proof-night; }
+@keyframes proof-night { 0%, 95% { opacity: 0; } 99.5%, 100% { opacity: 1; } }
+
+/* ---------- Wide screens: the strip sideways, the ledger as one centred
+   composition under the title ---------- */
+@media (min-width: 1024px) and (min-aspect-ratio: 5/4) {
+  .film .proof-card { top: 15cqh; max-width: none; }
+  .film .strip { top: calc(15cqh + 92px + 4cqh); bottom: 7cqh; }
+  .film .reel { --slot: 72%; }
+  .film .frame img { max-height: calc(100cqh - 15cqh - 92px - 4cqh - 7cqh - 84px); }
+  .film .shot figcaption, .film .count { font-size: 15px; }
+  .film .gps { left: 50%; right: auto; transform: translate(-50%, -50%); max-width: 26ch; text-align: center; }
+  @keyframes proof-gps { 0%, 52% { opacity: 0; transform: translate(-50%, calc(-50% + 3cqh)); } 55.5%, 61% { opacity: 1; transform: translate(-50%, -50%); } 64%, 100% { opacity: 0; transform: translate(-50%, calc(-50% - 4cqh)); } }
+  .film .ledger {
+    top: calc(15cqh + 80px + (85cqh - 80px) / 2); transform: translateY(-50%);
+    display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); gap: 0 5cqw; align-items: center; max-width: 1280px;
+  }
+  .film .lboard { padding: 40px 40px; gap: 30px 44px; }
+  .film .lboard img { height: calc(var(--lh) * 1.45); }
+  .film .lside { margin-top: 0; }
+  .film .years { font-size: 17px; }
+}
+
+/* ---------- Still frames: the whole record, stacked ---------- */
+:root:not(.story) .film .proof { height: auto; min-height: 100lvh; padding: 120px 0 72px; container-type: inline-size; }
+:root:not(.story) .film .proof :is(.proof-card, .strip, .gps, .ledger) { position: static; opacity: 1; transform: none; }
+:root:not(.story) .film .proof-card { margin: 0 var(--gutter); }
+:root:not(.story) .film .strip { margin-top: 28px; }
+:root:not(.story) .film .reel { flex-direction: column; gap: 40px; padding-top: 0; }
+:root:not(.story) .film .frame img { max-height: none; }
+:root:not(.story) .film .count, :root:not(.story) .film .f-lbox { display: none; }
+:root:not(.story) .film .gps { margin: 56px var(--gutter) 0; max-width: 26ch; }
+:root:not(.story) .film .ledger { margin: 40px var(--gutter) 0; }
+
+/* ===== ch7-finale.css ===== */
+/* Chapter 7, the finale: "Your name is next."
+   Back on the first street, out of the dark that proof ends on. It started
+   with one lit sign; the boards along the street come on one by one, the
+   middle one carrying the visitor's name. Then the words and the actions. */
+.film .finale { --ground: #051523; }
+.film .finale .cam { --ox: 50.05; --oy: 52.45; --fy: .5; }
+.film .finale .face {
+  --l: 23.7; --t: 49.4; --w: 52.71; --h: 6.1;
+  --lw: 58.19; --tw: 45.16; --ww: 27.09; --hw: 9.46;
+  --fh: .8; --fw: .9;
+  mix-blend-mode: multiply; opacity: .9;
+}
+
+/* The scene's own night behind the words (top) and the actions (bottom). */
+.film .fin-veil { position: absolute; inset: 0; z-index: 2; pointer-events: none;
+  background: linear-gradient(180deg, rgb(5 21 35 / 70%) 0, rgb(5 21 35 / 0%) 34%, rgb(5 21 35 / 0%) 70%, rgb(5 21 35 / 78%) 100%); }
+.film .fin-card { top: max(96px, 12cqh); --card-ink: #F4EDDF; }
+.film .fin-card h2 { font-size: clamp(40px, min(13cqw, 8cqh), 104px); }
+.film .fin-acts {
+  position: absolute; z-index: 5; left: var(--gutter); right: var(--gutter); bottom: calc(28px + var(--bar));
+  display: grid; max-width: 480px; gap: 6px; color: #F4EDDF;
+}
+.film .fin-acts .cta { width: 100%; }
+.film .fin-more { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 0 18px; }
+.film .fin-tel { display: inline-flex; min-height: 44px; align-items: center; font-size: 15px; font-weight: 500; text-decoration: none; letter-spacing: .02em; opacity: .9; }
+
+@media (min-width: 1024px) and (min-aspect-ratio: 5/4) {
+  .film .finale .cam { --fxw: 1; --oxw: 71.735; --oyw: 49.89; }
+  .film .fin-veil { background: linear-gradient(90deg, rgb(2 18 27 / 82%) 0, rgb(2 18 27 / 55%) 30%, transparent 52%); }
+  /* Below the palm that stands at x 32 to 39%, y 19 to 32% of the wide plate. */
+  .film .fin-card { top: 34cqh; right: auto; width: min(44cqw, 640px); }
+  .film .fin-card h2 { font-size: min(12cqh, 7.2cqw); line-height: .99; }
+  .film .fin-card p { margin-top: 3cqh; font-size: clamp(18px, 2.45cqh, 24px); }
+  .film .fin-acts { right: auto; bottom: max(16cqh, 150px); display: flex; max-width: none; align-items: center; gap: 30px; }
+  .film .fin-acts .cta { width: auto; min-height: 56px; padding-inline: 28px; font-size: 17px; }
+  .film .fin-more { gap: 0 30px; }
+}
+
+/* Out of the dark, and a slow settle back to the hero's own framing. */
+.film .finale .cam { animation-name: fin-cam; }
+@keyframes fin-cam { 0% { transform: scale(1.14); } 50%, 100% { transform: none; } }
+.film .finale .flash { background: var(--light-night); animation-name: fin-dark; }
+@keyframes fin-dark { 0% { opacity: 1; } 14%, 100% { opacity: 0; } }
+:root:not(.story) .film .finale .flash { opacity: 0; }
+/* The lit windows sit in a box the size of the plate. */
+.film .fin-lights { position: absolute; inset: 0; }
+
+/* ===== Chapter 0, the hero (prototype chapters/ch0-hero.css) =====
+   At rest it is the site's hero (components/home/Home.module.css, unchanged).
+   Only the ending is the film's: the words lift away and the camera dollies
+   into the lit board until its light fills the screen, the colour the brief
+   opens on. The art box is the hero's own (.heroArt), so its position and
+   size come from Home.module.css; this adds the camera's origin and aim. */
+.film .hero-stage {
+  --ground: light-dark(#F6F0E3, #051523);
+  --road: light-dark(#756B65, #061016);
+  /* Under a phone's browser bar the stage runs on below the first screen:
+     the strip shows the colour of the road's bottom edge. */
+  background: linear-gradient(var(--ground) 50%, var(--road) 50%);
+}
+.film .hero-frame { margin-top: 0; }
+.film .hero-art {
+  --ox: 50.055; --oy: 52.45;              /* the board's centre */
+  --top: max(calc(var(--copy-top) + 3.09 * var(--h1) + 69px - 71.1cqw), calc(100% - 177.68cqw));
+  --dx: 0px;
+  --dy: calc(50cqh - var(--top) - .5245 * 177.68cqw);
+  transform-origin: calc(var(--ox) * 1%) calc(var(--oy) * 1%);
+  will-change: transform;
+}
+/* The lettering fits the board for any name up to 24 characters. */
+.film .hero-face { font-size: min(6.5cqw, 52.71cqw * .98 / var(--em, 6.6)); }
+/* The board's own light, laid over its face as the camera arrives. */
+.film .hero-glow {
+  --l: 23.7; --t: 49.4; --w: 52.71; --h: 6.1;
+  --lw: 58.19; --tw: 45.16; --ww: 27.09; --hw: 9.46;
+  background: var(--light);
+  box-shadow: 0 0 3cqw 1.2cqw var(--light);
+  opacity: 0;
+  pointer-events: none;
+}
+.film .hero-stage .bloom { position: absolute; inset: -20%; z-index: 8; background: radial-gradient(closest-side, var(--light) 30%, color-mix(in srgb, var(--light) 60%, transparent) 62%, transparent 100%); opacity: 0; pointer-events: none; }
+@media (min-width: 1024px) and (min-aspect-ratio: 5/4) {
+  .film .hero-stage { --ground: light-dark(#F6F0E3, #02121B); --road: light-dark(#ECE9DF, #030B0F); }
+  .film .hero-art {
+    --cw2: calc(100cqh * 1672 / 941);
+    --right: min(0px, calc((100cqw - 150cqh) * .5));
+    --ox: 71.735; --oy: 49.89;
+    --dx: calc(50cqw - (100cqw - var(--right) - var(--cw2)) - .71735 * var(--cw2));
+    --dy: calc(50cqh - .4989 * 100cqh);
+  }
+  .film .hero-face { font-size: min(3.15cqw, 27.09cqw * .98 / var(--em, 6.6)); }
+}
+
+.film .hero-art { animation-name: hero-push; }
+@keyframes hero-push {
+  0%   { transform: none; }
+  8%   { transform: translate(calc(var(--dx) * .1), calc(var(--dy) * .1)) scale(1.14); }
+  20%  { transform: translate(calc(var(--dx) * .26), calc(var(--dy) * .26)) scale(1.4); }
+  33%  { transform: translate(calc(var(--dx) * .42), calc(var(--dy) * .42)) scale(1.8); }
+  46%  { transform: translate(calc(var(--dx) * .58), calc(var(--dy) * .58)) scale(2.4); }
+  60%  { transform: translate(calc(var(--dx) * .74), calc(var(--dy) * .74)) scale(3.4); }
+  74%  { transform: translate(calc(var(--dx) * .88), calc(var(--dy) * .88)) scale(5.2); }
+  87%  { transform: translate(calc(var(--dx) * .97), calc(var(--dy) * .97)) scale(8); }
+  100% { transform: translate(var(--dx), var(--dy)) scale(12); }
+}
+/* Depth on the push: the near plane grows 1.6 times as fast as the shop
+   row and the far plane .55 times as fast, about the board's centre. */
+.film .hero-art .pl.far { -webkit-mask-image: linear-gradient(180deg, transparent 0, #000 14%); mask-image: linear-gradient(180deg, transparent 0, #000 14%); }
+@media (min-width: 1024px) and (min-aspect-ratio: 5/4) { .film .hero-art .pl.far { -webkit-mask-image: none; mask-image: none; } }
+.film .hero-art .pl.near { animation-name: hero-near; }
+.film .hero-art .pl.far { animation-name: hero-far; }
+@keyframes hero-near {
+  0% { transform: none; } 8% { transform: scale(1.074); } 20% { transform: scale(1.171); } 33% { transform: scale(1.267); }
+  46% { transform: scale(1.35); } 60% { transform: scale(1.424); } 74% { transform: scale(1.485); } 87% { transform: scale(1.525); } 100% { transform: scale(1.55); }
+}
+@keyframes hero-far {
+  0% { transform: none; } 8% { transform: scale(.955); } 20% { transform: scale(.871); } 33% { transform: scale(.806); }
+  46% { transform: scale(.729); } 60% { transform: scale(.682); } 74% { transform: scale(.637); } 87% { transform: scale(.606); } 100% { transform: scale(.588); }
+}
+.film .hero-face { animation-name: hero-name; }
+@keyframes hero-name { 0%, 9% { opacity: .9; } 22%, 100% { opacity: 0; } }
+.film .hero-copy { animation-name: hero-lift; }
+.film .hero-actions, .film .hero-trades { animation-name: hero-lift-low; }
+@keyframes hero-lift { 0% { transform: none; opacity: 1; } 20%, 100% { transform: translateY(-9cqh); opacity: 0; } }
+@keyframes hero-lift-low { 0% { transform: none; opacity: 1; } 12%, 100% { transform: translateY(-4cqh); opacity: 0; } }
+.film .hero-glow { animation-name: hero-glow; }
+@keyframes hero-glow { 0%, 40% { opacity: 0; } 70%, 100% { opacity: 1; } }
+.film .hero-stage .bloom { animation-name: hero-bloom; }
+@keyframes hero-bloom { 0%, 56% { opacity: 0; transform: scale(.4); } 90%, 100% { opacity: 1; transform: scale(1.2); } }
+.film .hero-stage .flash { animation-name: hero-flash; }
+@keyframes hero-flash { 0%, 82% { opacity: 0; } 96%, 100% { opacity: 1; } }
+
+/* ===== Words pinned to a stage's bottom edge clear the consent banner ===== */
+.film :is(.ws-line, .h-names, .j-caps, .fin-acts) { translate: 0 var(--consent-up); }
+
+/* ===== The chapter rail (prototype engine/shell.css) =====
+   Short ticks on the right edge, the current one longer. Shown only while a
+   chapter after the hero is pinned. */
+.film .rail { position: fixed; z-index: 39; right: 6px; top: 50%; translate: 0 -50%; display: flex; flex-direction: column; color: var(--ink); transition: opacity 320ms ease; }
+:root[data-film-tone="dark"] .film .rail { color: #F4EDDF; }
+:root[data-film-tone="light"] .film .rail { color: #172229; }
+.film .rail a { display: grid; width: 28px; height: 22px; place-items: center end; padding-right: 6px; }
+.film .rail a::before { content: ""; width: 18px; height: 2px; background: currentColor; opacity: .45; scale: .444 1; transform-origin: right center; transition: scale 300ms var(--ease), opacity 300ms ease; }
+.film .rail a[aria-current]::before { scale: 1 1; opacity: 1; }
+/* Heavier ticks on light frames. */
+:root[data-film-tone="light"] .film .rail a::before { height: 2.5px; opacity: .7; }
+:root[data-film-tone="light"] .film .rail a[aria-current]::before { opacity: 1; }
+.film .rail span { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+:root:not(.story) .film .rail, :root[data-film-ch="hero"] .film .rail, :root:not(.settled) .film .rail, :root[data-film-ch="after"] .film .rail { opacity: 0; pointer-events: none; }
+@media (min-width: 1024px) { .film .rail { right: 14px; } }
+
+/* ===== The site's header over the film =====
+   While the film plays the header stays on the artwork (Nav.tsx) and takes
+   its ink from the stage under it; with tone "page" it keeps the hero's own
+   rules (design/fieldwork.css). */
+:root.story[data-film-tone="dark"] .site-header.site-header--over-hero { --hero-ink: var(--night-ink); --focus-ring: var(--gold); }
+:root.story[data-film-tone="light"] .site-header.site-header--over-hero { --hero-ink: var(--day-ink); --focus-ring: var(--cerulean-deep); }
+:root.story .site-header.site-header--over-hero { transition: --hero-ink 320ms ease, background-color 320ms ease, border-color 320ms ease; }
+/* The site's reading rail would sit on the chapter rail: off while the film plays. */
+:root.story:not([data-film-ch="after"]) div:has(> [data-motion-progress]) { opacity: 0; }
+
+/* ===== The one floating action on a phone =====
+   While the film plays the dock is the small square of the prototype, in the
+   bottom right corner, which every chapter leaves clear; it hides in the
+   hero and the finale, during a light handoff, and while a chapter's own gold
+   action is on screen (WhatsAppFAB). */
+.quote-dock.quote-dock--film { left: auto; right: max(16px, env(safe-area-inset-right, 0px)); bottom: calc(16px + env(safe-area-inset-bottom, 0px)); transition: opacity 300ms ease, translate 300ms cubic-bezier(.22, 1, .36, 1); }
+.quote-dock.quote-dock--film .quote-dock__cta { width: 52px; min-height: 52px; padding: 0; }
+/* Hidden with visibility after the fade, so it also leaves the tab order. */
+.quote-dock.quote-dock--film[data-hidden] { opacity: 0; translate: 0 12px; visibility: hidden; transition: opacity 300ms ease, translate 300ms cubic-bezier(.22, 1, .36, 1), visibility 0s linear 300ms; }
+.quote-dock.quote-dock--film[data-hidden] .quote-dock__cta { pointer-events: none; }
+
+/* ===== Questions after the film: the theme's own ground, no scroll effects ===== */
+.film-faq { position: relative; z-index: 2; background: var(--paper); }
+
+/* ===== Depth planes (prototype ENGINE.md, "Planes") =====
+   A stack (.planes) of up to three images (.pl far, mid, near) inside a
+   chapter's camera stands in for the flat plate only while the camera moves.
+   It shows while --at <= p < --off and every plane has decoded (.ready); a
+   stack not ready when its move began sits that pass out (.late). Each .pl
+   takes an animation-name like the camera; its origin is --px --py (percent
+   of the plate), by default the camera's --ox --oy. */
+.film .planes { position: absolute; inset: 0; display: none; pointer-events: none; }
+.story .film .planes.ready.on:not(.late) { display: block; }
+.film .pl {
+  position: absolute; inset: 0; width: 100%; height: 100%; max-width: none;
+  transform-origin: calc(var(--px, var(--ox, 50)) * 1%) calc(var(--py, var(--oy, 50)) * 1%);
+  will-change: transform;
+}

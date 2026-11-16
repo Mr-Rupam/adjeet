@@ -1,15 +1,10 @@
-/* Homepage: a market street in North Bengal, read shop by shop.
-   Written mobile first. A labelled street visualisation opens the page and real
-   shopfronts start straight after it; every caption under a finished
-   job is a fascia plate in the logo's cerulean with the gold sweep above it. */
+/* Homepage: the film (components/film/film.css) opens on this hero, its
+   chapter 0, and the questions follow it. Written mobile first. */
 
 .home { color: var(--ink); }
 
 /* ---------- Shared pieces ---------- */
-.coverImage { object-fit: cover; transition: transform 650ms cubic-bezier(.22, 1, .36, 1); }
-
-.textLink,
-.textLinkLight {
+.textLink {
   display: inline-flex;
   min-height: 44px;
   align-items: center;
@@ -21,18 +16,9 @@
   transition: color 180ms;
 }
 .textLink:hover { color: var(--signal-text); }
-.textLinkLight { color: var(--night-ink); }
-.textLinkLight:hover { color: var(--glow); }
-.textLink svg,
-.textLinkLight svg { flex-shrink: 0; transition: transform 350ms cubic-bezier(.22, 1, .36, 1); }
-.textLink:is(:hover, :focus-visible) svg,
-.textLinkLight:is(:hover, :focus-visible) svg { transform: translate(3px, -3px); }
+.textLink svg { flex-shrink: 0; transition: transform 350ms cubic-bezier(.22, 1, .36, 1); }
+.textLink:is(:hover, :focus-visible) svg { transform: translate(3px, -3px); }
 
-.sectionTitle,
-.workIntro h2,
-.choicesIntro h2,
-.processHeading,
-.coverage h2,
 .faqIntro h2 {
   margin: 0;
   font-family: var(--font-heading);
@@ -41,49 +27,6 @@
   line-height: .96;
   letter-spacing: -.02em;
 }
-
-/* The fascia: the plate a shop's name is lettered on. Cerulean in both themes,
-   cream lettering, the logo's gold sweep along the top edge. */
-.fascia {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px 24px;
-  padding: 16px 18px 18px;
-  border-top: 3px solid var(--gold);
-  background: var(--cerulean-deep);
-  color: var(--night-ink);
-}
-.fasciaName { min-width: 0; }
-.fasciaName strong {
-  display: block;
-  font-family: var(--font-heading);
-  font-size: clamp(24px, 2.3vw, 32px);
-  font-weight: 600;
-  line-height: 1.02;
-  letter-spacing: .01em;
-  text-transform: uppercase;
-  overflow-wrap: anywhere;
-}
-.fasciaName span { display: block; margin-top: 5px; font-size: 15px; line-height: 1.35; }
-.fasciaAsk {
-  display: inline-flex;
-  min-height: 44px;
-  align-items: center;
-  gap: 10px;
-  padding: 0 16px;
-  border: 1px solid currentColor;
-  border-radius: var(--radius-button);
-  color: inherit;
-  font-size: 14px;
-  font-weight: 500;
-  line-height: 1.2;
-  text-decoration: none;
-  transition: background-color 180ms, color 180ms;
-}
-.fasciaAsk:hover { background: var(--night-ink); color: var(--cerulean-deep); }
-.fasciaAsk:focus-visible { outline-color: var(--gold); }
 
 /* ---------- Hero ---------- */
 /* A market street where one shop's sign board is the thing you notice (a
@@ -336,176 +279,6 @@
   .heroTrades a:hover { color: var(--hero-ink); text-decoration: underline; text-underline-offset: 5px; }
 }
 
-/* ---------- Finished shopfronts: the street after dark ---------- */
-.work {
-  border-top: 1px solid var(--night-rule);
-  --inner: min(1240px, 100%);
-  position: relative;
-  padding: clamp(64px, 9vw, 128px) var(--page-gutter);
-  background: var(--night);
-  color: var(--night-ink);
-}
-.workIntro {
-  display: grid;
-  max-width: var(--inner);
-  gap: 18px;
-  margin: 0 auto clamp(32px, 4vw, 56px);
-}
-.workIntro h2 span { color: var(--glow); }
-.workIntro p { max-width: 40ch; color: var(--night-ink-muted); font-size: 17px; line-height: 1.65; }
-.workList {
-  display: grid;
-  max-width: var(--inner);
-  gap: 36px;
-  margin: 0 auto;
-  padding: 0;
-  list-style: none;
-}
-.workItem { min-width: 0; }
-.workItem figure { margin: 0; }
-.workImage { position: relative; overflow: hidden; aspect-ratio: 4 / 3; background: var(--night-elevated); }
-.workItem:nth-child(1) .workImage { aspect-ratio: 2 / 1; }
-.workItem:nth-child(3) .workImage { aspect-ratio: 16 / 9; }
-.work > .textLinkLight { margin: 40px 0 0 calc((100% - var(--inner)) / 2); }
-.workItem:is(:hover, :focus-within) .coverImage { transform: scale(1.03); }
-
-@media (min-width: 768px) {
-  .workIntro { grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr); align-items: end; gap: 48px; }
-  .workList { grid-template-columns: repeat(12, minmax(0, 1fr)); gap: 40px 28px; }
-  .workItem:nth-child(1) { grid-column: 1 / -1; }
-  .workItem:nth-child(1) .workImage { aspect-ratio: 12 / 5; }
-  .workItem:nth-child(2) { grid-column: 1 / span 5; }
-  .workItem:nth-child(3) { grid-column: 6 / -1; }
-  .workItem:nth-child(n + 2) .workImage { height: clamp(240px, 27vw, 380px); aspect-ratio: auto; }
-  .workItem:nth-child(1) .fascia { padding: 20px 24px 22px; }
-  .workItem:nth-child(1) .fasciaName strong { font-size: clamp(30px, 3.2vw, 44px); }
-}
-
-/* Desktop: the lead example is a 1600 x 800 phone photograph, so it is drawn
-   at its own 2:1 shape across two thirds of the row (about 830px, never past
-   its taken size at 2x), with its fascia plate standing beside it. */
-@media (min-width: 1024px) {
-  .workItem:nth-child(1) figure { display: grid; grid-template-columns: minmax(0, 2fr) minmax(0, 1fr); align-items: end; }
-  .workItem:nth-child(1) .workImage { aspect-ratio: 2 / 1; }
-  .workItem:nth-child(1) .fascia { flex-direction: column; align-items: flex-start; gap: 22px; padding: 26px 28px 28px; }
-}
-
-/* ---------- Glow sign or LED letters ---------- */
-.choices {
-  position: relative;
-  max-width: var(--content-max);
-  margin: auto;
-  padding: clamp(64px, 9vw, 128px) var(--page-gutter);
-}
-.choicesIntro { display: grid; gap: 18px; margin-bottom: clamp(36px, 4.5vw, 64px); }
-.choicesIntro h2 span { color: var(--signal-text); }
-.choicesIntro p { max-width: 42ch; color: var(--ink-muted); font-size: 17px; line-height: 1.65; }
-.choiceGrid { --choice-gap: clamp(56px, 7vw, 112px); display: grid; gap: 0; }
-.choice { position: relative; min-width: 0; }
-.choiceMedia { margin: 0; }
-.choiceImage { position: relative; overflow: hidden; aspect-ratio: 4 / 3; background: var(--paper-deep); }
-.choiceMedia figcaption { margin-top: 10px; color: var(--ink-muted); font-size: 13px; }
-.choice h3 { margin: 22px 0 16px; font-family: var(--font-heading); font-size: clamp(32px, 3.2vw, 46px); font-weight: 500; line-height: 1; letter-spacing: -.01em; }
-.choiceFacts { margin: 0 0 18px; }
-.choiceFacts > div { display: grid; grid-template-columns: minmax(0, 8.5em) minmax(0, 1fr); gap: 16px; padding: 13px 0; border-top: 1px solid var(--rule); }
-.choiceFacts > div:last-child { border-bottom: 1px solid var(--rule); }
-.choiceFacts dt { padding-top: 3px; color: var(--ink-subtle); font-size: 12px; font-weight: 500; letter-spacing: .05em; line-height: 1.45; text-transform: uppercase; }
-.choiceFacts dd { margin: 0; color: var(--ink); font-size: 16px; line-height: 1.5; }
-.choiceOr {
-  display: flex;
-  align-items: center;
-  gap: 18px;
-  margin: 40px 0;
-  color: var(--signal-text);
-  font-family: var(--font-heading);
-  font-size: 30px;
-  font-weight: 600;
-  letter-spacing: .04em;
-  line-height: 1;
-  text-transform: uppercase;
-}
-.choiceOr::before,
-.choiceOr::after { content: ''; flex: 1; height: 1px; background: var(--rule); }
-.moreTrades {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 0 26px;
-  margin-top: clamp(48px, 6vw, 72px);
-  padding-top: 16px;
-  border-top: 2px solid var(--ink);
-}
-.moreTrades p { width: 100%; margin: 0 0 4px; color: var(--ink-muted); font-size: 13px; }
-.moreTrades a { display: inline-flex; min-height: 44px; align-items: center; gap: 8px; font-size: 15px; text-decoration: underline; text-underline-offset: 5px; }
-.moreTrades a:hover { color: var(--signal-text); }
-
-@media (min-width: 600px) and (max-width: 899px) {
-  .choiceImage { aspect-ratio: 16 / 9; }
-}
-@media (min-width: 900px) {
-  .choicesIntro { grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr); align-items: end; gap: 48px; }
-  .choiceGrid { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); column-gap: var(--choice-gap); }
-  .choiceOr {
-    position: absolute;
-    top: 0;
-    bottom: 0;
-    left: calc(var(--choice-gap) / -2);
-    flex-direction: column;
-    margin: 0;
-    transform: translateX(-50%);
-  }
-  .choiceOr::before,
-  .choiceOr::after { width: 1px; height: auto; }
-  .choiceOr::before { flex: 0 0 clamp(90px, 12vw, 170px); }
-  .moreTrades p { width: auto; margin: 0 6px 0 0; }
-}
-
-/* ---------- From a photo to a fitted sign ---------- */
-.process {
-  padding: clamp(64px, 9vw, 128px) var(--page-gutter);
-  overflow: clip;
-  background: var(--night);
-  color: var(--night-ink);
-}
-.processInner { max-width: 1240px; margin: 0 auto; }
-.processHeading { max-width: 14ch; margin-bottom: clamp(32px, 4vw, 56px); }
-.processHeading span { color: var(--glow); }
-.processLayout { display: grid; gap: 34px; }
-.processMedia { min-width: 0; margin: 0; }
-.processMediaFrame { position: relative; overflow: hidden; aspect-ratio: 4 / 3; background: var(--night-elevated); }
-.processMedia figcaption { margin-top: 10px; color: var(--night-ink-muted); font-size: 13px; }
-.processCopy ol { margin: 0; padding: 0; list-style: none; border-top: 1px solid var(--night-rule); }
-.processCopy li { display: grid; grid-template-columns: 44px minmax(0, 1fr); gap: 16px; padding: 22px 0; border-bottom: 1px solid var(--night-rule); }
-.processCopy li > span { color: var(--signal-hot); font-family: var(--font-heading); font-size: 40px; font-weight: 600; line-height: .9; }
-.processCopy h3 { font-family: var(--font-heading); font-size: clamp(26px, 2.4vw, 34px); font-weight: 500; line-height: 1.05; }
-.processCopy p { max-width: 46ch; margin-top: 8px; color: var(--night-ink-muted); font-size: 16px; line-height: 1.6; }
-.processActions { display: flex; flex-wrap: wrap; align-items: center; gap: 16px 28px; margin-top: 30px; }
-
-@media (min-width: 1024px) {
-  .processLayout { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: clamp(40px, 5vw, 84px); align-items: start; }
-  .processMedia { position: sticky; top: 120px; }
-  .processCopy li { grid-template-columns: 60px minmax(0, 1fr); padding: 28px 0; }
-  .processCopy li > span { font-size: 52px; }
-}
-
-/* ---------- Places served (the approved coverage map) ---------- */
-.coverage { display: grid; border-block: 1px solid var(--rule); background: var(--paper-elevated); }
-.coverageCopy { padding: 54px 22px; }
-.coverage h2 span { color: var(--signal-text); }
-.coverageCopy > p { max-width: 38ch; margin-top: 24px; color: var(--ink-muted); font-size: 16px; line-height: 1.65; }
-.coverage ul { display: flex; max-width: 450px; flex-wrap: wrap; gap: 8px 20px; margin: 24px 0; padding: 0; list-style: none; }
-.coverage li { font-size: 14px; }
-.coverageMap { display: flex; flex-direction: column; align-items: center; justify-content: center; margin: 0; padding: 28px 32px; background: var(--map-paper); }
-.coverageMap img { width: 100%; max-width: 310px; height: auto; }
-.coverageMap figcaption { color: #4F5655; font-size: 12px; text-align: center; }
-@media (min-width: 768px) {
-  .coverage { grid-template-columns: 1.1fr .9fr; }
-  .coverageCopy { padding: 75px 32px 75px max(var(--page-gutter), calc((100vw - 1160px) / 2)); }
-  .coverage h2 { font-size: clamp(48px, 5.4vw, 74px); }
-  .coverageMap { padding: 28px; }
-  .coverageMap img { max-width: 390px; }
-}
-
 /* ---------- Questions ---------- */
 .faq { position: relative; display: grid; max-width: var(--content-max); gap: 28px; margin: auto; padding: clamp(56px, 8vw, 112px) var(--page-gutter); }
 .faqIntro h2 span { color: var(--signal-text); }
@@ -526,57 +299,10 @@
   .faqList summary { font-size: 18px; padding-block: 22px; }
 }
 
-/* ---------- Light on lit work ---------- */
-/* A moving highlight reads as light on lacquered, acrylic or painted work. */
-.home [data-light-surface] { isolation: isolate; }
-.home [data-light-surface]::before,
-.home [data-light-surface]::after { content: ""; position: absolute; inset: 0; z-index: 1; pointer-events: none; }
-.home [data-light-surface]::before {
-  background: radial-gradient(ellipse 210px 180px at var(--light-x, 50%) var(--light-y, 50%), rgb(255 255 255 / 28%), rgb(16 159 204 / 8%) 48%, transparent 78%);
-  mix-blend-mode: screen;
-  opacity: 0;
-  transition: opacity 300ms ease;
-}
-.home [data-light-surface]:hover::before { opacity: 1; }
-.home [data-light-surface]::after {
-  background: linear-gradient(105deg, transparent 36%, rgb(255 255 255 / 0%) 43%, rgb(255 255 255 / 45%) 49%, rgb(241 243 109 / 25%) 52%, transparent 61%);
-  transform: translateX(-125%);
-  opacity: 0;
-}
-.home [data-light-surface]:global(.is-lit)::after { animation: sign-light-pass 1100ms cubic-bezier(.22, 1, .36, 1) both; }
-@keyframes sign-light-pass {
-  0% { transform: translateX(-125%); opacity: 0; }
-  16% { opacity: .92; }
-  100% { transform: translateX(125%); opacity: 0; }
-}
-
-/* The bright rule enters like a power line traced between paper sections. */
-.choices::before,
-.faq::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  right: var(--page-gutter);
-  left: var(--page-gutter);
-  height: 2px;
-  background: linear-gradient(90deg, var(--signal), var(--signal-hot) 75%, transparent);
-  transform: scaleX(0);
-  transform-origin: left center;
-}
-.choices:global(.is-traced)::before,
-.faq:global(.is-traced)::before { animation: trace-rule 1150ms cubic-bezier(.22, 1, .36, 1) both; }
-@keyframes trace-rule { to { transform: scaleX(1); } }
-
 @media (prefers-reduced-motion: reduce) {
   .hero, .hero::before { transition: none !important; }
-  .coverImage, .textLink svg, .textLinkLight svg, .heroMore, .heroMore svg, .heroTrades a, .faqList details, .faqList summary, .faqList details > p, .fasciaAsk { transition: none; }
+  .textLink svg, .heroMore, .heroMore svg, .heroTrades a, .faqList details, .faqList summary, .faqList details > p { transition: none; }
   .faqList details:is(:hover, :focus-within, [open]) > :is(summary, p) { transform: none; }
-  .workItem:is(:hover, :focus-within) .coverImage { transform: none; }
-  .home [data-light-surface]::before,
-  .home [data-light-surface]::after,
-  .choices::before,
-  .faq::before { animation: none !important; transition: none !important; }
   .textLink:is(:hover, :focus-visible) svg,
-  .textLinkLight:is(:hover, :focus-visible) svg,
   .heroMore:is(:hover, :focus-visible) svg { transform: none; }
 }

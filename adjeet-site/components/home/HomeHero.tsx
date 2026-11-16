@@ -1,5 +1,9 @@
 import Link from 'next/link'
+import type { CSSProperties } from 'react'
 import { preload } from 'react-dom'
+import { DEFAULT_SHOP_NAME, SKIP_LABEL, chapter, railLabel } from '@/content/home-film'
+import { FILM_BOOT } from '@/components/film/film-boot'
+import { PLANES, Planes } from '@/components/film/planes'
 import { ArrowDown } from 'lucide-react'
 import { outfit } from '@/app/fonts'
 import { FOUNDED_YEAR } from '@/lib/coverage'
@@ -57,6 +61,21 @@ const sceneLayers = () => buildSceneLayers({
   wideSizes: WIDE_SIZES,
   highPriority: true,
 })
+
+/**
+ * The night scene for the film's finale, which returns to this street: the
+ * same files and sizes as the hero's, so a visitor in the dark theme already
+ * has it, but at normal priority since it is far below the fold.
+ */
+export const finaleNightLayer = () => buildSceneLayers({
+  scenes: SCENES,
+  tallWidth: 941,
+  tallHeight: 1672,
+  wideWidth: 1672,
+  wideHeight: 941,
+  tallSizes: TALL_SIZES,
+  wideSizes: WIDE_SIZES,
+}).night
 
 /**
  * Preload the one image a visitor on the system theme will see, from <head>:
@@ -118,46 +137,72 @@ document.head.appendChild(link);
  * same place when the theme changes. The artwork is a visualisation: since
  * 16 November 2026 it carries no visible label, its alt text begins
  * "Visualisation:" and it is never presented as a client job (DESIGN.md); real
- * photographs start in the next section. The board in the artwork is blank: "Your shop name" is
- * decorative HTML placed on the board's own rectangle (ThemeScene).
+ * photographs start in the film's proof chapter. The board in the artwork is
+ * blank: "Your shop name" is decorative HTML placed on the board's own
+ * rectangle (ThemeScene), which the film letters with the visitor's name.
+ *
+ * Since 16 November 2026 it is chapter 0 of the home film (DESIGN.md, "Home
+ * film"): at rest it is exactly this hero; as the visitor scrolls, the words
+ * lift away and the camera pushes into the lit board until its light fills
+ * the screen (components/film/film.css). Its first paint is unchanged: the
+ * same image request, the same preloads, and the one inline script it always
+ * had, which now also picks the film's mode before paint (film-boot.ts).
  */
 export function HomeHero() {
   const layers = sceneLayers()
   preloadScenes(layers)
+  const entry = chapter('hero')
 
   return (
-    <section id="hero-section" className={`${styles.hero} ${outfit.variable}`} aria-labelledby="home-heading">
-      <script dangerouslySetInnerHTML={{ __html: preloadScript(layers) }} />
-      <ThemeScene
-        layers={layers}
-        wideScreen={WIDE_SCREEN}
-        wideSizes={WIDE_SIZES}
-        wideWidth={1672}
-        wideHeight={941}
-        className={styles.heroArt}
-        imageAttribute="data-hero-image"
-        rootAttribute="data-hero-light"
-      >
-        <span className={styles.heroBoard} aria-hidden="true" data-hero-board>Your shop name</span>
-      </ThemeScene>
+    <section
+      className="ch"
+      id="hero"
+      style={{ '--len': entry.len, '--still': entry.still } as CSSProperties}
+      data-title={railLabel(entry)}
+      data-rest={entry.rest}
+      aria-labelledby="home-heading"
+    >
+      <div className="stage hero-stage" data-tone="page" data-tone-at=".78" data-tone-late="light">
+        <div id="hero-section" className={`${styles.hero} hero-frame ${outfit.variable}`}>
+          <script dangerouslySetInnerHTML={{ __html: preloadScript(layers) + FILM_BOOT }} />
+          <ThemeScene
+            layers={layers}
+            wideScreen={WIDE_SCREEN}
+            wideSizes={WIDE_SIZES}
+            wideWidth={1672}
+            wideHeight={941}
+            className={`${styles.heroArt} hero-art tl`}
+            imageAttribute="data-hero-image"
+            rootAttribute="data-hero-light"
+          >
+            {/* Depth for the push: three planes over the scene while it moves (planes.tsx). */}
+            <Planes stack={PLANES.hero} at={0.003} off={0.9} />
+            <span className={`${styles.heroBoard} hero-face tl`} aria-hidden="true" data-hero-board data-name><span>{DEFAULT_SHOP_NAME}</span></span>
+            <i className="glow hero-glow tl" aria-hidden="true" />
+          </ThemeScene>
 
-      <div className={styles.heroCopy}>
-        <h1 id="home-heading" data-hero-title>Advertising{' '}<br />that gets you{' '}<br /><em>noticed.</em></h1>
-        <p className={styles.heroLead} data-hero-lead>Advertising agency in Siliguri, since {FOUNDED_YEAR}.</p>
+          <div className={`${styles.heroCopy} hero-copy tl`}>
+            <h1 id="home-heading" data-hero-title>Advertising{' '}<br />that gets you{' '}<br /><em>noticed.</em></h1>
+            <p className={styles.heroLead} data-hero-lead>Advertising agency in Siliguri, since {FOUNDED_YEAR}.</p>
+          </div>
+
+          <div className={`${styles.heroActions} hero-actions tl`} data-hero-actions>
+            <QuoteCTA source="hero" label="WhatsApp your project" tone="yellow" />
+            {/* The way past the film: straight to the real work. */}
+            <a href="#proof" className={styles.heroMore} aria-label={SKIP_LABEL}>
+              <span>{SKIP_LABEL}</span><ArrowDown size={18} aria-hidden="true" />
+            </a>
+          </div>
+
+          <nav className={`${styles.heroTrades} hero-trades tl`} aria-label="Main trades">
+            {MAIN_TRADES.map(slug => (
+              <Link key={slug} href={'/services/' + slug}>{getServiceBySlug(slug)?.name}</Link>
+            ))}
+          </nav>
+        </div>
+        <i className="bloom tl" aria-hidden="true" />
+        <i className="flash tl" aria-hidden="true" />
       </div>
-
-      <div className={styles.heroActions} data-hero-actions>
-        <QuoteCTA source="hero" label="WhatsApp your project" tone="yellow" />
-        <a href="#selected-work" className={styles.heroMore} aria-label="See finished shopfronts">
-          <span>See finished shopfronts</span><ArrowDown size={18} aria-hidden="true" />
-        </a>
-      </div>
-
-      <nav className={styles.heroTrades} aria-label="Main trades">
-        {MAIN_TRADES.map(slug => (
-          <Link key={slug} href={'/services/' + slug}>{getServiceBySlug(slug)?.name}</Link>
-        ))}
-      </nav>
     </section>
   )
 }
