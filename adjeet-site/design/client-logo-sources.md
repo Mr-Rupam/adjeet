@@ -10,7 +10,7 @@ The two client boards (the home page and `/for-brands`) used to carry a line say
 | Supreme Pipe | [Supreme Industries logo on Wikimedia Commons](https://commons.wikimedia.org/wiki/File:Supreme_Industries_logo.svg) |
 | Havells | [Havells logo on Wikimedia Commons](https://commons.wikimedia.org/wiki/File:Havells_Logo.svg), cross-checked with [Havells' current site header](https://havells.com/media/logo/stores/1/Havells_Logo.svg) |
 | Star Cement | [Star Cement official logo](https://www.starcement.co.in/star-cement-logo.svg) |
-| SRMB | [SRMB official site logo](https://www.srmbsteel.com/assets/images/logo.png) |
+| SRMB | [SRMB official site logo](https://www.srmbsteel.com/assets/images/logo.png); fetched again 16 November 2026: the same 105 x 32 PNG, no larger file |
 | Shyam Steel | [Shyam Steel official site logo](https://shyamsteel.com/wp-content/uploads/2026/02/ssil-logo4.jpg) |
 | Emami | [Emami Limited's 2025 logo change filing](https://www.emamiltd.in/wp-content/uploads/2025/07/31002924/final-logo-change-intimation-pr-300725.pdf), complete embedded Emami Group logo from the press-release page |
 | OYO | [OYO Rooms logo on Wikimedia Commons](https://commons.wikimedia.org/wiki/File:OYO_Rooms_logo.png) |
@@ -19,13 +19,15 @@ The two client boards (the home page and `/for-brands`) used to carry a line say
 | Vivo | [Vivo 2019 logo on Wikimedia Commons](https://commons.wikimedia.org/wiki/File:Vivo_logo_2019.svg) |
 | Toptech TMT | [TopTech official site logo](https://www.toptechtmt.com/assets/images/icTopTechLogo.png) |
 | Captain TMT Bar | [Captain Steel official site logo](https://cdn.shopify.com/s/files/1/0614/6116/8277/files/captain-steel-new-logo_2751a29a-7c59-4dba-b221-f922e2b87035.jpg?v=1730272896) |
-| Supershakti | [Super Shakti official site logo](https://supershakti.in/public/frontend/images/logo-dark.webp) |
+| Supershakti | [Super Shakti official site logo](https://supershakti.in/public/frontend/images/logo-dark.webp); fetched again 16 November 2026: the same 146 x 49 WebP, no larger file |
 | Elegant TMT Bar | [Elegant Steel official site logo](https://www.elegantsteels.com/wp-content/uploads/2022/09/elegant-steel-logo.png) |
-| Astral Pipe | [Astral Pipes official media file](https://www.astralpipes.com/wp-content/uploads/2026/01/astral-pipe-logo.png) |
-| SEL TMT | [SEL Tiger official site logo](https://www.seltigertmt.com/wp-content/uploads/2023/07/logo-new.png) |
+| Astral Pipe | [Astral Pipes official media file](https://www.astralpipes.com/wp-content/uploads/2026/01/astral-pipe-logo.png); fetched again 16 November 2026: the same 150 x 52 PNG, no larger file |
+| SEL TMT | [SEL Tiger official site logo](https://www.seltigertmt.com/wp-content/uploads/2023/07/logo-new.png); fetched again 16 November 2026: the same 150 x 62 PNG, no larger file |
 | Adani Cement | [Adani Group official site mark](https://www.adani.com/-/media/project/adaniv1/logo/adani-logo.svg); the site's photographed work is filed under ACC, an Adani Cement brand |
 | Anchor | [Anchor by Panasonic official site logo](https://d32zxht0g2dn3w.cloudfront.net/s3fs-public/2024-02/New_Anchor_logo.png) |
 | SD Lion TMT | [SD Lion official site logo](https://sdlionsteel.com/wp-content/uploads/2025/06/Sd-Lion-Logo-scaled.jpg) |
 | Dish TV | [DishTV 2025 logo on Wikimedia Commons](https://commons.wikimedia.org/wiki/File:DishTV_logo_%282025%29.svg) |
 
 Current-version audit: all 21 source URLs were reachable on 25 September 2026. The Emami file was incomplete despite using the right 2025 identity, so it was replaced with the full image embedded in Emami's filing. Dalmia's former mark was replaced with its official 2026 identity. The remaining marks were checked against the linked official assets or current company sites; no newer official version was found. The Anchor source had blank space trimmed around the mark. Other WebP files were resized and converted without recolouring.
+
+Cropped copies (16 November 2026, for the home film's brands wall): `airtel-trim.webp`, `emami-trim.png` and `star-cement-trim.webp` are the same artwork as `airtel.webp`, `emami.png` and `star-cement.webp` with the empty margin of the canvas cropped to a small even border, never into the mark, so the mark fills its board. No recolouring or redrawing; the originals are kept and still used elsewhere.
