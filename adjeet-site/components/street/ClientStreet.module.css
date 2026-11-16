@@ -100,7 +100,6 @@
 .cardFooter { display: flex; min-width: 0; align-items: end; justify-content: space-between; gap: 6px; padding-top: 10px; border-top: 1px solid #e2e0d9; }
 .cardFooter small { display: block; color: #5d6668; font-size: 12px; font-weight: 600; letter-spacing: .04em; line-height: 1.2; text-transform: uppercase; }
 .cardFooter strong { display: block; margin-top: 4px; font-size: 13px; font-weight: 600; line-height: 1.3; overflow-wrap: anywhere; }
-.note { margin: 15px 0 0; color: var(--ink-muted); font-size: 12px; line-height: 1.55; }
 
 @media (max-width: 1279px) {
   .names { grid-template-columns: repeat(3, minmax(0, 1fr)); }

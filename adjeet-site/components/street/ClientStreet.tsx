@@ -67,7 +67,6 @@ export function ClientStreet() {
             )
           })}
         </ul>
-        <p className={styles.note}>Selected history includes assignments through regional agencies. The portfolio brings the project photographs together.</p>
       </div>
     </section>
   )

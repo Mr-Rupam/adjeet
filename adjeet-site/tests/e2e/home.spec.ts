@@ -24,7 +24,8 @@ test.describe('Home page', () => {
   test('keeps the client history proof section on the landing page', async ({ page }) => {
     const clientHistory = page.locator('#client-history')
     await expect(clientHistory.getByRole('heading', { name: /names you know.*work you can see/i })).toBeVisible()
-    await expect(clientHistory.getByText(/selected history includes assignments through regional agencies/i)).toBeVisible()
+    // The owner took the note about regional agencies off this board on 16 November 2026.
+    await expect(clientHistory.getByText(/regional agenc/i)).toHaveCount(0)
     await expect(clientHistory.getByText('Airtel', { exact: true })).toBeVisible()
     await expect(clientHistory.locator('li a')).toHaveCount(0)
   })

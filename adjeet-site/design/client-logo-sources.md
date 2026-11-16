@@ -2,6 +2,8 @@
 
 Downloaded and checked 25 September 2026 for the homepage client history. Most images in `public/client-logos/` are local, lossless WebP conversions of the source artwork; the complete Emami mark and Dalmia's current mark are original PNGs. They identify brands in AD JEET's existing client list; they do not imply an endorsement. Work attributed to a national brand may have been commissioned through a regional agency. The logo cards are static; project photographs appear together in the portfolio.
 
+The two client boards (the home page and `/for-brands`) used to carry a line saying that selected history includes assignments through regional agencies. The owner had it removed from both on 16 November 2026. This file keeps the fact; the pages do not state it, and the home page and `/for-brands` tests fail if the line returns.
+
 | Brand | Artwork source |
 | --- | --- |
 | Airtel | [Airtel official logo downloads](https://www.airtel.in/logo-tune), horizontal red text version |
