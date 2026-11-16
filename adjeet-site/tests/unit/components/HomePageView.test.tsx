@@ -25,7 +25,8 @@ describe('storefront homepage', () => {
   it('shows the client board with no note about regional agencies', () => {
     // The owner took that note off /for-brands and then off this board on 16 November 2026.
     const board = render().querySelector('#client-history')!
-    expect(board.querySelector('h2')?.textContent).toBe('Names you know.Work you can see.')
+    // The heading keeps "can see." together with a non-breaking space, which \s matches.
+    expect(board.querySelector('h2')?.textContent).toMatch(/^Names you know\.Work you can\ssee\.$/)
     expect(board.textContent).not.toMatch(/regional agenc/i)
   })
 
