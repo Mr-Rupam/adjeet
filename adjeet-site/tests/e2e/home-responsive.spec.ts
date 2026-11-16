@@ -1,5 +1,4 @@
 import { test, expect } from '@playwright/test'
-import { CLIENT_NAMES } from './support/clients'
 
 test('mobile hero shows the night scene and WhatsApp action in the first screen', async ({ page }) => {
   await page.addInitScript(() => localStorage.setItem('adjeet-consent', 'declined'))
@@ -43,20 +42,17 @@ test('mobile hero shows the night scene and WhatsApp action in the first screen'
 })
 
 for (const width of [320, 390, 430, 768, 1440]) {
-  test(`hero and client names fit at ${width}px`, async ({ page }) => {
+  test(`the still frames fit at ${width}px`, async ({ page }) => {
     await page.setViewportSize({ width, height: 900 })
     await page.emulateMedia({ reducedMotion: 'reduce' })
     await page.goto('/')
     await page.evaluate(() => document.fonts.ready)
-    // Since the 1612d04 redesign the client history follows the selected work
-    // instead of sitting directly under the hero (design-loop.md, "Coverage and purpose").
+    // Since 16 November 2026 the hero is the film's first chapter and the questions follow the film.
     const sectionOrder = await page.locator('[data-home-page] > [id]').evaluateAll(sections => sections.map(section => section.id))
-    expect(sectionOrder.slice(0, 3)).toEqual(['hero-section', 'selected-work', 'client-history'])
-    expect(CLIENT_NAMES.length).toBeGreaterThan(0)
-    await expect(page.locator('#client-history [data-client-name]')).toHaveText(CLIENT_NAMES)
+    expect(sectionOrder).toEqual(['film', 'questions'])
     for (const theme of ['light', 'dark']) {
       await page.evaluate(theme => document.documentElement.setAttribute('data-theme', theme), theme)
-      const overflow = await page.locator('#hero-section h1, #client-history h2, #client-history li, #client-history p').evaluateAll(elements => {
+      const overflow = await page.locator('#film h1, #film h2, #film li, #film p, #film figcaption').evaluateAll(elements => {
         return elements.flatMap(element => {
           const range = document.createRange()
           range.selectNodeContents(element)
@@ -65,15 +61,16 @@ for (const width of [320, 390, 430, 768, 1440]) {
       })
       expect(overflow).toEqual([])
     }
+    expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(width)
   })
 }
 
-test('client logos load without company-specific links', async ({ page }) => {
+test('the proof chapter shows the gallery photographs and links the whole portfolio', async ({ page }) => {
   await page.emulateMedia({ reducedMotion: 'reduce' })
   await page.goto('/')
-  const logos = page.locator('#client-history img')
-  await expect(logos).toHaveCount(CLIENT_NAMES.length)
-  const loaded = await logos.evaluateAll(async images => {
+  const photos = page.locator('#proof .shot img')
+  await expect(photos).toHaveCount(6)
+  const loaded = await photos.evaluateAll(async images => {
     for (const image of images) {
       image.scrollIntoView({ block: 'center' })
       await (image as HTMLImageElement).decode().catch(() => undefined)
@@ -81,8 +78,6 @@ test('client logos load without company-specific links', async ({ page }) => {
     return images.every(image => (image as HTMLImageElement).naturalWidth > 0)
   })
   expect(loaded).toBe(true)
-  await expect(page.locator('#client-history li a')).toHaveCount(0)
-  await page.getByRole('link', { name: /Explore the portfolio/ }).click()
+  await page.locator('#proof').getByRole('link', { name: 'See all the work' }).click()
   await expect(page).toHaveURL('/portfolio')
-  await expect(page.getByRole('group', { name: 'Filter work by brand' })).toHaveCount(0)
 })

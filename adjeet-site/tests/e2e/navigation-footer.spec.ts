@@ -49,8 +49,8 @@ for (const width of [390, 1280]) {
 }
 
 test('section links and browser Back preserve their destinations', async ({ page }) => {
-  await page.goto('/', { waitUntil: 'domcontentloaded' })
-  await page.locator('a[href="/services#storefront"]').click()
+  // The home page linked this section until the film replaced it (16 November 2026).
+  await page.goto('/services#storefront', { waitUntil: 'domcontentloaded' })
   await expect(page).toHaveURL('/services#storefront')
   await expect.poll(() => page.locator('#storefront').evaluate(el => Math.abs(el.getBoundingClientRect().top - 104))).toBeLessThan(5)
   const link = page.getByRole('navigation', { name: 'Footer navigation' }).getByRole('link', { name: 'Our story' })

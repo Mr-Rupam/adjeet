@@ -55,20 +55,12 @@ test('the About workshop follows the global day and night transition', async ({ 
   await expect(scene.locator('[data-testid="hero-day-layer"]')).toHaveAttribute('data-visible', 'true')
 })
 
-test('phone client cards and reach signs contain their text', async ({ page }) => {
+test('phone reach signs contain their text', async ({ page }) => {
   for (const width of [320, 390]) {
     await page.setViewportSize({ width, height: 844 })
-    await page.goto('/')
+    // The coverage map left the home page for the film on 16 November 2026; About keeps it.
+    await page.goto('/about')
     await page.evaluate(() => document.fonts.ready)
-
-    const cards = page.locator('#client-history [data-home-client]')
-    await expect(cards).toHaveCount(21)
-    const columns = await page.locator('#client-history ul[aria-label="Brands in our work history"]')
-      .evaluate(element => getComputedStyle(element).gridTemplateColumns.split(' ').map(parseFloat))
-    // Three to a row, except under 360px, where two keep the 12px type floor
-    // without breaking a trade word such as "Electricals".
-    expect(columns).toHaveLength(width < 360 ? 2 : 3)
-    expect(Math.max(...columns) - Math.min(...columns)).toBeLessThan(1)
 
     const signs = page.locator('svg[aria-hidden="true"] [data-map-place]')
     await expect(signs).toHaveCount(11)

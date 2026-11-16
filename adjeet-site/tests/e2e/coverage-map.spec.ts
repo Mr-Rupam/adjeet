@@ -25,7 +25,8 @@ async function withoutWebGL(page: Page) {
 test.describe('Coverage map', () => {
   test.beforeEach(async ({ page }) => {
     await withoutWebGL(page)
-    await page.goto('/')
+    // The map left the home page for the film on 16 November 2026; About keeps it.
+    await page.goto('/about')
     await page.evaluate(() => localStorage.setItem('adjeet-consent', 'accepted'))
     await page.reload()
   })

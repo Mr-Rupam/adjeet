@@ -362,7 +362,7 @@ test.describe('home hero', () => {
       expect(cta.y, `${width}x${height}: below the figures`).toBeGreaterThan(art.y + art.height * FIGURES_FOOT)
       const board = await box(page, '[data-hero-board]')
       expect(board.y, `${width}x${height}: the board is clear of the copy`).toBeGreaterThan(lead.y + lead.height)
-      await expect(page.locator('#hero-section').getByRole('link', { name: 'See finished shopfronts' })).toBeInViewport()
+      await expect(page.locator('#hero-section').getByRole('link', { name: 'See finished work' })).toBeInViewport()
       expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(width)
     }
   })
@@ -387,7 +387,7 @@ test.describe('home hero', () => {
     }
   })
 
-  test('desktop keeps the action, the jump to real work and the four trades on the hero, clear of the chat button', async ({ page }) => {
+  test('desktop keeps the action, the skip to real work and the four trades on the hero, clear of the chat button', async ({ page }) => {
     await seenIntro(page)
     await page.emulateMedia({ reducedMotion: 'reduce' })
     for (const [width, height] of [[1440, 900], [1280, 720], [1920, 1080]]) {
@@ -395,7 +395,7 @@ test.describe('home hero', () => {
       await page.goto('/')
       const hero = page.locator('#hero-section')
       await expect(hero.getByRole('link', { name: 'WhatsApp your project' })).toBeInViewport()
-      await expect(hero.getByRole('link', { name: 'See finished shopfronts' })).toHaveText('See finished shopfronts')
+      await expect(hero.getByRole('link', { name: 'See finished work' })).toHaveText('See finished work')
       const trades = hero.getByRole('navigation', { name: 'Main trades' }).getByRole('link')
       await expect(trades).toHaveText(['Glow Sign Boards', 'ACP & LED Signage', 'Flex Printing', 'Vehicle Branding'])
       const bubble = page.locator('.chatbot-bubble')

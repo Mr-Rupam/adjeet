@@ -1,43 +1,60 @@
 import { describe, expect, it, vi } from 'vitest'
 import { renderToStaticMarkup } from 'react-dom/server'
 import { HomePageView } from '@/components/home/HomePageView'
-import { getPhotoById, photos } from '@/content/gallery'
+import { getPhotoById } from '@/content/gallery'
+import { homeFaqs } from '@/content/home-faqs'
+import { CHAPTERS, PROOF_PICKS } from '@/content/home-film'
+import { SERVICE_SLUGS } from '@/content/services'
+import { FILM_BOOT } from '@/components/film/film-boot'
 
-// The map islands and the motion layer render nothing here; the page structure
-// and the facts it shows are under test.
-vi.mock('@/components/coverage/CoverageStage', () => ({ CoverageStage: () => null }))
-vi.mock('@/components/coverage/CoveragePlaceList', () => ({ CoveragePlaceList: () => null }))
-vi.mock('@/components/motion/HomeMotion', () => ({ HomeMotion: () => null }))
-vi.mock('@/components/motion/ReducedMotionWrapper', () => ({ useReducedMotion: () => false }))
+// The engine runs in the browser; the page's structure and words are under test.
+vi.mock('@/components/film/FilmEngine', () => ({ FilmEngine: () => null }))
 
 function render() {
   return new DOMParser().parseFromString(renderToStaticMarkup(<HomePageView />), 'text/html')
 }
 
-const textOf = (url: string | null | undefined) => new URL(url ?? '').searchParams.get('text') ?? ''
-
-describe('storefront homepage', () => {
-  it('runs shopfront, examples, trust, sign choice, process, places, then the enquiry', () => {
-    const ids = [...render().querySelectorAll('[data-home-page] > [id]')].map(section => section.id)
-    expect(ids).toEqual(['hero-section', 'selected-work', 'client-history', 'services', 'how-it-works', 'areas'])
-  })
-
-  it('names the trade and the town under a strong headline, in one line', () => {
+describe('home page: the film, then the questions', () => {
+  it('runs the eight chapters in order inside the film, then the questions', () => {
     const doc = render()
-    expect(doc.querySelector('h1')?.textContent).toBe('Advertising that gets you noticed.')
-    expect(doc.querySelector('h1 em')?.textContent).toBe('noticed.')
-    // 15 November 2026: the lead's second sentence left the hero.
-    expect(doc.querySelector('[data-hero-lead]')?.textContent).toBe('Advertising agency in Siliguri, since 1990.')
-    expect(doc.querySelector('#hero-section')?.textContent).not.toContain('Send a photo of your shop to start.')
+    expect([...doc.querySelectorAll('#film .chs > section.ch')].map(section => section.id)).toEqual(CHAPTERS.map(chapter => chapter.id))
+    expect([...doc.querySelectorAll('[data-home-page] > [id]')].map(section => section.id)).toEqual(['film', 'questions'])
   })
 
-  it('opens on the street visualisation, by day and by night, each in a tall and a wide cut', () => {
+  it('has one h1, and one h2 per chapter after the hero', () => {
+    const doc = render()
+    expect(doc.querySelectorAll('h1')).toHaveLength(1)
+    expect(doc.querySelector('h1')?.textContent).toBe('Advertising that gets you noticed.')
+    for (const chapter of CHAPTERS.slice(1)) {
+      const headings = doc.querySelectorAll(`#${chapter.id} h2`)
+      expect(headings, chapter.id).toHaveLength(1)
+      expect(headings[0].textContent).toBe(chapter.title)
+      expect(doc.querySelector(`#${chapter.id}`)?.getAttribute('aria-labelledby')).toBe(headings[0].id)
+    }
+  })
+
+  it('keeps the hero as it was: words, line, action and the four trades', () => {
     const hero = render().querySelector('#hero-section')!
-    const images = [...hero.querySelectorAll('img')]
+    expect(hero.querySelector('h1 em')?.textContent).toBe('noticed.')
+    expect(hero.querySelector('[data-hero-lead]')?.textContent).toBe('Advertising agency in Siliguri, since 1990.')
+    const actions = hero.querySelector('[data-hero-actions]')!
+    expect(actions.querySelector('a[href^="https://wa.me/"]')?.textContent).toBe('WhatsApp your project')
+    expect([...hero.querySelectorAll('nav[aria-label="Main trades"] a')].map(link => link.getAttribute('href')))
+      .toEqual(['/services/glow-sign-boards', '/services/acp-led-signage', '/services/flex-printing', '/services/vehicle-branding'])
+  })
+
+  it('turns the old jump to the shopfronts into the honest skip to the proof chapter', () => {
+    const link = render().querySelector('#hero-section [data-hero-actions] a[href="#proof"]')
+    expect(link?.getAttribute('aria-label')).toBe('See finished work')
+    expect(link?.textContent).toBe('See finished work')
+  })
+
+  it('opens on the street visualisation, by day and by night, each in a tall and a wide cut, through the same pipeline', () => {
+    const hero = render().querySelector('#hero-section')!
+    const images = [...hero.querySelectorAll('img[data-hero-image]')]
     expect(images.map(image => image.getAttribute('data-hero-image'))).toEqual(['day', 'night'])
     for (const image of images) {
       const scene = image.getAttribute('data-hero-image')
-      // Lazy, so only the scene laid out (the visitor's theme) is fetched; the inline script preloads it.
       expect(image.getAttribute('loading')).toBe('lazy')
       expect(image.getAttribute('fetchpriority')).toBe('high')
       expect(decodeURIComponent(image.getAttribute('srcset') ?? '')).toContain(`/hero/${scene}-street-tall.webp`)
@@ -47,87 +64,79 @@ describe('storefront homepage', () => {
     }
     expect(images[0].getAttribute('alt')).toMatch(/^Visualisation: a small market street on a misty morning after rain/)
     expect(images[1].getAttribute('alt')).toMatch(/^Visualisation: a small market street at night after rain/)
-    // Since 16 November 2026 a concept scene carries no visible label: the
-    // alt text above says what it is (DESIGN.md).
-    expect(hero.querySelector('[data-hero-label]')).toBeNull()
     expect(hero.textContent).not.toMatch(/visualisation/i)
   })
 
-  it('preloads the scene for a theme opposite to the system one from an inline script', () => {
-    const script = render().querySelector('#hero-section > script')?.textContent ?? ''
+  it('picks the film mode in the hero\'s one inline script, which still preloads a chosen theme\'s scene', () => {
+    const doc = render()
+    const scripts = [...doc.querySelectorAll('#film script')]
+    expect(scripts).toHaveLength(1)
+    const script = scripts[0].textContent ?? ''
     expect(script).toContain("getAttribute('data-theme')==='dark'?'night':'day'")
-    // The system theme's scene is preloaded from <head>, so the script only covers a chosen theme.
     expect(script).toContain('if(scene===system)return;')
-    expect(script).toContain('day-street-tall.webp')
     expect(script).toContain('night-street-wide.webp')
-    expect(script).toContain("setAttribute('fetchpriority','high')")
+    expect(script.endsWith(FILM_BOOT)).toBe(true)
+    expect(FILM_BOOT).toContain("prefers-reduced-motion: reduce")
   })
 
-  it('sets "Your shop name" on the blank board as decoration, outside the heading and the image text', () => {
-    const hero = render().querySelector('#hero-section')!
-    const board = hero.querySelector('[data-hero-board]')
-    expect(board?.textContent).toBe('Your shop name')
-    expect(board?.getAttribute('aria-hidden')).toBe('true')
-    expect(hero.querySelector('h1')?.textContent).not.toContain('Your shop name')
-  })
-
-  it('keeps the WhatsApp action and the jump to real work, and no photo slideshow, in the hero', () => {
-    const hero = render().querySelector('#hero-section')!
-    const actions = hero.querySelector('[data-hero-actions]')!
-    expect(actions.querySelector('a[href^="https://wa.me/"]')?.textContent).toBe('WhatsApp your project')
-    expect(actions.querySelector('a[href="#selected-work"]')?.getAttribute('aria-label')).toBe('See finished shopfronts')
-    expect(hero.querySelectorAll('[data-hero-slide], [data-hero-caption]')).toHaveLength(0)
-    expect(hero.querySelector('a[href^="/portfolio"]')).toBeNull()
-    expect(hero.querySelector('button')).toBeNull()
-  })
-
-  it('shows the three selected shopfronts, each with an enquiry that carries its reference', () => {
-    const items = [...render().querySelectorAll('#selected-work li')]
-    expect(items).toHaveLength(3)
-    const expected = [
-      { id: 'tanyamakeovers-154', line: 'Lit studio lettering · Siliguri' },
-      { id: 'acc-125', line: 'ACP shopfront fascia · Dalkhola' },
-      { id: 'anchor-by-panasonic-112', line: 'Jai Maa Anjani Electricals · Shop board' },
-    ]
-    expected.forEach(({ id, line }, index) => {
-      const item = items[index]
-      const photo = getPhotoById(id)
-      expect(item.querySelector('img')?.getAttribute('alt')).toBe(photo.alt)
-      expect(item.querySelector('figcaption strong')?.textContent).toBe(photo.client)
-      expect(item.querySelector('figcaption strong + span')?.textContent).toBe(line)
-      const message = textOf(item.querySelector('a[href^="https://wa.me/"]')?.getAttribute('href'))
-      expect(message).toContain(`(${id})`)
-      expect(message).toContain('My shop is in ___.')
-    })
-  })
-
-  it('claims a place for an example only where the gallery records one', () => {
-    expect(getPhotoById('tanyamakeovers-154').location).toBe('Siliguri')
-    expect(getPhotoById('acc-125').location).toBe('Dalkhola')
-    expect(getPhotoById('anchor-by-panasonic-112').location).toBeUndefined()
-  })
-
-  it('links the four main trades, the full portfolio and every area served', () => {
+  it('letters "Your shop name" on the boards as decoration, outside the headings', () => {
     const doc = render()
-    const hrefs = [...doc.querySelectorAll('a')].map(link => link.getAttribute('href'))
-    for (const slug of ['glow-sign-boards', 'acp-led-signage', 'flex-printing', 'vehicle-branding']) {
-      expect(hrefs).toContain('/services/' + slug)
+    const boards = [...doc.querySelectorAll('[data-name]')]
+    expect(boards.length).toBeGreaterThan(5)
+    for (const board of boards) {
+      expect(board.textContent).toBe('Your shop name')
+      expect(board.closest('[aria-hidden="true"]')).not.toBeNull()
     }
-    expect(hrefs).toContain('/areas')
-    expect(hrefs).toContain('/portfolio')
-    expect(doc.querySelector('#selected-work a[href="/portfolio"]')?.textContent).toContain(`See all ${photos.length} project photographs`)
+    expect(doc.querySelector('[data-hero-board]')?.textContent).toBe('Your shop name')
   })
 
-  it('compares the two main sign choices from the shared comparison records', () => {
+  it('keeps the name field on the device and masked from session recording', () => {
+    const input = render().querySelector<HTMLInputElement>('#brief input[data-name-input]')!
+    expect(input.getAttribute('data-clarity-mask')).toBe('true')
+    expect(input.getAttribute('maxlength')).toBe('24')
+    expect(input.closest('form')).toBeNull()
+    expect(input.closest('label')?.textContent).toContain("Type your shop's name")
+  })
+
+  it('shows the six photographs from the gallery, whole, with their own alt text and captions', () => {
+    const shots = [...render().querySelectorAll('#proof ol.reel > li')]
+    expect(shots.map(shot => shot.getAttribute('data-photo'))).toEqual(PROOF_PICKS.map(pick => pick.id))
+    for (const shot of shots) {
+      const photo = getPhotoById(shot.getAttribute('data-photo')!)
+      const image = shot.querySelector('img')!
+      expect(image.getAttribute('alt')).toBe(photo.alt)
+      expect(shot.querySelector('figcaption b')?.textContent).toBe(photo.client)
+      // Through the image pipeline, never asking for more than its own width.
+      expect(decodeURIComponent(image.getAttribute('src') ?? '')).toContain(photo.src)
+      expect(image.getAttribute('sizes')).toMatch(/min\(/)
+    }
+  })
+
+  it('every scene image is named as a visualisation, and only the proof shows gallery photographs', () => {
     const doc = render()
-    const choices = [...doc.querySelectorAll('#services article h3')].map(heading => heading.textContent)
-    expect(choices).toEqual(['Glow sign board', 'ACP board with 3D LED letters'])
+    for (const image of doc.querySelectorAll('#film img')) {
+      const alt = image.getAttribute('alt') ?? ''
+      const real = image.closest('#proof .shot') !== null
+      const logo = image.closest('#proof .lboard') !== null
+      if (real || logo) continue
+      expect(alt === '' || alt.startsWith('Visualisation:'), alt).toBe(true)
+    }
   })
 
-  it('uses real workshop photography, never the generated bench image', () => {
-    // Image URLs are encoded by the optimiser, so match the file names.
-    const html = renderToStaticMarkup(<HomePageView />)
-    expect(html).toContain('workshop-gate.webp')
-    expect(html).not.toContain('led-letter-workshop-interior-visualisation')
+  it('reaches every service page, the areas, the brand page, the portfolio and the contact page', () => {
+    const hrefs = [...render().querySelectorAll('a')].map(link => link.getAttribute('href'))
+    for (const slug of SERVICE_SLUGS) expect(hrefs, slug).toContain('/services/' + slug)
+    for (const path of ['/areas', '/for-brands', '/portfolio', '/contact']) expect(hrefs, path).toContain(path)
+  })
+
+  it('reports every WhatsApp action with its own source', () => {
+    const doc = render()
+    const whatsapp = [...doc.querySelectorAll('#film a[href^="https://wa.me/"]')]
+    expect(whatsapp.length).toBe(6)
+  })
+
+  it('keeps the questions from home-faqs.ts, in order', () => {
+    const questions = [...render().querySelectorAll('#questions summary')].map(summary => summary.textContent)
+    expect(questions).toEqual(homeFaqs.map(faq => faq.q))
   })
 })

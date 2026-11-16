@@ -3,7 +3,6 @@ import { TOWNS, townPath } from '../../content/areas'
 import { SERVICE_SLUGS } from '../../content/services'
 import { COVERAGE_AREAS } from '../../lib/coverage'
 import { photos } from '../../content/gallery'
-import { CLIENT_NAMES } from './support/clients'
 
 const acpCount = photos.filter(p => p.service === 'acp-led-signage').length
 
@@ -20,8 +19,8 @@ test('new homepage keeps real project discovery and every coverage area accessib
   await expect(page.getByRole('heading', { level: 1 })).toHaveText('Advertising that gets you noticed.')
   await expect(page.locator('#hero-section').getByRole('link', { name: 'WhatsApp your project' })).toBeVisible()
   await expect(page.getByRole('list', { name: 'Areas we serve' }).getByRole('listitem')).toHaveCount(COVERAGE_AREAS.length)
-  // Real work starts straight after the hero; its closing link opens the whole portfolio.
-  await page.locator('#selected-work').getByRole('link', { name: `See all ${photos.length} project photographs` }).click()
+  // Real work is the film's proof chapter (16 November 2026); its link opens the whole portfolio.
+  await page.locator('#proof').getByRole('link', { name: 'See all the work' }).click()
   await expect(page).toHaveURL(/\/portfolio$/)
   await expect(page.getByRole('button', { name: /^View:/ })).toHaveCount(photos.length)
 })
@@ -189,16 +188,15 @@ test('unknown pages offer a useful route back to the work', async ({ page }) => 
   await expect(page).toHaveURL('/portfolio')
 })
 
-test('both themes keep all client names and heading text inside small viewports', async ({ page }) => {
+test('both themes keep the headings inside small viewports', async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' })
   for (const width of [320, 390, 768]) {
     await page.setViewportSize({ width, height: 900 })
     await page.goto('/')
     await page.evaluate(() => document.fonts.ready)
-    expect(CLIENT_NAMES.length).toBeGreaterThan(0)
-    await expect(page.locator('#client-history [data-client-name]')).toHaveText(CLIENT_NAMES)
     for (const theme of ['light', 'dark']) {
       await page.evaluate(theme => document.documentElement.setAttribute('data-theme', theme), theme)
-      const overflow = await page.locator('#hero-section h1, #client-history h2, #client-history li, #client-history p').evaluateAll(elements => elements.flatMap(element => {
+      const overflow = await page.locator('#film h1, #film h2, #film li, #film p').evaluateAll(elements => elements.flatMap(element => {
         const range = document.createRange()
         range.selectNodeContents(element)
         return [...range.getClientRects()].filter(r => r.left < -1 || r.right > innerWidth + 1).map(() => element.textContent)
@@ -212,8 +210,8 @@ test('the enquiry button stays a readable light pill on the cerulean band in bot
   // `.cta` fades its background, so without reduced motion the colours read
   // straight after a theme switch are still the previous theme's.
   await page.emulateMedia({ reducedMotion: 'reduce' })
-  // Home renders CommissionCTA; the town pages write their own band.
-  for (const route of ['/', '/areas/cooch-behar']) {
+  // The services page renders CommissionCTA; the town pages write their own band.
+  for (const route of ['/services', '/areas/cooch-behar']) {
     await page.goto(route)
     const button = page.locator('.commission-actions > .cta')
     for (const theme of ['light', 'dark']) {
