@@ -1,4 +1,5 @@
 import { test, expect } from '@playwright/test'
+import { WORK_PICKS } from '../../content/home-film'
 
 test('mobile hero shows the night scene and WhatsApp action in the first screen', async ({ page }) => {
   await page.addInitScript(() => localStorage.setItem('adjeet-consent', 'declined'))
@@ -65,11 +66,11 @@ for (const width of [320, 390, 430, 768, 1440]) {
   })
 }
 
-test('the proof chapter shows the gallery photographs and links the whole portfolio', async ({ page }) => {
+test('the work chapter shows the gallery photographs and links the whole portfolio', async ({ page }) => {
   await page.emulateMedia({ reducedMotion: 'reduce' })
   await page.goto('/')
-  const photos = page.locator('#proof .shot img')
-  await expect(photos).toHaveCount(6)
+  const photos = page.locator('#work [data-photo] img')
+  await expect(photos).toHaveCount(WORK_PICKS.length)
   const loaded = await photos.evaluateAll(async images => {
     for (const image of images) {
       image.scrollIntoView({ block: 'center' })
@@ -78,6 +79,6 @@ test('the proof chapter shows the gallery photographs and links the whole portfo
     return images.every(image => (image as HTMLImageElement).naturalWidth > 0)
   })
   expect(loaded).toBe(true)
-  await page.locator('#proof').getByRole('link', { name: 'See all the work' }).click()
+  await page.locator('#work').getByRole('link', { name: 'See all the work' }).click()
   await expect(page).toHaveURL('/portfolio')
 })

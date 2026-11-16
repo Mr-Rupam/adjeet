@@ -71,7 +71,7 @@ test.describe('Home page', () => {
     await expect(hero.getByRole('img', { name: /^visualisation: a small market street on a misty morning/i })).toBeVisible()
     const waLink = hero.getByRole('link', { name: /whatsapp your project/i })
     expect(await waLink.getAttribute('href')).toMatch(/^https:\/\/wa\.me\//)
-    await expect(hero.getByRole('link', { name: 'See finished work' })).toHaveAttribute('href', '#proof')
+    await expect(hero.getByRole('link', { name: 'See finished work' })).toHaveAttribute('href', '#work')
   })
 
   test('the film plays: mode set before paint, one stage per chapter, the rail on the right', async ({ page }) => {
@@ -90,7 +90,7 @@ test.describe('Home page', () => {
       await page.goto('/')
       await page.evaluate(() => document.fonts.ready)
       // Where each heading is on screen (the junction's gives way to its list at its resting point).
-      const headingAt: Record<string, number> = { brief: 0.6, workshop: 0.66, road: 0.14, hills: 0.8, junction: 0.3, proof: 0.06, finale: 0.72 }
+      const headingAt: Record<string, number> = { brands: 0.5, work: 0.06, brief: 0.6, workshop: 0.66, road: 0.14, hills: 0.8, junction: 0.3, finale: 0.72 }
       for (const chapter of CHAPTERS.slice(1)) {
         await scrollToChapter(page, chapter.id, headingAt[chapter.id])
         await expect(page.locator('html'), `${width}: ${chapter.id}`).toHaveAttribute('data-film-ch', chapter.id)
@@ -101,7 +101,8 @@ test.describe('Home page', () => {
         ['brief', 0.6, '#brief .acts .cta'],
         ['hills', 0.8, '#hills a[href="/areas"]'],
         ['junction', 0.8, '#junction .j-trades a[href="/services/glow-sign-boards"]'],
-        ['proof', 0.8, '#proof .acts .cta'],
+        ['brands', 0.5, '#brands .acts .cta'],
+        ['work', 0.8, '#work a[href="/portfolio"]'],
         ['finale', 0.72, '#finale .fin-acts .cta'],
       ]
       for (const [id, p, selector] of actions) {
@@ -111,13 +112,45 @@ test.describe('Home page', () => {
     }
   })
 
+  test('the brands wall is lit at its stop, on screen, and no logo or photograph is drawn above its own pixels', async ({ page }) => {
+    test.slow()
+    for (const [width, height, boards] of [[390, 844, 15], [1440, 900, 18]] as const) {
+      await page.setViewportSize({ width, height })
+      await page.goto('/')
+      await scrollToChapter(page, 'brands', 0.5)
+      const wall = await page.locator('#brands .b-board').evaluateAll(async items => {
+        const shown = items.filter(item => getComputedStyle(item).display !== 'none')
+        await Promise.all(shown.map(item => item.querySelector('img')?.decode().catch(() => undefined)))
+        return shown.map(item => {
+          const box = item.getBoundingClientRect()
+          const img = item.querySelector('img')
+          return {
+            lit: item.classList.contains('on'),
+            inside: box.left >= 0 && box.right <= innerWidth && box.top >= 0 && box.bottom <= innerHeight,
+            logo: img ? img.getBoundingClientRect().width <= img.naturalWidth + 0.5 && img.getBoundingClientRect().height <= img.naturalHeight + 0.5 : true,
+          }
+        })
+      })
+      expect(wall, `${width}`).toHaveLength(boards)
+      for (const board of wall) expect(board, `${width}`).toEqual({ lit: true, inside: true, logo: true })
+      expect(await seen(page, '#brands .b-big'), `${width}`).toBe(true)
+      for (const p of [0.3, 0.6]) {
+        await scrollToChapter(page, 'work', p)
+        const sizes = await page.locator('#work [data-photo] img').evaluateAll(images => images.map(image => image.getBoundingClientRect().width <= Number(image.getAttribute('width')) + 0.5))
+        expect(sizes.every(Boolean), `${width} work ${p}`).toBe(true)
+      }
+    }
+  })
+
   test('tabbing to a chapter\'s link scrolls the film to where it shows', async ({ page }) => {
     await page.setViewportSize({ width: 390, height: 844 })
     await page.goto('/')
-    await page.locator('#proof a[href="/portfolio"]').focus()
-    await page.waitForTimeout(700)
-    await expect(page.locator('html')).toHaveAttribute('data-film-ch', 'proof')
-    expect(await seen(page, '#proof a[href="/portfolio"]')).toBe(true)
+    for (const [id, selector] of [['brands', '#brands a[href="/for-brands"]'], ['work', '#work a[href="/portfolio"]']] as const) {
+      await page.locator(selector).focus()
+      await page.waitForTimeout(700)
+      await expect(page.locator('html')).toHaveAttribute('data-film-ch', id)
+      expect(await seen(page, selector), selector).toBe(true)
+    }
   })
 
   test('the skip link lands on the real photographs', async ({ page }) => {
@@ -125,8 +158,8 @@ test.describe('Home page', () => {
     await page.goto('/')
     await page.locator('#hero-section').getByRole('link', { name: 'See finished work' }).click()
     await page.waitForTimeout(700)
-    await expect(page.locator('html')).toHaveAttribute('data-film-ch', 'proof')
-    expect(await seen(page, '#proof h2')).toBe(true)
+    await expect(page.locator('html')).toHaveAttribute('data-film-ch', 'work')
+    expect(await seen(page, '#work h2')).toBe(true)
   })
 
   test('the name typed in the brief letters every board, and stays on the device', async ({ page }) => {
@@ -237,8 +270,8 @@ test.describe('Home page', () => {
     for (let i = 1; i < tops.length; i++) expect(tops[i]).toBeGreaterThan(tops[i - 1])
     const links = [
       ...SERVICE_SLUGS.map(slug => `#junction .j-trades a[href="/services/${slug}"]`),
-      '#hills a[href="/areas"]', '#proof a[href="/for-brands"]', '#proof a[href="/portfolio"]',
-      '#brief .acts .cta', '#proof .acts .cta', '#finale .fin-acts .cta',
+      '#hills a[href="/areas"]', '#brands a[href="/for-brands"]', '#work a[href="/portfolio"]',
+      '#brief .acts .cta', '#brands .acts .cta', '#finale .fin-acts .cta',
     ]
     for (const selector of links) {
       const link = page.locator(selector)
@@ -263,11 +296,11 @@ test.describe('Home page', () => {
     await context.close()
   })
 
-  test('keeps real photographs to the proof chapter and names every scene as a visualisation', async ({ page }) => {
+  test('keeps real photographs and logos to the proof chapters and names every scene as a visualisation', async ({ page }) => {
     await page.goto('/')
     const scenes = await page.locator('#film img[alt]:not([alt=""])').evaluateAll(images => images.map(image => ({
       alt: image.getAttribute('alt') ?? '',
-      proof: !!image.closest('#proof'),
+      proof: !!image.closest('#brands, #work'),
     })))
     for (const scene of scenes.filter(image => !image.proof)) expect(scene.alt).toMatch(/^Visualisation:/)
     await expect(page.getByText(/visualisation/i)).toHaveCount(0)

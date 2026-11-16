@@ -19,8 +19,8 @@ test('new homepage keeps real project discovery and every coverage area accessib
   await expect(page.getByRole('heading', { level: 1 })).toHaveText('Advertising that gets you noticed.')
   await expect(page.locator('#hero-section').getByRole('link', { name: 'WhatsApp your project' })).toBeVisible()
   await expect(page.getByRole('list', { name: 'Areas we serve' }).getByRole('listitem')).toHaveCount(COVERAGE_AREAS.length)
-  // Real work is the film's proof chapter (16 November 2026); its link opens the whole portfolio.
-  await page.locator('#proof').getByRole('link', { name: 'See all the work' }).click()
+  // Real work is the film's work chapter (storyboard-v2); its link opens the whole portfolio.
+  await page.locator('#work').getByRole('link', { name: 'See all the work' }).click()
   await expect(page).toHaveURL(/\/portfolio$/)
   await expect(page.getByRole('button', { name: /^View:/ })).toHaveCount(photos.length)
 })

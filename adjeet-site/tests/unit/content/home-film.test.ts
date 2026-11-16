@@ -4,19 +4,19 @@ import fs from 'node:fs'
 import path from 'node:path'
 import sharp from 'sharp'
 import {
-  BRIEF, CHAPTERS, FINALE, HILLS, JUNCTION, LEDGER_LOGOS, MALDA_BOARDS, MALDA_DAYS, PROOF, PROOF_PICKS, ROAD,
-  WORKSHOP_CHAPTER, FILM_SOURCES, SKIP_LABEL, DEFAULT_SHOP_NAME,
+  BRANDS, BRIEF, CHAPTERS, FINALE, HILLS, JUNCTION, MALDA_BOARDS, MALDA_DAYS, ROAD, WALL_DESKTOP_MAX, WALL_LOGOS, WALL_PHONE_MAX,
+  WORK, WORK_PICKS, WORKSHOP_CHAPTER, FILM_SOURCES, SKIP_LABEL, DEFAULT_SHOP_NAME, wallCompanies, workPicks,
 } from '@/content/home-film'
 import {
   ALSO_SERVICES, BRAND_TENURES, COMPANIES_SERVED, CREW_NETWORK, GPS_PHOTO_LINE, JOB_DAYS, JOB_DAYS_CAPTION, MALDA_STORY,
   VEHICLES, WORKSHOP, brandTenureLines, jobDaysLabel,
 } from '@/content/company-figures'
-import { getPhotoById } from '@/content/gallery'
+import { getPhotoById, photos } from '@/content/gallery'
 import { photoPlace } from '@/content/photo-places'
 import { SERVICE_SLUGS, getServiceBySlug } from '@/content/services'
 import { SERVICE_LINK_LABELS } from '@/content/site-links'
 import { COVERAGE_AREAS } from '@/lib/coverage'
-import { proofCaption } from '@/components/film/FilmProof'
+import { DESK_WALL, PHONE_WALL, workBeats, workCaption } from '@/components/film/FilmWork'
 
 /**
  * The home film's words and data (content/home-film.ts). Every figure traces
@@ -35,25 +35,32 @@ function filmStrings(): string[] {
     else if (Array.isArray(value)) value.forEach(walk)
     else if (value && typeof value === 'object') Object.values(value).forEach(walk)
   }
-  walk([CHAPTERS, BRIEF, WORKSHOP_CHAPTER, ROAD, HILLS, JUNCTION, PROOF, FINALE, SKIP_LABEL, DEFAULT_SHOP_NAME])
+  walk([CHAPTERS, BRANDS, WORK, wallCompanies().map(company => company.name), BRIEF, WORKSHOP_CHAPTER, ROAD, HILLS, JUNCTION, FINALE, SKIP_LABEL, DEFAULT_SHOP_NAME])
   return out
 }
 
 const BANNED = /\b(solutions?|end-to-end|seamless(ly)?|unforgettable|experience|elevate[sd]?|transform(s|ed|ing)?|cutting-edge|one-stop|passionate)\b|24\/7/i
 
 describe('the film follows the storyboard', () => {
-  it('has the eight chapters, in order, with one heading each and the storyboard lines', () => {
-    expect(CHAPTERS.map(chapter => chapter.id)).toEqual(['hero', 'brief', 'workshop', 'road', 'hills', 'junction', 'proof', 'finale'])
+  it('has the nine chapters, proof first, with one heading each and the storyboard lines', () => {
+    expect(CHAPTERS.map(chapter => chapter.id)).toEqual(['hero', 'brands', 'work', 'brief', 'workshop', 'road', 'hills', 'junction', 'finale'])
     expect(CHAPTERS.map(chapter => chapter.title)).toEqual([
-      'Advertising that gets you noticed.', 'It starts with a photo.', 'Made in our own workshop.', 'Then it goes out on the road.',
-      'From the plains to the hills.', 'Shopfronts, walls, vehicles, events.', 'Brands stay for years.', 'Your name is next.',
+      'Advertising that gets you noticed.', 'Brands stay for years.', 'Seen on real streets.', 'It starts with a photo.', 'Made in our own workshop.',
+      'Then it goes out on the road.', 'From the plains to the hills.', 'Shopfronts, walls, vehicles, events.', 'Your name is next.',
     ])
-    // At most 15 screens on a phone (storyboard, section 4): each chapter is its pinned length plus one screen.
-    expect(CHAPTERS.reduce((sum, chapter) => sum + chapter.len, 0) + 1).toBeLessThanOrEqual(15)
+    // Each chapter is its pinned length plus one screen. storyboard-v2 asks for 14 or fewer once the
+    // scroll controller lets the other chapters shorten; until then the bound is 16.5
+    // (the work wall needs about 2.8 screens to rise at no more than one and a half times the scroll).
+    expect(CHAPTERS.reduce((sum, chapter) => sum + chapter.len, 0) + 1).toBeLessThanOrEqual(16.5)
     for (const chapter of CHAPTERS) {
       expect(chapter.rest, chapter.id).toBeGreaterThanOrEqual(0)
       expect(chapter.rest, chapter.id).toBeLessThanOrEqual(1)
+      // The controller's stops are p values, rising, inside the chapter.
+      const stops = (chapter.stops ?? '').split(' ').filter(Boolean).map(Number)
+      for (const stop of stops) expect(stop > 0 && stop < 1, `${chapter.id} ${stop}`).toBe(true)
+      expect([...stops].sort((a, b) => a - b)).toEqual(stops)
     }
+    expect(CHAPTERS.find(chapter => chapter.id === 'brands')?.stops).toBe('.5')
   })
 
   it('uses only the house wording: no banned words, no dashes, no question headings', () => {
@@ -94,10 +101,10 @@ describe('every figure traces to content/company-figures.ts', () => {
   })
 
   it('the proof figures are the company figures', () => {
-    expect(`${PROOF.companies.value} ${PROOF.companies.label}`).toBe(COMPANIES_SERVED)
-    expect(PROOF.gps).toBe(GPS_PHOTO_LINE)
+    expect(`${BRANDS.companies.value} ${BRANDS.companies.label}`).toBe(COMPANIES_SERVED)
+    expect(WORK.gps).toBe(GPS_PHOTO_LINE)
     const now = new Date('2026-11-16T12:00:00Z')
-    expect(PROOF.years(now)).toEqual(brandTenureLines(now))
+    expect(BRANDS.years(now)).toEqual(brandTenureLines(now))
   })
 
   it('no number in the film is typed outside the figures, except chapter timings', () => {
@@ -106,7 +113,7 @@ describe('every figure traces to content/company-figures.ts', () => {
       ...JOB_DAYS.flatMap(job => [String(job.min), String(job.max)]),
       ...brandTenureLines().flatMap(line => line.match(/\d+/g) ?? []),
     ])
-    const numbers = [BRIEF, WORKSHOP_CHAPTER, ROAD, HILLS, JUNCTION, FINALE, CHAPTERS.map(chapter => chapter.title)]
+    const numbers = [BRIEF, WORKSHOP_CHAPTER, ROAD, HILLS, JUNCTION, FINALE, WORK, { ...BRANDS, years: undefined }, CHAPTERS.map(chapter => chapter.title)]
       .flatMap(value => JSON.stringify(value).match(/(?<![\w-])\d[\d,]*(?![\w-])/g) ?? [])
     // CHAPTERS' own len/rest/still are timings, read through the JSON of titles only above.
     for (const number of numbers) expect(allowed.has(number), number).toBe(true)
@@ -131,14 +138,56 @@ describe('places and services come from their records', () => {
   })
 })
 
-describe('the six real photographs', () => {
-  it('are gallery records in the curated order', () => {
-    expect(PROOF_PICKS.map(pick => pick.id)).toEqual(['tanyamakeovers-154', 'star-cement-137', 'anchor-by-panasonic-106', 'acc-105', 'havells-120', 'havells-015'])
-    for (const pick of PROOF_PICKS) expect(() => getPhotoById(pick.id), pick.id).not.toThrow()
+describe('the brands wall', () => {
+  const tenure = BRAND_TENURES.map(entry => entry.brand as string)
+  const clients = new Set(photos.map(photo => photo.client))
+
+  it('shows only companies the repo records: tenure brands first, then gallery clients by photograph count', () => {
+    const wall = wallCompanies()
+    expect(wall.length).toBeLessThanOrEqual(WALL_DESKTOP_MAX)
+    expect(WALL_PHONE_MAX).toBe(15)
+    expect(wall.slice(0, tenure.length).map(company => company.name)).toEqual(tenure)
+    for (const company of wall) expect(tenure.includes(company.name) || clients.has(company.name), company.name).toBe(true)
+    const rest = wall.slice(tenure.length)
+    for (let i = 1; i < rest.length; i++) expect(rest[i - 1].photos, rest[i].name).toBeGreaterThanOrEqual(rest[i].photos)
+    for (const company of wall) expect(company.photos).toBe(photos.filter(photo => photo.client === company.name).length)
+    // Lloyd and Shyam Steel stay on the wall for their tenures.
+    expect(wall.map(company => company.name)).toEqual(expect.arrayContaining(['Lloyd', 'Shyam Steel']))
+    for (const company of wall) {
+      const recorded = BRAND_TENURES.find(entry => entry.brand === company.name)
+      expect(company.since, company.name).toBe(recorded?.since)
+    }
+  })
+
+  it('prints a logo only from a clean file wide enough for the board, at its own pixel size', async () => {
+    for (const [name, logo] of Object.entries(WALL_LOGOS)) {
+      expect(tenure.includes(name) || clients.has(name), name).toBe(true)
+      const meta = await sharp(path.join(ROOT, 'public', logo.src)).metadata()
+      expect([meta.width, meta.height], name).toEqual([logo.width, logo.height])
+      // The board's printed area at 2x on a phone.
+      expect(logo.width, name).toBeGreaterThanOrEqual(192)
+      // Never the Adani group mark for Ambuja or ACC.
+      expect(logo.src, name).not.toMatch(/adani/)
+    }
+  })
+})
+
+describe('the real photographs', () => {
+  it('are gallery records, in the curated order, 12 to 16 of them, none skipped', () => {
+    const { shown, skipped } = workPicks()
+    expect(skipped).toEqual([])
+    expect(shown.length).toBeGreaterThanOrEqual(12)
+    expect(shown.length).toBeLessThanOrEqual(16)
+    expect(shown.map(pick => pick.id)).toEqual(WORK_PICKS.map(pick => pick.id))
+    expect(new Set(WORK_PICKS.map(pick => pick.id)).size).toBe(WORK_PICKS.length)
+    // Night pictures lead; the one with a readable GPS stamp closes, beside the GPS line.
+    expect(WORK_PICKS.slice(0, 3).map(pick => pick.id)).toEqual(['star-cement-137', 'tanyamakeovers-154', 'anchor-by-panasonic-106'])
+    expect(WORK_PICKS[WORK_PICKS.length - 1].id).toBe('star-cement-132')
+    expect(WORK_PICKS.map(pick => pick.id)).not.toContain('havells-015')
   })
 
   it('carry the pixel size of their file, so none is drawn larger', async () => {
-    for (const pick of PROOF_PICKS) {
+    for (const pick of WORK_PICKS) {
       const photo = getPhotoById(pick.id)
       const meta = await sharp(path.join(ROOT, 'public', photo.src)).metadata()
       expect([meta.width, meta.height], pick.id).toEqual([pick.width, pick.height])
@@ -146,9 +195,9 @@ describe('the six real photographs', () => {
   })
 
   it('are captioned only with what the gallery records', () => {
-    for (const pick of PROOF_PICKS) {
+    for (const pick of WORK_PICKS) {
       const photo = getPhotoById(pick.id)
-      const caption = proofCaption(photo)
+      const caption = workCaption(photo)
       const place = photoPlace(photo)
       const expected = [photo.client, getServiceBySlug(photo.service)!.name]
       if (place && photo.year) expected.push(`${place}, ${photo.year}`)
@@ -157,18 +206,16 @@ describe('the six real photographs', () => {
       expect(caption, pick.id).toEqual(expected)
     }
     // Places are claimed only where recorded.
-    expect(proofCaption(getPhotoById('star-cement-137'))).toEqual(['Star Cement', 'Vehicle Branding'])
-    expect(proofCaption(getPhotoById('havells-015'))).toEqual(['Havells', 'Glow Sign Boards', 'Jalpaiguri, 2021'])
+    expect(workCaption(getPhotoById('star-cement-137'))).toEqual(['Star Cement', 'Vehicle Branding'])
   })
 
-  it('logos on the ledger are brands with a recorded tenure, at their file size or smaller', async () => {
-    const brands = BRAND_TENURES.map(entry => entry.brand as string)
-    for (const logo of LEDGER_LOGOS) {
-      expect(brands).toContain(logo.brand)
-      const meta = await sharp(path.join(ROOT, 'public', logo.src)).metadata()
-      expect([meta.width, meta.height], logo.brand).toEqual([logo.width, logo.height])
-      // Drawn at most 1.45 times its phone height on a desktop (film.css).
-      expect(logo.height1x * 1.45, logo.brand).toBeLessThanOrEqual(logo.height)
+  it('switch on in order as the wall rises, on a phone and on a desktop', () => {
+    for (const model of [PHONE_WALL, DESK_WALL]) {
+      const wall = workBeats(WORK_PICKS.slice(0, -1), model)
+      expect(wall).toHaveLength(WORK_PICKS.length - 1)
+      for (let i = 1; i < wall.length; i++) expect(wall[i]).toBeGreaterThanOrEqual(wall[i - 1])
+      for (const at of wall) expect(at >= 0 && at < 0.8).toBe(true)
+      expect(wall[0]).toBe(0)
     }
   })
 })
