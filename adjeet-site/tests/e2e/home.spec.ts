@@ -271,6 +271,8 @@ test.describe('Home page', () => {
     })))
     for (const scene of scenes.filter(image => !image.proof)) expect(scene.alt).toMatch(/^Visualisation:/)
     await expect(page.getByText(/visualisation/i)).toHaveCount(0)
+    // The owner took the regional agencies note off the home page on 16 November 2026.
+    await expect(page.getByText(/regional agenc/i)).toHaveCount(0)
   })
 
   test('small phones keep the brand, actions and navigation usable without overflow', async ({ page }) => {

@@ -25,6 +25,7 @@ CONFIRMED BUSINESS DETAILS
 - Founded: ${business.foundingYear} by ${business.founder}
 - Services: ${services.map(service => service.name).join("; ")}.
 - Also done, with no page on the site yet: ${ALSO_SERVICES.join('; ')}. Say only that AD JEET does them and ask for the details.
+- Hoardings are only taken up on request, for companies. Never offer them unprompted. If a visitor asks about hoardings, say so and point them to WhatsApp at ${business.phoneDisplay}.
 - Track record: ${COMPANIES_SERVED}.
 - Workshop: ${WORKSHOP.area}, at ${WORKSHOP.place}. Fitting: ${CREW_NETWORK.line} (a network, not employees), with ${VEHICLES.line}.
 - Job times, counted in days from the order: ${JOB_DAYS.map(job => `${job.label.toLowerCase()} ${job.min} to ${job.max} days`).join('; ')}.

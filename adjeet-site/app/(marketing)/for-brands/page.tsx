@@ -13,7 +13,7 @@ import {
   TYPE_ONLY_TRADES,
   VENDOR_LINE,
 } from '@/content/for-brands'
-import { GPS_PHOTO_LINE, MALDA_STORY } from '@/content/company-figures'
+import { GPS_PHOTO_LINE, HOARDINGS_ON_REQUEST, MALDA_STORY } from '@/content/company-figures'
 import { getPhotoById } from '@/content/gallery'
 import { formatReviewDate, reviewedOn } from '@/content/page-reviews'
 import { business } from '@/lib/business'
@@ -105,6 +105,7 @@ export default function ForBrandsPage() {
                   <li key={trade.title}><h3>{trade.title}</h3><p>{trade.line}</p></li>
                 ))}
               </ul>
+              <p className={styles.onRequest}>{HOARDINGS_ON_REQUEST}</p>
             </li>
           </ul>
         </div>
@@ -113,7 +114,7 @@ export default function ForBrandsPage() {
       <section className={styles.speed} aria-labelledby="brands-speed-heading">
         <div className={`field-container ${styles.speedInner}`}>
           <div>
-            <h2 id="brands-speed-heading" className={styles.paperHeading} data-site-reveal="title">One week in Malda.</h2>
+            <h2 id="brands-speed-heading" className={styles.paperHeading} data-site-reveal="title">We put our clients first.</h2>
             <p className={styles.story}>{MALDA_STORY}</p>
           </div>
           <figure className={styles.speedFigure} data-site-reveal="media">

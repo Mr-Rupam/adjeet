@@ -63,7 +63,7 @@ export function FilmJunction() {
 
       {/* The changing line repeats the list below for the eye only. */}
       <div className="j-caps tl" aria-hidden="true">
-        {JUNCTION.surfaces.map((trade, index) => (
+        {JUNCTION.surfaces.map((trade, index) => trade && (
           <p key={trade.label} className="j-cap" style={vars({ '--at': SURFACE_AT[index] })}>
             {trade.href ? <Link href={trade.href} tabIndex={-1}>{trade.label}</Link> : <span>{trade.label}</span>}
           </p>

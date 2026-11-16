@@ -135,6 +135,13 @@ describe('home page: the film, then the questions', () => {
     expect(whatsapp.length).toBe(6)
   })
 
+  it('says nothing about regional agencies or hoardings anywhere on the page', () => {
+    // The owner took the regional agencies note off the home page, and hoardings are not promoted (16 November 2026).
+    const text = render().body.textContent ?? ''
+    expect(text).not.toMatch(/regional agenc/i)
+    expect(text).not.toMatch(/hoardings? and billboards?|billboard/i)
+  })
+
   it('keeps the questions from home-faqs.ts, in order', () => {
     const questions = [...render().querySelectorAll('#questions summary')].map(summary => summary.textContent)
     expect(questions).toEqual(homeFaqs.map(faq => faq.q))

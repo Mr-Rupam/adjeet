@@ -27,7 +27,7 @@ import { ArrowDown } from 'lucide-react'
 import { getPhotosByService, getServiceCover } from '@/content/gallery'
 import { formatReviewDate, reviewedOn } from '@/content/page-reviews'
 import { COMPARED_SLUGS } from '@/content/sign-comparison'
-import { SILIGURI_BRIEFS, SILIGURI_NEARBY, SILIGURI_SEND_US_BN } from '@/content/service-local'
+import { SILIGURI_BRIEFS, SILIGURI_NEARBY, SILIGURI_SEND_US_BN, BENGALI_HELP_PROOFED } from '@/content/service-local'
 import { FOUNDED_YEAR } from '@/lib/coverage'
 import { JOB_DAYS_CAPTION, jobDaysLabel } from '@/content/company-figures'
 import { business } from '@/lib/business'
@@ -74,7 +74,7 @@ export default async function ServiceDetailPage({
   const workPhoto = getServiceCover(service.slug as ServiceSlug)
   const servicePhotos = getPhotosByService(service.slug as ServiceSlug)
   const siliguri = SILIGURI_BRIEFS[service.slug as ServiceSlug]
-  const siliguriBn = SILIGURI_SEND_US_BN[service.slug as ServiceSlug]
+  const siliguriBn = BENGALI_HELP_PROOFED ? SILIGURI_SEND_US_BN[service.slug as ServiceSlug] : undefined
 
   const path = `/services/${service.slug}`
   const reviewed = reviewedOn(path)

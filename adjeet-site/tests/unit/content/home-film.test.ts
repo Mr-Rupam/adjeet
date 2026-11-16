@@ -126,8 +126,11 @@ describe('places and services come from their records', () => {
     expect(linked.map(trade => trade.label)).toEqual(SERVICE_SLUGS.map(slug => SERVICE_LINK_LABELS[slug]))
     expect(JUNCTION.trades.filter(trade => !trade.href).map(trade => trade.label)).toEqual([...ALSO_SERVICES])
     for (const surface of JUNCTION.surfaces) {
+      if (!surface) continue
       expect(JUNCTION.trades.some(trade => trade.label === surface.label && trade.href === surface.href), surface.label).toBe(true)
     }
+    // Hoardings are not promoted (owner, 16 November 2026).
+    expect(JSON.stringify(JUNCTION)).not.toMatch(/hoarding|billboard/i)
   })
 })
 

@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import {
-  ALSO_SERVICES, BRAND_TENURES, COMPANIES_SERVED, CREW_NETWORK, GPS_PHOTO_LINE, JOB_DAYS, JOB_DAYS_CAPTION, MALDA_STORY,
+  ALSO_SERVICES, BRAND_TENURES, COMPANIES_SERVED, CREW_NETWORK, GPS_PHOTO_LINE, HOARDINGS_ON_REQUEST, JOB_DAYS, JOB_DAYS_CAPTION, MALDA_STORY,
   VEHICLES, WORKSHOP, brandTenureLines, jobDaysLabel, yearsWith,
 } from '@/content/company-figures'
 import { getServiceBySlug } from '@/content/services'
@@ -16,7 +16,8 @@ describe('company figures', () => {
     expect(GPS_PHOTO_LINE).toBe('Every installation is photographed with a GPS stamp: place, date and time.')
     expect(MALDA_STORY).toBe('In 2025 Star Cement needed 100 glow sign boards across Malda in one week. That is normally 20 to 25 days of work. We put extra crews and vehicles on it and finished on day 7.')
     expect(JOB_DAYS_CAPTION).toBe('Days from the order.')
-    expect([...ALSO_SERVICES]).toEqual(['Hoardings and billboards', 'Exhibitions and dealer meets', 'Activations and road shows'])
+    expect([...ALSO_SERVICES]).toEqual(['Exhibitions and dealer meets', 'Activations and road shows'])
+    expect(HOARDINGS_ON_REQUEST).toBe('Hoardings are taken up on request.')
   })
 
   it('computes years with each brand from its start year, so they never go stale', () => {

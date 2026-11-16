@@ -121,27 +121,23 @@ export const HILLS = {
 } as const
 
 /**
- * The surfaces at the junction, in the order they light up. Each names a
- * trade: a service with a page, or one of the services that has none yet.
+ * The surfaces at the junction, in the order they light up, each naming the
+ * service it shows. The rooftop surface (third) names nothing: hoardings are
+ * not promoted (owner, 16 November 2026), and the surface itself is being
+ * taken out of the junction's art.
  */
-type Surface = { slug: ServiceSlug } | { also: (typeof ALSO_SERVICES)[number] }
-const SURFACES: readonly Surface[] = [
-  { slug: 'glow-sign-boards' },
-  { slug: 'wall-painting' },
-  { also: 'Hoardings and billboards' },
-  { slug: 'f-pole-installation' },
-  { slug: 'vehicle-branding' },
-  { slug: 'in-shop-branding' },
+const SURFACES: readonly (ServiceSlug | null)[] = [
+  'glow-sign-boards', 'wall-painting', null, 'f-pole-installation', 'vehicle-branding', 'in-shop-branding',
 ]
 
 export type TradeLink = { label: string; href?: string }
-const tradeOf = (surface: Surface): TradeLink =>
-  'slug' in surface ? { label: SERVICE_LINK_LABELS[surface.slug], href: `/services/${surface.slug}` } : { label: surface.also }
+const tradeOf = (slug: ServiceSlug | null): TradeLink | null =>
+  slug ? { label: SERVICE_LINK_LABELS[slug], href: `/services/${slug}` } : null
 
 export const JUNCTION = {
   surfaces: SURFACES.map(tradeOf),
   line: 'Made at one workshop. Put up by one crew network.',
-  /** Every trade: the ten with pages as links, the three without as text. */
+  /** Every trade: the ten with pages as links, the others without pages as text. */
   trades: [
     ...SERVICE_SLUGS.map(slug => ({ label: SERVICE_LINK_LABELS[slug], href: `/services/${slug}` })),
     ...ALSO_SERVICES.map(label => ({ label })),

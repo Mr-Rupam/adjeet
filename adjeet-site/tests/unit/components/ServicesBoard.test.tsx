@@ -29,9 +29,10 @@ describe('ServicesBoard', () => {
 
   it('names the services that have no page yet, each with a WhatsApp action', () => {
     render(<ServicesBoard />)
-    for (const name of ['Hoardings and billboards', 'Exhibitions and dealer meets', 'Activations and road shows']) {
+    for (const name of ['Exhibitions and dealer meets', 'Activations and road shows']) {
       const link = screen.getByText(name).closest('a')
       expect(link?.getAttribute('href'), name).toMatch(/^https:\/\/wa\.me\//)
     }
+    expect(screen.queryByText(/hoardings and billboards/i)).toBeNull()
   })
 })

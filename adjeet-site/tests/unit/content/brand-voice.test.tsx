@@ -81,14 +81,33 @@ describe('the business is an advertising agency', () => {
     expect(homeFaqs[0].a).toMatch(/^AD JEET, an advertising agency in Siliguri/)
   })
 
-  it('names the three added services in the schema without a URL', () => {
+  it('names the two added services in the schema without a URL', () => {
     const catalogue = buildLocalBusinessJsonLd().hasOfferCatalog.itemListElement
-    for (const name of ['Hoardings and billboards', 'Exhibitions and dealer meets', 'Activations and road shows']) {
+    for (const name of ['Exhibitions and dealer meets', 'Activations and road shows']) {
       const offer = catalogue.find(item => item.itemOffered.name === name)
       expect(offer, name).toBeDefined()
       expect(offer!.itemOffered).not.toHaveProperty('url')
       expect(buildLocalBusinessJsonLd().knowsAbout).toContain(name)
     }
+    expect(JSON.stringify(buildLocalBusinessJsonLd())).not.toMatch(/hoardings and billboards|billboard/i)
+  })
+
+  it('never names hoardings as a service: the phrase is gone and the on-request line is used once', () => {
+    const root = path.resolve(__dirname, '../../..')
+    const files: string[] = []
+    const walk = (dir: string) => {
+      for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
+        const full = path.join(dir, entry.name)
+        if (entry.isDirectory()) walk(full)
+        else if (/\.(ts|tsx)$/.test(entry.name)) files.push(full)
+      }
+    }
+    for (const folder of ['app', 'components', 'content', 'lib']) walk(path.join(root, folder))
+    const rel = (file: string) => path.relative(root, file).split(path.sep).join('/')
+    const withPhrase = files.filter(file => fs.readFileSync(file, 'utf8').includes('Hoardings and billboards'))
+    expect(withPhrase.map(rel)).toEqual([])
+    const importers = files.filter(file => fs.readFileSync(file, 'utf8').includes('HOARDINGS_ON_REQUEST')).map(rel).sort()
+    expect(importers).toEqual(['app/(marketing)/for-brands/page.tsx', 'content/company-figures.ts'])
   })
 })
 
