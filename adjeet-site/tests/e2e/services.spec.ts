@@ -64,6 +64,16 @@ test.describe('/services/[slug] detail', () => {
     await expect(page.getByText('Often ordered together')).toBeVisible()
   })
 
+  test('holds the Bengali send-us list back on the glow sign and ACP pages while it is unproofed', async ({ page }) => {
+    for (const slug of ['glow-sign-boards', 'acp-led-signage']) {
+      await page.goto(`/services/${slug}`)
+      await expect(page.getByRole('heading', { name: 'Send us' })).toBeVisible()
+      await expect(page.locator('[lang="bn"]')).toHaveCount(0)
+      const text = await page.locator('body').innerText()
+      expect(text, slug).not.toMatch(/[ঀ-৿]/)
+    }
+  })
+
   test('returns 404 for unknown slug', async ({ page }) => {
     await page.goto('/services/not-a-real-service')
     await expect(page.getByText(/404|not found/i)).toBeVisible()

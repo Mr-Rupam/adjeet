@@ -67,5 +67,13 @@ export function jobDaysLabel(slug: ServiceSlug): string | undefined {
  * Work AD JEET also does that has no page or photographs on the site yet
  * (confirmed by the owner on 16 November 2026). Name them where the offer is
  * listed; add no site, size, town, count, client or photograph to them.
+ * Hoardings are done rarely, on a company's request, and are not promoted
+ * (owner, 16 November 2026), so they are not in this list.
  */
-export const ALSO_SERVICES = ['Hoardings and billboards', 'Exhibitions and dealer meets', 'Activations and road shows'] as const
+export const ALSO_SERVICES = ['Exhibitions and dealer meets', 'Activations and road shows'] as const
+
+/**
+ * The one public mention of hoardings. It is used once, on /for-brands, and
+ * nowhere else (guarded by tests/unit/content/brand-voice.test.tsx).
+ */
+export const HOARDINGS_ON_REQUEST = 'Hoardings are taken up on request.'

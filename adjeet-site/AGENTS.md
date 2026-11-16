@@ -6,7 +6,7 @@ This version has breaking changes: APIs, conventions, and file structure may all
 
 ## Project Overview
 
-AD JEET is a marketing website for an advertising agency in Siliguri (since 1990): outdoor advertising, signage and brand rollouts across North Bengal and Sikkim. The entire product goal is one conversion: visitor fills the lead form or clicks WhatsApp.
+AD JEET is a marketing website for an advertising agency in Siliguri (since 1990): outdoor advertising, signage and brand rollouts across North Bengal and Sikkim. The entire product goal is one conversion: visitor fills the lead form or clicks WhatsApp. Exhibitions and dealer meets, and activations and road shows, are named wherever the offer is listed, with no invented detail or photograph. Hoardings are done rarely, on a company's request, and are mentioned once, on /for-brands, as "on request" (owner, 16 November 2026). The Bengali "what to send" list on the glow sign and ACP pages is held behind `BENGALI_HELP_PROOFED` in `content/service-local.ts` (false) on the owner's instruction of 16 November 2026, until a fluent reader has proofed the text; set it to true to show it again.
 
 ## Service Map
 

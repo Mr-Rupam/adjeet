@@ -10,7 +10,6 @@ import { WhatsAppLink } from '@/components/ui/WhatsAppLink'
 
 /** One honest line each: what to send, with no invented site, size, town or client. */
 const ALSO_LINES: Record<(typeof ALSO_SERVICES)[number], string> = {
-  'Hoardings and billboards': 'Tell us the town, the road and the size you have in mind.',
   'Exhibitions and dealer meets': 'Tell us the venue, the dates and what the stall or stage needs.',
   'Activations and road shows': 'Tell us the towns, the dates and the route.',
 }

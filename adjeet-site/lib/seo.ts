@@ -10,7 +10,7 @@ export const siteConfig = {
   name: business.name,
   url: business.url,
   ogImage: DEFAULT_PAGE_SHARE.url,
-  description: `Advertising agency in Siliguri since ${business.foundingYear}: sign boards, hoardings, wall painting, vehicle branding and brand rollouts across North Bengal and Sikkim.`,
+  description: `Advertising agency in Siliguri since ${business.foundingYear}: sign boards, wall painting, vehicle branding and brand rollouts across North Bengal and Sikkim.`,
 }
 
 // Stable node IDs. Every page's structured data points at the same business,
