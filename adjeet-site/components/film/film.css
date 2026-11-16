@@ -1043,8 +1043,14 @@
 .film .b-lit {
   position: absolute; inset: 0;
   background: linear-gradient(180deg, #FFF8E7, #F6F0E3 64%, #ECE2CC);
-  box-shadow: 0 0 calc(var(--bh) * .5) color-mix(in srgb, #FFF3C8 20%, transparent), 0 calc(var(--bh) * .4) calc(var(--bh) * .8) calc(var(--bh) * -.15) color-mix(in srgb, #FFF3C8 16%, transparent);
   transition: opacity var(--beat) ease;
+}
+/* The board's light on the wall round it: a gradient, not a blurred shadow,
+   which cost a second of raster on a desktop as the wall came on. */
+.film .b-lit::before {
+  content: ""; position: absolute; z-index: -1; inset: -45% -18% -70%;
+  background: radial-gradient(closest-side, color-mix(in srgb, #FFF3C8 16%, transparent), color-mix(in srgb, #FFF3C8 6%, transparent) 60%, transparent);
+  pointer-events: none;
 }
 .story .film .b-board:not(.on) .b-lit { opacity: 0; }
 /* Printed on the face: on the unlit acrylic the print reads as dark. */
@@ -1053,10 +1059,12 @@
 .film .b-print b { font-family: var(--f-head); font-weight: 700; color: #172229; letter-spacing: -.012em; line-height: 1; white-space: nowrap; font-size: min(var(--bh) * .34, var(--bw) * 1.3 / var(--n, 8)); }
 /* The years with a brand, stamped under its board. */
 .film .b-stamp { position: absolute; left: 0; top: calc(100% + 6px); font-family: var(--font-barlow-condensed), var(--f-head); font-weight: 500; font-size: 11.5px; line-height: 1; letter-spacing: .1em; text-transform: uppercase; white-space: nowrap; color: color-mix(in srgb, #F4EDDF 82%, transparent); }
+/* The full line ("16 years with Havells") for screen readers, kept inside the screen. */
+.film .b-stamp .sr { left: 0; top: 0; }
 /* The light the wall sits in once the boards are on. */
 .film .b-pool { position: absolute; inset: 0; z-index: 0; pointer-events: none; background: radial-gradient(ellipse calc(var(--ww) * .8) calc(var(--wh) * .9) at 50% calc(var(--wtop) + var(--wh) / 2), color-mix(in srgb, #FFF3C8 9%, transparent), transparent); animation-name: brands-pool; }
 /* The one blank board: the hero's light at the start, the way out at the end. */
-.film .b-seed { position: absolute; z-index: 2; left: calc(var(--sx) - var(--bw) / 2); top: calc(var(--sy) - var(--bh) / 2); width: var(--bw); height: var(--bh); border: 2px solid #0099D0; background: var(--light-board); box-shadow: 0 0 calc(var(--bh) * .6) color-mix(in srgb, var(--light-board) 30%, transparent); pointer-events: none; animation-name: brands-seed; }
+.film .b-seed { position: absolute; z-index: 2; left: calc(var(--sx) - var(--bw) / 2); top: calc(var(--sy) - var(--bh) / 2); width: var(--bw); height: var(--bh); border: 2px solid #0099D0; background: var(--light-board); pointer-events: none; animation-name: brands-seed; }
 
 /* The words: the title over the wall, the figure and the actions under it. */
 .film .b-out { position: absolute; inset: 0; z-index: 5; pointer-events: none; animation-name: brands-out; }

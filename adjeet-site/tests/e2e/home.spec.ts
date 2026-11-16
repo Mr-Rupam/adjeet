@@ -12,8 +12,18 @@ async function seenIntro(page: Page) {
   })
 }
 
+/**
+ * The engine starts after hydration and writes the current chapter on <html>.
+ * With the proof first, the first chapter a test scrolls to is the one right
+ * after the hero, so a scroll made before the engine runs would see its beats late.
+ */
+async function engineReady(page: Page) {
+  await page.locator('html[data-film-ch]').waitFor({ state: 'attached' })
+}
+
 /** Scrolls to progress p of a chapter's pinned scroll and waits for the engine's frame. */
 async function scrollToChapter(page: Page, id: string, p: number) {
+  await engineReady(page)
   await page.evaluate(([id, p]) => {
     const chapter = document.getElementById(id as string)!
     const top = chapter.getBoundingClientRect().top + scrollY
@@ -21,6 +31,9 @@ async function scrollToChapter(page: Page, id: string, p: number) {
     scrollTo({ top: Math.round(top + pin * (p as number)) + 2, behavior: 'instant' })
   }, [id, p] as const)
   await page.waitForTimeout(700)
+  // A first visit to a chapter decodes its pictures, which can hold a beat's
+  // light back on a busy machine: let the lights finish switching on.
+  await page.waitForFunction(() => document.getAnimations().every(animation => !(animation instanceof CSSTransition) || animation.playState !== 'running'), undefined, { timeout: 4000 }).catch(() => {})
 }
 
 /**
@@ -145,6 +158,7 @@ test.describe('Home page', () => {
   test('tabbing to a chapter\'s link scrolls the film to where it shows', async ({ page }) => {
     await page.setViewportSize({ width: 390, height: 844 })
     await page.goto('/')
+    await engineReady(page)
     for (const [id, selector] of [['brands', '#brands a[href="/for-brands"]'], ['work', '#work a[href="/portfolio"]']] as const) {
       await page.locator(selector).focus()
       await page.waitForTimeout(700)
@@ -156,6 +170,7 @@ test.describe('Home page', () => {
   test('the skip link lands on the real photographs', async ({ page }) => {
     await page.setViewportSize({ width: 390, height: 844 })
     await page.goto('/')
+    await engineReady(page)
     await page.locator('#hero-section').getByRole('link', { name: 'See finished work' }).click()
     await page.waitForTimeout(700)
     await expect(page.locator('html')).toHaveAttribute('data-film-ch', 'work')
