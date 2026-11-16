@@ -5,7 +5,7 @@ import path from 'node:path'
 import sharp from 'sharp'
 import {
   BRANDS, BRIEF, CHAPTERS, FINALE, HILLS, JUNCTION, MALDA_BOARDS, MALDA_DAYS, MALDA_NORMAL, MALDA_ROWS, ROAD, WALL,
-  WORK, WORK_PICKS, WORKSHOP_CHAPTER, FILM_SOURCES, SKIP_LABEL, DEFAULT_SHOP_NAME, stopP, stopsAttr, tenureLine, workPicks,
+  WORK, WORK_PICKS, WORKSHOP_CHAPTER, FILM_SOURCES, SKIP_LABEL, DEFAULT_SHOP_NAME, isGate, stopP, stopsAttr, tenureLine, workPicks,
 } from '@/content/home-film'
 import {
   ALSO_SERVICES, BRAND_TENURES, COMPANIES_SERVED, CREW_NETWORK, GPS_PHOTO_LINE, JOB_DAYS, JOB_DAYS_CAPTION, MALDA_STORY,
@@ -68,13 +68,16 @@ describe('the film follows the storyboard', () => {
       for (const stop of stops) expect(stop >= 0 && stop < 1, `${chapter.id} ${stop}`).toBe(true)
       expect([...stops].sort((a, b) => a - b)).toEqual(stops)
       expect(stops, chapter.id).toContain(chapter.rest)
-      for (const stop of chapter.stops) if (typeof stop !== 'number') expect(stop.ms).toBeLessThanOrEqual(4000)
+      for (const stop of chapter.stops) if (typeof stop !== 'number') expect(stop.ms ?? 0).toBeLessThanOrEqual(4000)
     }
     // About 23 stops, one a screenful: every frame meant to be read is a stop.
     expect(CHAPTERS.flatMap(chapter => chapter.stops)).toHaveLength(23)
     expect(CHAPTERS.find(chapter => chapter.id === 'work')?.stops).toHaveLength(6)
     expect(CHAPTERS.find(chapter => chapter.id === 'junction')?.stops).toHaveLength(6)
-    expect(stopsAttr(CHAPTERS.find(chapter => chapter.id === 'road')?.stops)).toBe('0.14 0.78:3500')
+    expect(stopsAttr(CHAPTERS.find(chapter => chapter.id === 'road')?.stops)).toBe('0.14 0.78:3500!')
+    // Eight gates, one per chapter after the hero, on the frame that carries its message.
+    const gates = CHAPTERS.flatMap(chapter => chapter.stops.filter(isGate).map(stop => `${chapter.id} ${stopP(stop)}`))
+    expect(gates).toEqual(['brands 0.5', 'work 0.8', 'brief 0.57', 'workshop 0.66', 'road 0.78', 'hills 0.8', 'junction 0.8', 'finale 0.72'])
   })
 
   it('uses only the house wording: no banned words, no dashes, no question headings', () => {
@@ -128,7 +131,7 @@ describe('every figure traces to content/company-figures.ts', () => {
 
   it('the road declares its stops: the title frame and the hold, a showpiece', () => {
     const road = CHAPTERS.find(entry => entry.id === 'road')!
-    expect(road.stops).toEqual([road.rest, { p: 0.78, ms: 3500 }])
+    expect(road.stops).toEqual([road.rest, { p: 0.78, ms: 3500, gate: true }])
     for (const stop of road.stops.map(stopP)) {
       expect(stop).toBeGreaterThan(0)
       expect(stop).toBeLessThan(1)
@@ -235,13 +238,13 @@ describe('the brands wall', () => {
   it('the junction declares its scroll controller stops: each surface lit, then the list settled', () => {
     const junction = CHAPTERS.find(chapter => chapter.id === 'junction')!
     expect(junction.stops).toHaveLength(JUNCTION.surfaces.length + 1)
-    expect(junction.stops!.at(-1)).toBe(junction.rest)
+    expect(stopP(junction.stops.at(-1)!)).toBe(junction.rest)
     // Each surface's stop falls after it lights and before the next one does.
     SURFACE_AT.forEach((at, index) => {
-      expect(junction.stops![index], `surface ${index}`).toBeGreaterThan(at)
-      if (index + 1 < SURFACE_AT.length) expect(junction.stops![index]).toBeLessThan(SURFACE_AT[index + 1])
+      expect(stopP(junction.stops[index]), `surface ${index}`).toBeGreaterThan(at)
+      if (index + 1 < SURFACE_AT.length) expect(stopP(junction.stops[index])).toBeLessThan(SURFACE_AT[index + 1])
     })
-    for (const stop of junction.stops!) {
+    for (const stop of junction.stops.map(stopP)) {
       expect(stop).toBeGreaterThan(0)
       expect(stop).toBeLessThan(1)
     }

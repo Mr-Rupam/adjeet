@@ -37,10 +37,13 @@ export type ChapterId = 'hero' | 'brands' | 'work' | 'brief' | 'workshop' | 'roa
  * A stop: where the film rests (a p value, 0 to 1 of the chapter's pinned
  * scroll), and for the showpieces how long the move into it takes, in ms.
  */
-export type Stop = number | { readonly p: number; readonly ms: number }
+export type Stop = number | { readonly p: number; readonly ms?: number; readonly gate?: boolean }
 export const stopP = (stop: Stop) => (typeof stop === 'number' ? stop : stop.p)
+/** A gate holds the film: a gesture never carries past it (the other stops are soft). */
+export const isGate = (stop: Stop) => typeof stop !== 'number' && !!stop.gate
 /** `data-stops` on the section: "0.14 0.78:3500" (p, or p:ms for a showpiece). */
-export const stopsAttr = (stops?: readonly Stop[]) => stops?.map(stop => (typeof stop === 'number' ? String(stop) : `${stop.p}:${stop.ms}`)).join(' ')
+export const stopsAttr = (stops?: readonly Stop[]) =>
+  stops?.map(stop => (typeof stop === 'number' ? String(stop) : `${stop.p}${stop.ms ? `:${stop.ms}` : ''}${stop.gate ? '!' : ''}`)).join(' ')
 
 /**
  * Each chapter: how long it stays pinned (`len`, in screens), how far its
@@ -69,7 +72,12 @@ export interface Chapter {
 
 /**
  * Proof first (storyboard-v2, section 2): the brands, then the real
- * photographs, then the story. 23 stops (stepper-contract.md):
+ * photographs, then the story. 23 stops (stepper-contract.md). Eight are
+ * gates (gate: true), one per chapter after the hero, on the frame that
+ * carries its message (the owner's 5 to 8 hard blocks, film diagnosis of
+ * 17fe3e4): a gesture is spent there and never carries past one. The others
+ * are soft: still the only frames the film rests on, but a quick swipe, or
+ * input during a move, carries the film on through them to the next gate.
  * - hero: at rest.
  * - brands: the wall lit, the title, the figure and the actions (the hero's
  *   push and the wave are the move into it, a showpiece).
@@ -89,14 +97,14 @@ export interface Chapter {
  */
 export const CHAPTERS: readonly Chapter[] = [
   { id: 'hero', title: 'Advertising that gets you noticed.', len: 1.4, rest: 0, still: 0, stops: [0], dur: 1.5 },
-  { id: 'brands', title: 'Brands stay for years.', len: 1.6, over: 0, rest: 0.5, stops: [{ p: 0.5, ms: 2500 }], dur: 2.5 },
-  { id: 'work', title: 'Seen on real streets.', len: 4.5, over: 0, rest: 0.06, stops: [0.06, 0.2, 0.34, 0.48, 0.62, 0.8], dur: 8 },
-  { id: 'brief', title: 'It starts with a photo.', len: 2.6, over: 0, rest: 0.57, stops: [0.4, 0.57], dur: 6 },
-  { id: 'workshop', title: 'Made in our own workshop.', len: 2.7, over: 0, rest: 0.66, stops: [0.37, 0.66], dur: 4.5 },
-  { id: 'road', title: 'Then it goes out on the road.', len: 3.2, over: 0, rest: 0.14, stops: [0.14, { p: 0.78, ms: 3500 }], dur: 5 },
-  { id: 'hills', title: 'From the plains to the hills.', len: 3.2, over: 0, rest: 0.8, stops: [0.17, { p: 0.8, ms: 3000 }], dur: 5 },
-  { id: 'junction', title: 'Shopfronts, walls, vehicles, events.', len: 3.4, over: 0, rest: 0.8, stops: [0.13, 0.25, 0.37, 0.49, 0.6, 0.8], dur: 9 },
-  { id: 'finale', title: 'Your name is next.', len: 2.1, over: 0, rest: 0.72, stops: [0.72], dur: 3 },
+  { id: 'brands', title: 'Brands stay for years.', len: 1.6, over: 0, rest: 0.5, stops: [{ p: 0.5, ms: 2500, gate: true }], dur: 2.5 },
+  { id: 'work', title: 'Seen on real streets.', len: 4.5, over: 0, rest: 0.06, stops: [0.06, 0.2, 0.34, 0.48, 0.62, { p: 0.8, gate: true }], dur: 8 },
+  { id: 'brief', title: 'It starts with a photo.', len: 2.6, over: 0, rest: 0.57, stops: [0.4, { p: 0.57, gate: true }], dur: 6 },
+  { id: 'workshop', title: 'Made in our own workshop.', len: 2.7, over: 0, rest: 0.66, stops: [0.37, { p: 0.66, gate: true }], dur: 4.5 },
+  { id: 'road', title: 'Then it goes out on the road.', len: 3.2, over: 0, rest: 0.14, stops: [0.14, { p: 0.78, ms: 3500, gate: true }], dur: 5 },
+  { id: 'hills', title: 'From the plains to the hills.', len: 3.2, over: 0, rest: 0.8, stops: [0.17, { p: 0.8, ms: 3000, gate: true }], dur: 5 },
+  { id: 'junction', title: 'Shopfronts, walls, vehicles, events.', len: 3.4, over: 0, rest: 0.8, stops: [0.13, 0.25, 0.37, 0.49, 0.6, { p: 0.8, gate: true }], dur: 9 },
+  { id: 'finale', title: 'Your name is next.', len: 2.1, over: 0, rest: 0.72, stops: [{ p: 0.72, gate: true }], dur: 3 },
 ]
 
 export function chapter(id: ChapterId): Chapter {

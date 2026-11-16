@@ -150,9 +150,8 @@
 .story.drv-play .film .ch .stage { opacity: 0; }
 .story.drv-play .film .ch.cur .stage { opacity: 1; }
 .story.drv-play .film .ch:not(.live) .stage { visibility: hidden; }
-/* The stages beside the one shown (.cur) stay rendered and composited at
-   opacity 0, so a move never starts in the frame that reveals one. */
-.story.drv-play .film .ch.live .stage { will-change: opacity; }
+/* The stages beside the one shown (.cur) stay rendered (styled and laid out)
+   at opacity 0, so a move never starts in the frame that makes one visible. */
 /* A playing chapter is never skipped, so its animations exist when the move starts. */
 .story.drv-play .film .ch.live { content-visibility: visible; }
 /* The stepper (story.ts) owns the film's scrolling once every listener is
@@ -843,6 +842,22 @@
   mask-image: radial-gradient(ellipse calc(var(--rx, 10) * 1%) calc(var(--ry, 5) * 1%) at calc(var(--x, 50) * 1%) calc(var(--y, 50) * 1%), #000 34%, transparent 100%);
   transition: opacity 480ms ease;
 }
+/* Each light is a small sprite: its box is its ellipse's, not the whole plate,
+   with the lit plate sized and offset so it still registers (a twentieth of
+   the raster of a full-plate window). --sx --sy --srx --sry: the ellipse in
+   percent of the plate (tall art; the wide art below). */
+.film .lamp:not(.h-lit) {
+  --sx: var(--x, 50); --sy: var(--y, 50); --srx: var(--rx, 10); --sry: var(--ry, 5);
+  inset: auto;
+  left: calc((var(--sx) - var(--srx)) * 1%);
+  top: calc((var(--sy) - var(--sry)) * 1%);
+  width: calc(var(--srx) * 2%);
+  height: calc(var(--sry) * 2%);
+  background-size: calc(5000% / var(--srx)) calc(5000% / var(--sry));
+  background-position: calc((var(--sx) - var(--srx)) / (100 - 2 * var(--srx)) * 100%) calc((var(--sy) - var(--sry)) / (100 - 2 * var(--sry)) * 100%);
+  -webkit-mask-image: radial-gradient(closest-side, #000 34%, transparent 100%);
+  mask-image: radial-gradient(closest-side, #000 34%, transparent 100%);
+}
 /* Once every group is on, the whole lit plate settles in over them, and the
    windows leave rendering once it is in (twelve masked layers less). */
 .film .lamp.h-lit { -webkit-mask-image: none; mask-image: none; transition-duration: 900ms; }
@@ -891,10 +906,7 @@
 @media (min-width: 1024px) and (min-aspect-ratio: 5/4) {
   .film .hills { --lit: var(--lit-w); }
   .film .hills-cam { --oxw: 87.83; --oyw: 50.32; --bx: .8783; --by: .5032; --fyw: .5; }
-  .film .lamp {
-    -webkit-mask-image: radial-gradient(ellipse calc(var(--rxw, var(--rx)) * 1%) calc(var(--ryw, var(--ry)) * 1%) at calc(var(--xw, var(--x)) * 1%) calc(var(--yw, var(--y)) * 1%), #000 34%, transparent 100%);
-    mask-image: radial-gradient(ellipse calc(var(--rxw, var(--rx)) * 1%) calc(var(--ryw, var(--ry)) * 1%) at calc(var(--xw, var(--x)) * 1%) calc(var(--yw, var(--y)) * 1%), #000 34%, transparent 100%);
-  }
+  .film .lamp:not(.h-lit) { --sx: var(--xw, var(--x)); --sy: var(--yw, var(--y)); --srx: var(--rxw, var(--rx)); --sry: var(--ryw, var(--ry)); }
   .film .h-sky { -webkit-mask-image: linear-gradient(180deg, transparent 0, #000 14%, #000 25%, transparent 33%); mask-image: linear-gradient(180deg, transparent 0, #000 14%, #000 25%, transparent 33%); }
   .film .h-board { --lw: 86; --tw: 49.2; --ww: 3.65; --hw: 2.23; }
   .film .h-veil { background: linear-gradient(180deg, color-mix(in srgb, #001D39 70%, transparent) 0, transparent 22%), linear-gradient(90deg, color-mix(in srgb, #021522 55%, transparent) 0, transparent 40%), linear-gradient(0deg, color-mix(in srgb, #03100E 80%, transparent) 0, transparent 26%); }

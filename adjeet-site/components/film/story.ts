@@ -43,7 +43,7 @@ export type StopStory = () => void
 
 type Beat = { b: HTMLElement; at: number; off: number; on: boolean; cta: boolean; pl: boolean }
 type Stack = HTMLElement & { t?: number }
-type Stop = { p: number; ms: number }
+type Stop = { p: number; ms: number; gate: boolean }
 type Chapter = {
   el: HTMLElement; id: string; i: number; st: HTMLElement; rest: number; dur: number; stops: Stop[]; beats: Beat[]
   marks: number[]; top: number; pin: number; H: number; ld?: boolean; was?: boolean; near?: boolean; ok?: boolean
@@ -51,8 +51,9 @@ type Chapter = {
   /** The p its keyframes are seated on (NaN while a move plays them). */
   sp?: number
 }
-/** A rest in page pixels, its chapter and p; ms: a showpiece's own duration for the move into it. */
-type Rest = { y: number; ms: number; c: Chapter; p: number }
+/** A rest in page pixels, its chapter and p; ms: a showpiece's own duration
+    for the move into it; gate: a gesture is spent there and never carries past it. */
+type Rest = { y: number; ms: number; c: Chapter; p: number; gate: boolean }
 /** One chapter's part of a move: p from a to b over ms. */
 type Seg = { c: Chapter; a: number; b: number; ms: number }
 
@@ -60,8 +61,11 @@ const clamp = (v: number, a: number, b: number) => Math.max(a, Math.min(b, v))
 /** A move's ease (sine in and out), and its inverse for the beats' times. */
 const ease = (x: number) => (1 - Math.cos(Math.PI * x)) / 2
 const unease = (f: number) => Math.acos(1 - 2 * clamp(f, 0, 1)) / Math.PI
+/** The ease for the rest of a move that was carried on (it is already at speed). */
+const easeOut = (x: number) => Math.sin((Math.PI * x) / 2)
+const uneaseOut = (f: number) => (2 * Math.asin(clamp(f, 0, 1))) / Math.PI
 /** Rate changes along a move: the compositor holds each until the next. */
-const SLICES = 6
+const SLICES = 10
 /** An ordinary move takes 0.8 to 1.6 s (a showpiece sets its own). */
 const MOVE_MIN = 800
 const MOVE_MAX = 1600
@@ -89,8 +93,11 @@ export function startStory(film: HTMLElement): StopStory {
       el, id: el.id, i, st, beats, marks,
       rest: parseFloat(el.dataset.rest ?? ''),
       dur: (parseFloat(el.dataset.dur ?? '') || 4) * 1000,
-      // "0.14 0.78:3500": a stop's p, and a showpiece's duration.
-      stops: (el.dataset.stops || '').split(' ').filter(Boolean).map(s => { const [p, ms] = s.split(':'); return { p: +p, ms: +ms || 0 } }),
+      // "0.14 0.78:3500!": a stop's p, a showpiece's duration, and "!" for a gate.
+      stops: (el.dataset.stops || '').split(' ').filter(Boolean).map(s => {
+        const [p, ms] = s.replace('!', '').split(':')
+        return { p: +p, ms: +ms || 0, gate: s.endsWith('!') }
+      }),
       top: 0, pin: 1, H: 1,
     }
   })
@@ -142,7 +149,7 @@ export function startStory(film: HTMLElement): StopStory {
       c.pin = Math.max(1, c.el.offsetHeight - c.H)
     }
     R = []
-    for (const c of C) for (const s of c.stops) R.push({ y: at(c, s.p), ms: s.ms, c, p: s.p })
+    for (const c of C) for (const s of c.stops) R.push({ y: at(c, s.p), ms: s.ms, c, p: s.p, gate: s.gate })
     R.sort((a, b) => a.y - b.y)
     frame()
   }
@@ -226,6 +233,10 @@ export function startStory(film: HTMLElement): StopStory {
   const last = () => (R.length ? R[R.length - 1].y : 0)
   /** The header's, the rail's and the dock's view of the film: chapter c at progress pr. */
   const mark = (now: Chapter | null, pr: number) => {
+    // Nothing on <html> changes during a move: a class or an attribute there
+    // restyles the whole page, and the header's and dock's tone transitions
+    // would run on the main thread. The move's end writes them all at once.
+    if (moving) return
     let tone: string | undefined
     if (now) {
       const s = now.st.dataset
@@ -307,59 +318,103 @@ export function startStory(film: HTMLElement): StopStory {
     return { c, p: clamp((y - c.top) / c.pin, 0, 1) }
   }
 
+  /** The chapter part playing now: it can be carried on to a further p. */
+  type Play = { c: Chapter; a: number; now: () => number; extend: (b: number, ms: number) => boolean }
+  let playing: Play | null = null
+
   /** Plays one chapter from a to b over ms, eased, and calls done once its
       keyframes reach b by their own clamp. Each animation's timing is set to
       the stretch [a, b] (iterationStart, iterations, and direction "reverse"
       going back, so the rate stays positive), and the speed follows the ease
       by a few rate changes; the compositor carries each until the next, so a
       late timer never stops the picture. `fresh`: the stage was just shown or
-      woken, so the play waits two frames for it to be composited first. */
+      woken, so the play waits two frames for it to be composited first.
+      Input during the move can carry it on to a further p in the same
+      direction (extend): the stretch grows, and the rest of it eases out. */
   const play = (s: Seg, done: () => void, fresh: boolean) => {
-    const { c, a, b, ms } = s
+    const { c, a } = s
+    let b = s.b
+    let ms = s.ms
     const fwd = b > a
     if (!c.near) { c.near = true; c.el.classList.add('near'); c.an = null; c.sp = undefined; fresh = true }
     // .rev: the chapter plays backwards (film.css: the hills' lights go out together).
     c.el.classList.toggle('rev', !fwd)
+    const mine = new Set<number>()
+    const lt = (f: () => void, t: number) => {
+      const id = window.setTimeout(() => { mine.delete(id); timers.delete(id); f() }, t)
+      mine.add(id)
+      timers.add(id)
+    }
+    const drop = () => { for (const id of mine) { clearTimeout(id); timers.delete(id) } mine.clear() }
+    let list: Animation[] = []
+    let started = false
+    let over = false
+    const finish = () => {
+      if (over) return
+      over = true
+      drop()
+      if (playing === handle) playing = null
+      c.sp = b
+      beats(c, b)
+      done()
+    }
+    /** Rates and beats from progress x to b over t ms, along a shape. */
+    const plan = (x: number, t: number, shape: (u: number) => number, inv: (f: number) => number) => {
+      const span = Math.abs(b - x)
+      const base = (span * 1000) / t
+      const rate = (k: number) => Math.max(0.02, base * SLICES * (shape((k + 1) / SLICES) - shape(k / SLICES)))
+      for (const y of list) y.updatePlaybackRate(rate(0))
+      for (let k = 1; k < SLICES; k++) lt(() => { for (const y of list) y.updatePlaybackRate(rate(k)) }, (t * k) / SLICES)
+      // Every mark crossed fires once, at its place in the eased move, in order.
+      for (const m of c.marks) {
+        if (fwd ? !(m > x && m <= b) : !(m > b && m <= x)) continue
+        const after = fwd ? m : m - 1e-4
+        lt(() => { beats(c, after); mark(c, after) }, inv(Math.abs(m - x) / span) * t)
+      }
+      // A safety net, should the clamp never be reached.
+      lt(finish, list.length ? t * 1.5 + 400 : t)
+    }
     const start = () => {
-      const list = anims(c)
-      const lo = Math.min(a, b)
-      const span = Math.abs(b - a)
-      const base = (span * 1000) / ms
-      const rate = (k: number) => Math.max(0.02, base * SLICES * (ease((k + 1) / SLICES) - ease(k / SLICES)))
+      list = anims(c)
       for (const x of list) {
         x.pause()
-        x.effect?.updateTiming({ iterationStart: lo, iterations: span, direction: fwd ? 'normal' : 'reverse' })
+        x.effect?.updateTiming({ iterationStart: Math.min(a, b), iterations: Math.abs(b - a), direction: fwd ? 'normal' : 'reverse' })
         x.currentTime = 0
-        x.playbackRate = rate(0)
+        x.playbackRate = 1
         x.play()
       }
       c.sp = NaN
-      for (let k = 1; k < SLICES; k++) later(() => { for (const x of list) x.updatePlaybackRate(rate(k)) }, (ms * k) / SLICES)
-      // Every mark crossed fires once, at its place in the eased move, in order.
-      for (const m of c.marks) {
-        if (fwd ? !(m > a && m <= b) : !(m > b && m <= a)) continue
-        const after = fwd ? m : m - 1e-4
-        later(() => { beats(c, after); mark(c, after) }, unease(Math.abs(m - a) / span) * ms)
-      }
-      let over = false
-      const finish = () => {
-        if (over) return
-        over = true
-        c.sp = b
-        beats(c, b)
-        done()
-      }
+      started = true
       if (list.length) list[0].finished.then(finish, () => undefined)
-      // A safety net, should the clamp never be reached.
-      later(finish, list.length ? ms * 1.5 + 400 : ms)
+      plan(a, ms, ease, unease)
     }
+    const now = () => {
+      if (!started || !list.length) return a
+      const t = Number(list[0].currentTime) || 0
+      return clamp(fwd ? a + t / 1000 : a - t / 1000, Math.min(a, b), Math.max(a, b))
+    }
+    const handle: Play = {
+      c, a, now,
+      extend: (b2, t) => {
+        if (over || (b2 - a) * (b - a) <= 0) return false
+        if (!started) { b = b2; ms = t; return true }
+        const x = now()
+        drop()
+        b = b2
+        for (const y of list) y.effect?.updateTiming({ iterationStart: Math.min(a, b), iterations: Math.abs(b - a) })
+        plan(x, t, easeOut, uneaseOut)
+        return true
+      },
+    }
+    playing = handle
     if (fresh) requestAnimationFrame(() => requestAnimationFrame(start))
     else start()
   }
 
   /** The move from where the page is to a rest, as a list of chapter parts. */
-  const route = (r: Rest) => {
+  const route = (r: Rest, fromP?: number) => {
     const from = where(scrollY)
+    if (fromP !== undefined) from.p = fromP
     const i = from.c.i
     const j = r.c.i
     const segs: Array<Omit<Seg, 'ms'>> = []
@@ -382,45 +437,95 @@ export function startStory(film: HTMLElement): StopStory {
     return { segs: segs.map((s, k) => ({ ...s, jump: jumps[k] })).filter(s => Math.abs(s.b - s.a) > 1e-4 || s.jump !== null) }
   }
 
+  /** The move under way, which input in its direction can carry on. */
+  let mv: { dir: number; r: Rest; extend: (r2: Rest) => void } | null = null
+
   /** One timed move to a rest. It holds where it is (a stop, or the
       handoff light) until every chapter it plays has its pictures decoded,
-      4 s at most, then plays the chapters in turn and lands on the stop. */
-  const go = (r: Rest, ms?: number) => {
+      4 s at most, then plays the chapters in turn and lands on the stop.
+      `fromP`: the move starts from that p of the chapter on screen (the work
+      wall let go between two stops). */
+  const go = (r: Rest, ms?: number, fromP?: number) => {
     if (moving) return
     moving = true
     // data-film-moving: for tools and tests (nothing styles it): "hold" while
     // the pictures decode, "play" while the move plays.
     h.setAttribute('data-film-moving', 'hold')
     clearTimeout(settleT)
-    const { segs } = route(r)
-    const base = segs.map(s => Math.abs(s.b - s.a) * s.c.dur)
-    const sum = base.reduce((x, y) => x + y, 0)
-    const own = ms === undefined ? r.ms : ms
-    const total = own || clamp(sum, MOVE_MIN, MOVE_MAX)
-    const parts: Array<Seg & { jump: number | null }> = segs.map((s, k) => ({ ...s, ms: sum ? (base[k] / sum) * total : total / segs.length }))
+    let target = r
+    const timed = (segs: ReturnType<typeof route>['segs'], own: number) => {
+      const base = segs.map(s => Math.abs(s.b - s.a) * s.c.dur)
+      const sum = base.reduce((x, y) => x + y, 0)
+      const total = own || clamp(sum, MOVE_MIN, MOVE_MAX)
+      return { scale: sum ? total / sum : 1, parts: segs.map((s, k) => ({ ...s, ms: sum ? (base[k] / sum) * total : total / segs.length })) }
+    }
+    const first = timed(route(r, fromP).segs, ms === undefined ? r.ms : ms)
+    let parts: Array<Seg & { jump: number | null }> = first.parts
+    const scale = first.scale
+    let k = -1
     const ks = [...new Set(parts.map(s => s.c))]
-    for (const k of ks) load(k)
+    for (const c of ks) load(c)
     live([...new Set([...around(where(scrollY).c), ...ks])])
     let ready = false
     Promise.race([
-      Promise.all(ks.flatMap(k => (k.im || []).map(i => i.decode().catch(() => undefined)))),
+      Promise.all(ks.flatMap(c => (c.im || []).map(i => i.decode().catch(() => undefined)))),
       new Promise(done => setTimeout(done, 4000)),
     ]).then(() => { ready = true })
     const asked = performance.now()
+    const dir = Math.sign(r.y - scrollY) || 1
+    // Input during the move carries it on to a further stop, never past a gate.
+    const extend = (r2: Rest) => {
+      const segs2 = route(r2, k <= 0 ? fromP : undefined).segs
+      if (k < 0) {
+        // Still holding for pictures: the plan is simply longer.
+        parts = timed(segs2, r2.ms).parts
+      } else {
+        const cur = parts[k]
+        const lead = segs2[0]
+        if (!cur || !lead || lead.c !== cur.c || Math.abs(lead.a - cur.a) > 1e-6 || !playing || playing.c !== cur.c) return
+        const x = playing.now()
+        const rest = segs2.slice(1)
+        const base = [Math.abs(lead.b - x) * cur.c.dur, ...rest.map(s => Math.abs(s.b - s.a) * s.c.dur)]
+        const sum = base.reduce((p, q) => p + q, 0)
+        const total = clamp(sum * scale, 500, r2.ms || MOVE_MAX)
+        const lms = sum ? (base[0] / sum) * total : total
+        if (!playing.extend(lead.b, Math.max(200, lms))) return
+        parts = [...parts.slice(0, k), { ...cur, b: lead.b, ms: lms }, ...rest.map((s, n) => ({ ...s, ms: sum ? (base[n + 1] / sum) * total : 0 }))]
+        for (const c of rest.map(s => s.c)) { load(c); c.el.classList.add('live') }
+      }
+      target = r2
+      mv!.r = r2
+    }
+    mv = { dir, r, extend }
     const wait = () => {
       // Before the page has loaded a chapter may not have started loading: wait for it too.
-      if (!ready || (ks.some(k => k !== C[0] && !k.ok) && performance.now() - asked < 4000)) { later(wait, 50); return }
+      if (!ready || (ks.some(c => c !== C[0] && !c.ok) && performance.now() - asked < 4000)) { later(wait, 50); return }
       h.setAttribute('data-film-moving', 'play')
       next(0)
     }
-    const next = (k: number) => {
-      if (k === parts.length) {
+    const next = (n: number) => {
+      k = n
+      if (n === parts.length) {
+        // The move ends once the compositor has drawn its last frame (two frames on).
+        requestAnimationFrame(() => requestAnimationFrame(land))
+        return
+      }
+      const s = parts[n]
+      let fresh = false
+      if (s.jump !== null) { jump(s.jump); seat(s.c, s.a); beats(s.c, s.a); mark(s.c, s.a); fresh = true }
+      if (!s.c.el.classList.contains('cur')) { show(s.c); fresh = true }
+      if (s.ms < 1 || Math.abs(s.b - s.a) < 1e-4) { next(n + 1); return }
+      play(s, () => next(n + 1), fresh)
+    }
+    const land = () => {
+      {
         // The rest is the stop; the page jumps to its place, and nothing is re-seated.
-        restC = r.c
-        restP = r.p
-        jump(r.y)
-        live(around(r.c))
-        show(r.c)
+        mv = null
+        restC = target.c
+        restP = target.p
+        jump(target.y)
+        live(around(target.c))
+        show(target.c)
         for (const c of C) c.el.classList.remove('rev')
         moving = false
         h.removeAttribute('data-film-moving')
@@ -428,20 +533,29 @@ export function startStory(film: HTMLElement): StopStory {
         tick()
         // A chapter that came near during the move is seated (0 or 1) once the frame has run.
         requestAnimationFrame(() => requestAnimationFrame(seatAll))
-        return
       }
-      const s = parts[k]
-      let fresh = false
-      if (s.jump !== null) { jump(s.jump); seat(s.c, s.a); beats(s.c, s.a); mark(s.c, s.a); fresh = true }
-      if (!s.c.el.classList.contains('cur')) { show(s.c); fresh = true }
-      if (s.ms < 1 || Math.abs(s.b - s.a) < 1e-4) { next(k + 1); return }
-      play(s, () => next(k + 1), fresh)
     }
     wait()
   }
-  /** The next stop in a direction, from where the page is (stateless). */
+  /** Carries the move under way on by n stops in its direction, up to the next gate. */
+  const carry = (dir: number, n: number) => {
+    if (!mv || mv.dir !== dir || mv.r.gate) return
+    let i = R.indexOf(mv.r)
+    let r2 = mv.r
+    for (let k = 0; k < n; k++) {
+      const nx = R[i + dir]
+      if (!nx) break
+      i += dir
+      r2 = nx
+      if (nx.gate) break
+    }
+    if (r2 !== mv.r) mv.extend(r2)
+  }
+  /** The next stop in a direction, from where the page is (stateless); during
+      a move, the move is carried on instead. */
   const step = (dir: number) => {
-    if (moving || !R.length) return
+    if (moving) { carry(dir, 1); return }
+    if (!R.length) return
     const y = scrollY
     if (dir > 0) {
       const r = R.find(r => r.y > y + 2)
@@ -486,27 +600,37 @@ export function startStory(film: HTMLElement): StopStory {
     const gap = t - wT
     // Only events made after the move count towards re-arming (a busy page
     // can hand over a burst late, stamped with when it was made).
-    grow = !moving && t > ended && abs >= wAbs ? grow + 1 : 0
-    if (!moving && !armed && t > ended) {
+    grow = abs >= wAbs ? grow + 1 : 0
+    // A new gesture (not a trackpad's tail) arms again, after a move or during one.
+    if (!armed && (moving || t > ended)) {
       if (dir !== wDir || gap > 600 || (gap >= 150 && abs >= wAbs) || grow >= 3) armed = true
     }
     if (dir !== wDir) acc = 0
     wDir = dir
     wT = t
     wAbs = abs
-    if (moving || !armed) return
+    if (!armed) return
     acc += dy
     if (Math.abs(acc) >= 40) { armed = false; acc = 0; grow = 0; step(dir) }
   }
 
   /* Touch: the first move past 24 px that is more vertical than horizontal
-     fires one step and the gesture is spent. No finger-follow. The browser's
-     own pan is cancelled from the first cancelable move. */
-  let g: { x: number; y: number; done: boolean; nat: boolean } | null = null
+     fires one step. A finger that keeps going carries the move on by a stop
+     each 110 px, and a quick swipe carries it on to the next gate; never past
+     one. In the work chapter the wall follows the finger between its first
+     stop and its gate, and is let go to a stop. The browser's own pan is
+     cancelled from the first cancelable move. */
+  type Touch = {
+    x: number; y: number; done: boolean; nat: boolean; dir: number; at: number; ext: number
+    q: Array<[number, number]>; follow?: { p0: number; k: number; p: number }
+  }
+  let g: Touch | null = null
+  const work = C.find(c => c.id === 'work')
+  const workStops = () => R.filter(r => r.c === work)
   const onStart = (e: TouchEvent) => {
     g = null
     if (e.touches.length !== 1 || skip(e.target)) return
-    g = { x: e.touches[0].clientX, y: e.touches[0].clientY, done: false, nat: false }
+    g = { x: e.touches[0].clientX, y: e.touches[0].clientY, done: false, nat: false, dir: 0, at: 0, ext: 0, q: [[e.timeStamp, e.touches[0].clientY]] }
   }
   const onMove = (e: TouchEvent) => {
     if (!g || g.nat || e.touches.length !== 1) return
@@ -514,18 +638,82 @@ export function startStory(film: HTMLElement): StopStory {
     const dy = g.y - e.touches[0].clientY
     const y = scrollY
     const end = last()
+    g.q.push([e.timeStamp, e.touches[0].clientY])
+    if (g.q.length > 6) g.q.shift()
     if (!g.done && !moving) {
       // Past the last stop, or at it and going on down: the page's own scroll.
       if (y > end + 2 || (y >= end - 2 && dy > 0)) { g.nat = true; return }
       if (y >= end - 2 && dy === 0) return
     }
     if (e.cancelable) e.preventDefault()
-    if (g.done || moving) return
-    if (Math.abs(dy) > 24 && Math.abs(dy) > Math.abs(dx)) { g.done = true; step(Math.sign(dy)) }
+    if (g.follow) {
+      const f = g.follow
+      const ws = workStops()
+      f.p = clamp(f.p0 + dy / f.k, ws[0].p, ws[ws.length - 1].p)
+      seat(work!, f.p)
+      beats(work!, f.p)
+      mark(work!, f.p)
+      return
+    }
+    if (g.done) {
+      // The same finger going on: one more stop each 110 px.
+      if (moving && g.dir && Math.sign(dy) === g.dir && Math.abs(dy) - g.at > 110 * (g.ext + 1)) { g.ext++; carry(g.dir, 1) }
+      return
+    }
+    if (Math.abs(dy) > 24 && Math.abs(dy) > Math.abs(dx)) {
+      g.done = true
+      g.dir = Math.sign(dy)
+      g.at = Math.abs(dy)
+      // The work wall at rest between its first stop and its gate: under the finger.
+      const ws = workStops()
+      if (!moving && work && restC === work && onRest() && ws.length > 1 && !(g.dir < 0 && restP <= ws[0].p + 1e-6) && !(g.dir > 0 && restP >= ws[ws.length - 1].p - 1e-6)) {
+        const wall = work.el.querySelector<HTMLElement>('.w-rise')
+        const travel = wall ? wall.offsetHeight - work.H : 0
+        if (travel > 0) {
+          // The wall rises over 6 to 78% of the chapter (film.css, work-rise): 1 px of finger, 1 px of wall.
+          g.follow = { p0: restP, k: travel / 0.72, p: restP }
+          return
+        }
+      }
+      step(g.dir)
+    }
     else if (Math.abs(dx) > 24) g.done = true
   }
-  // A native pan that brought the page back up into the film lands on the last stop.
-  const onEnd = () => { g = null; if (past && !moving && scrollY < last() - 2) settle() }
+  /** The finger's speed at the end, px per ms (down the page is positive). */
+  const speed = (t: Touch) => {
+    const a = t.q[0]
+    const b = t.q[t.q.length - 1]
+    return b[0] > a[0] ? (a[1] - b[1]) / (b[0] - a[0]) : 0
+  }
+  const onEnd = () => {
+    const t = g
+    g = null
+    if (t?.follow) {
+      // Let go: on to the stop the wall is heading for (a flick carries it further), never past the gate.
+      const f = t.follow
+      const v = speed(t) / f.k
+      const aim = clamp(f.p + v * 300, workStops()[0].p, workStops()[workStops().length - 1].p)
+      const ws = workStops()
+      let r2 = ws.reduce((a, b) => (Math.abs(b.p - aim) < Math.abs(a.p - aim) ? b : a), ws[0])
+      if (Math.abs(v) > 0.0004 && Math.sign(r2.p - f.p) !== Math.sign(v)) r2 = (v > 0 ? ws.find(r => r.p > f.p) : [...ws].reverse().find(r => r.p < f.p)) || r2
+      // A quick flick goes on to the end of the wall that way (the gate, or the first stop).
+      if (Math.abs(speed(t)) > 1.0) r2 = v > 0 ? ws[ws.length - 1] : ws[0]
+      // A drag of more than 40 px always goes on to the next stop its way.
+      const moved = (f.p - f.p0) * f.k
+      if (Math.abs(moved) > 40 && (r2.p - f.p0) * Math.sign(moved) <= 1e-6) {
+        r2 = (moved > 0 ? ws.find(r => r.p > f.p0 + 1e-6) : [...ws].reverse().find(r => r.p < f.p0 - 1e-6)) || r2
+      }
+      go(r2, 0, f.p)
+      return
+    }
+    if (t?.done && moving && t.dir) {
+      // A quick swipe carries the move on to the next gate.
+      const v = Math.abs(speed(t))
+      if (Math.sign(speed(t)) === t.dir) { if (v > 1.0) carry(t.dir, Infinity); else if (v > 0.55) carry(t.dir, 1) }
+    }
+    // A native pan that brought the page back up into the film lands on the last stop.
+    if (past && !moving && scrollY < last() - 2) settle()
+  }
 
   /* Keys go through the same step and lock. */
   const onKey = (e: KeyboardEvent) => {
