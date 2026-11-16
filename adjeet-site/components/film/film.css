@@ -845,6 +845,9 @@
 .film .h-lamps { position: absolute; inset: 0; }
 .story .film .hills-cam:has(> .h-lit.on) > .h-lamps { visibility: hidden; transition: visibility 0s linear 950ms; }
 :root:not(.story) .film .h-lamps { display: none; }
+/* Going back the lights go out together with the lit plate: bringing a dozen
+   masked windows back at once cost a slow device seconds of frames. */
+.story .film .ch.rev .h-lamps { visibility: hidden; }
 .story .film .lamp[style*="--at"]:not(.on) { opacity: 0; }
 
 /* The ridge board's own light, brightening as the camera arrives. */

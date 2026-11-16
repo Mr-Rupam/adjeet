@@ -18,11 +18,15 @@ async function open(page: Page, url = '/') {
     // When the page last scrolled, for the time a move takes from the first input to rest.
     // The player does not scroll during a move: it marks <html> with
     // data-film-moving, and jumps the page to the stop at the end.
-    const w = window as unknown as { __last: number }
+    // __play: when the last move started to play (after any hold for pictures).
+    const w = window as unknown as { __last: number; __play: number }
     w.__last = 0
+    w.__play = 0
     addEventListener('scroll', () => { w.__last = performance.now() }, { passive: true, capture: true })
-    document.addEventListener('DOMContentLoaded', () => new MutationObserver(() => { w.__last = performance.now() })
-      .observe(document.documentElement, { attributes: true, attributeFilter: ['data-film-moving'] }))
+    document.addEventListener('DOMContentLoaded', () => new MutationObserver(() => {
+      w.__last = performance.now()
+      if (document.documentElement.getAttribute('data-film-moving') === 'play') w.__play = w.__last
+    }).observe(document.documentElement, { attributes: true, attributeFilter: ['data-film-moving'] }))
   })
   await page.goto(url, { waitUntil: 'load' })
   await page.locator('html.stepper[data-film-ch]').waitFor({ state: 'attached' })
@@ -70,7 +74,9 @@ async function rest(page: Page, timeout = 12000) {
     const s = await page.evaluate(() => ({ y: scrollY, last: (window as unknown as { __last: number }).__last, now: performance.now(), moving: document.documentElement.hasAttribute('data-film-moving') }))
     const moved = (s.last > from || Date.now() - start > 5000) && !s.moving
     // A rest is quiet for 600 ms, and on a stop or past the last one (a pause inside a move is not a rest).
-    if (moved && s.now - s.last >= 600 && (await onStop(page) || Date.now() - start > timeout - 2000)) return { y: s.y, last: s.last }
+    if (moved && s.now - s.last >= 600 && (await onStop(page) || Date.now() - start > timeout - 2000)) {
+      return { y: s.y, last: s.last, play: await page.evaluate(() => (window as unknown as { __play: number }).__play) }
+    }
     if (Date.now() - start > timeout) throw new Error(`no rest within ${timeout} ms (at ${s.y})`)
     await page.waitForTimeout(100)
   }
@@ -137,11 +143,13 @@ for (const [device, use] of [['phone', PHONE], ['desktop', DESK]] as const) {
         await gesture(page, 1)
         const r = await rest(page)
         expect(Math.abs(r.y - R[i].y), `down to ${R[i].id} ${R[i].p}`).toBeLessThanOrEqual(2)
-        const took = r.last - t0
-        // Data-driven durations: an ordinary move 0.8 to 1.6 s, a showpiece its own ms
-        // (with 0.9 s for the input, the timers and a hold for pictures).
-        expect(took, `move to ${R[i].id} ${R[i].p}`).toBeGreaterThanOrEqual(750)
-        expect(took, `move to ${R[i].id} ${R[i].p}`).toBeLessThanOrEqual((R[i].ms || 1600) + 900)
+        // Data-driven durations: the move plays 0.8 to 1.6 s, or a showpiece's own
+        // ms (with 0.5 s for timers that fire late on a busy page); before it, a hold while the next
+        // pictures decode is 4 s at most (the contract's gate).
+        const played = r.last - r.play
+        expect(played, `move to ${R[i].id} ${R[i].p}`).toBeGreaterThanOrEqual(R[i].ms ? R[i].ms - 100 : 750)
+        expect(played, `move to ${R[i].id} ${R[i].p}`).toBeLessThanOrEqual((R[i].ms || 1600) + 500)
+        expect(r.play - t0, `hold before ${R[i].id} ${R[i].p}`).toBeLessThanOrEqual(4300)
         const check = await atRest(page)
         expect(check, `${R[i].id} ${R[i].p}`).toEqual({ off: [], running: 0 })
         visited.push(r.y)
@@ -152,7 +160,8 @@ for (const [device, use] of [['phone', PHONE], ['desktop', DESK]] as const) {
         await gesture(page, -1)
         const r = await rest(page)
         expect(Math.abs(r.y - visited[i]), `up to ${R[i].id} ${R[i].p}`).toBeLessThanOrEqual(2)
-        expect(r.last - t0, `up to ${R[i].id} ${R[i].p}`).toBeLessThanOrEqual((R[i + 1].ms || 1600) + 900)
+        expect(r.last - r.play, `up to ${R[i].id} ${R[i].p}`).toBeLessThanOrEqual((R[i + 1].ms || 1600) + 500)
+        expect(r.play - t0, `hold before ${R[i].id} ${R[i].p}`).toBeLessThanOrEqual(4300)
       }
     })
 
@@ -172,7 +181,7 @@ for (const [device, use] of [['phone', PHONE], ['desktop', DESK]] as const) {
       expect(await y(page)).toBe(below)
       if (device === 'phone') await swipe(page, below - end + 300, 1200)
       // Wheel up until the stepper takes over (one gesture, however long it takes the page to answer).
-      else for (let i = 0; i < 20 && await y(page) > end + 2; i++) { await wheel(page, -100); await page.waitForTimeout(30) }
+      else for (let i = 0; i < 20 && await y(page) > end + 2 && !(await page.evaluate(() => document.documentElement.hasAttribute('data-film-moving'))); i++) { await wheel(page, -100); await page.waitForTimeout(30) }
       expect(Math.abs((await rest(page)).y - end)).toBeLessThanOrEqual(2)
     })
 

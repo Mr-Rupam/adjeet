@@ -180,7 +180,12 @@ export function startStory(film: HTMLElement): StopStory {
   const anims = (c: Chapter) => {
     // A chapter the browser is still skipping (content-visibility) has none
     // yet, so an empty list is never kept.
-    if (!c.an?.length) c.an = c.el.getAnimations({ subtree: true }).filter(a => 'animationName' in a)
+    // Only the film's keyframes (.cam, .tl, .pl): a loading shimmer, a light's
+    // own loop or the Malda days that run on by themselves keep their time.
+    if (!c.an?.length) {
+      c.an = c.el.getAnimations({ subtree: true }).filter(a => 'animationName' in a && !(a.effect as KeyframeEffect | null)?.pseudoElement
+        && !!((a.effect as KeyframeEffect | null)?.target as Element | null)?.matches?.('.cam, .tl, .pl'))
+    }
     return c.an
   }
   const seat = (c: Chapter, p: number) => {
@@ -275,6 +280,8 @@ export function startStory(film: HTMLElement): StopStory {
     if (!c.near) { c.near = true; c.el.classList.add('near'); c.an = null }
     const list = anims(c)
     const rate = ((b - a) * 1000) / ms
+    // .rev: the chapter plays backwards (film.css: the hills' lights go out together).
+    c.el.classList.toggle('rev', b < a)
     for (const x of list) { x.pause(); x.currentTime = a * 1000; x.playbackRate = rate; x.play() }
     // Every mark crossed fires once, at its place in the move, in order.
     const fwd = b > a
@@ -285,6 +292,7 @@ export function startStory(film: HTMLElement): StopStory {
     }
     later(() => {
       for (const x of list) { x.pause(); x.currentTime = b * 1000; x.playbackRate = 1 }
+      c.el.classList.remove('rev')
       beats(c, b)
       done()
     }, ms)
@@ -321,8 +329,9 @@ export function startStory(film: HTMLElement): StopStory {
   const go = (r: Rest, ms?: number) => {
     if (moving) return
     moving = true
-    // data-film-moving: for tools and tests (nothing styles it).
-    h.setAttribute('data-film-moving', '')
+    // data-film-moving: for tools and tests (nothing styles it): "hold" while
+    // the pictures decode, "play" while the move plays.
+    h.setAttribute('data-film-moving', 'hold')
     clearTimeout(settleT)
     const { segs } = route(r)
     const base = segs.map(s => Math.abs(s.b - s.a) * s.c.dur)
@@ -342,6 +351,7 @@ export function startStory(film: HTMLElement): StopStory {
     const wait = () => {
       // Before the page has loaded a chapter may not have started loading: wait for it too.
       if (!ready || (ks.some(k => k !== C[0] && !k.ok) && performance.now() - asked < 4000)) { later(wait, 50); return }
+      h.setAttribute('data-film-moving', 'play')
       next(0)
     }
     const next = (k: number) => {
@@ -547,7 +557,7 @@ export function startStory(film: HTMLElement): StopStory {
     if (pr < p - 0.001 || pr > 1) requestAnimationFrame(() => goto(c, Math.min(1, p)))
   }
 
-  const stopMove = () => { for (const t of timers) clearTimeout(t); timers.clear(); moving = false; h.removeAttribute('data-film-moving') }
+  const stopMove = () => { for (const t of timers) clearTimeout(t); timers.clear(); for (const c of C) c.el.classList.remove('rev'); moving = false; h.removeAttribute('data-film-moving') }
   const onResize = () => {
     if (moving) stopMove()
     measure()
