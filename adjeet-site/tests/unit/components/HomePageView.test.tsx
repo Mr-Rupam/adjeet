@@ -22,6 +22,13 @@ describe('storefront homepage', () => {
     expect(ids).toEqual(['hero-section', 'selected-work', 'client-history', 'services', 'how-it-works', 'areas'])
   })
 
+  it('shows the client board with no note about regional agencies', () => {
+    // The owner took that note off /for-brands and then off this board on 16 November 2026.
+    const board = render().querySelector('#client-history')!
+    expect(board.querySelector('h2')?.textContent).toBe('Names you know.Work you can see.')
+    expect(board.textContent).not.toMatch(/regional agenc/i)
+  })
+
   it('names the trade and the town under a strong headline, in one line', () => {
     const doc = render()
     expect(doc.querySelector('h1')?.textContent).toBe('Advertising that gets you noticed.')

@@ -136,7 +136,7 @@ describe('/for-brands', () => {
       expect(existsSync(path.join(process.cwd(), 'public', brand.logo)), brand.logo).toBe(true)
       expect(doc.querySelector(`img[alt="${brand.name}"]`), brand.name).not.toBeNull()
     }
-    // The owner took the agency note off this page on 16 November 2026; the home page's client board keeps its own.
+    // The owner took the agency note off this page, and then off the home page's client board, on 16 November 2026.
     expect(text).not.toContain('regional agencies')
   })
 
