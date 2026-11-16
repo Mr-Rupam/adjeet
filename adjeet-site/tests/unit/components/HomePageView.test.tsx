@@ -135,7 +135,7 @@ describe('home page: the film, then the questions', () => {
   it('declares the stepper stops on every chapter, with the showpiece durations', () => {
     const doc = render()
     expect(doc.querySelector('#hero')?.getAttribute('data-stops')).toBe('0')
-    expect(doc.querySelector('#brands')?.getAttribute('data-stops')).toBe('0.5:3000')
+    expect(doc.querySelector('#brands')?.getAttribute('data-stops')).toBe('0.5:2500')
     expect(doc.querySelector('#work')?.getAttribute('data-stops')).toMatch(/^0\.06 /)
     for (const chapter of CHAPTERS) {
       expect(doc.querySelector(`#${chapter.id}`)?.getAttribute('data-stops') ?? undefined, chapter.id).toBe(stopsAttr(chapter.stops))

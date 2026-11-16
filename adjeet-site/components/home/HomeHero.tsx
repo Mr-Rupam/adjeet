@@ -161,6 +161,7 @@ export function HomeHero() {
       data-title={railLabel(entry)}
       data-rest={entry.rest}
       data-stops={stopsAttr(entry.stops)}
+      data-dur={entry.dur}
       aria-labelledby="home-heading"
     >
       <div className="stage hero-stage" data-tone="page" data-tone-at=".78" data-tone-late="light">

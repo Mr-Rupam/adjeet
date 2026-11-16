@@ -49,15 +49,20 @@ export function FilmHills() {
           wide={ART.hillsWideDark}
           alt="Visualisation: blue hour over North Bengal, from tea gardens and a river town on the plain, up a winding road to a hill town on a ridge, with snow peaks above. The lights of the towns come on from the plain to the hills"
         />
-        <i className="h-sky" aria-hidden="true" />
-        {LAMPS.map(([x, y, rx, ry, xw, yw, rxw, ryw], index) => (
-          <i
-            key={HILLS.places[index]}
-            className="lamp"
-            aria-hidden="true"
-            style={vars({ '--x': x, '--y': y, '--rx': rx, '--ry': ry, '--xw': xw, '--yw': yw, '--rxw': rxw, '--ryw': ryw, '--at': placeAt(index) })}
-          />
-        ))}
+        {/* The lights, one soft window each on to the lit plate. Once the
+            whole lit plate is in (.h-lit) they leave rendering: a dozen masked
+            layers cost a slow device seconds of raster. */}
+        <div className="h-lamps">
+          <i className="h-sky" aria-hidden="true" />
+          {LAMPS.map(([x, y, rx, ry, xw, yw, rxw, ryw], index) => (
+            <i
+              key={HILLS.places[index]}
+              className="lamp"
+              aria-hidden="true"
+              style={vars({ '--x': x, '--y': y, '--rx': rx, '--ry': ry, '--xw': xw, '--yw': yw, '--rxw': rxw, '--ryw': ryw, '--at': placeAt(index) })}
+            />
+          ))}
+        </div>
         <i className="lamp h-lit" aria-hidden="true" style={vars({ '--at': 0.75 })} />
         {/* Depth for the push into the ridge board (planes.tsx). */}
         <Planes stack={PLANES.hills} at={0.845} />
@@ -66,19 +71,15 @@ export function FilmHills() {
       </div>
       <i className="h-veil tl" aria-hidden="true" />
 
+      {/* The places come on with their lights, plains first, and stay: one
+          list in two columns under the title, every place the same size. */}
       <div className="card hills-card tl">
         <h2 id="hills-h" className="fade" style={vars({ '--at': 0.1 })}>{chapter('hills').title}</h2>
         <p className="fade" style={vars({ '--at': 0.13 })}>{HILLS.line}</p>
-      </div>
-
-      <div className="h-names tl">
-        <p className="h-now" aria-hidden="true">
-          {HILLS.places.map((place, index) => <span key={place} style={vars({ '--at': placeAt(index) })}>{place}</span>)}
-        </p>
-        <div className="h-all fade" style={vars({ '--at': 0.76 })}>
-          <ul className="h-list" aria-label={HILLS.listLabel}>{HILLS.places.map(place => <li key={place}>{place}</li>)}</ul>
-          <Link className="quiet" href={HILLS.link.href}>{HILLS.link.label}</Link>
-        </div>
+        <ul className="h-list" aria-label={HILLS.listLabel}>
+          {HILLS.places.map((place, index) => <li key={place} className="fade" style={vars({ '--at': placeAt(index) })}>{place}</li>)}
+        </ul>
+        <Link className="quiet h-link fade" href={HILLS.link.href} style={vars({ '--at': 0.72 })}>{HILLS.link.label}</Link>
       </div>
 
       <i className="h-wash h-white tl" aria-hidden="true" />

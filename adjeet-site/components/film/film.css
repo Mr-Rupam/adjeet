@@ -137,6 +137,20 @@
   animation-play-state: paused;
   animation-delay: calc(var(--p) * -1s);
 }
+/* The player (story.ts): once the stepper runs, the keyframes are paused
+   one-second animations that each move plays from one stop to the next on
+   the compositor. Only the playing chapters' stages are rendered (.live); a
+   stage shows once its chapter is pinned. */
+.story.drv-play .film :is(.cam, .tl, .pl) {
+  animation-duration: 1s;
+  animation-timing-function: linear;
+  animation-fill-mode: both;
+  animation-play-state: paused;
+}
+.story.drv-play .film .ch.pin .stage { opacity: 1; }
+.story.drv-play .film .ch:not(.live) .stage { visibility: hidden; }
+/* A playing chapter is never skipped, so its animations exist when the move starts. */
+.story.drv-play .film .ch.live { content-visibility: visible; }
 /* The stepper (story.ts) owns the film's scrolling once every listener is
    attached: the browser keeps pinch zoom but not the pan, and no bounce or
    pull-to-refresh fights a move. At and past the last stop (.step-end) the
@@ -275,6 +289,8 @@
 /* .lit-all: a whole lit plate (an img.f-plate) that fades in over 1s at its
    beat, to finish a lights sequence. */
 .film .lit-all { transition: opacity 1s ease; }
+/* Once the whole lit plate is in, the light windows under it leave rendering. */
+.story .film .ch:has(.lit-all.on) .light { visibility: hidden; transition: visibility 0s linear 1050ms; }
 .story .film .lit-all[style*="--at"]:not(.on) { opacity: 0; }
 .story .film .fade[style*="--at"] { transition: opacity var(--beat) ease, transform 700ms var(--ease); }
 .story .film .fade[style*="--at"]:not(.on) { opacity: 0; transform: translateY(14px); }
@@ -823,8 +839,12 @@
   mask-image: radial-gradient(ellipse calc(var(--rx, 10) * 1%) calc(var(--ry, 5) * 1%) at calc(var(--x, 50) * 1%) calc(var(--y, 50) * 1%), #000 34%, transparent 100%);
   transition: opacity 480ms ease;
 }
-/* Once every group is on, the whole lit view settles in under them. */
-.film .lamp.h-lit { -webkit-mask-image: linear-gradient(180deg, transparent 0, #000 30%); mask-image: linear-gradient(180deg, transparent 0, #000 30%); transition-duration: 900ms; }
+/* Once every group is on, the whole lit plate settles in over them, and the
+   windows leave rendering once it is in (twelve masked layers less). */
+.film .lamp.h-lit { -webkit-mask-image: none; mask-image: none; transition-duration: 900ms; }
+.film .h-lamps { position: absolute; inset: 0; }
+.story .film .hills-cam:has(> .h-lit.on) > .h-lamps { visibility: hidden; transition: visibility 0s linear 950ms; }
+:root:not(.story) .film .h-lamps { display: none; }
 .story .film .lamp[style*="--at"]:not(.on) { opacity: 0; }
 
 /* The ridge board's own light, brightening as the camera arrives. */
@@ -841,7 +861,7 @@
 .film .h-veil {
   position: absolute; inset: 0; z-index: 2; pointer-events: none;
   background:
-    linear-gradient(180deg, color-mix(in srgb, #001B31 70%, transparent) 0, transparent 30%),
+    linear-gradient(180deg, color-mix(in srgb, #001B31 78%, transparent) 0, color-mix(in srgb, #001B31 55%, transparent) 30%, transparent 46%),
     linear-gradient(0deg, color-mix(in srgb, #03100E 88%, transparent) 0, color-mix(in srgb, #03100E 55%, transparent) 20%, transparent 34%);
   animation-name: hills-veil;     /* rises with the land, so the chapter opens on flat night */
 }
@@ -849,17 +869,10 @@
 .film .hills-card { top: clamp(92px, 11.5cqh, 120px); max-width: 600px; animation-name: hills-out; }
 @keyframes hills-out { 0%, 83% { opacity: 1; } 88%, 100% { opacity: 0; } }
 
-.film .h-names { position: absolute; z-index: 5; left: var(--gutter); right: calc(var(--gutter) + 52px); bottom: calc(var(--bar) + 30px); max-width: 560px; color: #F4EDDF; animation-name: hills-out; }
-.film .h-now { position: absolute; left: 0; bottom: 0; height: 1.1em; width: 100%; margin: 0; font-family: var(--f-head); font-weight: 600; font-size: clamp(30px, min(8.4cqw, 4.4cqh), 52px); line-height: 1.05; letter-spacing: -.02em; }
-.film .h-now span { position: absolute; left: 0; bottom: 0; white-space: nowrap; transition: opacity 360ms ease, transform 460ms var(--ease); }
-.story .film .h-now span:not(.on) { opacity: 0; transform: translateY(10px); }
-.story .film .h-now span.on:has(~ span.on) { opacity: 0; transform: translateY(-10px); }
-.story .film .h-names:has(.h-all.on) .h-now { opacity: 0; transition: opacity 300ms ease; }
-:root:not(.story) .film .h-now { display: none; }
-.film .h-all .h-list { display: flex; flex-wrap: wrap; max-width: 46ch; margin: 0; padding: 0; list-style: none; font-size: 15px; line-height: 1.55; color: color-mix(in srgb, #F4EDDF 88%, transparent); }
-.film .h-list li:not(:last-child)::after { content: ","; margin-right: .35em; }
-.film .h-list li:last-child::after { content: "."; }
-.film .h-all .quiet { margin-top: 6px; color: #F4EDDF; }
+/* The places: a list in two columns under the title, filled down the first
+   column first (plains first), every name the same size and weight. */
+.film .h-list { display: grid; grid-auto-flow: column; grid-template-rows: repeat(6, auto); gap: 2px 22px; justify-content: start; margin: 12px 0 0; padding: 0; list-style: none; font-size: 18px; line-height: 1.25; color: #F4EDDF; }
+.film .h-link { display: flex; width: max-content; min-height: 36px; margin-top: 4px; color: #F4EDDF; }
 
 .film .h-wash { position: absolute; inset: 0; z-index: 9; pointer-events: none; opacity: 0; }
 .film .h-white { background: var(--light-white, #FFF8E7); animation-name: hills-white; }
@@ -881,8 +894,7 @@
   .film .hills-card { top: 11cqh; right: auto; width: 70cqw; max-width: none; }
   .film .hills-card h2 { font-size: min(5.6cqh, 3.8cqw); }
   .film .hills-card p { margin-top: 8px; }
-  .film .h-names { right: auto; width: min(42cqw, 600px); bottom: 7cqh; }
-  .film .h-all .h-list { font-size: 17px; }
+  .film .h-list { font-size: 22px; gap: 4px 32px; }
 }
 
 /* ===== ch5-junction.css ===== */
@@ -1449,7 +1461,7 @@
 @keyframes hero-flash { 0%, 82% { opacity: 0; } 96%, 100% { opacity: 1; } }
 
 /* ===== Words pinned to a stage's bottom edge clear the consent banner ===== */
-.film :is(.ws-line, .h-names, .j-caps, .fin-acts) { translate: 0 var(--consent-up); }
+.film :is(.ws-line, .j-caps, .fin-acts) { translate: 0 var(--consent-up); }
 
 /* ===== The chapter rail (prototype engine/shell.css) =====
    Short ticks on the right edge, the current one longer. Shown only while a

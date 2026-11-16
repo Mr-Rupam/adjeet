@@ -40,7 +40,7 @@ export function Chapter({ id, stage, tone, toneAt, toneLate, stageStyle, childre
   if (entry.over !== undefined) style['--over'] = entry.over
   if (entry.still !== undefined) style['--still'] = entry.still
   return (
-    <section className="ch" id={id} style={vars(style)} data-title={railLabel(entry)} data-rest={entry.rest} data-stops={stopsAttr(entry.stops)} aria-labelledby={`${id}-h`}>
+    <section className="ch" id={id} style={vars(style)} data-title={railLabel(entry)} data-rest={entry.rest} data-stops={stopsAttr(entry.stops)} data-dur={entry.dur} aria-labelledby={`${id}-h`}>
       <div className={`stage ${stage}`} data-tone={tone} data-tone-at={toneAt} data-tone-late={toneLate} style={stageStyle}>
         {children}
       </div>

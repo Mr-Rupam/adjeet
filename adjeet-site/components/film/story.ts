@@ -5,26 +5,35 @@
  * fits the visitor's name to every board, and writes the current chapter and
  * its tone on <html> for the header, the rail and the dock.
  *
- * The stepper (stepper-contract.md) is its input layer, for every driver. A
- * gesture is an intent, never a distance: one swipe, one wheel gesture or one
- * key press moves the page to the next stop (a chapter's `data-stops`), in a
- * timed, eased move that is the same for everyone; input during a move is
- * ignored, and the film rests only on stops. The page scroll stays the single
- * source of truth, so the scenes' keyframes, anchors and restored positions
- * work as before. Past the last stop the page scrolls natively.
+ * The stepper (stepper-contract.md) is its input layer: a gesture is an
+ * intent, never a distance. One swipe, one wheel gesture or one key press
+ * moves the film to the next stop (a chapter's `data-stops`); input during a
+ * move is ignored, and the film rests only on stops.
  *
- * Drivers: the native scroll timelines drive the keyframes, or the
- * requestAnimationFrame driver feeds `--p` where the browser has none.
+ * The player. A move does not scroll the page. Each chapter's keyframes are
+ * paused one-second animations (`drv-play`); a move from stop a to stop b over
+ * T ms sets every animation's time to a, its rate to (b - a) / T and plays it,
+ * so transforms and opacity run on the compositor with no script per frame.
+ * Beats fire from timers at their place in the move, each once. The page
+ * scroll is the source of truth between moves: at the end of a move (and at
+ * the flat light where one chapter hands over to the next) the page jumps to
+ * the stop's place, so anchors, the rail, restored positions and the native
+ * scroll after the film work as before. Only the playing chapters' stages are
+ * rendered.
  *
- * `startStory` returns its teardown: every listener removed and everything it
- * set on <html> taken off, so leaving the page and coming back starts clean.
+ * Before the engine starts, and with no stepper, the native scroll timelines
+ * (or the requestAnimationFrame driver) drive the same keyframes.
+ *
+ * `startStory` returns its teardown: every listener and timer removed and
+ * everything it set on <html> taken off, so leaving the page and coming back
+ * starts clean.
  */
 
 import { DEFAULT_SHOP_NAME, SHOP_NAME_MAX } from '@/content/shop-name'
 
 /** Classes and attributes the film sets on <html>. */
-export const FILM_ROOT_CLASSES = ['story', 'drv-native', 'drv-js', 'stepper', 'step-end', 'settled', 'has-cta'] as const
-export const FILM_ROOT_ATTRIBUTES = ['data-film-ch', 'data-film-tone'] as const
+export const FILM_ROOT_CLASSES = ['story', 'drv-native', 'drv-js', 'drv-play', 'stepper', 'step-end', 'settled', 'has-cta'] as const
+export const FILM_ROOT_ATTRIBUTES = ['data-film-ch', 'data-film-tone', 'data-film-moving'] as const
 /** Session storage only: the name never leaves the device. */
 export const NAME_KEY = 'adj-name'
 /** Elements whose own scrolling the stepper leaves alone. */
@@ -36,14 +45,19 @@ type Beat = { b: HTMLElement; at: number; off: number; on: boolean; cta: boolean
 type Stack = HTMLElement & { t?: number }
 type Stop = { p: number; ms: number }
 type Chapter = {
-  el: HTMLElement; id: string; st: HTMLElement; rest: number; stops: Stop[]; beats: Beat[]
-  top: number; pin: number; H: number; ld?: boolean; was?: boolean; near?: boolean; ok?: boolean; im?: HTMLImageElement[]
+  el: HTMLElement; id: string; i: number; st: HTMLElement; rest: number; dur: number; stops: Stop[]; beats: Beat[]
+  marks: number[]; top: number; pin: number; H: number; ld?: boolean; was?: boolean; near?: boolean; ok?: boolean
+  im?: HTMLImageElement[]; an?: Animation[] | null
 }
-/** A rest in page pixels; ms: the showpiece's own duration for the move into it. */
-type Rest = { y: number; ms: number; c: Chapter }
+/** A rest in page pixels, its chapter and p; ms: a showpiece's own duration for the move into it. */
+type Rest = { y: number; ms: number; c: Chapter; p: number }
+/** One chapter's part of a move: p from a to b over ms. */
+type Seg = { c: Chapter; a: number; b: number; ms: number }
 
-const ease = (k: number) => (k < 0.5 ? 4 * k * k * k : 1 - Math.pow(2 - 2 * k, 3) / 2)
 const clamp = (v: number, a: number, b: number) => Math.max(a, Math.min(b, v))
+/** An ordinary move takes 0.8 to 1.6 s (a showpiece sets its own). */
+const MOVE_MIN = 800
+const MOVE_MAX = 1600
 
 export function startStory(film: HTMLElement): StopStory {
   const d = document
@@ -51,20 +65,28 @@ export function startStory(film: HTMLElement): StopStory {
   const all = <T extends Element = HTMLElement>(s: string, e: ParentNode = film) => [...e.querySelectorAll<T>(s)]
   const story = h.classList.contains('story')
   const js = h.classList.contains('drv-js')
-  // The stepper runs with the film; reduced motion and still mode have neither.
+  // The stepper and the player run with the film; reduced motion and still mode have neither.
   const on = story
+  const touch = matchMedia('(pointer: coarse)').matches
   // Beats are written inline, so they are read from the style attribute: no style recalculation.
   const num = (e: HTMLElement, k: string) => parseFloat(e.style.getPropertyValue(k))
-  const C: Chapter[] = all('.ch').map(el => ({
-    el, id: el.id, st: el.querySelector<HTMLElement>('.stage')!,
-    rest: parseFloat(el.dataset.rest ?? ''),
-    // "0.14 0.78:3500": a stop's p, and a showpiece's duration.
-    stops: (el.dataset.stops || '').split(' ').filter(Boolean).map(s => { const [p, ms] = s.split(':'); return { p: +p, ms: +ms || 0 } }),
-    beats: all('[style*="--at"]', el).map(b => ({
+  const C: Chapter[] = all('.ch').map((el, i) => {
+    const st = el.querySelector<HTMLElement>('.stage')!
+    const beats = all('[style*="--at"]', el).map(b => ({
       b, at: num(b, '--at') || 0, off: num(b, '--off') || 9, on: false, cta: !!b.querySelector('.cta'), pl: b.classList.contains('planes'),
-    })),
-    top: 0, pin: 1, H: 1,
-  }))
+    }))
+    // Every p where something changes on screen besides the keyframes: beats, tones, .settled.
+    const marks = [...new Set([0.06, ...beats.flatMap(t => [t.at, t.off]), ...(st.dataset.toneAt || '').split(' ').filter(Boolean).map(Number)])]
+      .filter(x => x > 0 && x <= 1)
+    return {
+      el, id: el.id, i, st, beats, marks,
+      rest: parseFloat(el.dataset.rest ?? ''),
+      dur: (parseFloat(el.dataset.dur ?? '') || 4) * 1000,
+      // "0.14 0.78:3500": a stop's p, and a showpiece's duration.
+      stops: (el.dataset.stops || '').split(' ').filter(Boolean).map(s => { const [p, ms] = s.split(':'); return { p: +p, ms: +ms || 0 } }),
+      top: 0, pin: 1, H: 1,
+    }
+  })
   const rail = all<HTMLAnchorElement>('.rail a')
   let raf = 0
   let cur: Chapter | null | undefined
@@ -72,15 +94,18 @@ export function startStory(film: HTMLElement): StopStory {
   let tok = 0
   let idleId = 0
   let R: Rest[] = []
+  const timers = new Set<number>()
+  const later = (f: () => void, ms: number) => { const t = window.setTimeout(() => { timers.delete(t); f() }, ms); timers.add(t) }
 
-  /* Depth planes: fetched only in the film, never with Save-Data; the hero's
-     only once the page has loaded and gone idle. .ready once all decoded. */
+  /* Depth planes: fetched only in the film, never with Save-Data or on a
+     touch screen (for now: a phone's frames go to the scenes); the hero's only
+     once the page has loaded and gone idle. .ready once all decoded. */
   const WIDE = matchMedia('(min-width: 1024px) and (min-aspect-ratio: 5/4)')
   const save = !!(navigator as Navigator & { connection?: { saveData?: boolean } }).connection?.saveData
   const planes = (c?: Chapter) => {
     // Never under the requestAnimationFrame driver: there the planes cost more
     // frames than they add depth, so the flat plate does every move.
-    if (!story || js || save || !c || (c === C[0] && !idle)) return
+    if (!story || js || touch || save || !c || (c === C[0] && !idle)) return
     for (const s of all<Stack>('.planes', c.el)) {
       if (s.t) continue
       const k = WIDE.matches ? 'srcw' : 'src'
@@ -88,12 +113,12 @@ export function startStory(film: HTMLElement): StopStory {
       const t = (s.t = ++tok)
       const imgs = all<HTMLImageElement>('.pl', s)
       for (const i of imgs) i.src = (n && i.dataset[k + 'N']) || i.dataset[k] || ''
-      Promise.all(imgs.map(i => i.decode())).then(() => { if (s.t === t) s.classList.add('ready') }, () => {})
+      Promise.all(imgs.map(i => i.decode())).then(() => { if (s.t === t) { s.classList.add('ready'); c.an = null } }, () => {})
     }
   }
   const reset = () => {
     for (const s of all<Stack>('.planes')) { s.t = 0; s.classList.remove('ready') }
-    for (const c of C) if (c.ld) planes(c)
+    for (const c of C) { c.an = null; if (c.ld) planes(c) }
   }
 
   /* A stop's place on the page: a pixel past the exact frame, so a beat that
@@ -110,7 +135,7 @@ export function startStory(film: HTMLElement): StopStory {
       c.pin = Math.max(1, c.el.offsetHeight - c.H)
     }
     R = []
-    for (const c of C) for (const s of c.stops) R.push({ y: at(c, s.p), ms: s.ms, c })
+    for (const c of C) for (const s of c.stops) R.push({ y: at(c, s.p), ms: s.ms, c, p: s.p })
     R.sort((a, b) => a.y - b.y)
     frame()
   }
@@ -134,49 +159,43 @@ export function startStory(film: HTMLElement): StopStory {
       .then(() => { c.ok = true })
   }
 
+  /* Beats: on from --at until --off. */
   const beats = (c: Chapter, pr: number) => {
+    let changed = false
     for (const t of c.beats) {
-      const on = story ? (t.on ? pr >= t.at - 0.015 : pr >= t.at) && pr < t.off : true
+      const on = story ? pr >= t.at && pr < t.off : true
       if (on !== t.on) {
         t.on = on
+        changed = true
         // A stack that is not ready when its move begins sits this pass out.
         if (on && t.pl) t.b.classList.toggle('late', !t.b.classList.contains('ready'))
         t.b.classList.toggle('on', on)
       }
     }
+    return changed
+  }
+
+  /* The chapter's CSS animations (only on a chapter that is near: film.css),
+     each set to the frame for progress p and paused. */
+  const anims = (c: Chapter) => {
+    // A chapter the browser is still skipping (content-visibility) has none
+    // yet, so an empty list is never kept.
+    if (!c.an?.length) c.an = c.el.getAnimations({ subtree: true }).filter(a => 'animationName' in a)
+    return c.an
+  }
+  const seat = (c: Chapter, p: number) => {
+    if (!h.classList.contains('drv-play')) return
+    for (const a of anims(c)) { a.pause(); a.currentTime = clamp(p, 0, 1) * 1000 }
   }
 
   /* Root attributes are written only when they change. */
   const set = (k: string, v: string) => { if (h.getAttribute(k) !== v) h.setAttribute(k, v) }
   const last = () => (R.length ? R[R.length - 1].y : 0)
-
-  const frame = () => {
-    raf = 0
-    const y = scrollY
-    let now: Chapter | null = null
+  /** The header's, the rail's and the dock's view of the film: chapter c at progress pr. */
+  const mark = (now: Chapter | null, pr: number) => {
     let tone: string | undefined
-    for (let i = 0; i < C.length; i++) {
-      const c = C[i]
-      const r = y - c.top
-      const pr = r / c.pin
-      const p = Math.min(1, Math.max(0, pr))
-      if (r >= 0) now = c
-      const near = r > -2 * c.H && r < c.pin + c.H
-      c.el.classList.toggle('pin', story ? r >= 0 && r < c.pin + c.H : true)
-      // Scroll-bound animations exist only on chapters near the screen (film.css).
-      if (near !== c.near) { c.near = near; c.el.classList.toggle('near', near) }
-      if (!near && !c.was) continue
-      c.was = near
-      if (story && js) c.el.style.setProperty('--p', p.toFixed(4))
-      if (near) { load(c); if (r >= 0) { load(C[i + 1]); load(C[i + 2]) } }
-      beats(c, pr)
-    }
-    const end = C[C.length - 1]
-    if (now === end && y - end.top > end.pin + end.H * 0.5) now = null
-    let pr = 1
     if (now) {
       const s = now.st.dataset
-      pr = (y - now.top) / now.pin
       tone = s.tone
       const marks = (s.toneAt || '').split(' ')
       const late = (s.toneLate || '').split(' ')
@@ -185,20 +204,56 @@ export function startStory(film: HTMLElement): StopStory {
     set('data-film-ch', now ? now.id : 'after')
     set('data-film-tone', tone || 'page')
     // .settled: past the first moments of a chapter (its light handoff);
-    // .has-cta: a gold action of the chapter's own is showing;
-    // .step-end: at or past the last stop, where the page scrolls natively.
-    h.classList.toggle('settled', pr >= 0.06)
+    // .has-cta: a gold action of the chapter's own is showing.
+    h.classList.toggle('settled', !now || pr >= 0.06)
     h.classList.toggle('has-cta', !!now && now.beats.some(t => t.on && t.cta))
-    if (on) h.classList.toggle('step-end', y >= last() - 2)
     if (now !== cur) {
       cur = now
       for (const a of rail) a.toggleAttribute('aria-current', !!now && a.hash === '#' + now.id)
     }
   }
+
+  /* Live: the chapters whose stages are rendered (film.css). At rest, the one
+     on screen; during a move, the ones it plays. */
+  const live = (ks: Chapter[]) => { for (const c of C) c.el.classList.toggle('live', ks.includes(c)) }
+
+  const frame = () => {
+    raf = 0
+    const y = scrollY
+    let now: Chapter | null = null
+    for (let i = 0; i < C.length; i++) {
+      const c = C[i]
+      const r = y - c.top
+      const pr = r / c.pin
+      const p = Math.min(1, Math.max(0, pr))
+      if (r >= 0) now = c
+      const near = r > -2 * c.H && r < c.pin + c.H
+      c.el.classList.toggle('pin', story ? r >= 0 && r < c.pin + c.H : true)
+      // Scroll-bound animations exist only on chapters near the screen (film.css);
+      // under the player a chapter that comes near is seated on its frame.
+      if (near !== c.near) {
+        c.near = near
+        c.el.classList.toggle('near', near)
+        c.an = null
+        if (near && !moving) requestAnimationFrame(() => { if (!moving) seat(c, (scrollY - c.top) / c.pin) })
+      }
+      if (!near && !c.was) continue
+      c.was = near
+      if (story && js && !h.classList.contains('drv-play')) c.el.style.setProperty('--p', p.toFixed(4))
+      if (near) { load(c); if (r >= 0) { load(C[i + 1]); load(C[i + 2]) } }
+      if (!moving) beats(c, pr)
+    }
+    const end = C[C.length - 1]
+    if (now === end && y - end.top > end.pin + end.H * 0.5) now = null
+    if (!moving) {
+      mark(now, now ? (y - now.top) / now.pin : 1)
+      if (h.classList.contains('drv-play')) live(now ? [now] : [])
+    }
+    if (on) h.classList.toggle('step-end', y >= last() - 2)
+  }
   const tick = () => { if (!raf) raf = requestAnimationFrame(frame) }
 
-  /* ---------- The stepper ---------- */
-  let move = 0 // the tween's frame request, while a move runs (the lock)
+  /* ---------- The player ---------- */
   let moving = false
   let ended = 0 // when the last move ended
   let past = false // the page went below the last stop
@@ -207,43 +262,106 @@ export function startStory(film: HTMLElement): StopStory {
   const nearest = (y: number) => R.reduce((a, b) => (Math.abs(b.y - y) < Math.abs(a.y - y) ? b : a), R[0])
   // The page is in the stepper's hands up to the last stop.
   const inFilm = (y: number) => y <= last() + 2
+  /** The chapter on top at a scroll position, and its progress. */
+  const where = (y: number) => {
+    let c = C[0]
+    for (const k of C) if (k.top <= y + 0.5) c = k
+    return { c, p: clamp((y - c.top) / c.pin, 0, 1) }
+  }
+
+  /** Plays one chapter from a to b over ms; calls done at the end. */
+  const play = (s: Seg, done: () => void) => {
+    const { c, a, b, ms } = s
+    if (!c.near) { c.near = true; c.el.classList.add('near'); c.an = null }
+    const list = anims(c)
+    const rate = ((b - a) * 1000) / ms
+    for (const x of list) { x.pause(); x.currentTime = a * 1000; x.playbackRate = rate; x.play() }
+    // Every mark crossed fires once, at its place in the move, in order.
+    const fwd = b > a
+    for (const m of c.marks) {
+      if (fwd ? !(m > a && m <= b) : !(m > b && m <= a)) continue
+      const after = fwd ? m : m - 1e-4
+      later(() => { beats(c, after); mark(c, after) }, (Math.abs(m - a) / Math.abs(b - a)) * ms)
+    }
+    later(() => {
+      for (const x of list) { x.pause(); x.currentTime = b * 1000; x.playbackRate = 1 }
+      beats(c, b)
+      done()
+    }, ms)
+  }
+
+  /** The move from where the page is to a rest, as a list of chapter parts. */
+  const route = (r: Rest) => {
+    const from = where(scrollY)
+    const i = from.c.i
+    const j = r.c.i
+    const segs: Array<Omit<Seg, 'ms'>> = []
+    // Jumps: [y to jump to before the part] for each part.
+    const jumps: Array<number | null> = []
+    if (i === j) { segs.push({ c: r.c, a: from.p, b: r.p }); jumps.push(null) }
+    else if (j === i + 1) {
+      segs.push({ c: from.c, a: from.p, b: 1 }, { c: r.c, a: 0, b: r.p })
+      jumps.push(null, r.c.top)
+    } else if (j === i - 1) {
+      segs.push({ c: from.c, a: from.p, b: 0 }, { c: r.c, a: 1, b: r.p })
+      // The flat light at the boundary is the same place for both chapters.
+      jumps.push(null, from.c.top)
+    } else {
+      // Further: cut to the target chapter's handoff light, then play into it.
+      const a = j > i ? 0 : 1
+      segs.push({ c: r.c, a, b: r.p })
+      jumps.push(j > i ? r.c.top : r.c.top + r.c.pin)
+    }
+    return { segs: segs.map((s, k) => ({ ...s, jump: jumps[k] })).filter(s => Math.abs(s.b - s.a) > 1e-4 || s.jump !== null) }
+  }
+
   /** One timed move to a rest. It holds where it is (a stop, or the
-      handoff light) until every chapter it passes through has its pictures
-      decoded, 4 s at most: the browser may have dropped a decoded picture it
-      has not shown for a while, and decoding it in the middle of the move
-      would stall the frames. */
+      handoff light) until every chapter it plays has its pictures decoded,
+      4 s at most, then plays the chapters in turn and lands on the stop. */
   const go = (r: Rest, ms?: number) => {
     if (moving) return
     moving = true
-    const a = scrollY
-    const dist = Math.abs(r.y - a)
-    const dur = (ms === undefined ? r.ms : ms) || clamp(550 + (550 * dist) / innerHeight, 700, 2400)
-    const lo = Math.min(a, r.y)
-    const hi = Math.max(a, r.y) + innerHeight
-    const ks = C.filter(k => k.top < hi && k.top + k.pin + k.H > lo)
+    // data-film-moving: for tools and tests (nothing styles it).
+    h.setAttribute('data-film-moving', '')
+    clearTimeout(settleT)
+    const { segs } = route(r)
+    const base = segs.map(s => Math.abs(s.b - s.a) * s.c.dur)
+    const sum = base.reduce((x, y) => x + y, 0)
+    const show = ms === undefined ? r.ms : ms
+    const total = show || clamp(sum, MOVE_MIN, MOVE_MAX)
+    const parts: Array<Seg & { jump: number | null }> = segs.map((s, k) => ({ ...s, ms: sum ? (base[k] / sum) * total : total / segs.length }))
+    const ks = [...new Set(parts.map(s => s.c))]
     for (const k of ks) load(k)
+    live([...new Set([where(scrollY).c, ...ks])])
     let ready = false
     Promise.race([
       Promise.all(ks.flatMap(k => (k.im || []).map(i => i.decode().catch(() => undefined)))),
       new Promise(done => setTimeout(done, 4000)),
     ]).then(() => { ready = true })
     const asked = performance.now()
-    let s = 0
-    const run = (t: number) => {
-      if (!s) {
-        // Before the page has loaded a chapter may not have started loading: wait for it too.
-        if (!ready || (ks.some(k => k !== C[0] && !k.ok) && t - asked < 4000)) { move = requestAnimationFrame(run); return }
-        s = t
-      }
-      const k = Math.min(1, (t - s) / dur)
-      jump(a + (r.y - a) * ease(k))
-      if (k < 1) { move = requestAnimationFrame(run); return }
-      jump(r.y)
-      move = 0
-      moving = false
-      ended = performance.now()
+    const wait = () => {
+      // Before the page has loaded a chapter may not have started loading: wait for it too.
+      if (!ready || (ks.some(k => k !== C[0] && !k.ok) && performance.now() - asked < 4000)) { later(wait, 50); return }
+      next(0)
     }
-    move = requestAnimationFrame(run)
+    const next = (k: number) => {
+      if (k === parts.length) {
+        jump(r.y)
+        live([r.c])
+        moving = false
+        h.removeAttribute('data-film-moving')
+        ended = performance.now()
+        tick()
+        // A chapter that came near during the move is seated once the frame has run.
+        requestAnimationFrame(() => requestAnimationFrame(seatAll))
+        return
+      }
+      const s = parts[k]
+      if (s.jump !== null) { jump(s.jump); seat(s.c, s.a); beats(s.c, s.a); mark(s.c, s.a) }
+      if (s.ms < 1 || Math.abs(s.b - s.a) < 1e-4) { next(k + 1); return }
+      play(s, () => next(k + 1))
+    }
+    wait()
   }
   /** The next stop in a direction, from where the page is (stateless). */
   const step = (dir: number) => {
@@ -290,7 +408,9 @@ export function startStory(film: HTMLElement): StopStory {
     const t = e.timeStamp
     const abs = Math.abs(dy)
     const gap = t - wT
-    grow = abs >= wAbs ? grow + 1 : 0
+    // Only events made after the move count towards re-arming (a busy page
+    // can hand over a burst late, stamped with when it was made).
+    grow = !moving && t > ended && abs >= wAbs ? grow + 1 : 0
     if (!moving && !armed && t > ended) {
       if (dir !== wDir || gap > 600 || (gap >= 150 && abs >= wAbs) || grow >= 3) armed = true
     }
@@ -353,13 +473,17 @@ export function startStory(film: HTMLElement): StopStory {
   const settle = () => {
     settleT = 0
     // data-film-free on <html>: a tool or a test that needs a frame between stops.
-    if (moving || g || !R.length || h.hasAttribute('data-film-free')) return
+    if (moving || g || !R.length) return
+    if (h.hasAttribute('data-film-free')) { seatAll(); return }
     const y = scrollY
     if (!inFilm(y)) return
     if (past) { go(R[R.length - 1]); return }
     const r = nearest(y)
     if (Math.abs(r.y - y) > 2) jump(r.y)
+    else seatAll()
   }
+  /** Every near chapter on its frame for the page's place (after a jump that was not a move). */
+  const seatAll = () => { for (const c of C) if (c.near) seat(c, (scrollY - c.top) / c.pin) }
   const onScroll = () => {
     tick()
     if (!on || moving) return
@@ -396,12 +520,12 @@ export function startStory(film: HTMLElement): StopStory {
   const restOf = (c: Chapter) => (isNaN(c.rest) ? 0 : c.rest)
   const stopIn = (c: Chapter, p: number) => {
     const s = c.stops.find(s => s.p >= p - 0.001) || c.stops[c.stops.length - 1]
-    return R.find(r => r.c === c && s && r.y === at(c, s.p))
+    return R.find(r => r.c === c && s && r.p === s.p)
   }
   const goto = (c: Chapter, p: number, instant = false) => {
     const r = stopIn(c, p)
     if (!r) return jump(at(c, p))
-    if (instant) jump(r.y)
+    if (instant) { jump(r.y); requestAnimationFrame(seatAll) }
     else go(r)
   }
   const byHash = (hash: string) => C.find(c => '#' + c.id === hash)
@@ -423,8 +547,9 @@ export function startStory(film: HTMLElement): StopStory {
     if (pr < p - 0.001 || pr > 1) requestAnimationFrame(() => goto(c, Math.min(1, p)))
   }
 
+  const stopMove = () => { for (const t of timers) clearTimeout(t); timers.clear(); moving = false; h.removeAttribute('data-film-moving') }
   const onResize = () => {
-    if (move) { cancelAnimationFrame(move); move = 0; moving = false }
+    if (moving) stopMove()
     measure()
     fit()
     if (on) settle()
@@ -436,10 +561,15 @@ export function startStory(film: HTMLElement): StopStory {
     idleId = typeof requestIdleCallback === 'function' ? requestIdleCallback(onIdle, { timeout: 3000 }) : window.setTimeout(onIdle, 1500)
   }
   // A theme change lays out the other theme's pictures and swaps the hero's planes.
-  const themes = new MutationObserver(() => requestAnimationFrame(() => { measure(); fit(); reset() }))
+  const themes = new MutationObserver(() => requestAnimationFrame(() => { measure(); fit(); reset(); seatAll() }))
 
   // A chapter the browser had skipped letters its boards once it renders.
-  const onShown = (e: Event) => { if (!(e as Event & { skipped?: boolean }).skipped) fit() }
+  const onShown = (e: Event) => {
+    if ((e as Event & { skipped?: boolean }).skipped) return
+    fit()
+    const c = C.find(c => c.el === e.currentTarget)
+    if (c) { c.an = null; if (!moving) seat(c, (scrollY - c.top) / c.pin) }
+  }
   for (const c of C) c.el.addEventListener('contentvisibilityautostatechange', onShown)
   for (const i of inputs) i.addEventListener('input', onInput)
   d.addEventListener('click', onClick)
@@ -449,8 +579,8 @@ export function startStory(film: HTMLElement): StopStory {
   addEventListener('load', onLoad)
   WIDE.addEventListener('change', reset)
   themes.observe(h, { attributes: true, attributeFilter: ['data-theme'] })
-  let live = true
-  d.fonts?.ready.then(() => { if (live) onResize() })
+  let live0 = true
+  d.fonts?.ready.then(() => { if (live0) onResize() })
 
   measure()
   load(C[0])
@@ -466,22 +596,26 @@ export function startStory(film: HTMLElement): StopStory {
     addEventListener('touchend', onEnd, { passive: true })
     addEventListener('touchcancel', onEnd, { passive: true })
     addEventListener('keydown', onKey)
-    // Last, with every listener in place: take the page's panning away from
-    // the browser (film.css: .stepper). If anything above threw, the class is
-    // never set and the page keeps native scrolling.
-    h.classList.add('stepper')
+    // Last, with every listener in place: the player takes over the
+    // keyframes from the scroll, and the page's panning from the browser
+    // (film.css: .drv-play, .stepper). If anything above threw, neither class
+    // is set and the page keeps native scrolling on the scroll timelines.
+    h.classList.remove('drv-native', 'drv-js')
+    h.classList.add('drv-play', 'stepper')
+    for (const c of C) c.an = null
     frame()
+    seatAll()
   }
   const hash = byHash(location.hash)
   if (hash && story) goto(hash, restOf(hash), true)
   else if (on) settle()
 
   return () => {
-    live = false
+    live0 = false
     if (raf) cancelAnimationFrame(raf)
-    if (move) cancelAnimationFrame(move)
+    stopMove()
     clearTimeout(settleT)
-    for (const c of C) c.el.removeEventListener('contentvisibilityautostatechange', onShown)
+    for (const c of C) { c.el.removeEventListener('contentvisibilityautostatechange', onShown); c.el.classList.remove('live') }
     for (const i of inputs) i.removeEventListener('input', onInput)
     d.removeEventListener('click', onClick)
     d.removeEventListener('focusin', onFocus)

@@ -42,13 +42,13 @@ async function scrollToChapter(page: Page, id: string, p: number, free = false) 
   await page.waitForFunction(() => document.getAnimations().every(animation => !(animation instanceof CSSTransition) || animation.playState !== 'running'), undefined, { timeout: 4000 }).catch(() => {})
 }
 
-/** Waits for a timed move to end: the page has not scrolled for 600 ms. */
+/** Waits for a timed move to end: the player has finished and the page has not scrolled for 600 ms. */
 async function moveEnded(page: Page) {
   let last = await page.evaluate(() => scrollY)
   for (let still = 0, i = 0; still < 6 && i < 120; i++) {
     await page.waitForTimeout(100)
-    const y = await page.evaluate(() => scrollY)
-    still = y === last ? still + 1 : 0
+    const [y, moving] = await page.evaluate(() => [scrollY, document.documentElement.hasAttribute('data-film-moving')] as const)
+    still = y === last && !moving ? still + 1 : 0
     last = y
   }
 }
@@ -223,15 +223,23 @@ test.describe('Home page', () => {
     }
   })
 
-  test('tabbing to a chapter\'s link scrolls the film to where it shows', async ({ page }) => {
+  test('with the keyboard the keys step the film to a chapter and Tab reaches its links', async ({ page }) => {
     await page.setViewportSize({ width: 390, height: 844 })
     await page.goto('/')
     await engineReady(page)
-    for (const [id, selector] of [['brands', '#brands a[href="/for-brands"]'], ['work', '#work a[href="/portfolio"]']] as const) {
-      await page.locator(selector).focus()
-      await page.waitForTimeout(200)
-      await moveEnded(page)
+    await page.locator('html.stepper').waitFor({ state: 'attached' })
+    // Only the chapter on screen is rendered, so its links are the ones in the tab order.
+    for (const [id, selector, extra] of [['brands', '#brands a[href="/for-brands"]', 0], ['work', '#work a[href="/portfolio"]', 5]] as const) {
+      for (let i = 0; i < 12 && await page.evaluate(() => document.documentElement.dataset.filmCh) !== id; i++) {
+        await page.keyboard.press('ArrowDown')
+        await page.waitForTimeout(200)
+        await moveEnded(page)
+      }
+      // The work chapter's link closes its wall, at its last stop.
+      for (let i = 0; i < extra; i++) { await page.keyboard.press('ArrowDown'); await page.waitForTimeout(200); await moveEnded(page) }
       await expect(page.locator('html')).toHaveAttribute('data-film-ch', id)
+      await page.locator(selector).focus()
+      await expect(page.locator(selector)).toBeFocused()
       expect(await seen(page, selector), selector).toBe(true)
     }
   })

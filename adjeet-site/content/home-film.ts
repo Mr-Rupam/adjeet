@@ -59,6 +59,12 @@ export interface Chapter {
   rest: number
   still?: number
   stops: readonly Stop[]
+  /**
+   * Seconds the chapter's whole timeline (p 0 to 1) takes when the stepper
+   * plays it: a move from stop a to stop b takes (b - a) times this, held to
+   * 0.8 to 1.6 s, unless the stop it goes into is a showpiece with its own ms.
+   */
+  dur: number
 }
 
 /**
@@ -75,21 +81,22 @@ export interface Chapter {
  *   job times and the line.
  * - road: the title and the crew line; the Malda hold (the count plays
  *   during the move, a showpiece).
- * - hills: the title over the land; every light on with the places and the
- *   link (the lights come on during the move, a showpiece).
+ * - hills: the title over the land; every light on, the whole list of
+ *   places under the title and the link (the lights and the names come on
+ *   together during the move, a showpiece).
  * - junction: each of the five surfaces with its caption; the settled list.
  * - finale: the title and the actions.
  */
 export const CHAPTERS: readonly Chapter[] = [
-  { id: 'hero', title: 'Advertising that gets you noticed.', len: 1.4, rest: 0, still: 0, stops: [0] },
-  { id: 'brands', title: 'Brands stay for years.', len: 1.6, over: 0, rest: 0.5, stops: [{ p: 0.5, ms: 3000 }] },
-  { id: 'work', title: 'Seen on real streets.', len: 4.5, over: 0, rest: 0.06, stops: [0.06, 0.2, 0.34, 0.48, 0.62, 0.8] },
-  { id: 'brief', title: 'It starts with a photo.', len: 2.6, over: 0, rest: 0.57, stops: [0.4, 0.57] },
-  { id: 'workshop', title: 'Made in our own workshop.', len: 2.7, over: 0, rest: 0.66, stops: [0.37, 0.66] },
-  { id: 'road', title: 'Then it goes out on the road.', len: 3.2, over: 0, rest: 0.14, stops: [0.14, { p: 0.78, ms: 3500 }] },
-  { id: 'hills', title: 'From the plains to the hills.', len: 3.2, over: 0, rest: 0.8, stops: [0.17, { p: 0.8, ms: 3500 }] },
-  { id: 'junction', title: 'Shopfronts, walls, vehicles, events.', len: 3.4, over: 0, rest: 0.8, stops: [0.13, 0.25, 0.37, 0.49, 0.6, 0.8] },
-  { id: 'finale', title: 'Your name is next.', len: 2.1, over: 0, rest: 0.72, stops: [0.72] },
+  { id: 'hero', title: 'Advertising that gets you noticed.', len: 1.4, rest: 0, still: 0, stops: [0], dur: 1.5 },
+  { id: 'brands', title: 'Brands stay for years.', len: 1.6, over: 0, rest: 0.5, stops: [{ p: 0.5, ms: 2500 }], dur: 2.5 },
+  { id: 'work', title: 'Seen on real streets.', len: 4.5, over: 0, rest: 0.06, stops: [0.06, 0.2, 0.34, 0.48, 0.62, 0.8], dur: 8 },
+  { id: 'brief', title: 'It starts with a photo.', len: 2.6, over: 0, rest: 0.57, stops: [0.4, 0.57], dur: 6 },
+  { id: 'workshop', title: 'Made in our own workshop.', len: 2.7, over: 0, rest: 0.66, stops: [0.37, 0.66], dur: 4.5 },
+  { id: 'road', title: 'Then it goes out on the road.', len: 3.2, over: 0, rest: 0.14, stops: [0.14, { p: 0.78, ms: 3500 }], dur: 5 },
+  { id: 'hills', title: 'From the plains to the hills.', len: 3.2, over: 0, rest: 0.8, stops: [0.17, { p: 0.8, ms: 3000 }], dur: 5 },
+  { id: 'junction', title: 'Shopfronts, walls, vehicles, events.', len: 3.4, over: 0, rest: 0.8, stops: [0.13, 0.25, 0.37, 0.49, 0.6, 0.8], dur: 9 },
+  { id: 'finale', title: 'Your name is next.', len: 2.1, over: 0, rest: 0.72, stops: [0.72], dur: 3 },
 ]
 
 export function chapter(id: ChapterId): Chapter {
