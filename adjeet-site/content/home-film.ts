@@ -46,13 +46,16 @@ export interface Chapter {
   over?: number
   rest: number
   still?: number
+  /** The scroll controller's rest positions (p values), for `data-stops` on the section. */
+  stops?: readonly number[]
 }
 
 export const CHAPTERS: readonly Chapter[] = [
   { id: 'hero', title: 'Advertising that gets you noticed.', len: 0.9, rest: 0, still: 0 },
   { id: 'brief', title: 'It starts with a photo.', len: 1.6, over: 0, rest: 0.6 },
   { id: 'workshop', title: 'Made in our own workshop.', len: 1.7, over: 0, rest: 0.66 },
-  { id: 'road', title: 'Then it goes out on the road.', len: 2, over: 0, rest: 0.14 },
+  // Stops: the title frame, then the hold (the field complete, the days run on by themselves).
+  { id: 'road', title: 'Then it goes out on the road.', len: 2, over: 0, rest: 0.14, stops: [0.14, 0.78] },
   { id: 'hills', title: 'From the plains to the hills.', len: 2, over: 0, rest: 0.8 },
   { id: 'junction', title: 'Shopfronts, walls, vehicles, events.', len: 2.1, over: 0, rest: 0.8 },
   { id: 'proof', title: 'Brands stay for years.', len: 2.4, over: 0, rest: 0.04 },
@@ -97,12 +100,36 @@ function maldaNumber(pattern: RegExp): number {
 }
 export const MALDA_BOARDS = maldaNumber(/needed (\d+) /)
 export const MALDA_DAYS = maldaNumber(/finished on day (\d+)\./)
+/** "normally 20 to 25 days of work": the job's normal time, the only comparison the film makes. */
+export const MALDA_NORMAL = {
+  min: maldaNumber(/normally (\d+) to \d+ days of work/),
+  max: maldaNumber(/normally \d+ to (\d+) days of work/),
+} as const
+
+/**
+ * The Malda beat (storyboard v2, section 7): the boards as a field of 10 rows,
+ * nearest first, and a strip of one mark per day up to the top of the normal
+ * time, the first MALDA_DAYS of them gold.
+ */
+export const MALDA_ROWS = 10
 
 export const ROAD = {
   line: `${sentence(CREW_NETWORK.line)} ${sentence(VEHICLES.line)}`,
+  /**
+   * The Malda beat's heading, the owner's own words (16 November 2026). Mirrors
+   * the heading of the Malda section on /for-brands on main
+   * (app/(marketing)/for-brands/page.tsx, "brands-speed-heading"), which is
+   * not a shared constant there yet.
+   */
+  maldaTitle: 'We put our clients first.',
   story: MALDA_STORY,
   hold: `${MALDA_BOARDS} boards. Day ${MALDA_DAYS}.`,
-  gridLabel: `A grid of ${MALDA_BOARDS} glow sign boards, filled row by row from day 1 to day ${MALDA_DAYS}`,
+  /** The approved sentence's second clause, as a line of its own. */
+  normal: `Normally ${MALDA_NORMAL.min} to ${MALDA_NORMAL.max} days of work.`,
+  unit: 'boards',
+  day: 'Day',
+  fieldLabel: `${MALDA_BOARDS} glow sign boards, lit row by row from day 1 to day ${MALDA_DAYS}`,
+  stripLabel: `One mark for each day up to day ${MALDA_NORMAL.max}. Day 1 to day ${MALDA_DAYS} are gold: the job was finished on day ${MALDA_DAYS}`,
 } as const
 
 type Place = (typeof COVERAGE_AREAS)[number]['name']
