@@ -1,7 +1,7 @@
 import Link from 'next/link'
 import type { CSSProperties } from 'react'
 import { preload } from 'react-dom'
-import { DEFAULT_SHOP_NAME, SKIP_LABEL, chapter, railLabel } from '@/content/home-film'
+import { DEFAULT_SHOP_NAME, SKIP_LABEL, chapter, railLabel, stopsAttr } from '@/content/home-film'
 import { FILM_BOOT } from '@/components/film/film-boot'
 import { PLANES, Planes } from '@/components/film/planes'
 import { ArrowDown } from 'lucide-react'
@@ -160,6 +160,7 @@ export function HomeHero() {
       style={{ '--len': entry.len, '--still': entry.still } as CSSProperties}
       data-title={railLabel(entry)}
       data-rest={entry.rest}
+      data-stops={stopsAttr(entry.stops)}
       aria-labelledby="home-heading"
     >
       <div className="stage hero-stage" data-tone="page" data-tone-at=".78" data-tone-late="light">

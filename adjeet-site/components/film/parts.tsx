@@ -1,5 +1,5 @@
 import type { CSSProperties, ReactNode } from 'react'
-import { DEFAULT_SHOP_NAME, chapter, railLabel, type ChapterId } from '@/content/home-film'
+import { DEFAULT_SHOP_NAME, chapter, railLabel, stopsAttr, type ChapterId } from '@/content/home-film'
 
 /** Custom properties in an inline style. */
 export type Vars = CSSProperties & Record<`--${string}`, string | number>
@@ -40,7 +40,7 @@ export function Chapter({ id, stage, tone, toneAt, toneLate, stageStyle, childre
   if (entry.over !== undefined) style['--over'] = entry.over
   if (entry.still !== undefined) style['--still'] = entry.still
   return (
-    <section className="ch" id={id} style={vars(style)} data-title={railLabel(entry)} data-rest={entry.rest} data-stops={entry.stops?.join(' ')} aria-labelledby={`${id}-h`}>
+    <section className="ch" id={id} style={vars(style)} data-title={railLabel(entry)} data-rest={entry.rest} data-stops={stopsAttr(entry.stops)} aria-labelledby={`${id}-h`}>
       <div className={`stage ${stage}`} data-tone={tone} data-tone-at={toneAt} data-tone-late={toneLate} style={stageStyle}>
         {children}
       </div>

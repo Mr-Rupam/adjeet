@@ -1,0 +1,291 @@
+import { test, expect, type Page } from '@playwright/test'
+
+// The stepped film (stepper-contract.md): a gesture is an intent, never a
+// distance. One swipe, one wheel gesture or one key press moves exactly one
+// stop, in a timed move; input during a move is ignored; the film rests only
+// on stops. These are the contract's eleven pass checks, on a phone with touch
+// (390 x 844) and on a desktop with a mouse (1440 x 900).
+
+type Rest = { y: number; id: string; p: number; ms: number }
+
+const PHONE = { viewport: { width: 390, height: 844 }, hasTouch: true, isMobile: true }
+const DESK = { viewport: { width: 1440, height: 900 } }
+
+async function open(page: Page, url = '/') {
+  await page.addInitScript(() => {
+    sessionStorage.setItem('adjeet-entry-intro-v1', 'seen')
+    localStorage.setItem('adjeet-consent', 'declined')
+    // When the page last scrolled, for the time a move takes from the first input to rest.
+    const w = window as unknown as { __last: number }
+    w.__last = 0
+    addEventListener('scroll', () => { w.__last = performance.now() }, { passive: true, capture: true })
+  })
+  await page.goto(url, { waitUntil: 'load' })
+  await page.locator('html.stepper[data-film-ch]').waitFor({ state: 'attached' })
+  await page.evaluate(() => document.fonts.ready)
+  await page.waitForTimeout(400)
+}
+
+/** Every stop in page pixels, as the engine places them. */
+function rests(page: Page): Promise<Rest[]> {
+  return page.evaluate(() => {
+    const chapters = [...document.querySelectorAll<HTMLElement>('#film .ch')]
+    const H = chapters[0].querySelector<HTMLElement>('.stage')!.offsetHeight
+    const out: Rest[] = []
+    chapters.forEach((chapter, index) => {
+      const top = chapter.getBoundingClientRect().top + scrollY
+      const pin = Math.max(1, chapter.offsetHeight - H)
+      for (const stop of (chapter.dataset.stops || '').split(' ').filter(Boolean)) {
+        const [p, ms] = stop.split(':').map(Number)
+        out.push({ y: index === 0 && p === 0 ? 0 : Math.ceil(top + pin * p) + 1, id: chapter.id, p, ms: ms || 0 })
+      }
+    })
+    return out.sort((a, b) => a.y - b.y)
+  })
+}
+
+/** True when the page is on a stop (within 2 px) or past the last one. */
+async function onStop(page: Page) {
+  const R = await rests(page)
+  const at = await y(page)
+  return at > R[R.length - 1].y + 2 || R.some(r => Math.abs(r.y - at) <= 2)
+}
+
+const now = (page: Page) => page.evaluate(() => performance.now())
+const y = (page: Page) => page.evaluate(() => scrollY)
+
+/**
+ * Waits for the move an input started (the page scrolls after it; a move may
+ * first hold for the next chapter's pictures) and then until the page has not
+ * scrolled for 600 ms; returns where, and when it last moved.
+ */
+async function rest(page: Page, timeout = 12000) {
+  const start = Date.now()
+  const from = await page.evaluate(() => performance.now()) - 400
+  for (;;) {
+    const s = await page.evaluate(() => ({ y: scrollY, last: (window as unknown as { __last: number }).__last, now: performance.now() }))
+    const moved = s.last > from || Date.now() - start > 5000
+    // A rest is quiet for 600 ms, and on a stop or past the last one (a pause inside a move is not a rest).
+    if (moved && s.now - s.last >= 600 && (await onStop(page) || Date.now() - start > timeout - 2000)) return { y: s.y, last: s.last }
+    if (Date.now() - start > timeout) throw new Error(`no rest within ${timeout} ms (at ${s.y})`)
+    await page.waitForTimeout(100)
+  }
+}
+
+const wheel = async (page: Page, dy: number) => { await page.mouse.move(700, 450); await page.mouse.wheel(0, dy) }
+/**
+ * A finger on the screen: raw touch events through CDP, `distance` px at
+ * `speed` px a second, in steps of 10 px (a negative distance scrolls down).
+ * Input.synthesizeScrollGesture sends no touchmove once the page has taken
+ * panning from the browser (touch-action: pinch-zoom), so it cannot test this.
+ */
+async function swipe(page: Page, distance: number, speed: number) {
+  const cdp = await page.context().newCDPSession(page)
+  const n = Math.max(2, Math.round(Math.abs(distance) / 10))
+  const gap = (Math.abs(distance) / speed) * 1000 / n
+  await cdp.send('Input.dispatchTouchEvent', { type: 'touchStart', touchPoints: [{ x: 195, y: 500 }] })
+  for (let i = 1; i <= n; i++) {
+    await cdp.send('Input.dispatchTouchEvent', { type: 'touchMove', touchPoints: [{ x: 195, y: 500 + (distance * i) / n }] })
+    if (gap >= 4) await page.waitForTimeout(gap)
+  }
+  await cdp.send('Input.dispatchTouchEvent', { type: 'touchEnd', touchPoints: [] })
+  await cdp.detach()
+}
+
+/** At a rest: every chapter's progress is 0, 1 or one of its stops, and nothing time-based is running. */
+async function atRest(page: Page) {
+  return page.evaluate(async () => {
+    const chapters = [...document.querySelectorAll<HTMLElement>('#film .ch')]
+    const H = chapters[0].querySelector<HTMLElement>('.stage')!.offsetHeight
+    const off: string[] = []
+    for (const chapter of chapters) {
+      const top = chapter.getBoundingClientRect().top + scrollY
+      const pin = Math.max(1, chapter.offsetHeight - H)
+      const pr = (scrollY - top) / pin
+      if (pr <= 0 || pr >= 1) continue
+      const stops = (chapter.dataset.stops || '').split(' ').filter(Boolean).map(s => Number(s.split(':')[0]))
+      if (!stops.some(s => Math.abs(s - pr) <= 0.003)) off.push(`${chapter.id} at ${pr.toFixed(4)}`)
+    }
+    // Ambient loops (a flickering tube, a breathing light) never end, so they are not
+    // counted; everything that has an end (a beat's fade, the Malda days) must end.
+    const running = () => document.getAnimations().filter(a => a.playState === 'running' && a.timeline instanceof DocumentTimeline
+      && a.effect?.getComputedTiming().iterations !== Infinity)
+    const t = performance.now()
+    while (running().length && performance.now() - t < 4000) await new Promise(r => setTimeout(r, 100))
+    return { off, running: running().length }
+  })
+}
+
+for (const [device, use] of [['phone', PHONE], ['desktop', DESK]] as const) {
+  test.describe(`The stepped film on a ${device}`, () => {
+    test.use(use)
+    const gesture = (page: Page, dir: 1 | -1) => (device === 'phone' ? swipe(page, -dir * 200, 2000) : wheel(page, dir * 100))
+
+    test('walking the film takes one gesture a stop, rests only on stops, and every move is timed (checks 4, 5, 6)', async ({ page }) => {
+      test.setTimeout(240000)
+      await open(page)
+      const R = await rests(page)
+      expect(R.length).toBe(23)
+      expect(await y(page)).toBe(0)
+      const visited: number[] = [0]
+      for (let i = 1; i < R.length; i++) {
+        const t0 = await now(page)
+        await gesture(page, 1)
+        const r = await rest(page)
+        expect(Math.abs(r.y - R[i].y), `down to ${R[i].id} ${R[i].p}`).toBeLessThanOrEqual(2)
+        const took = r.last - t0
+        expect(took, `move to ${R[i].id} ${R[i].p}`).toBeGreaterThanOrEqual(600)
+        expect(took, `move to ${R[i].id} ${R[i].p}`).toBeLessThanOrEqual(R[i].ms ? 4000 : 2500)
+        const check = await atRest(page)
+        expect(check, `${R[i].id} ${R[i].p}`).toEqual({ off: [], running: 0 })
+        visited.push(r.y)
+      }
+      // And back up, through the same stops.
+      for (let i = R.length - 2; i >= 0; i--) {
+        const t0 = await now(page)
+        await gesture(page, -1)
+        const r = await rest(page)
+        expect(Math.abs(r.y - visited[i]), `up to ${R[i].id} ${R[i].p}`).toBeLessThanOrEqual(2)
+        expect(r.last - t0, `up to ${R[i].id} ${R[i].p}`).toBeLessThanOrEqual(4000)
+      }
+    })
+
+    test('past the last stop the page scrolls natively, and back up lands on the last stop (check 7)', async ({ page }) => {
+      test.setTimeout(60000)
+      await open(page)
+      const R = await rests(page)
+      const end = R[R.length - 1].y
+      await page.evaluate(top => scrollTo({ top, behavior: 'instant' }), end)
+      expect(Math.abs((await rest(page)).y - end)).toBeLessThanOrEqual(2)
+      if (device === 'phone') await swipe(page, -500, 1200)
+      else for (let i = 0; i < 5; i++) { await wheel(page, 100); await page.waitForTimeout(30) }
+      const below = (await rest(page)).y
+      expect(below).toBeGreaterThan(end + 200)
+      // Native: no move of its own afterwards.
+      await page.waitForTimeout(800)
+      expect(await y(page)).toBe(below)
+      if (device === 'phone') await swipe(page, below - end + 300, 1200)
+      else for (let i = 0; i < 12; i++) { await wheel(page, -100); await page.waitForTimeout(30) }
+      expect(Math.abs((await rest(page)).y - end)).toBeLessThanOrEqual(2)
+    })
+
+    test('a jump made by a script settles on the nearest stop (check 11)', async ({ page }) => {
+      await open(page)
+      const R = await rests(page)
+      const work = R.filter(r => r.id === 'work')
+      const between = Math.round(work[1].y + (work[2].y - work[1].y) * 0.3)
+      await page.evaluate(top => scrollTo({ top, behavior: 'instant' }), between)
+      expect(Math.abs((await rest(page)).y - work[1].y)).toBeLessThanOrEqual(2)
+    })
+
+    test('a rail link and /#work land on the chapter\'s rest, and the next gesture goes to the following stop (check 9)', async ({ page }) => {
+      test.setTimeout(60000)
+      await open(page)
+      const R = await rests(page)
+      const restOf = async (id: string) => Number(await page.locator(`#${id}`).getAttribute('data-rest'))
+      for (const id of ['hills', 'work']) {
+        await page.locator(`#film .rail a[href="#${id}"]`).evaluate(link => (link as HTMLElement).click())
+        const p = await restOf(id)
+        const target = R.find(r => r.id === id && Math.abs(r.p - p) < 1e-9)!
+        expect(Math.abs((await rest(page)).y - target.y), id).toBeLessThanOrEqual(2)
+      }
+      await gesture(page, 1)
+      const next = R[R.findIndex(r => r.id === 'work' && Math.abs(r.p - 0.06) < 1e-9) + 1]
+      expect(Math.abs((await rest(page)).y - next.y)).toBeLessThanOrEqual(2)
+
+      await page.goto('/#work', { waitUntil: 'load' })
+      await page.locator('html.stepper').waitFor({ state: 'attached' })
+      const R2 = await rests(page)
+      const first = R2.find(r => r.id === 'work')!
+      expect(Math.abs((await rest(page)).y - first.y)).toBeLessThanOrEqual(2)
+      await gesture(page, 1)
+      expect(Math.abs((await rest(page)).y - R2[R2.indexOf(first) + 1].y)).toBeLessThanOrEqual(2)
+    })
+  })
+}
+
+test.describe('The stepped film with a mouse and keys', () => {
+  test.use(DESK)
+
+  test('one wheel event and a burst of thirty both end exactly on the next stop (check 1)', async ({ page }) => {
+    await open(page)
+    const R = await rests(page)
+    await wheel(page, 100)
+    expect(Math.abs((await rest(page)).y - R[1].y)).toBeLessThanOrEqual(2)
+    for (let i = 0; i < 30; i++) { await page.mouse.wheel(0, 150); await page.waitForTimeout(12) }
+    expect(Math.abs((await rest(page)).y - R[2].y)).toBeLessThanOrEqual(2)
+  })
+
+  test('a decaying trackpad gesture makes one step, and a new gesture after it one more (check 3)', async ({ page }) => {
+    await open(page)
+    const R = await rests(page)
+    await page.mouse.move(700, 450)
+    for (const dy of [120, 90, 70, 50, 35, 25, 15, 10, 6, 3]) { await page.mouse.wheel(0, dy); await page.waitForTimeout(220) }
+    expect(Math.abs((await rest(page)).y - R[1].y)).toBeLessThanOrEqual(2)
+    await page.waitForTimeout(300)
+    await page.mouse.wheel(0, 100)
+    expect(Math.abs((await rest(page)).y - R[2].y)).toBeLessThanOrEqual(2)
+  })
+
+  test('arrow, page and space keys step once each; typing the shop name never steps (check 8)', async ({ page }) => {
+    test.setTimeout(60000)
+    await open(page)
+    const R = await rests(page)
+    let i = 0
+    for (const key of ['ArrowDown', 'PageDown', 'Space']) {
+      await page.keyboard.press(key)
+      i++
+      expect(Math.abs((await rest(page)).y - R[i].y), key).toBeLessThanOrEqual(2)
+    }
+    for (const key of ['ArrowUp', 'PageUp', 'Shift+Space']) {
+      await page.keyboard.press(key)
+      i--
+      expect(Math.abs((await rest(page)).y - R[i].y), key).toBeLessThanOrEqual(2)
+    }
+    // The brief's last stop shows the name field.
+    const brief = R.filter(r => r.id === 'brief').pop()!
+    await page.evaluate(top => scrollTo({ top, behavior: 'instant' }), brief.y)
+    await rest(page)
+    const field = page.locator('#brief input[data-name-input]')
+    await field.click()
+    await page.keyboard.type('Maa Tara Stores')
+    for (const key of ['ArrowDown', 'ArrowUp', 'PageDown', 'End']) await page.keyboard.press(key)
+    await page.waitForTimeout(800)
+    expect(Math.abs((await y(page)) - brief.y)).toBeLessThanOrEqual(2)
+    await expect(field).toHaveValue('Maa Tara Stores')
+  })
+
+  test('with reduced motion there is no stepper and the stills scroll natively (check 10)', async ({ page }) => {
+    await page.emulateMedia({ reducedMotion: 'reduce' })
+    await page.goto('/', { waitUntil: 'load' })
+    await page.waitForTimeout(500)
+    await expect(page.locator('html')).not.toHaveClass(/\bstory\b|\bstepper\b/)
+    await page.mouse.move(700, 450)
+    await page.mouse.wheel(0, 300)
+    await page.waitForTimeout(600)
+    expect(await y(page)).toBeGreaterThanOrEqual(290)
+    expect(await y(page)).toBeLessThanOrEqual(310)
+  })
+})
+
+test.describe('The stepped film with touch', () => {
+  test.use(PHONE)
+
+  test('a fast long flick and a slow short drag both end exactly on the next stop (check 2)', async ({ page }) => {
+    await open(page)
+    const R = await rests(page)
+    await swipe(page, -800, 5000)
+    expect(Math.abs((await rest(page)).y - R[1].y)).toBeLessThanOrEqual(2)
+    await swipe(page, -60, 120)
+    expect(Math.abs((await rest(page)).y - R[2].y)).toBeLessThanOrEqual(2)
+  })
+
+  test('the page takes panning from the browser only with the stepper running', async ({ page }) => {
+    await open(page)
+    const pan = await page.evaluate(() => ({
+      film: getComputedStyle(document.getElementById('film')!).touchAction,
+      root: getComputedStyle(document.documentElement).overscrollBehaviorY,
+    }))
+    expect(pan).toEqual({ film: 'pinch-zoom', root: 'none' })
+  })
+})

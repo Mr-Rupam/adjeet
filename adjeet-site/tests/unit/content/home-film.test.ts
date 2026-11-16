@@ -5,7 +5,7 @@ import path from 'node:path'
 import sharp from 'sharp'
 import {
   BRANDS, BRIEF, CHAPTERS, FINALE, HILLS, JUNCTION, MALDA_BOARDS, MALDA_DAYS, MALDA_NORMAL, MALDA_ROWS, ROAD, WALL_DESKTOP_MAX, WALL_LOGOS, WALL_PHONE_MAX,
-  WORK, WORK_PICKS, WORKSHOP_CHAPTER, FILM_SOURCES, SKIP_LABEL, DEFAULT_SHOP_NAME, wallCompanies, workPicks,
+  WORK, WORK_PICKS, WORKSHOP_CHAPTER, FILM_SOURCES, SKIP_LABEL, DEFAULT_SHOP_NAME, stopP, stopsAttr, wallCompanies, workPicks,
 } from '@/content/home-film'
 import {
   ALSO_SERVICES, BRAND_TENURES, COMPANIES_SERVED, CREW_NETWORK, GPS_PHOTO_LINE, JOB_DAYS, JOB_DAYS_CAPTION, MALDA_STORY,
@@ -59,12 +59,20 @@ describe('the film follows the storyboard', () => {
     for (const chapter of CHAPTERS) {
       expect(chapter.rest, chapter.id).toBeGreaterThanOrEqual(0)
       expect(chapter.rest, chapter.id).toBeLessThanOrEqual(1)
-      // The controller's stops are p values, rising, inside the chapter.
-      const stops = [...(chapter.stops ?? [])]
-      for (const stop of stops) expect(stop > 0 && stop < 1, `${chapter.id} ${stop}`).toBe(true)
+      // The stepper's stops (stepper-contract.md) are p values, rising, inside the
+      // chapter (the hero's is its top); the rest is one of them; a showpiece's own
+      // duration stays inside the contract's 4 seconds.
+      const stops = chapter.stops.map(stopP)
+      for (const stop of stops) expect(stop >= 0 && stop < 1, `${chapter.id} ${stop}`).toBe(true)
       expect([...stops].sort((a, b) => a - b)).toEqual(stops)
+      expect(stops, chapter.id).toContain(chapter.rest)
+      for (const stop of chapter.stops) if (typeof stop !== 'number') expect(stop.ms).toBeLessThanOrEqual(4000)
     }
-    expect(CHAPTERS.find(chapter => chapter.id === 'brands')?.stops).toEqual([0.5])
+    // About 23 stops, one a screenful: every frame meant to be read is a stop.
+    expect(CHAPTERS.flatMap(chapter => chapter.stops)).toHaveLength(23)
+    expect(CHAPTERS.find(chapter => chapter.id === 'work')?.stops).toHaveLength(6)
+    expect(CHAPTERS.find(chapter => chapter.id === 'junction')?.stops).toHaveLength(6)
+    expect(stopsAttr(CHAPTERS.find(chapter => chapter.id === 'road')?.stops)).toBe('0.14 0.78:3500')
   })
 
   it('uses only the house wording: no banned words, no dashes, no question headings', () => {
@@ -116,10 +124,10 @@ describe('every figure traces to content/company-figures.ts', () => {
     }
   })
 
-  it('the road declares its scroll controller stops: the title frame and the hold', () => {
+  it('the road declares its stops: the title frame and the hold, a showpiece', () => {
     const road = CHAPTERS.find(entry => entry.id === 'road')!
-    expect(road.stops).toEqual([road.rest, 0.78])
-    for (const stop of road.stops!) {
+    expect(road.stops).toEqual([road.rest, { p: 0.78, ms: 3500 }])
+    for (const stop of road.stops.map(stopP)) {
       expect(stop).toBeGreaterThan(0)
       expect(stop).toBeLessThan(1)
     }

@@ -137,21 +137,13 @@
   animation-play-state: paused;
   animation-delay: calc(var(--p) * -1s);
 }
-/* The GSAP driver (storyboard-v2, section 3b): the same keyframes, paused,
-   one second long; the engine sets each animation's currentTime from the
-   chapter's scrubbed progress. A stage shows while its chapter is pinned. */
-.story.drv-gsap .film .ch.pin .stage { opacity: 1; }
-.story.drv-gsap .film :is(.cam, .tl, .pl) {
-  animation-duration: 1s;
-  animation-timing-function: linear;
-  animation-fill-mode: both;
-  animation-play-state: paused;
-}
-/* Lenis's own rules (lenis.css 1.3.27); <html> has .lenis only while it runs. */
-html.lenis, html.lenis body { height: auto; }
-.lenis:not(.lenis-autoToggle).lenis-stopped { overflow: clip; }
-.lenis [data-lenis-prevent] { overscroll-behavior: contain; }
-.lenis.lenis-smooth iframe { pointer-events: none; }
+/* The stepper (story.ts) owns the film's scrolling once every listener is
+   attached: the browser keeps pinch zoom but not the pan, and no bounce or
+   pull-to-refresh fights a move. At and past the last stop (.step-end) the
+   page pans natively again, for the questions and the footer. */
+:root.stepper { overscroll-behavior: none; }
+:root.stepper body { overscroll-behavior: none; }
+.stepper:not(.step-end) .film { touch-action: pinch-zoom; }
 /* A chapter far from the screen keeps no animations: every animated layer
    would otherwise be composited from the first paint, which held the hero's
    paint back by about half a second on a throttled phone. The engine marks a

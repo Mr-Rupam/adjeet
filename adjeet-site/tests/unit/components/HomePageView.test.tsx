@@ -3,7 +3,7 @@ import { renderToStaticMarkup } from 'react-dom/server'
 import { HomePageView } from '@/components/home/HomePageView'
 import { getPhotoById } from '@/content/gallery'
 import { homeFaqs } from '@/content/home-faqs'
-import { CHAPTERS, MALDA_BOARDS, MALDA_DAYS, MALDA_NORMAL, MALDA_ROWS, ROAD, WALL_PHONE_MAX, WORK_PICKS, wallCompanies } from '@/content/home-film'
+import { CHAPTERS, MALDA_BOARDS, MALDA_DAYS, MALDA_NORMAL, MALDA_ROWS, ROAD, WALL_PHONE_MAX, WORK_PICKS, stopsAttr, wallCompanies } from '@/content/home-film'
 import { BRAND_TENURES, MALDA_STORY, brandTenureLines } from '@/content/company-figures'
 import { SERVICE_SLUGS } from '@/content/services'
 import { FILM_BOOT } from '@/components/film/film-boot'
@@ -132,12 +132,13 @@ describe('home page: the film, then the questions', () => {
     expect(input.closest('label')?.textContent).toContain("Type your shop's name")
   })
 
-  it('declares the scroll controller stops on the two proof chapters', () => {
+  it('declares the stepper stops on every chapter, with the showpiece durations', () => {
     const doc = render()
-    expect(doc.querySelector('#brands')?.getAttribute('data-stops')).toBe('0.5')
+    expect(doc.querySelector('#hero')?.getAttribute('data-stops')).toBe('0')
+    expect(doc.querySelector('#brands')?.getAttribute('data-stops')).toBe('0.5:3000')
     expect(doc.querySelector('#work')?.getAttribute('data-stops')).toMatch(/^0\.06 /)
     for (const chapter of CHAPTERS) {
-      expect(doc.querySelector(`#${chapter.id}`)?.getAttribute('data-stops') ?? undefined, chapter.id).toBe(chapter.stops?.join(' '))
+      expect(doc.querySelector(`#${chapter.id}`)?.getAttribute('data-stops') ?? undefined, chapter.id).toBe(stopsAttr(chapter.stops))
     }
   })
 

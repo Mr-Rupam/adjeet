@@ -34,13 +34,22 @@ export { DEFAULT_SHOP_NAME, SHOP_NAME_MAX } from '@/content/shop-name'
 export type ChapterId = 'hero' | 'brands' | 'work' | 'brief' | 'workshop' | 'road' | 'hills' | 'junction' | 'finale'
 
 /**
+ * A stop: where the film rests (a p value, 0 to 1 of the chapter's pinned
+ * scroll), and for the showpieces how long the move into it takes, in ms.
+ */
+export type Stop = number | { readonly p: number; readonly ms: number }
+export const stopP = (stop: Stop) => (typeof stop === 'number' ? stop : stop.p)
+/** `data-stops` on the section: "0.14 0.78:3500" (p, or p:ms for a showpiece). */
+export const stopsAttr = (stops?: readonly Stop[]) => stops?.map(stop => (typeof stop === 'number' ? String(stop) : `${stop.p}:${stop.ms}`)).join(' ')
+
+/**
  * Each chapter: how long it stays pinned (`len`, in screens), how far its
  * start overlaps the one before (`over`), where an anchor or a skip link lands
- * (`rest`, 0 to 1 of its pinned scroll), the camera frame for the still
- * version (`still`, default 1), its heading, and the scroll controller's
- * resting points (`stops`, p values separated by spaces, written on the
- * section as `data-stops`; storyboard-v2, section 3). The rail labels each
- * chapter with its heading, without the full stop.
+ * (`rest`, one of its stops), the camera frame for the still version (`still`,
+ * default 1), its heading, and its stops. The film is stepped
+ * (stepper-contract.md): one gesture moves exactly one stop, every move is
+ * timed, and the film rests only on stops, so every frame meant to be read is
+ * a stop. The rail labels each chapter with its heading, without the full stop.
  */
 export interface Chapter {
   id: ChapterId
@@ -49,25 +58,36 @@ export interface Chapter {
   over?: number
   rest: number
   still?: number
-  /** The scroll controller's rest positions (p values), for `data-stops` on the section. */
-  stops?: readonly number[]
+  stops: readonly Stop[]
 }
 
 /**
  * Proof first (storyboard-v2, section 2): the brands, then the real
- * photographs, then the story. Lengths are about 1.6 times the first pass,
- * for the scroll driver of section 3b (the prototype's values where it has
- * the chapter, the same factor for brands, work and the rebuilt road).
+ * photographs, then the story. 23 stops (stepper-contract.md):
+ * - hero: at rest.
+ * - brands: the wall lit, the title, the figure and the actions (the hero's
+ *   push and the wave are the move into it, a showpiece).
+ * - work: the title with the first photographs, then a screenful of
+ *   photographs per stop as the wall rises (6 to 78% of the chapter), then the
+ *   closing photograph with the GPS sentence and the link.
+ * - brief: the chat played; the words and the action.
+ * - workshop: the first board lit with the title; every board lit with the
+ *   job times and the line.
+ * - road: the title and the crew line; the Malda hold (the count plays
+ *   during the move, a showpiece).
+ * - hills: the title over the land; every light on with the places and the
+ *   link (the lights come on during the move, a showpiece).
+ * - junction: each of the five surfaces with its caption; the settled list.
+ * - finale: the title and the actions.
  */
 export const CHAPTERS: readonly Chapter[] = [
-  { id: 'hero', title: 'Advertising that gets you noticed.', len: 1.4, rest: 0, still: 0 },
-  { id: 'brands', title: 'Brands stay for years.', len: 1.6, over: 0, rest: 0.5, stops: [0.5] },
-  { id: 'work', title: 'Seen on real streets.', len: 4.5, over: 0, rest: 0.06, stops: [0.06, 0.8] },
-  { id: 'brief', title: 'It starts with a photo.', len: 2.6, over: 0, rest: 0.6, stops: [0.4, 0.6] },
-  { id: 'workshop', title: 'Made in our own workshop.', len: 2.7, over: 0, rest: 0.66, stops: [0.3, 0.66] },
-  // Stops: the title frame, then the hold (the field complete, the days run on by themselves).
-  { id: 'road', title: 'Then it goes out on the road.', len: 3.2, over: 0, rest: 0.14, stops: [0.14, 0.78] },
-  { id: 'hills', title: 'From the plains to the hills.', len: 3.2, over: 0, rest: 0.8, stops: [0.8] },
+  { id: 'hero', title: 'Advertising that gets you noticed.', len: 1.4, rest: 0, still: 0, stops: [0] },
+  { id: 'brands', title: 'Brands stay for years.', len: 1.6, over: 0, rest: 0.5, stops: [{ p: 0.5, ms: 3000 }] },
+  { id: 'work', title: 'Seen on real streets.', len: 4.5, over: 0, rest: 0.06, stops: [0.06, 0.2, 0.34, 0.48, 0.62, 0.8] },
+  { id: 'brief', title: 'It starts with a photo.', len: 2.6, over: 0, rest: 0.57, stops: [0.4, 0.57] },
+  { id: 'workshop', title: 'Made in our own workshop.', len: 2.7, over: 0, rest: 0.66, stops: [0.37, 0.66] },
+  { id: 'road', title: 'Then it goes out on the road.', len: 3.2, over: 0, rest: 0.14, stops: [0.14, { p: 0.78, ms: 3500 }] },
+  { id: 'hills', title: 'From the plains to the hills.', len: 3.2, over: 0, rest: 0.8, stops: [0.17, { p: 0.8, ms: 3500 }] },
   { id: 'junction', title: 'Shopfronts, walls, vehicles, events.', len: 3.4, over: 0, rest: 0.8, stops: [0.13, 0.25, 0.37, 0.49, 0.6, 0.8] },
   { id: 'finale', title: 'Your name is next.', len: 2.1, over: 0, rest: 0.72, stops: [0.72] },
 ]

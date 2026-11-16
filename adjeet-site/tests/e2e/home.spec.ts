@@ -21,19 +21,36 @@ async function engineReady(page: Page) {
   await page.locator('html[data-film-ch]').waitFor({ state: 'attached' })
 }
 
-/** Scrolls to progress p of a chapter's pinned scroll and waits for the engine's frame. */
-async function scrollToChapter(page: Page, id: string, p: number) {
+/**
+ * Scrolls to progress p of a chapter's pinned scroll and waits for the engine's
+ * frame. The film rests only on stops (stepper-contract.md), so the stepper
+ * settles a jump on the nearest stop; `free` holds a frame between two stops,
+ * for a check of a move's middle.
+ */
+async function scrollToChapter(page: Page, id: string, p: number, free = false) {
   await engineReady(page)
-  await page.evaluate(([id, p]) => {
+  await page.evaluate(([id, p, free]) => {
+    document.documentElement.toggleAttribute('data-film-free', free as boolean)
     const chapter = document.getElementById(id as string)!
     const top = chapter.getBoundingClientRect().top + scrollY
     const pin = chapter.offsetHeight - chapter.querySelector<HTMLElement>('.stage')!.offsetHeight
     scrollTo({ top: Math.round(top + pin * (p as number)) + 2, behavior: 'instant' })
-  }, [id, p] as const)
+  }, [id, p, free] as const)
   await page.waitForTimeout(700)
   // A first visit to a chapter decodes its pictures, which can hold a beat's
   // light back on a busy machine: let the lights finish switching on.
   await page.waitForFunction(() => document.getAnimations().every(animation => !(animation instanceof CSSTransition) || animation.playState !== 'running'), undefined, { timeout: 4000 }).catch(() => {})
+}
+
+/** Waits for a timed move to end: the page has not scrolled for 600 ms. */
+async function moveEnded(page: Page) {
+  let last = await page.evaluate(() => scrollY)
+  for (let still = 0, i = 0; still < 6 && i < 120; i++) {
+    await page.waitForTimeout(100)
+    const y = await page.evaluate(() => scrollY)
+    still = y === last ? still + 1 : 0
+    last = y
+  }
 }
 
 /**
@@ -103,7 +120,7 @@ test.describe('Home page', () => {
       await page.goto('/')
       await page.evaluate(() => document.fonts.ready)
       // Where each heading is on screen (the junction's gives way to its list at its resting point).
-      const headingAt: Record<string, number> = { brands: 0.5, work: 0.06, brief: 0.6, workshop: 0.66, road: 0.14, hills: 0.8, junction: 0.3, finale: 0.72 }
+      const headingAt: Record<string, number> = { brands: 0.5, work: 0.06, brief: 0.57, workshop: 0.66, road: 0.14, hills: 0.8, junction: 0.25, finale: 0.72 }
       for (const chapter of CHAPTERS.slice(1)) {
         await scrollToChapter(page, chapter.id, headingAt[chapter.id])
         await expect(page.locator('html'), `${width}: ${chapter.id}`).toHaveAttribute('data-film-ch', chapter.id)
@@ -111,7 +128,7 @@ test.describe('Home page', () => {
       }
       // Each chapter's own actions come into view on their beats.
       const actions: Array<[string, number, string]> = [
-        ['brief', 0.6, '#brief .acts .cta'],
+        ['brief', 0.57, '#brief .acts .cta'],
         ['hills', 0.8, '#hills a[href="/areas"]'],
         ['junction', 0.8, '#junction .j-trades a[href="/services/glow-sign-boards"]'],
         ['brands', 0.5, '#brands .acts .cta'],
@@ -134,8 +151,8 @@ test.describe('Home page', () => {
       const road = page.locator('#road')
       await expect(road.locator('.m-field .m-row > i')).toHaveCount(MALDA_BOARDS)
       await expect(road.locator('.m-strip i')).toHaveCount(MALDA_NORMAL.max)
-      // Mid count: some rows lit, some not, and the gold days with them.
-      await scrollToChapter(page, 'road', 0.5)
+      // Mid count (a frame of the move into the hold): some rows lit, some not, and the gold days with them.
+      await scrollToChapter(page, 'road', 0.5, true)
       const lit = await road.locator('.m-row.on').count()
       expect(lit, `${width}: rows lit mid count`).toBeGreaterThan(0)
       expect(lit, `${width}: rows lit mid count`).toBeLessThan(MALDA_ROWS)
@@ -212,7 +229,8 @@ test.describe('Home page', () => {
     await engineReady(page)
     for (const [id, selector] of [['brands', '#brands a[href="/for-brands"]'], ['work', '#work a[href="/portfolio"]']] as const) {
       await page.locator(selector).focus()
-      await page.waitForTimeout(700)
+      await page.waitForTimeout(200)
+      await moveEnded(page)
       await expect(page.locator('html')).toHaveAttribute('data-film-ch', id)
       expect(await seen(page, selector), selector).toBe(true)
     }
@@ -223,7 +241,8 @@ test.describe('Home page', () => {
     await page.goto('/')
     await engineReady(page)
     await page.locator('#hero-section').getByRole('link', { name: 'See finished work' }).click()
-    await page.waitForTimeout(700)
+    await page.waitForTimeout(200)
+    await moveEnded(page)
     await expect(page.locator('html')).toHaveAttribute('data-film-ch', 'work')
     expect(await seen(page, '#work h2')).toBe(true)
   })
@@ -272,7 +291,7 @@ test.describe('Home page', () => {
     await expect(dock.and(page.locator(':not([data-hidden])'))).toHaveCount(0)
     await scrollToChapter(page, 'workshop', 0.4)
     await expect(page.locator('.quote-dock--film:not([data-hidden])')).toHaveCount(1)
-    await scrollToChapter(page, 'brief', 0.6)
+    await scrollToChapter(page, 'brief', 0.57)
     await expect(page.locator('.quote-dock--film[data-hidden]')).toHaveCount(1)
     await scrollToChapter(page, 'finale', 0.72)
     await expect(page.locator('.quote-dock--film[data-hidden]')).toHaveCount(1)
@@ -379,10 +398,10 @@ test.describe('Home page', () => {
       expect(shown, slug).toEqual(pages.map((_, other) => other === index))
     }
     // The names step off before the push, so no giant cropped letters show.
-    await scrollToChapter(page, 'junction', 0.86)
+    await scrollToChapter(page, 'junction', 0.86, true)
     expect(Number(await page.locator('#junction .j-name-out').evaluate(element => getComputedStyle(element).opacity))).toBeLessThan(0.05)
     // The chapter leaves on the film's flat white, the colour the next chapter opens on.
-    await scrollToChapter(page, 'junction', 1)
+    await scrollToChapter(page, 'junction', 1, true)
     const out = await page.locator('#junction .j-out').evaluate(element => {
       const style = getComputedStyle(element)
       const probe = document.createElement('i')
