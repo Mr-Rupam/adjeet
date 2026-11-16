@@ -88,18 +88,20 @@ async function rest(page: Page, timeout = 12000) {
 const wheel = async (page: Page, dy: number) => { await page.mouse.move(700, 450); await page.mouse.wheel(0, dy) }
 /**
  * A finger on the screen: raw touch events through CDP, `distance` px at
- * `speed` px a second, in steps of 10 px (a negative distance scrolls down).
+ * `speed` px a second, one event a frame (at least 10 px apart) (a negative distance scrolls down).
  * Input.synthesizeScrollGesture sends no touchmove once the page has taken
  * panning from the browser (touch-action: pinch-zoom), so it cannot test this.
  */
 async function swipe(page: Page, distance: number, speed: number) {
   const cdp = await page.context().newCDPSession(page)
-  const n = Math.max(2, Math.round(Math.abs(distance) / 10))
+  // One event a frame (60 a second), as a touch screen sends them: a fast flick moves far between events.
+  const n = Math.max(2, Math.round(Math.abs(distance) / Math.max(10, speed / 60)))
   const gap = (Math.abs(distance) / speed) * 1000 / n
   await cdp.send('Input.dispatchTouchEvent', { type: 'touchStart', touchPoints: [{ x: 195, y: 500 }] })
   for (let i = 1; i <= n; i++) {
     await cdp.send('Input.dispatchTouchEvent', { type: 'touchMove', touchPoints: [{ x: 195, y: 500 + (distance * i) / n }] })
-    if (gap >= 4) await page.waitForTimeout(gap)
+    // At least 4 ms apart, so the page can time the finger (a real touch screen reports every frame or so).
+    await page.waitForTimeout(Math.max(4, gap))
   }
   await cdp.send('Input.dispatchTouchEvent', { type: 'touchEnd', touchPoints: [] })
   await cdp.detach()
@@ -116,7 +118,7 @@ async function atRest(page: Page) {
       const pin = Math.max(1, chapter.offsetHeight - H)
       const pr = (scrollY - top) / pin
       if (pr <= 0 || pr >= 1) continue
-      const stops = (chapter.dataset.stops || '').split(' ').filter(Boolean).map(s => Number(s.split(':')[0]))
+      const stops = (chapter.dataset.stops || '').split(' ').filter(Boolean).map(s => Number(s.replace('!', '').split(':')[0]))
       if (!stops.some(s => Math.abs(s - pr) <= 0.003)) off.push(`${chapter.id} at ${pr.toFixed(4)}`)
     }
     // Ambient loops (a flickering tube, a breathing light) never end, so they are not
