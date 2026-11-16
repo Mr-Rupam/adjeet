@@ -195,7 +195,7 @@ test.describe('Home page', () => {
 
   test('the brands wall is lit at its stop, on screen, and no logo or photograph is drawn above its own pixels', async ({ page }) => {
     test.slow()
-    for (const [width, height, boards] of [[390, 844, 15], [1440, 900, 18]] as const) {
+    for (const [width, height, boards] of [[390, 844, 22], [360, 740, 22], [1440, 900, 22]] as const) {
       await page.setViewportSize({ width, height })
       await page.goto('/')
       await scrollToChapter(page, 'brands', 0.5)
@@ -206,7 +206,7 @@ test.describe('Home page', () => {
           const box = item.getBoundingClientRect()
           const img = item.querySelector('img')
           return {
-            lit: item.classList.contains('on'),
+            lit: getComputedStyle(item.querySelector('.b-face')!).opacity === '1',
             inside: box.left >= 0 && box.right <= innerWidth && box.top >= 0 && box.bottom <= innerHeight,
             logo: img ? img.getBoundingClientRect().width <= img.naturalWidth + 0.5 && img.getBoundingClientRect().height <= img.naturalHeight + 0.5 : true,
           }
@@ -214,7 +214,10 @@ test.describe('Home page', () => {
       })
       expect(wall, `${width}`).toHaveLength(boards)
       for (const board of wall) expect(board, `${width}`).toEqual({ lit: true, inside: true, logo: true })
-      expect(await seen(page, '#brands .b-big'), `${width}`).toBe(true)
+      for (const selector of ['#brands h2', '#brands .b-big', '#brands .b-years', '#brands .acts .cta', '#brands a[href="/for-brands"]']) expect(await seen(page, selector), `${width} ${selector}`).toBe(true)
+      // The words sit under the wall, not over it.
+      const [wallBottom, wordsTop] = await page.evaluate(() => [document.querySelector('#brands .b-wall')!.getBoundingClientRect().bottom, document.querySelector('#brands .b-words')!.getBoundingClientRect().top])
+      expect(wordsTop, `${width}`).toBeGreaterThan(wallBottom)
       for (const p of [0.3, 0.6]) {
         await scrollToChapter(page, 'work', p)
         const sizes = await page.locator('#work [data-photo] img').evaluateAll(images => images.map(image => image.getBoundingClientRect().width <= Number(image.getAttribute('width')) + 0.5))

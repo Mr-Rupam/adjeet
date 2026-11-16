@@ -4,19 +4,21 @@ import fs from 'node:fs'
 import path from 'node:path'
 import sharp from 'sharp'
 import {
-  BRANDS, BRIEF, CHAPTERS, FINALE, HILLS, JUNCTION, MALDA_BOARDS, MALDA_DAYS, MALDA_NORMAL, MALDA_ROWS, ROAD, WALL_DESKTOP_MAX, WALL_LOGOS, WALL_PHONE_MAX,
-  WORK, WORK_PICKS, WORKSHOP_CHAPTER, FILM_SOURCES, SKIP_LABEL, DEFAULT_SHOP_NAME, stopP, stopsAttr, wallCompanies, workPicks,
+  BRANDS, BRIEF, CHAPTERS, FINALE, HILLS, JUNCTION, MALDA_BOARDS, MALDA_DAYS, MALDA_NORMAL, MALDA_ROWS, ROAD, WALL,
+  WORK, WORK_PICKS, WORKSHOP_CHAPTER, FILM_SOURCES, SKIP_LABEL, DEFAULT_SHOP_NAME, stopP, stopsAttr, tenureLine, workPicks,
 } from '@/content/home-film'
 import {
   ALSO_SERVICES, BRAND_TENURES, COMPANIES_SERVED, CREW_NETWORK, GPS_PHOTO_LINE, JOB_DAYS, JOB_DAYS_CAPTION, MALDA_STORY,
-  VEHICLES, WORKSHOP, brandTenureLines, jobDaysLabel,
+  VEHICLES, WORKSHOP, brandTenureLines, jobDaysLabel, yearsWith,
 } from '@/content/company-figures'
-import { getPhotoById, photos } from '@/content/gallery'
+import { getPhotoById } from '@/content/gallery'
 import { photoPlace } from '@/content/photo-places'
 import { SERVICE_SLUGS, getServiceBySlug } from '@/content/services'
 import { SERVICE_LINK_LABELS } from '@/content/site-links'
 import { COVERAGE_AREAS } from '@/lib/coverage'
 import { DESK_WALL, PHONE_WALL, workBeats, workCaption } from '@/components/film/FilmWork'
+import { BRAND_LEDGER } from '@/content/for-brands'
+import { WALL_COLS, wallPlaces, wallRows } from '@/components/film/FilmBrands'
 import { SURFACE_AT } from '@/components/film/FilmJunction'
 
 /** What the film never names (storyboard v2, section 7a). */
@@ -39,7 +41,7 @@ function filmStrings(): string[] {
     else if (Array.isArray(value)) value.forEach(walk)
     else if (value && typeof value === 'object') Object.values(value).forEach(walk)
   }
-  walk([CHAPTERS, BRANDS, WORK, wallCompanies().map(company => company.name), BRIEF, WORKSHOP_CHAPTER, ROAD, HILLS, JUNCTION, FINALE, SKIP_LABEL, DEFAULT_SHOP_NAME])
+  walk([CHAPTERS, BRANDS, WORK, WALL.map(brand => brand.name), BRIEF, WORKSHOP_CHAPTER, ROAD, HILLS, JUNCTION, FINALE, SKIP_LABEL, DEFAULT_SHOP_NAME])
   return out
 }
 
@@ -137,7 +139,9 @@ describe('every figure traces to content/company-figures.ts', () => {
     expect(`${BRANDS.companies.value} ${BRANDS.companies.label}`).toBe(COMPANIES_SERVED)
     expect(WORK.gps).toBe(GPS_PHOTO_LINE)
     const now = new Date('2026-11-16T12:00:00Z')
-    expect(BRANDS.years(now)).toEqual(brandTenureLines(now))
+    expect(BRANDS.tenure(now)).toBe(tenureLine(now))
+    expect(BRANDS.tenure(now)).toBe('16 years with Havells, 15 with Lloyd, 12 with Shyam Steel, 7 with Star Cement and 5 with Anchor by Panasonic.')
+    for (const { since } of BRAND_TENURES) expect(BRANDS.tenure(now)).toContain(`${yearsWith(since, now)}`)
   })
 
   it('no number in the film is typed outside the figures, except chapter timings', () => {
@@ -146,7 +150,7 @@ describe('every figure traces to content/company-figures.ts', () => {
       ...JOB_DAYS.flatMap(job => [String(job.min), String(job.max)]),
       ...brandTenureLines().flatMap(line => line.match(/\d+/g) ?? []),
     ])
-    const numbers = [BRIEF, WORKSHOP_CHAPTER, ROAD, HILLS, JUNCTION, FINALE, WORK, { ...BRANDS, years: undefined }, CHAPTERS.map(chapter => chapter.title)]
+    const numbers = [BRIEF, WORKSHOP_CHAPTER, ROAD, HILLS, JUNCTION, FINALE, WORK, { ...BRANDS, tenure: BRANDS.tenure() }, CHAPTERS.map(chapter => chapter.title)]
       .flatMap(value => JSON.stringify(value).match(/(?<![\w-])\d[\d,]*(?![\w-])/g) ?? [])
     // CHAPTERS' own len/rest/still are timings, read through the JSON of titles only above.
     for (const number of numbers) expect(allowed.has(number), number).toBe(true)
@@ -178,34 +182,40 @@ describe('places and services come from their records', () => {
 
 describe('the brands wall', () => {
   const tenure = BRAND_TENURES.map(entry => entry.brand as string)
-  const clients = new Set(photos.map(photo => photo.client))
 
-  it('shows only companies the repo records: tenure brands first, then gallery clients by photograph count', () => {
-    const wall = wallCompanies()
-    expect(wall.length).toBeLessThanOrEqual(WALL_DESKTOP_MAX)
-    expect(WALL_PHONE_MAX).toBe(15)
-    expect(wall.slice(0, tenure.length).map(company => company.name)).toEqual(tenure)
-    for (const company of wall) expect(tenure.includes(company.name) || clients.has(company.name), company.name).toBe(true)
-    const rest = wall.slice(tenure.length)
-    for (let i = 1; i < rest.length; i++) expect(rest[i - 1].photos, rest[i].name).toBeGreaterThanOrEqual(rest[i].photos)
-    for (const company of wall) expect(company.photos).toBe(photos.filter(photo => photo.client === company.name).length)
-    // Lloyd and Shyam Steel stay on the wall for their tenures.
-    expect(wall.map(company => company.name)).toEqual(expect.arrayContaining(['Lloyd', 'Shyam Steel']))
-    for (const company of wall) {
-      const recorded = BRAND_TENURES.find(entry => entry.brand === company.name)
-      expect(company.since, company.name).toBe(recorded?.since)
-    }
+  it('is the owner-approved board plus Lloyd: the five tenure brands first, then the board in its order, brands only', () => {
+    const board = BRAND_LEDGER.flatMap(row => row.brands.map(brand => (brand.name === 'Anchor' ? 'Anchor by Panasonic' : brand.name)))
+    const names = WALL.map(brand => brand.name)
+    expect(names).toHaveLength(22)
+    expect(new Set(names).size).toBe(names.length)
+    expect(names.slice(0, tenure.length)).toEqual(tenure)
+    // Every brand on the wall is on the approved board or has a recorded tenure, and every approved brand is on the wall.
+    for (const name of names) expect(board.includes(name) || tenure.includes(name), name).toBe(true)
+    for (const name of board) expect(names, name).toContain(name)
+    // No local outlets: the one in the photographs stays off the wall.
+    expect(names).not.toContain('Tanyamakeovers')
   })
 
-  it('prints a logo only from a clean file wide enough for the board, at its own pixel size', async () => {
-    for (const [name, logo] of Object.entries(WALL_LOGOS)) {
-      expect(tenure.includes(name) || clients.has(name), name).toBe(true)
-      const meta = await sharp(path.join(ROOT, 'public', logo.src)).metadata()
-      expect([meta.width, meta.height], name).toEqual([logo.width, logo.height])
-      // The board's printed area at 2x on a phone.
-      expect(logo.width, name).toBeGreaterThanOrEqual(192)
-      // Never the Adani group mark for Ambuja or ACC.
-      expect(logo.src, name).not.toMatch(/adani/)
+  it('prints each logo from its own file, at its pixel size, never the Adani mark for another brand', async () => {
+    for (const brand of WALL) {
+      if (!brand.logo) continue
+      const meta = await sharp(path.join(ROOT, 'public', brand.logo.src)).metadata()
+      expect([meta.width, meta.height], brand.name).toEqual([brand.logo.width, brand.logo.height])
+      if (brand.name !== 'Adani Cement') expect(brand.logo.src, brand.name).not.toMatch(/adani/)
+    }
+    // Lettered until a larger file is approved.
+    expect(WALL.filter(brand => !brand.logo).map(brand => brand.name)).toEqual(['SRMB'])
+  })
+
+  it('lays 22 boards out as deliberate rows: 3 across on a phone, 8, 7 and 7 on a desktop, each short row centred', () => {
+    expect(wallRows(22, WALL_COLS.phone)).toEqual([3, 3, 3, 3, 3, 3, 2, 2])
+    expect(wallRows(22, WALL_COLS.desk)).toEqual([8, 7, 7])
+    for (const cols of [WALL_COLS.phone, WALL_COLS.desk]) {
+      const places = wallPlaces(WALL.length, cols)
+      expect(places).toHaveLength(WALL.length)
+      const keys = places.map(place => `${place.row}:${place.col}`)
+      expect(new Set(keys).size).toBe(keys.length)
+      for (const place of places) expect(place.col >= 1 && place.col + 1 <= 2 * cols).toBe(true)
     }
   })
 

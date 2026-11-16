@@ -9,8 +9,8 @@ import {
   MALDA_STORY,
   VEHICLES,
   WORKSHOP,
-  brandTenureLines,
   jobDaysLabel,
+  yearsWith,
 } from '@/content/company-figures'
 import { photos, type GalleryPhoto } from '@/content/gallery'
 import { SERVICE_SLUGS, type ServiceSlug } from '@/content/services'
@@ -212,61 +212,68 @@ export const JUNCTION = {
 } as const
 
 /* ---------- Chapter 1, brands: "Brands stay for years." ----------
-   Only companies the repo records: the brands in BRAND_TENURES, then every
-   client of a gallery photograph, by how many photographs the gallery has
-   (most first, then by name). Curation: storyboard/curation/companies.json. */
+   The wall is the owner-approved client board: the 21 brands of ROW_1 and
+   ROW_2 in components/street/ClientStreet.tsx on main (the board the home
+   page carried until 16 November 2026; the same names as BRAND_LEDGER in
+   content/for-brands.ts), plus Lloyd, the one tenure brand the board left
+   out for want of a logo file. Brands only, no local outlets. The five
+   tenure brands come first, in BRAND_TENURES order, then the other 17 in
+   the board's order. Owner's instruction, 16 November 2026. */
 
-type LogoFile = { src: string; width: number; height: number }
+export type LogoFile = { src: string; width: number; height: number }
+export type WallBrand = { name: string; logo?: LogoFile }
 
 /**
- * A logo is printed on a board only where its file is clean and at least
- * 192px wide (the board's printed area at 2x on a phone); every other company
- * is lettered in the film's face. `width` and `height` are the file's own
- * pixels: it is never drawn larger, never recoloured. Lloyd, ACC and Ambuja
- * Cement are the owner-approved files from the company profile deck.
+ * Every brand on the wall, with its logo from /client-logos. `width` and
+ * `height` are the file's own pixels: a logo is never drawn larger, never
+ * recoloured, and on a phone at most half its width so it stays sharp at 2x
+ * (film.css). A brand without a file sharp enough for the board is lettered
+ * in the film's face until a larger file is approved.
  */
-export const WALL_LOGOS: Readonly<Record<string, LogoFile>> = {
-  Havells: { src: '/client-logos/havells.webp', width: 424, height: 280 },
-  Lloyd: { src: '/client-logos/lloyd.png', width: 700, height: 203 },
-  'Shyam Steel': { src: '/client-logos/shyam-steel.webp', width: 220, height: 97 },
-  'Star Cement': { src: '/client-logos/star-cement.webp', width: 280, height: 280 },
-  'Anchor by Panasonic': { src: '/client-logos/anchor.webp', width: 536, height: 155 },
-  'Supreme Pipe': { src: '/client-logos/supreme-pipe.webp', width: 660, height: 213 },
-  ACC: { src: '/client-logos/acc.png', width: 640, height: 489 },
-  'Toptech TMT': { src: '/client-logos/toptech-tmt.webp', width: 660, height: 185 },
-  'Ambuja Cement': { src: '/client-logos/ambuja-cement.png', width: 640, height: 540 },
-  'SD Lion TMT': { src: '/client-logos/sd-lion-tmt.webp', width: 517, height: 280 },
-  'Dish TV': { src: '/client-logos/dish-tv.webp', width: 660, height: 240 },
-  Airtel: { src: '/client-logos/airtel.webp', width: 660, height: 271 },
-  Emami: { src: '/client-logos/emami.png', width: 612, height: 567 },
-}
-
-/** Boards on the wall: up to 15 on a phone (three across), up to 24 on a desktop (six across). */
-export const WALL_PHONE_MAX = 15
-export const WALL_DESKTOP_MAX = 24
-
-export type WallCompany = { name: string; logo?: LogoFile; since?: number; photos: number }
-
-/** The wall, in order: tenure brands first, then gallery clients by photograph count. */
-export function wallCompanies(): WallCompany[] {
-  const count = (name: string) => photos.filter(photo => photo.client === name).length
-  const tenure = BRAND_TENURES.map(({ brand, since }) => ({ name: brand as string, since }))
-  const clients = [...new Set(photos.map(photo => photo.client))]
-    .filter(name => !tenure.some(entry => entry.name === name))
-    .sort((a, b) => count(b) - count(a) || a.localeCompare(b))
-    .map(name => ({ name }))
-  return [...tenure, ...clients]
-    .slice(0, WALL_DESKTOP_MAX)
-    .map(entry => ({ ...entry, logo: WALL_LOGOS[entry.name], photos: count(entry.name) }))
-}
+export const WALL: readonly WallBrand[] = [
+  { name: 'Havells', logo: { src: '/client-logos/havells.webp', width: 424, height: 280 } },
+  // Lloyd's clean logo is the owner-approved file from the company profile deck.
+  { name: 'Lloyd', logo: { src: '/client-logos/lloyd.png', width: 700, height: 203 } },
+  { name: 'Shyam Steel', logo: { src: '/client-logos/shyam-steel.webp', width: 220, height: 97 } },
+  { name: 'Star Cement', logo: { src: '/client-logos/star-cement.webp', width: 280, height: 280 } },
+  { name: 'Anchor by Panasonic', logo: { src: '/client-logos/anchor.webp', width: 536, height: 155 } },
+  { name: 'Airtel', logo: { src: '/client-logos/airtel.webp', width: 660, height: 271 } },
+  { name: 'Supreme Pipe', logo: { src: '/client-logos/supreme-pipe.webp', width: 660, height: 213 } },
+  // The only SRMB file is 105 x 32: lettered until a larger one is approved.
+  { name: 'SRMB' },
+  { name: 'Emami', logo: { src: '/client-logos/emami.png', width: 612, height: 567 } },
+  { name: 'OYO', logo: { src: '/client-logos/oyo.webp', width: 660, height: 232 } },
+  { name: 'Dalmia Cement', logo: { src: '/client-logos/dalmia-cement.png', width: 400, height: 225 } },
+  { name: 'Jio', logo: { src: '/client-logos/jio.webp', width: 83, height: 83 } },
+  { name: 'Vivo', logo: { src: '/client-logos/vivo.webp', width: 660, height: 173 } },
+  { name: 'Toptech TMT', logo: { src: '/client-logos/toptech-tmt.webp', width: 660, height: 185 } },
+  { name: 'Captain TMT Bar', logo: { src: '/client-logos/captain-tmt-bar.webp', width: 190, height: 36 } },
+  { name: 'Supershakti', logo: { src: '/client-logos/supershakti.webp', width: 146, height: 49 } },
+  { name: 'Elegant TMT Bar', logo: { src: '/client-logos/elegant-tmt-bar.webp', width: 150, height: 71 } },
+  { name: 'Astral Pipe', logo: { src: '/client-logos/astral-pipe.webp', width: 150, height: 52 } },
+  { name: 'SEL TMT', logo: { src: '/client-logos/sel-tmt.webp', width: 150, height: 62 } },
+  { name: 'Adani Cement', logo: { src: '/client-logos/adani-cement.webp', width: 462, height: 174 } },
+  { name: 'SD Lion TMT', logo: { src: '/client-logos/sd-lion-tmt.webp', width: 517, height: 280 } },
+  { name: 'Dish TV', logo: { src: '/client-logos/dish-tv.webp', width: 660, height: 240 } },
+]
 
 /** "200+" and "companies since 1990". */
 const [companiesValue, ...companiesWords] = COMPANIES_SERVED.split(' ')
 
+/**
+ * The years with each tenure brand as one quiet line, from BRAND_TENURES and
+ * yearsWith: "16 years with Havells, 15 with Lloyd, ... and 5 with Anchor by
+ * Panasonic."
+ */
+export function tenureLine(now?: Date): string {
+  const parts = BRAND_TENURES.map(({ brand, since }, index) => `${yearsWith(since, now)}${index === 0 ? ' years' : ''} with ${brand}`)
+  return `${parts.slice(0, -1).join(', ')} and ${parts[parts.length - 1]}.`
+}
+
 export const BRANDS = {
-  wallLabel: 'Some of the companies we work with',
+  wallLabel: 'Brands we have worked for',
   companies: { value: companiesValue, label: companiesWords.join(' ') },
-  years: (now?: Date) => brandTenureLines(now),
+  tenure: (now?: Date) => tenureLine(now),
   profile: 'Ask for the company profile',
   brands: { href: '/for-brands', label: 'For brand teams' },
 } as const
