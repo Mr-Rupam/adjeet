@@ -53,18 +53,23 @@ export interface Chapter {
   stops?: readonly number[]
 }
 
-/** Proof first (storyboard-v2, section 2): the brands, then the real photographs, then the story. */
+/**
+ * Proof first (storyboard-v2, section 2): the brands, then the real
+ * photographs, then the story. Lengths are about 1.6 times the first pass,
+ * for the scroll driver of section 3b (the prototype's values where it has
+ * the chapter, the same factor for brands, work and the rebuilt road).
+ */
 export const CHAPTERS: readonly Chapter[] = [
-  { id: 'hero', title: 'Advertising that gets you noticed.', len: 0.9, rest: 0, still: 0 },
-  { id: 'brands', title: 'Brands stay for years.', len: 1, over: 0, rest: 0.5, stops: [0.5] },
-  { id: 'work', title: 'Seen on real streets.', len: 2.8, over: 0, rest: 0.06, stops: [0.06, 0.8] },
-  { id: 'brief', title: 'It starts with a photo.', len: 1.6, over: 0, rest: 0.6 },
-  { id: 'workshop', title: 'Made in our own workshop.', len: 1.7, over: 0, rest: 0.66 },
+  { id: 'hero', title: 'Advertising that gets you noticed.', len: 1.4, rest: 0, still: 0 },
+  { id: 'brands', title: 'Brands stay for years.', len: 1.6, over: 0, rest: 0.5, stops: [0.5] },
+  { id: 'work', title: 'Seen on real streets.', len: 4.5, over: 0, rest: 0.06, stops: [0.06, 0.8] },
+  { id: 'brief', title: 'It starts with a photo.', len: 2.6, over: 0, rest: 0.6, stops: [0.4, 0.6] },
+  { id: 'workshop', title: 'Made in our own workshop.', len: 2.7, over: 0, rest: 0.66, stops: [0.3, 0.66] },
   // Stops: the title frame, then the hold (the field complete, the days run on by themselves).
-  { id: 'road', title: 'Then it goes out on the road.', len: 2, over: 0, rest: 0.14, stops: [0.14, 0.78] },
-  { id: 'hills', title: 'From the plains to the hills.', len: 2, over: 0, rest: 0.8 },
-  { id: 'junction', title: 'Shopfronts, walls, vehicles, events.', len: 2.1, over: 0, rest: 0.8 },
-  { id: 'finale', title: 'Your name is next.', len: 1.3, over: 0, rest: 0.72 },
+  { id: 'road', title: 'Then it goes out on the road.', len: 3.2, over: 0, rest: 0.14, stops: [0.14, 0.78] },
+  { id: 'hills', title: 'From the plains to the hills.', len: 3.2, over: 0, rest: 0.8, stops: [0.8] },
+  { id: 'junction', title: 'Shopfronts, walls, vehicles, events.', len: 3.4, over: 0, rest: 0.8, stops: [0.2, 0.45, 0.8] },
+  { id: 'finale', title: 'Your name is next.', len: 2.1, over: 0, rest: 0.72, stops: [0.72] },
 ]
 
 export function chapter(id: ChapterId): Chapter {

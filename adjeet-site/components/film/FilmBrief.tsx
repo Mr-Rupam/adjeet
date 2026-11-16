@@ -33,15 +33,15 @@ export function FilmBrief() {
           <div className="screen">
             <div className="sbar tl" aria-hidden="true"><span>9:41</span><i /></div>
             <div className="chead tl" aria-hidden="true"><b>{BRIEF.chatName}</b></div>
-            <div className="view"><div className="thread">
+            <div className="view"><div className="thread tl">
               <div className="outwrap tl">
-                <figure className="msg out fade" style={vars({ '--at': 0.16 })}>
+                <figure className="msg out">
                   <Plate tall={ART.shopBefore} alt="Visualisation: a shopfront with a dull, unlit, blank board over its open front" className="" />
                   <figcaption>{BRIEF.sent}</figcaption>
                 </figure>
               </div>
-              <i className="typing fade" style={vars({ '--at': 0.23 })} aria-hidden="true"><b /><b /><b /></i>
-              <figure className="msg in fade" style={vars({ '--at': 0.3 })}>
+              <i className="typing tl" aria-hidden="true"><b /><b /><b /></i>
+              <figure className="msg in tl">
                 <div className="pic">
                   <Plate tall={ART.shopAfter} alt="Visualisation: the same shopfront with a new lit board carrying the shop's name" className="" />
                   <Name />
@@ -68,8 +68,9 @@ export function FilmBrief() {
         </div>
       </div>
 
-      <div className="brief-out tl">
-        <div className="card brief-card fade" style={vars({ '--at': 0.47 })}>
+      {/* --at and --off only tell the dock when this gold action shows; the words are scroll-bound. */}
+      <div className="brief-out tl" style={vars({ '--at': 0.47, '--off': 0.66 })}>
+        <div className="card brief-card">
           <h2 id="brief-h">{chapter('brief').title}</h2>
           <p>{BRIEF.line}</p>
           <div className="acts">

@@ -134,10 +134,10 @@ describe('home page: the film, then the questions', () => {
 
   it('declares the scroll controller stops on the two proof chapters', () => {
     const doc = render()
-    expect(doc.querySelector('#brands')?.getAttribute('data-stops')).toBe('.5')
-    expect(doc.querySelector('#work')?.getAttribute('data-stops')).toMatch(/^\.06 /)
+    expect(doc.querySelector('#brands')?.getAttribute('data-stops')).toBe('0.5')
+    expect(doc.querySelector('#work')?.getAttribute('data-stops')).toMatch(/^0\.06 /)
     for (const chapter of CHAPTERS) {
-      expect(doc.querySelector(`#${chapter.id}`)?.getAttribute('data-stops') ?? undefined, chapter.id).toBe(chapter.stops)
+      expect(doc.querySelector(`#${chapter.id}`)?.getAttribute('data-stops') ?? undefined, chapter.id).toBe(chapter.stops?.join(' '))
     }
   })
 
