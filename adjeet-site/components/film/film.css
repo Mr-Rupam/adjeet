@@ -82,6 +82,11 @@
 
 /* ---------- Chapters ---------- */
 .film .ch { position: relative; }
+/* The browser skips the style, layout and paint of a chapter far from the
+   screen, so the hero's first paint does not wait for the rest of the film.
+   A chapter renders before it pins (its box enters the viewport a screen
+   ahead), and the engine refits its lettering when it does. */
+.film .ch:not(:first-child) { content-visibility: auto; contain-intrinsic-size: auto 100lvh; }
 .film .stage {
   position: relative;
   height: 100lvh;
@@ -1327,6 +1332,8 @@
    of the plate), by default the camera's --ox --oy. */
 .film .planes { position: absolute; inset: 0; display: none; pointer-events: none; }
 .story .film .planes.ready.on:not(.late) { display: block; }
+/* Never under the requestAnimationFrame driver (story.ts does not fetch them there). */
+.story.drv-js .film .planes { display: none !important; }
 .film .pl {
   position: absolute; inset: 0; width: 100%; height: 100%; max-width: none;
   transform-origin: calc(var(--px, var(--ox, 50)) * 1%) calc(var(--py, var(--oy, 50)) * 1%);

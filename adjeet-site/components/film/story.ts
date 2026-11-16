@@ -53,7 +53,9 @@ export function startStory(film: HTMLElement): () => void {
   const WIDE = matchMedia('(min-width: 1024px) and (min-aspect-ratio: 5/4)')
   const save = !!(navigator as Navigator & { connection?: { saveData?: boolean } }).connection?.saveData
   const planes = (c?: Chapter) => {
-    if (!story || save || !c || (c === C[0] && !idle)) return
+    // Never under the requestAnimationFrame driver: there the planes cost more
+    // frames than they add depth, so the flat plate does every move.
+    if (!story || js || save || !c || (c === C[0] && !idle)) return
     for (const s of all<Stack>('.planes', c.el)) {
       if (s.t) continue
       const k = WIDE.matches ? 'srcw' : 'src'
@@ -73,8 +75,11 @@ export function startStory(film: HTMLElement): () => void {
     const y = scrollY
     for (const c of C) {
       c.top = c.el.getBoundingClientRect().top + y
-      c.pin = Math.max(1, c.el.offsetHeight - c.st.offsetHeight)
-      c.H = c.st.offsetHeight
+      // Every stage is one screen; a chapter the browser is skipping
+      // (content-visibility) reports no layout inside it, so the first
+      // chapter's stage gives the height for all.
+      c.H = C[0].st.offsetHeight
+      c.pin = Math.max(1, c.el.offsetHeight - c.H)
     }
     frame()
   }
@@ -187,6 +192,9 @@ export function startStory(film: HTMLElement): () => void {
   // A theme change lays out the other theme's pictures and swaps the hero's planes.
   const themes = new MutationObserver(() => requestAnimationFrame(() => { onResize(); reset() }))
 
+  // A chapter the browser had skipped letters its boards once it renders.
+  const onShown = (e: Event) => { if (!(e as Event & { skipped?: boolean }).skipped) fit() }
+  for (const c of C) c.el.addEventListener('contentvisibilityautostatechange', onShown)
   for (const i of inputs) i.addEventListener('input', onInput)
   d.addEventListener('click', onClick)
   d.addEventListener('focusin', onFocus)
@@ -210,6 +218,7 @@ export function startStory(film: HTMLElement): () => void {
   return () => {
     live = false
     if (raf) cancelAnimationFrame(raf)
+    for (const c of C) c.el.removeEventListener('contentvisibilityautostatechange', onShown)
     for (const i of inputs) i.removeEventListener('input', onInput)
     d.removeEventListener('click', onClick)
     d.removeEventListener('focusin', onFocus)
