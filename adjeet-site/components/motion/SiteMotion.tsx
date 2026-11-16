@@ -174,5 +174,5 @@ export function SiteMotion() {
     }
   }, [pathname, desktop, prefersReducedMotion])
 
-  return <div className={styles.rail} aria-hidden="true"><span ref={progressRef} className={styles.railProgress} data-motion-progress /></div>
+  return <div className={styles.rail} aria-hidden="true" data-site-rail><span ref={progressRef} className={styles.railProgress} data-motion-progress /></div>
 }

@@ -51,16 +51,24 @@ function useOverHero(isHome: boolean, pathname: string, header: RefObject<HTMLEl
       // While the home film plays the header stays on the artwork through the
       // whole film, taking its ink from each stage (components/film/film.css);
       // in the still frames it is over the hero only, as before the film.
-      const film = document.documentElement.classList.contains('story')
-      const hero = document.getElementById(film ? 'film' : 'hero-section')
-      const over = Boolean(hero && header.current && hero.getBoundingClientRect().bottom > header.current.offsetHeight)
+      // The film's engine says which chapter is on screen ("after" once the
+      // film has gone), so no layout is read while the film scrolls.
+      const root = document.documentElement
+      const chapter = root.classList.contains('story') ? root.getAttribute('data-film-ch') : null
+      const hero = chapter === null ? document.getElementById('hero-section') : null
+      const over = chapter !== null
+        ? chapter !== 'after'
+        : Boolean(hero && header.current && hero.getBoundingClientRect().bottom > header.current.offsetHeight)
       setState(current => (current.path === pathname && current.over === over ? current : { path: pathname, over }))
     }
     const schedule = () => { if (!frame) frame = window.requestAnimationFrame(update) }
     schedule()
     window.addEventListener('scroll', schedule, { passive: true })
     window.addEventListener('resize', schedule)
+    const chapters = new MutationObserver(schedule)
+    chapters.observe(document.documentElement, { attributes: true, attributeFilter: ['data-film-ch'] })
     return () => {
+      chapters.disconnect()
       if (frame) window.cancelAnimationFrame(frame)
       window.removeEventListener('scroll', schedule)
       window.removeEventListener('resize', schedule)

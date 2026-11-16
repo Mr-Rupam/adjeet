@@ -1360,7 +1360,7 @@
 :root.story[data-film-tone="light"] .site-header.site-header--over-hero { --hero-ink: var(--day-ink); --focus-ring: var(--cerulean-deep); }
 :root.story .site-header.site-header--over-hero { transition: --hero-ink 320ms ease, background-color 320ms ease, border-color 320ms ease; }
 /* The site's reading rail would sit on the chapter rail: off while the film plays. */
-:root.story:not([data-film-ch="after"]) div:has(> [data-motion-progress]) { opacity: 0; }
+:root.story:not([data-film-ch="after"]) [data-site-rail] { opacity: 0; }
 
 /* ===== The one floating action on a phone =====
    While the film plays the dock is the small square of the prototype, in the
