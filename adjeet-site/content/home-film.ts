@@ -236,20 +236,23 @@ export type WallBrand = { name: string; logo?: LogoFile }
  * `height` are the file's own pixels: a logo is never drawn larger, never
  * recoloured, and on a phone at most half its width so it stays sharp at 2x
  * (film.css). A brand without a file sharp enough for the board is lettered
- * in the film's face until a larger file is approved.
+ * in the film's face until a larger file is approved. A `-trim` file is the
+ * same artwork with the empty margin of its canvas cropped (never the mark),
+ * so the mark fills its board; the original is kept beside it.
  */
 export const WALL: readonly WallBrand[] = [
   { name: 'Havells', logo: { src: '/client-logos/havells.webp', width: 424, height: 280 } },
   // Lloyd's clean logo is the owner-approved file from the company profile deck.
   { name: 'Lloyd', logo: { src: '/client-logos/lloyd.png', width: 700, height: 203 } },
   { name: 'Shyam Steel', logo: { src: '/client-logos/shyam-steel.webp', width: 220, height: 97 } },
-  { name: 'Star Cement', logo: { src: '/client-logos/star-cement.webp', width: 280, height: 280 } },
+  { name: 'Star Cement', logo: { src: '/client-logos/star-cement-trim.webp', width: 234, height: 216 } },
   { name: 'Anchor by Panasonic', logo: { src: '/client-logos/anchor.webp', width: 536, height: 155 } },
-  { name: 'Airtel', logo: { src: '/client-logos/airtel.webp', width: 660, height: 271 } },
+  { name: 'Airtel', logo: { src: '/client-logos/airtel-trim.webp', width: 521, height: 143 } },
   { name: 'Supreme Pipe', logo: { src: '/client-logos/supreme-pipe.webp', width: 660, height: 213 } },
-  // The only SRMB file is 105 x 32: lettered until a larger one is approved.
+  // SRMB's own site serves the same 105 x 32 file (fetched 16 November 2026):
+  // lettered until a larger one is found.
   { name: 'SRMB' },
-  { name: 'Emami', logo: { src: '/client-logos/emami.png', width: 612, height: 567 } },
+  { name: 'Emami', logo: { src: '/client-logos/emami-trim.png', width: 506, height: 457 } },
   { name: 'OYO', logo: { src: '/client-logos/oyo.webp', width: 660, height: 232 } },
   { name: 'Dalmia Cement', logo: { src: '/client-logos/dalmia-cement.png', width: 400, height: 225 } },
   { name: 'Jio', logo: { src: '/client-logos/jio.webp', width: 83, height: 83 } },

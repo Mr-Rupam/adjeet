@@ -205,6 +205,11 @@ describe('the brands wall', () => {
       const meta = await sharp(path.join(ROOT, 'public', brand.logo.src)).metadata()
       expect([meta.width, meta.height], brand.name).toEqual([brand.logo.width, brand.logo.height])
       if (brand.name !== 'Adani Cement') expect(brand.logo.src, brand.name).not.toMatch(/adani/)
+      // A cropped copy keeps its original beside it, and is no larger than it.
+      if (brand.logo.src.includes('-trim')) {
+        const original = await sharp(path.join(ROOT, 'public', brand.logo.src.replace('-trim', ''))).metadata()
+        expect(brand.logo.width * brand.logo.height, brand.name).toBeLessThan(original.width! * original.height!)
+      }
     }
     // Lettered until a larger file is approved.
     expect(WALL.filter(brand => !brand.logo).map(brand => brand.name)).toEqual(['SRMB'])
