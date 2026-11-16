@@ -22,10 +22,10 @@
   --cream: #F6F0E3;
   --marine: #172229;
   --night-ground: #051523;
-  --light-board: #FEF4C5;           /* the hero board's lit face: hero ends, brief begins */
+  --light-board: #FEF4C5;           /* a lit board's face: hero to brands, brands to work, work to brief, brief to workshop */
   --light-gold: #F2B04C;            /* the workshop doorway: workshop ends, road begins */
-  --light-white: #FFF8E7;           /* hills and junction end on it */
-  --light-night: #051523;           /* proof ends on it, the finale rises out of it */
+  --light-white: #FFF8E7;           /* hills and junction end on it; the finale rises out of it as it dims */
+  --light-night: #051523;           /* the night ground */
   --light: var(--light-board);
   --gutter: var(--page-gutter);
   --f-head: var(--font-outfit), system-ui, sans-serif;
@@ -984,172 +984,236 @@
   :root:not(.story) .film .j-list { top: calc(14cqh + 2.2 * min(11.4cqw, 6.4cqh) + 24px); }
 }
 
-/* ===== ch6-proof.css ===== */
-/* Chapter 6, the proof. Everything before was a picture of an idea; this is
-   the record. The hoarding's white dims to the night ground as the first
-   frame switches on like a light box; six real photographs pass as a film
-   strip tied to the scroll (whole, never cropped, never wider than their own
-   pixels, each in a thin cerulean frame like the hero's board, captioned
-   only with the gallery record). On a portrait screen the strip runs
-   upward, each photograph the width of the screen; on a landscape screen it
-   runs sideways. Then the GPS line, then the ledger: one wide lit board
-   carrying the client logos, the years beside it. Leaves on the flat night
-   ground. Order and captions: curation/report.md. */
-.film .proof {
-  --ground: var(--light-night, #051523);
+/* ===== Chapter 1, brands (storyboard-v2, section 4; branch film/proof-top) =====
+   "Brands stay for years." The hero's board light is the lit face of one
+   board; the camera pulls back to a dark wall of the film's boards, all the
+   same size, one company each; a wave switches them on; then the words. It
+   leaves by pushing into the blank board at the wall's centre (.b-seed)
+   until its light (--light-board) fills the screen: the work chapter opens
+   on it. The wall's geometry is worked out here from the screen, so the
+   camera always knows where that board is:
+     --bh --bw   a board's height and width (2.1 : 1, a fascia's shape)
+     --ww --wh   the wall's size; --wl --wtop its place on the stage
+     --sx --sy   the centre of the seed board, in the wall (column --sc, row --sr)
+     --dx --dy   the move that brings that centre to the middle of the screen
+   Rows and the seed's row come from FilmBrands (--rows-t, --rows-w, --sr-t,
+   --sr-w), so the wall follows the company list. Logos sit on the lit face
+   as if printed (multiply), never larger than their own pixels, and step off
+   before the camera moves. */
+.film .brands {
+  --ground: #051523;
   --card-ink: #F4EDDF;
   --top: clamp(92px, 11.5cqh, 120px);
-  --h2: clamp(38px, min(11.4cqw, 6.4cqh), 92px);
+  --h2: clamp(36px, min(11.4cqw, 6.4cqh), 92px);
+  --cols: 3; --rows: var(--rows-t, 5); --sc: 2; --sr: var(--sr-t, 3);
+  --cg: 12px; --rg: 24px; --face: 2.1;
+  --span: calc(100cqw - 2 * var(--gutter));
+  --wtop: calc(var(--top) + 2.15 * var(--h2) + 20px);
+  --words: 230px;
+  --room: calc(100cqh - var(--wtop) - var(--bar) - var(--words));
+  --bh: max(22px, min((var(--span) - (var(--cols) - 1) * var(--cg)) / var(--cols) / var(--face), (var(--room) - (var(--rows) - 1) * var(--rg)) / var(--rows)));
+  --bw: calc(var(--bh) * var(--face));
+  --ww: calc(var(--cols) * var(--bw) + (var(--cols) - 1) * var(--cg));
+  --wh: calc(var(--rows) * var(--bh) + (var(--rows) - 1) * var(--rg));
+  --wl: calc(50cqw - var(--ww) / 2);
+  --sx: calc((var(--sc) - 1) * (var(--bw) + var(--cg)) + var(--bw) / 2);
+  --sy: calc((var(--sr) - 1) * (var(--bh) + var(--rg)) + var(--bh) / 2);
+  --dx: calc(50cqw - var(--wl) - var(--sx));
+  --dy: calc(50cqh - var(--wtop) - var(--sy));
   background: var(--ground);
   color: #F4EDDF;
 }
 
-.film .proof-card { top: var(--top); max-width: 640px; animation-name: proof-title; }
-@keyframes proof-title { 0%, 90% { opacity: 1; } 96%, 100% { opacity: 0; } }
+/* The wall. Unlit, a board is dull acrylic in its cerulean frame; lit, its
+   face is the hero board's cream and its light falls on the wall around it. */
+.film .b-cam {
+  position: absolute; z-index: 3;
+  left: var(--wl); top: var(--wtop); width: var(--ww); height: var(--wh);
+  transform-origin: var(--sx) var(--sy);
+  will-change: transform;
+  animation-name: brands-cam;
+}
+.film .b-wall { display: grid; grid-template-columns: repeat(var(--cols), var(--bw)); grid-auto-rows: var(--bh); gap: var(--rg) var(--cg); margin: 0; padding: 0; list-style: none; }
+.film .b-wide { display: none; }
+.film .b-board {
+  position: relative; isolation: isolate;
+  border: 2px solid #0099D0;
+  background: linear-gradient(180deg, #102532, #0A1B26);
+}
+.film .b-lit {
+  position: absolute; inset: 0;
+  background: linear-gradient(180deg, #FFF8E7, #F6F0E3 64%, #ECE2CC);
+  box-shadow: 0 0 calc(var(--bh) * .5) color-mix(in srgb, #FFF3C8 20%, transparent), 0 calc(var(--bh) * .4) calc(var(--bh) * .8) calc(var(--bh) * -.15) color-mix(in srgb, #FFF3C8 16%, transparent);
+  transition: opacity var(--beat) ease;
+}
+.story .film .b-board:not(.on) .b-lit { opacity: 0; }
+/* Printed on the face: on the unlit acrylic the print reads as dark. */
+.film .b-print { position: absolute; z-index: 1; inset: 15% 9%; display: flex; align-items: center; justify-content: center; mix-blend-mode: multiply; pointer-events: none; animation-name: brands-print; }
+.film .b-print img { display: block; flex: none; max-width: 100%; max-height: 100%; width: auto; height: auto; object-fit: contain; }
+.film .b-print b { font-family: var(--f-head); font-weight: 700; color: #172229; letter-spacing: -.012em; line-height: 1; white-space: nowrap; font-size: min(var(--bh) * .34, var(--bw) * 1.3 / var(--n, 8)); }
+/* The years with a brand, stamped under its board. */
+.film .b-stamp { position: absolute; left: 0; top: calc(100% + 6px); font-family: var(--font-barlow-condensed), var(--f-head); font-weight: 500; font-size: 11.5px; line-height: 1; letter-spacing: .1em; text-transform: uppercase; white-space: nowrap; color: color-mix(in srgb, #F4EDDF 82%, transparent); }
+/* The light the wall sits in once the boards are on. */
+.film .b-pool { position: absolute; inset: 0; z-index: 0; pointer-events: none; background: radial-gradient(ellipse calc(var(--ww) * .8) calc(var(--wh) * .9) at 50% calc(var(--wtop) + var(--wh) / 2), color-mix(in srgb, #FFF3C8 9%, transparent), transparent); animation-name: brands-pool; }
+/* The one blank board: the hero's light at the start, the way out at the end. */
+.film .b-seed { position: absolute; z-index: 2; left: calc(var(--sx) - var(--bw) / 2); top: calc(var(--sy) - var(--bh) / 2); width: var(--bw); height: var(--bh); border: 2px solid #0099D0; background: var(--light-board); box-shadow: 0 0 calc(var(--bh) * .6) color-mix(in srgb, var(--light-board) 30%, transparent); pointer-events: none; animation-name: brands-seed; }
 
-/* ---------- The film strip (landscape: sideways) ---------- */
-.film .strip {
-  position: absolute; z-index: 3; left: 0; right: 0;
-  top: calc(var(--top) + 2.2 * var(--h2) + 18px);
-  bottom: calc(var(--bar) + 28px);
-  display: flex; flex-direction: column; justify-content: center; padding-bottom: 4cqh;
-  animation-name: proof-strip;
+/* The words: the title over the wall, the figure and the actions under it. */
+.film .b-out { position: absolute; inset: 0; z-index: 5; pointer-events: none; animation-name: brands-out; }
+.film .b-out > * { pointer-events: auto; }
+.film .b-card { top: var(--top); max-width: 640px; }
+.film .b-card h2 { font-size: var(--h2); }
+.film .b-words { position: absolute; left: var(--gutter); right: var(--gutter); top: calc(var(--wtop) + var(--wh) + 30px); color: #F4EDDF; }
+.film .b-big { display: flex; flex-wrap: wrap; align-items: baseline; gap: 2px 12px; margin: 0; font-family: var(--f-head); font-weight: 500; font-size: 16px; line-height: 1.2; color: color-mix(in srgb, #F4EDDF 86%, transparent); }
+.film .b-big b { font-weight: 600; font-size: clamp(46px, min(14cqw, 7cqh), 104px); line-height: .9; letter-spacing: -.04em; color: #F4EDDF; }
+.film .b-words .acts { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 26px; margin-top: 16px; }
+
+/* ---------- Motion ---------- */
+@keyframes brands-cam {
+  0%   { transform: translate(var(--dx), var(--dy)) scale(24); }
+  5%   { transform: translate(calc(var(--dx) * .86), calc(var(--dy) * .86)) scale(9); }
+  10%  { transform: translate(calc(var(--dx) * .58), calc(var(--dy) * .58)) scale(3.8); }
+  15%  { transform: translate(calc(var(--dx) * .24), calc(var(--dy) * .24)) scale(1.7); }
+  20%, 80% { transform: none; }
+  86%  { transform: translate(calc(var(--dx) * .3), calc(var(--dy) * .3)) scale(1.8); }
+  92%  { transform: translate(calc(var(--dx) * .78), calc(var(--dy) * .78)) scale(5.5); }
+  100% { transform: translate(var(--dx), var(--dy)) scale(24); }
 }
-@keyframes proof-strip { 0%, 50% { opacity: 1; } 54%, 100% { opacity: 0; } }
-/* Each frame is --slot wide, so the next one waits at the right edge, as on
-   a strip of film. */
-.film .reel { --slot: 86%; flex: none; display: flex; margin: 0; padding: 0; list-style: none; animation-name: proof-reel; }
-@keyframes proof-reel {
-  0%, 8%    { transform: translateX(0); }
-  12%, 16%  { transform: translateX(calc(var(--slot) * -1)); }
-  20%, 24%  { transform: translateX(calc(var(--slot) * -2)); }
-  28%, 32%  { transform: translateX(calc(var(--slot) * -3)); }
-  36%, 40%  { transform: translateX(calc(var(--slot) * -4)); }
-  44%, 100% { transform: translateX(calc(var(--slot) * -5)); }
+@keyframes brands-print { 0%, 18% { opacity: 0; } 22%, 79% { opacity: 1; } 82%, 100% { opacity: 0; } }
+@keyframes brands-seed { 0%, 36% { opacity: 1; } 44%, 78% { opacity: 0; } 82%, 100% { opacity: 1; } }
+@keyframes brands-pool { 0%, 20% { opacity: 0; } 40%, 80% { opacity: 1; } 88%, 100% { opacity: 0; } }
+@keyframes brands-out { 0%, 79% { opacity: 1; transform: none; } 84%, 100% { opacity: 0; transform: translateY(-3cqh); } }
+.film .brands .flash { animation-name: brands-flash; }
+@keyframes brands-flash { 0% { opacity: 1; } 5%, 93% { opacity: 0; } 98.5%, 100% { opacity: 1; } }
+
+/* ---------- Wide screens: six across, the words in one row under the wall ---------- */
+@media (min-width: 1024px) and (min-aspect-ratio: 5/4) {
+  .film .brands {
+    --cols: 6; --rows: var(--rows-w, 3); --sc: 3; --sr: var(--sr-w, 2);
+    --cg: 20px; --rg: 34px;
+    --top: 14cqh; --h2: min(9cqh, 6.2cqw);
+    --span: min(100cqw - 2 * var(--gutter), 1280px);
+    --wtop: calc(var(--top) + 1.2 * var(--h2) + 4cqh);
+    --words: 17cqh;
+  }
+  .film .b-wide { display: block; }
+  .film .b-card { left: var(--wl); right: auto; max-width: none; }
+  .film .b-stamp { font-size: 13px; top: calc(100% + 8px); }
+  .film .b-words { left: var(--wl); right: auto; width: var(--ww); top: calc(var(--wtop) + var(--wh) + 5cqh); display: flex; align-items: flex-end; justify-content: space-between; gap: 24px; }
+  .film .b-big { font-size: 19px; }
+  .film .b-words .acts { margin-top: 0; gap: 4px 30px; }
+  .film .b-words .cta { min-height: 56px; padding-inline: 26px; font-size: 17px; }
 }
-.film .shot { flex: 0 0 var(--slot); min-width: 0; display: flex; align-items: center; padding-left: var(--gutter); }
-.film .shot figure { margin: 0; display: flex; flex-direction: column; align-items: flex-start; max-width: 100%; max-height: 100%; }
-/* The frame: the hero board's thin cerulean edge, lit from inside. Each
-   frame switches on like a light box when its beat comes (dim to full). */
-.film .frame {
-  position: relative; max-width: 100%;
-  border: 3px solid #0099D0; outline: 1px solid color-mix(in srgb, #0099D0 40%, transparent); outline-offset: 2px;
-  box-shadow: 0 0 38px color-mix(in srgb, #FFF3C8 14%, transparent);
+
+/* ---------- Still frame: the wall lit, the words under it ---------- */
+:root:not(.story) .film .brands { height: auto; min-height: 100lvh; padding: 112px 0 72px; container-type: inline-size; display: flex; flex-direction: column; --room: 4000px; }
+:root:not(.story) .film .brands :is(.b-out, .b-card, .b-words, .b-cam) { position: static; transform: none; opacity: 1; }
+:root:not(.story) .film .b-out { display: contents; }
+:root:not(.story) .film .b-card { order: 0; margin: 0 var(--gutter); }
+:root:not(.story) .film .b-cam { order: 1; margin: 28px auto 0; }
+:root:not(.story) .film .b-words { order: 2; margin: 36px var(--gutter) 0; }
+:root:not(.story) .film :is(.b-seed, .b-pool), :root:not(.story) .film .brands .flash { display: none; }
+@media (min-width: 1024px) and (min-aspect-ratio: 5/4) {
+  :root:not(.story) .film :is(.b-card, .b-words) { margin-inline: auto; width: var(--ww); }
+}
+
+/* ===== Chapter 2, work (storyboard-v2, section 5; branch film/proof-top) =====
+   "Seen on real streets." Opens on the board light, dimming to night as the
+   first frame switches on like a light box. A wall of light boxes: real
+   photographs from the gallery, each whole in the film's thin cerulean
+   frame, never drawn wider than its own pixels (--pw), captioned only with
+   its record. On a phone, one across the width, then a pair; on a desktop
+   four columns, a large one across two. The wall rises with the scroll (free
+   travel); the second of each pair drifts at its own rate (depth). It ends on
+   one photograph beside the GPS line and "See all the work"; that frame
+   turns to plain light and grows until it fills the screen. */
+.film .work {
+  --ground: #051523;
+  --card-ink: #F4EDDF;
+  --top: clamp(92px, 11.5cqh, 120px);
+  --wg: 12px;
+  background: var(--ground);
+  color: #F4EDDF;
+}
+/* The wall passes under the header: it fades out before it gets there. */
+.film .w-view { position: absolute; inset: 0; z-index: 3; -webkit-mask-image: linear-gradient(180deg, transparent 56px, #000 100px); mask-image: linear-gradient(180deg, transparent 56px, #000 100px); }
+.film .w-rise { position: absolute; left: 0; right: 0; top: 0; padding: var(--top) var(--gutter) 0; will-change: transform; animation-name: work-rise; }
+@keyframes work-rise { 0%, 6% { transform: none; } 78%, 100% { transform: translateY(calc(-100% + 100cqh)); } }
+.film .w-card { position: static; margin: 0 0 26px; max-width: 640px; }
+.film .w-wall { display: grid; grid-template-columns: 1fr 1fr; align-items: start; gap: 34px var(--wg); margin: 0; padding: 0; list-style: none; }
+.film .w-large { grid-column: 1 / -1; }
+.film .w-shot figure, .film .w-last { margin: 0; }
+.film .w-far .w-drift { animation-name: work-drift; }
+@keyframes work-drift { 0%, 6% { transform: translateY(2.5cqh); } 78%, 100% { transform: translateY(-2.5cqh); } }
+
+/* The frame: the hero board's thin cerulean edge, lit from inside. A frame
+   switches on (dim to full) when its beat comes. */
+.film .w-frame {
+  position: relative; width: 100%; max-width: var(--pw);
+  border: 2px solid #0099D0; outline: 1px solid color-mix(in srgb, #0099D0 40%, transparent); outline-offset: 2px;
+  box-shadow: 0 0 34px color-mix(in srgb, #FFF3C8 12%, transparent);
   line-height: 0;
   transition: opacity 650ms ease;
 }
-.film .shot figcaption { transition: opacity 650ms ease 150ms; }
-.story .film .shot:not(.on) .frame { opacity: .2; }
-.story .film .shot:not(.on) figcaption { opacity: 0; }
-.film .frame img {
-  display: block; width: auto; height: auto;
-  max-width: min(100%, var(--pw));   /* never wider than its own pixels */
-  max-height: calc(100cqh - var(--top) - 2.2 * var(--h2) - 18px - var(--bar) - 28px - 108px);
-}
-.film .f-lbox { position: absolute; inset: 0; background: var(--light-white, #FFF8E7); opacity: 0; animation-name: proof-lightbox; pointer-events: none; }
-@keyframes proof-lightbox { 0%, 3% { opacity: 1; } 8%, 100% { opacity: 0; } }
+.film .w-frame img { display: block; width: 100%; height: auto; }
+.story .film .w-shot:not(.on) .w-frame, .story .film .w-last:not(.on) .w-frame { opacity: .16; }
+.film .w-shot figcaption { transition: opacity 650ms ease 150ms; }
+.story .film .w-shot:not(.on) figcaption { opacity: 0; }
 /* The caption, set small like a stamp: only what the record says. */
-.film .shot figcaption { margin-top: 12px; display: flex; flex-wrap: wrap; gap: 2px 14px; font-family: var(--font-barlow-condensed), var(--f-head); font-weight: 500; font-size: 14px; line-height: 1.3; letter-spacing: .09em; text-transform: uppercase; color: color-mix(in srgb, #F4EDDF 74%, transparent); }
-.film .shot figcaption b { font-weight: 600; color: #F4EDDF; }
-.film .count { margin: 10px 0 0; padding-inline: var(--gutter); font-family: var(--font-barlow-condensed), var(--f-head); font-weight: 500; font-size: 14px; letter-spacing: .09em; text-transform: uppercase; color: color-mix(in srgb, #F4EDDF 56%, transparent); }
-.film .count-n { position: relative; display: inline-block; width: .7em; height: 1em; vertical-align: -.12em; color: #F4EDDF; }
-.film .count-n span { position: absolute; left: 0; top: 0; transition: opacity 260ms ease; }
-.story .film .count-n span:not(.on), .story .film .count-n span.on:has(~ span.on) { opacity: 0; }
+.film .work figcaption { margin-top: 10px; display: flex; flex-wrap: wrap; gap: 2px 12px; font-family: var(--font-barlow-condensed), var(--f-head); font-weight: 500; font-size: 13px; line-height: 1.3; letter-spacing: .08em; text-transform: uppercase; color: color-mix(in srgb, #F4EDDF 72%, transparent); }
+.film .work figcaption b { font-weight: 600; color: #F4EDDF; }
+/* The board's light, still on the first frame as the night comes in. */
+.film .w-first { position: absolute; inset: 0; background: var(--light-board); pointer-events: none; animation-name: work-first; }
+@keyframes work-first { 0%, 2% { opacity: 1; } 9%, 100% { opacity: 0; } }
 
-/* ---------- Portrait: the strip runs upward ----------
-   Each photograph the width of the screen (16px gutter), stacked with its
-   caption; the strip rises through the stage with the scroll, two or more
-   frames in view; the title is there for the first frame, then lifts away. */
-@media (orientation: portrait) {
-  .film .proof-card { animation-name: proof-title-v; }
-  @keyframes proof-title-v { 0%, 7% { opacity: 1; transform: none; } 10.5%, 100% { opacity: 0; transform: translateY(-6cqh); } }
-  .film .strip { top: 0; bottom: 0; display: block; padding: 0; -webkit-mask-image: linear-gradient(180deg, transparent 70px, #000 150px); mask-image: linear-gradient(180deg, transparent 70px, #000 150px); }
-  .film .reel { display: flex; flex-direction: column; gap: 30px; padding-top: calc(var(--top) + 2.2 * var(--h2) + 10px); animation-name: proof-reel-v; }
-  @keyframes proof-reel-v { 0%, 8% { transform: translateY(0); } 50%, 100% { transform: translateY(calc(-100% + 72cqh)); } }
-  .film .shot { display: block; flex: none; padding: 0 16px; }
-  .film .shot figure { display: block; }
-  .film .frame { display: block; }
-  .film .frame img { width: 100%; max-width: var(--pw); max-height: none; }
-  .film .shot figcaption { margin-top: 10px; }
-  .film .count { display: none; }
-}
+/* The close: one screen, the last photograph centred with the GPS line. */
+.film .w-end { height: 100cqh; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 18px; padding-bottom: var(--bar); text-align: center; }
+.film .w-last { display: flex; flex-direction: column; align-items: center; }
+.film .w-last .w-frame { width: auto; }
+.film .w-last img { width: auto; height: auto; max-width: min(100cqw - 2 * var(--gutter), var(--pw)); max-height: 46cqh; }
+.film .w-last figcaption { justify-content: center; }
+.film .w-close { display: flex; flex-direction: column; align-items: center; gap: 6px; }
+.film .w-gps { margin: 0; max-width: 24ch; font-family: var(--f-head); font-weight: 500; font-size: clamp(20px, min(5.6cqw, 3cqh), 30px); line-height: 1.25; letter-spacing: -.012em; color: #F4EDDF; text-wrap: balance; }
+.film .w-lbox { position: absolute; inset: 0; background: var(--light-board); opacity: 0; pointer-events: none; animation-name: work-lbox; }
 
-/* ---------- The GPS line ---------- */
-.film .gps {
-  position: absolute; z-index: 3; left: var(--gutter); right: var(--gutter); top: 50%;
-  max-width: 22ch; margin: 0;
-  font-family: var(--f-head); font-weight: 500; font-size: clamp(24px, min(6.6cqw, 3.6cqh), 40px); line-height: 1.2; letter-spacing: -.015em;
-  color: #F4EDDF; text-wrap: balance;
-  opacity: 0;
-  animation-name: proof-gps;
-}
-@keyframes proof-gps { 0%, 52% { opacity: 0; transform: translateY(calc(-50% + 3cqh)); } 55.5%, 61% { opacity: 1; transform: translateY(-50%); } 64%, 100% { opacity: 0; transform: translateY(calc(-50% - 4cqh)); } }
+/* ---------- Motion: the frame becomes light and fills the screen ---------- */
+.film .w-grow { animation-name: work-grow; }
+@keyframes work-grow { 0%, 89% { transform: none; } 94% { transform: scale(1.7); } 97% { transform: scale(3.6); } 100% { transform: scale(7); } }
+@keyframes work-lbox { 0%, 86% { opacity: 0; } 89%, 100% { opacity: 1; } }
+.film .w-img { animation-name: work-img; }
+@keyframes work-img { 0%, 89% { opacity: 1; } 90%, 100% { opacity: 0; } }
+.film .w-close { animation-name: work-close; }
+@keyframes work-close { 0%, 85% { opacity: 1; } 88%, 100% { opacity: 0; } }
+.film .work .flash { animation-name: work-flash; }
+@keyframes work-flash { 0% { opacity: 1; } 5%, 94% { opacity: 0; } 99%, 100% { opacity: 1; } }
 
-/* ---------- The ledger ---------- */
-.film .ledger {
-  position: absolute; z-index: 4; left: var(--gutter); right: var(--gutter);
-  top: calc(var(--top) + 2.2 * var(--h2) + 22px);
-  animation-name: proof-ledger;
-}
-@keyframes proof-ledger { 0%, 63% { opacity: 0; } 64.5%, 91% { opacity: 1; } 96%, 100% { opacity: 0; } }
-/* One wide lit board, the film's own motif: cream face, thin cerulean
-   frame. The logos sit on it as if printed (multiply takes their white
-   ground into the cream; they are never drawn larger than their pixels). */
-.film .lboard {
-  display: flex; flex-wrap: wrap; align-items: center; justify-content: space-around; gap: 14px 22px;
-  padding: 18px 20px;
-  background: linear-gradient(180deg, #FFF8E7, #F6F0E3 70%, #EFE6D2);
-  border: 3px solid #0099D0;
-  box-shadow: 0 0 0 1px color-mix(in srgb, #0099D0 30%, transparent), 0 0 48px color-mix(in srgb, #FFF3C8 22%, transparent);
-}
-.film .lboard img { height: var(--lh); width: auto; max-width: 100%; mix-blend-mode: multiply; }
-.film .lside { margin-top: 18px; }
-.film .big { font-family: var(--f-head); font-weight: 500; font-size: 17px; line-height: 1.2; color: color-mix(in srgb, #F4EDDF 86%, transparent); }
-.film .big b { display: block; font-weight: 600; font-size: clamp(56px, min(17cqw, 9cqh), 112px); line-height: .95; letter-spacing: -.04em; color: #F4EDDF; }
-.film .years { margin: 12px 0 0; padding: 0; list-style: none; font-size: 15px; line-height: 1.55; color: color-mix(in srgb, #F4EDDF 84%, transparent); }
-.film .proof .acts { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 24px; margin-top: 16px; }
-.film .proof .acts .cta { flex-basis: 100%; max-width: 360px; }
-
-.film .p-wash { position: absolute; inset: 0; z-index: 9; pointer-events: none; opacity: 0; }
-.film .p-white { background: var(--light-white, #FFF8E7); animation-name: proof-white; }
-@keyframes proof-white { 0% { opacity: 1; } 5%, 100% { opacity: 0; } }
-.film .p-night { background: var(--light-night, #051523); animation-name: proof-night; }
-@keyframes proof-night { 0%, 95% { opacity: 0; } 99.5%, 100% { opacity: 1; } }
-
-/* ---------- Wide screens: the strip sideways, the ledger as one centred
-   composition under the title ---------- */
+/* ---------- Wide screens: four columns ---------- */
 @media (min-width: 1024px) and (min-aspect-ratio: 5/4) {
-  .film .proof-card { top: 15cqh; max-width: none; }
-  .film .strip { top: calc(15cqh + 92px + 4cqh); bottom: 7cqh; }
-  .film .reel { --slot: 72%; }
-  .film .frame img { max-height: calc(100cqh - 15cqh - 92px - 4cqh - 7cqh - 84px); }
-  .film .shot figcaption, .film .count { font-size: 15px; }
-  .film .gps { left: 50%; right: auto; transform: translate(-50%, -50%); max-width: 26ch; text-align: center; }
-  @keyframes proof-gps { 0%, 52% { opacity: 0; transform: translate(-50%, calc(-50% + 3cqh)); } 55.5%, 61% { opacity: 1; transform: translate(-50%, -50%); } 64%, 100% { opacity: 0; transform: translate(-50%, calc(-50% - 4cqh)); } }
-  .film .ledger {
-    top: calc(15cqh + 80px + (85cqh - 80px) / 2); transform: translateY(-50%);
-    display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); gap: 0 5cqw; align-items: center; max-width: 1280px;
-  }
-  .film .lboard { padding: 40px 40px; gap: 30px 44px; }
-  .film .lboard img { height: calc(var(--lh) * 1.45); }
-  .film .lside { margin-top: 0; }
-  .film .years { font-size: 17px; }
+  .film .work { --top: 15cqh; --wg: 24px; }
+  .film .w-rise { left: 50%; right: auto; width: min(100cqw - 2 * var(--gutter), 1120px); translate: -50% 0; padding-inline: 0; }
+  .film .w-card { margin-bottom: 4cqh; }
+  .film .w-wall { grid-template-columns: repeat(4, minmax(0, 1fr)); grid-auto-flow: row dense; gap: 52px var(--wg); }
+  .film .w-large { grid-column: span 2; }
+  .film .w-large.w-right { grid-column: 3 / span 2; }
+  /* The desktop's rows light on their own beat (the inner .w-drift's). */
+  .story .film .w-shot:not(.on) .w-frame { opacity: 1; }
+  .story .film .w-shot:not(.on) figcaption { opacity: 1; }
+  .story .film .w-drift:not(.on) .w-frame { opacity: .16; }
+  .story .film .w-drift:not(.on) figcaption { opacity: 0; }
+  .film .work figcaption { font-size: 14px; }
+  .film .w-last img { max-height: 52cqh; }
 }
 
-/* ---------- Still frames: the whole record, stacked ---------- */
-:root:not(.story) .film .proof { height: auto; min-height: 100lvh; padding: 120px 0 72px; container-type: inline-size; }
-:root:not(.story) .film .proof :is(.proof-card, .strip, .gps, .ledger) { position: static; opacity: 1; transform: none; }
-:root:not(.story) .film .proof-card { margin: 0 var(--gutter); }
-:root:not(.story) .film .strip { margin-top: 28px; }
-:root:not(.story) .film .reel { flex-direction: column; gap: 40px; padding-top: 0; }
-:root:not(.story) .film .frame img { max-height: none; }
-:root:not(.story) .film .count, :root:not(.story) .film .f-lbox { display: none; }
-:root:not(.story) .film .gps { margin: 56px var(--gutter) 0; max-width: 26ch; }
-:root:not(.story) .film .ledger { margin: 40px var(--gutter) 0; }
+/* ---------- Still frame: every photograph, stacked, with its caption ---------- */
+:root:not(.story) .film .work { height: auto; min-height: 100lvh; padding: 0 0 72px; container-type: inline-size; }
+:root:not(.story) .film .w-view { position: static; -webkit-mask-image: none; mask-image: none; }
+:root:not(.story) .film .w-rise { position: static; translate: none; margin-inline: auto; }
+:root:not(.story) .film .w-end { height: auto; padding-top: 64px; }
+:root:not(.story) .film .w-first, :root:not(.story) .film .w-lbox, :root:not(.story) .film .work .flash { display: none; }
 
 /* ===== ch7-finale.css ===== */
 /* Chapter 7, the finale: "Your name is next."
-   Back on the first street, out of the dark that proof ends on. It started
+   Back on the first street, out of the junction's white light. It started
    with one lit sign; the boards along the street come on one by one, the
    middle one carrying the visitor's name. Then the words and the actions. */
 .film .finale { --ground: #051523; }
@@ -1186,11 +1250,13 @@
   .film .fin-more { gap: 0 30px; }
 }
 
-/* Out of the dark, and a slow settle back to the hero's own framing. */
+/* Out of the junction's white light as it dims (storyboard-v2): the light
+   thins over the dark street, then a slow settle back to the hero's own
+   framing. */
 .film .finale .cam { animation-name: fin-cam; }
 @keyframes fin-cam { 0% { transform: scale(1.14); } 50%, 100% { transform: none; } }
-.film .finale .flash { background: var(--light-night); animation-name: fin-dark; }
-@keyframes fin-dark { 0% { opacity: 1; } 14%, 100% { opacity: 0; } }
+.film .finale .flash { background: var(--light-white); animation-name: fin-dim; }
+@keyframes fin-dim { 0% { opacity: 1; } 4% { opacity: .72; } 9% { opacity: .3; } 15%, 100% { opacity: 0; } }
 :root:not(.story) .film .finale .flash { opacity: 0; }
 /* The lit windows sit in a box the size of the plate. */
 .film .fin-lights { position: absolute; inset: 0; }

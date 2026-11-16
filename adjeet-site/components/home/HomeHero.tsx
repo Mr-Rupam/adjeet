@@ -137,7 +137,7 @@ document.head.appendChild(link);
  * same place when the theme changes. The artwork is a visualisation: since
  * 16 November 2026 it carries no visible label, its alt text begins
  * "Visualisation:" and it is never presented as a client job (DESIGN.md); real
- * photographs start in the film's proof chapter. The board in the artwork is
+ * photographs start in the film's work chapter. The board in the artwork is
  * blank: "Your shop name" is decorative HTML placed on the board's own
  * rectangle (ThemeScene), which the film letters with the visitor's name.
  *
@@ -189,7 +189,7 @@ export function HomeHero() {
           <div className={`${styles.heroActions} hero-actions tl`} data-hero-actions>
             <QuoteCTA source="hero" label="WhatsApp your project" tone="yellow" />
             {/* The way past the film: straight to the real work. */}
-            <a href="#proof" className={styles.heroMore} aria-label={SKIP_LABEL}>
+            <a href="#work" className={styles.heroMore} aria-label={SKIP_LABEL}>
               <span>{SKIP_LABEL}</span><ArrowDown size={18} aria-hidden="true" />
             </a>
           </div>

@@ -31,8 +31,8 @@ type ChapterProps = {
 
 /**
  * One chapter: a section as tall as its pinned scroll, holding one sticky
- * stage of one screen (film.css). Its length, overlap, landing point and
- * still frame come from content/home-film.ts.
+ * stage of one screen (film.css). Its length, overlap, landing point, still
+ * frame and the scroll controller's stops come from content/home-film.ts.
  */
 export function Chapter({ id, stage, tone, toneAt, toneLate, stageStyle, children }: ChapterProps) {
   const entry = chapter(id)
@@ -40,7 +40,7 @@ export function Chapter({ id, stage, tone, toneAt, toneLate, stageStyle, childre
   if (entry.over !== undefined) style['--over'] = entry.over
   if (entry.still !== undefined) style['--still'] = entry.still
   return (
-    <section className="ch" id={id} style={vars(style)} data-title={railLabel(entry)} data-rest={entry.rest} aria-labelledby={`${id}-h`}>
+    <section className="ch" id={id} style={vars(style)} data-title={railLabel(entry)} data-rest={entry.rest} data-stops={entry.stops} aria-labelledby={`${id}-h`}>
       <div className={`stage ${stage}`} data-tone={tone} data-tone-at={toneAt} data-tone-late={toneLate} style={stageStyle}>
         {children}
       </div>

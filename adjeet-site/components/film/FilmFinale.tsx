@@ -30,8 +30,8 @@ type Light = (typeof TALL_LIGHTS)[number]
 const lightStyle = ({ bl, bt, bw, bh, soft, at }: Light) => vars({ '--bl': bl, '--bt': bt, '--bw': bw, '--bh': bh, '--soft': soft, '--at': at })
 
 /**
- * Chapter 7, the finale: "Your name is next." Back on the first street, out
- * of the dark the proof ends on. It started with one lit sign; the boards
+ * Chapter 8, the finale: "Your name is next." Back on the first street,
+ * rising out of the junction's white light as it dims. It started with one lit sign; the boards
  * along the street come on one by one, the middle one carrying the visitor's
  * name. Then the words and the actions. The street is the hero's own night
  * scene through the hero's image pipeline (`night`), so a visitor in the dark
@@ -42,7 +42,7 @@ const lightStyle = ({ bl, bt, bw, bh, soft, at }: Light) => vars({ '--bl': bl, '
  */
 export function FilmFinale({ night }: { night: SceneLayer }) {
   return (
-    <Chapter id="finale" stage="finale" tone="dark">
+    <Chapter id="finale" stage="finale" tone="light" toneAt=".08" toneLate="dark">
       <div className="cam">
         <picture>
           <source media={WIDE_SCREEN} srcSet={night.wideSrcSet} sizes="178vh" />
