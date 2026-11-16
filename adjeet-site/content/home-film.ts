@@ -68,7 +68,7 @@ export const CHAPTERS: readonly Chapter[] = [
   // Stops: the title frame, then the hold (the field complete, the days run on by themselves).
   { id: 'road', title: 'Then it goes out on the road.', len: 3.2, over: 0, rest: 0.14, stops: [0.14, 0.78] },
   { id: 'hills', title: 'From the plains to the hills.', len: 3.2, over: 0, rest: 0.8, stops: [0.8] },
-  { id: 'junction', title: 'Shopfronts, walls, vehicles, events.', len: 3.4, over: 0, rest: 0.8, stops: [0.2, 0.45, 0.8] },
+  { id: 'junction', title: 'Shopfronts, walls, vehicles, events.', len: 3.4, over: 0, rest: 0.8, stops: [0.13, 0.25, 0.37, 0.49, 0.6, 0.8] },
   { id: 'finale', title: 'Your name is next.', len: 2.1, over: 0, rest: 0.72, stops: [0.72] },
 ]
 
@@ -158,25 +158,27 @@ export const HILLS = {
 } as const
 
 /**
- * The surfaces at the junction, in the order they light up, each naming the
- * service it shows. The rooftop surface (third) names nothing: hoardings are
- * not promoted (owner, 16 November 2026), and the surface itself is being
- * taken out of the junction's art.
+ * The surfaces at the junction, in the order they light up: the glow sign
+ * board over the shop, the painted wall, the pole sign, the van and the open
+ * shop. Each names the service it shows and links to its page.
  */
-const SURFACES: readonly (ServiceSlug | null)[] = [
-  'glow-sign-boards', 'wall-painting', null, 'f-pole-installation', 'vehicle-branding', 'in-shop-branding',
+const SURFACES: readonly ServiceSlug[] = [
+  'glow-sign-boards',
+  'wall-painting',
+  'f-pole-installation',
+  'vehicle-branding',
+  'in-shop-branding',
 ]
 
 export type TradeLink = { label: string; href?: string }
-const tradeOf = (slug: ServiceSlug | null): TradeLink | null =>
-  slug ? { label: SERVICE_LINK_LABELS[slug], href: `/services/${slug}` } : null
+const tradeOf = (slug: ServiceSlug): TradeLink => ({ label: SERVICE_LINK_LABELS[slug], href: `/services/${slug}` })
 
 export const JUNCTION = {
   surfaces: SURFACES.map(tradeOf),
   line: 'Made at one workshop. Put up by one crew network.',
-  /** Every trade: the ten with pages as links, the others without pages as text. */
+  /** Every trade: the ten with pages as links, then the other work as text. */
   trades: [
-    ...SERVICE_SLUGS.map(slug => ({ label: SERVICE_LINK_LABELS[slug], href: `/services/${slug}` })),
+    ...SERVICE_SLUGS.map(tradeOf),
     ...ALSO_SERVICES.map(label => ({ label })),
   ] as TradeLink[],
   listLabel: 'Our work',

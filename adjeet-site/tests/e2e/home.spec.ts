@@ -362,6 +362,53 @@ test.describe('Home page', () => {
     await context.close()
   })
 
+  test('the junction lights five surfaces in turn, then pushes into the glow sign board\'s light', async ({ page }) => {
+    await page.setViewportSize({ width: 390, height: 844 })
+    await page.goto('/')
+    await page.evaluate(() => document.fonts.ready)
+    const stops = (await page.locator('#junction').getAttribute('data-stops'))!.split(' ').map(Number)
+    expect(stops).toHaveLength(6)
+    const captions = page.locator('#junction .j-cap')
+    await expect(captions).toHaveCount(5)
+    // At each surface's stop its caption is the one line showing, and its link goes to the service page.
+    const pages = ['glow-sign-boards', 'wall-painting', 'f-pole-installation', 'vehicle-branding', 'in-shop-branding']
+    for (const [index, slug] of pages.entries()) {
+      await scrollToChapter(page, 'junction', stops[index])
+      await expect(captions.nth(index).locator('a')).toHaveAttribute('href', `/services/${slug}`)
+      const shown = await captions.evaluateAll(lines => lines.map(line => Number(getComputedStyle(line).opacity) > 0.5))
+      expect(shown, slug).toEqual(pages.map((_, other) => other === index))
+    }
+    // The names step off before the push, so no giant cropped letters show.
+    await scrollToChapter(page, 'junction', 0.86)
+    expect(Number(await page.locator('#junction .j-name-out').evaluate(element => getComputedStyle(element).opacity))).toBeLessThan(0.05)
+    // The chapter leaves on the film's flat white, the colour the next chapter opens on.
+    await scrollToChapter(page, 'junction', 1)
+    const out = await page.locator('#junction .j-out').evaluate(element => {
+      const style = getComputedStyle(element)
+      const probe = document.createElement('i')
+      probe.style.color = getComputedStyle(element).getPropertyValue('--light-white')
+      document.body.append(probe)
+      const white = getComputedStyle(probe).color
+      probe.remove()
+      return { opacity: Number(style.opacity), background: style.backgroundColor, white }
+    })
+    expect(out.opacity).toBeGreaterThan(0.95)
+    expect(out.background).toBe(out.white)
+    expect(out.white).toBe('rgb(255, 248, 231)')
+  })
+
+  test('the film names no hoarding or billboard, in its words or its pictures', async ({ page }) => {
+    for (const reducedMotion of ['no-preference', 'reduce'] as const) {
+      await page.emulateMedia({ reducedMotion })
+      await page.goto('/')
+      const said = await page.locator('body').evaluate(film => [
+        film.textContent ?? '',
+        ...[...film.querySelectorAll('[alt], [aria-label], [title]')].flatMap(element => ['alt', 'aria-label', 'title'].map(name => element.getAttribute(name) ?? '')),
+      ].join('\n'))
+      expect(said, reducedMotion).not.toMatch(/hoarding|billboard/i)
+    }
+  })
+
   test('keeps real photographs and logos to the proof chapters and names every scene as a visualisation', async ({ page }) => {
     await page.goto('/')
     const scenes = await page.locator('#film img[alt]:not([alt=""])').evaluateAll(images => images.map(image => ({

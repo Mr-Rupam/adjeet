@@ -41,7 +41,7 @@ The owner asked for the whole home page to be one storyboard: every section a sc
 | 4 workshop | Made in our own workshop. | the doorway's gold light |
 | 5 road | Then it goes out on the road. | the night sky |
 | 6 hills | From the plains to the hills. | a ridge board's white light |
-| 7 junction | Shopfronts, walls, vehicles, events. | the hoarding's floodlight |
+| 7 junction | Shopfronts, walls, vehicles, events. | the glow sign board's light |
 | 8 finale | Your name is next. | the questions follow |
 
 Proof comes first (owner, 16 November 2026, storyboard-v2): the brands wall (only companies the repo records, tenure brands first, then gallery clients by photograph count; logos printed at their own pixel size or smaller, other names lettered) and a wall of real photographs (the list in `content/home-film.ts`, `WORK_PICKS`). Each chapter names the scroll controller's resting points as `data-stops` on its section.
@@ -58,6 +58,8 @@ Proof comes first (owner, 16 November 2026, storyboard-v2): the brands wall (onl
 - A chapter far from the screen is skipped by the browser (`content-visibility: auto`) and keeps no animations, so the hero's first paint never waits for the rest of the film.
 
 **Handoff colours.** Where one chapter ends on a flat light and the next opens on it, both sides use the same colour: the board's light `#FEF4C5` (hero to brands, brands to work, work to brief, brief to workshop), the doorway's gold `#F2B04C` (workshop to road), and white light `#FFF8E7` (hills to junction, junction to finale, which rises out of it as it dims). From the hills onward it is night in both themes; the hero and the brief follow the theme; the workshop and the road have one plate each.
+
+**The junction.** Five surfaces on one street corner light up in turn, each with one line naming its service and linking to its page: glow sign boards, wall painting advertising, F-pole sign boards, vehicle branding and in-shop branding (the shop opening). Then every trade settles as one line of type, and the camera pushes into the glow sign board over the shop until its own light fills the screen. The owner does not promote hoardings (16 November 2026), so the film shows and names no hoarding or billboard; `tests/unit/content/home-film.test.ts` and `tests/e2e/home.spec.ts` fail if one returns.
 
 **Generated art and real photographs.** Every scene is generated concept art. It carries no visible label (owner's instruction), every scene image's alt text begins "Visualisation:", every sign face in it is blank (the lettering is HTML on the face), and it is never presented as a client's job. Real photographs appear only in the work chapter, from `content/gallery.ts`: never retouched or upscaled, never drawn larger than their own pixels, shown whole in a thin cerulean frame, captioned only with what the record says. No photograph is ever placed on a drawn surface. The logo is never redrawn or put on a plate.
 
