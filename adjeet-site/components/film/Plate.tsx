@@ -24,6 +24,12 @@ type Props = {
  * once the chapter before this one pins.
  */
 export function Plate({ tall, wide, alt, className = 'f-plate', style, keepLazy, pictureClassName }: Props) {
+  // A plate a scene opens on carries its tiny blurred copy as its background
+  // (film.css, "The camera and the plate"), so the scene is never empty while
+  // the picture is on its way.
+  const preview = tall.preview
+    ? { '--pv': `url(${tall.preview})`, ...(wide?.preview ? { '--pvw': `url(${wide.preview})` } : {}) }
+    : undefined
   return (
     <picture className={pictureClassName}>
       {wide && <source media={WIDE_SCREEN} type="image/avif" srcSet={wide.avif.src} width={wide.avif.width} height={wide.avif.height} />}
@@ -37,7 +43,7 @@ export function Plate({ tall, wide, alt, className = 'f-plate', style, keepLazy,
         alt={alt}
         loading="lazy"
         decoding="async"
-        style={style}
+        style={preview ? ({ ...preview, ...style } as CSSProperties) : style}
         data-keep-lazy={keepLazy ? '' : undefined}
       />
     </picture>

@@ -5,6 +5,7 @@ import type { GalleryPhoto } from '@/content/gallery'
 import { photoPlace } from '@/content/photo-places'
 import { getServiceBySlug } from '@/content/services'
 import { Chapter, vars } from './parts'
+import { WORK_COLOR } from './work-colors'
 
 /**
  * A photograph's caption: only what its gallery record says, in the order
@@ -57,6 +58,9 @@ export function workBeats(picks: readonly Pick<WorkPick, 'width' | 'height' | 's
     return t <= 0 ? 0 : +(RISE_FROM + (RISE_TO - RISE_FROM) * Math.min(1, t)).toFixed(3)
   })
 }
+
+/** A frame's background while its photograph is on its way: the photograph's own average colour. */
+const slot = (id: string): Record<`--${string}`, string> => (WORK_COLOR[id] ? { '--avg': WORK_COLOR[id] } : {})
 
 /** The closing photograph lights as the wall's rise ends. */
 const LAST_AT = +(RISE_TO - 0.06).toFixed(3)
@@ -111,7 +115,7 @@ export function FilmWork() {
                 {/* A second beat for the desktop's rows: film.css picks which one dims the frame. */}
                 <div className={`w-drift${far ? ' tl' : ''}`} style={vars({ '--at': deskAt[index] })}>
                   <figure>
-                    <div className="w-frame" style={vars({ '--pw': `${pick.width}px` })}>
+                    <div className="w-frame" style={vars({ '--pw': `${pick.width}px`, ...slot(pick.id) })}>
                       <Image
                         src={pick.photo.src}
                         alt={pick.photo.alt}
@@ -134,7 +138,7 @@ export function FilmWork() {
         {last && (
           <div className="w-end">
             <figure className="w-last" style={vars({ '--at': LAST_AT })} data-photo={last.id}>
-              <div className="w-frame w-grow tl" style={vars({ '--pw': `${last.width}px` })}>
+              <div className="w-frame w-grow tl" style={vars({ '--pw': `${last.width}px`, ...slot(last.id) })}>
                 <div className="w-img tl">
                   <Image
                     src={last.photo.src}

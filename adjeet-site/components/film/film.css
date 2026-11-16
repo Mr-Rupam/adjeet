@@ -157,6 +157,15 @@ html.film-run .film { height: calc((var(--film-len) + 41) * 100lvh); }
 }
 .film .cam picture, .film .cam picture > img, .film .cam .f-plate { position: absolute; inset: 0; width: 100%; height: 100%; }
 .film .cam img { object-fit: cover; }
+/* A plate a scene opens on shows its own tiny blurred copy (--pv, --pvw: set
+   by Plate.tsx from art-previews.ts) until the picture arrives. */
+.film img.f-plate { background: var(--pv, none) center / cover no-repeat; }
+@media (min-width: 1024px) and (min-aspect-ratio: 5/4) { .film img.f-plate { background-image: var(--pvw, var(--pv, none)); } }
+/* A plate's top edge melting into the stage's ground: a cap of the ground
+   colour over the camera's content, drawn into the camera's own layer, in
+   place of a mask on a screen-sized picture (the road, the hills and the
+   junction). --cap: its height, percent of the plate. */
+.film :is(.road-cam, .hills-cam, .junction-cam)::after { content: ""; position: absolute; inset: 0 0 auto; height: calc(var(--cap) * 1%); background: linear-gradient(180deg, var(--ground), transparent); pointer-events: none; }
 @media (min-width: 1024px) and (min-aspect-ratio: 5/4) {
   .film .cam { --ar: 1672 / 941; --pr: 1.7768; --fx: var(--fxw, .5); --fy: var(--fyw, .5); --ox: var(--oxw, 50); --oy: var(--oyw, 50); }
 }
@@ -583,8 +592,9 @@ html.film-run .film { height: calc((var(--film-len) + 41) * 100lvh); }
   background: var(--ground);
 }
 .film .road-cam { --ox: 48.06; --oy: 65.75; animation-name: road-cam; }
-/* The plate's top edge melts into the ground, so the camera can lift. */
-.film .road-cam > picture { -webkit-mask-image: linear-gradient(180deg, transparent 0, #000 7%); mask-image: linear-gradient(180deg, transparent 0, #000 7%); }
+/* The plate's top edge melts into the ground, so the camera can lift (the cap,
+   "The camera and the plate"). */
+.film .road-cam { --cap: 7; }
 @keyframes road-cam {
   0%   { transform: scale(1.03); }
   20%  { transform: translateY(0) scale(1.06); }
@@ -792,19 +802,23 @@ html.film-run .film { height: calc((var(--film-len) + 41) * 100lvh); }
 /* On a phone the whole width of the view is shown, sat on the bottom edge,
    and the night ground carries on above it (more sky for the words). */
 @container (max-aspect-ratio: 941 / 1672) { .film .hills-cam { --cw: 100cqw; --fy: 1; } }
-/* Depth on the push into the ridge board. */
-.film .hills .planes { -webkit-mask-image: linear-gradient(180deg, transparent 0, #000 14%); mask-image: linear-gradient(180deg, transparent 0, #000 14%); }
+/* Depth on the push into the ridge board. The cap over the camera fades the
+   planes' top edge as it does the plate's. */
 .film .hills .pl.mid { animation-name: hills-mid; }
 .film .hills .pl.near { animation-name: hills-near; }
 @keyframes hills-mid { 0%, 84% { transform: none; } 89% { transform: scale(1.15); } 93% { transform: scale(1.282); } 97% { transform: scale(1.35); } 100% { transform: scale(1.373); } }
 @keyframes hills-near { 0%, 84% { transform: none; } 89% { transform: scale(1.525); } 93% { transform: scale(1.988); } 97% { transform: scale(2.225); } 100% { transform: scale(2.307); } }
-/* The plate's top edge melts into the night ground. */
-.film .hills-cam > picture { -webkit-mask-image: linear-gradient(180deg, transparent 0, #000 14%); mask-image: linear-gradient(180deg, transparent 0, #000 14%); }
+/* The plate's top edge melts into the night ground (the cap, "The camera and
+   the plate", over the plate, the sky, the lights and the planes). */
+.film .hills-cam { --cap: 14; }
 
 /* Lit windows on to the lit plate. The sky and the peaks are always the lit
    plate's, so the night ground, the sky and the peaks agree. */
 .film .h-sky, .film .lamp { position: absolute; inset: 0; background: center / 100% 100% no-repeat; pointer-events: none; }
-.film .h-sky { background-image: var(--lit); -webkit-mask-image: linear-gradient(180deg, transparent 0, #000 14%, #000 28%, transparent 35%); mask-image: linear-gradient(180deg, transparent 0, #000 14%, #000 28%, transparent 35%); }
+/* The sky: only the plate's top 35% (33% wide), the lit plate sized and
+   placed so it still registers, faded out at its foot; its top edge is the
+   cap's. */
+.film .h-sky { --sh: 35; bottom: auto; height: calc(var(--sh) * 1%); background-image: var(--lit); background-size: 100% calc(10000% / var(--sh)); background-position: 50% 0; -webkit-mask-image: linear-gradient(180deg, #000 80%, transparent); mask-image: linear-gradient(180deg, #000 80%, transparent); }
 .film .ld .lamp, :root:not(.story) .film .lamp { background-image: var(--lit); }
 .film .lamp {
   -webkit-mask-image: radial-gradient(ellipse calc(var(--rx, 10) * 1%) calc(var(--ry, 5) * 1%) at calc(var(--x, 50) * 1%) calc(var(--y, 50) * 1%), #000 34%, transparent 100%);
@@ -880,7 +894,7 @@ html.film-run .film { height: calc((var(--film-len) + 41) * 100lvh); }
   .film .hills { --lit: var(--lit-w); }
   .film .hills-cam { --oxw: 87.83; --oyw: 50.32; --bx: .8783; --by: .5032; --fyw: .5; }
   .film .lamp:not(.h-lit) { --sx: var(--xw, var(--x)); --sy: var(--yw, var(--y)); --srx: var(--rxw, var(--rx)); --sry: var(--ryw, var(--ry)); }
-  .film .h-sky { -webkit-mask-image: linear-gradient(180deg, transparent 0, #000 14%, #000 25%, transparent 33%); mask-image: linear-gradient(180deg, transparent 0, #000 14%, #000 25%, transparent 33%); }
+  .film .h-sky { --sh: 33; -webkit-mask-image: linear-gradient(180deg, #000 75.76%, transparent); mask-image: linear-gradient(180deg, #000 75.76%, transparent); }
   .film .h-board { --lw: 86; --tw: 49.2; --ww: 3.65; --hw: 2.23; }
   .film .h-veil { background: linear-gradient(180deg, color-mix(in srgb, #001D39 70%, transparent) 0, transparent 22%), linear-gradient(90deg, color-mix(in srgb, #021522 55%, transparent) 0, transparent 40%), linear-gradient(0deg, color-mix(in srgb, #03100E 80%, transparent) 0, transparent 26%); }
   .film .hills-card { top: 11cqh; right: auto; width: 70cqw; max-width: none; }
@@ -941,24 +955,40 @@ html.film-run .film { height: calc((var(--film-len) + 41) * 100lvh); }
      100cqh - 177.68cqw), not up under the header. */
   .story .film .junction-card { top: max(clamp(92px, 11.5cqh, 120px), calc(100cqh - 133.3cqw - 2.1 * clamp(36px, min(11.4cqw, 8cqh), 96px))); }
 }
-.film .junction-cam > picture, .film .win.j-lit { -webkit-mask-image: linear-gradient(180deg, transparent 0, #000 12%); mask-image: linear-gradient(180deg, transparent 0, #000 12%); }
+/* The plate's top edge melts into the night ground (the cap, "The camera and
+   the plate", over the plate and the whole lit plate). */
+.film .junction-cam { --cap: 12; }
 
 /* A soft-edged rectangular window on to the lit plate: --ql --qt --qw --qh
-   (percent of the plate), feathered by --qf across and --qv down. */
+   (percent of the plate), feathered by --qf across and --qv down. Its box is
+   the window and its feather only, not the whole plate (as .light.rect), with
+   the lit plate sized and offset so it still registers. */
 .film .win {
   position: absolute; inset: 0; pointer-events: none;
   background: center / 100% 100% no-repeat;
-  -webkit-mask-image:
-    linear-gradient(90deg, transparent calc((var(--ql) - var(--qf)) * 1%), #000 calc(var(--ql) * 1%), #000 calc((var(--ql) + var(--qw)) * 1%), transparent calc((var(--ql) + var(--qw) + var(--qf)) * 1%)),
-    linear-gradient(180deg, transparent calc((var(--qt) - var(--qv)) * 1%), #000 calc(var(--qt) * 1%), #000 calc((var(--qt) + var(--qh)) * 1%), transparent calc((var(--qt) + var(--qh) + var(--qv)) * 1%));
-  -webkit-mask-composite: source-in;
-  mask-image:
-    linear-gradient(90deg, transparent calc((var(--ql) - var(--qf)) * 1%), #000 calc(var(--ql) * 1%), #000 calc((var(--ql) + var(--qw)) * 1%), transparent calc((var(--ql) + var(--qw) + var(--qf)) * 1%)),
-    linear-gradient(180deg, transparent calc((var(--qt) - var(--qv)) * 1%), #000 calc(var(--qt) * 1%), #000 calc((var(--qt) + var(--qh)) * 1%), transparent calc((var(--qt) + var(--qh) + var(--qv)) * 1%));
-  mask-composite: intersect;
   transition: opacity 440ms ease;
 }
-.film .win.j-lit { -webkit-mask-composite: source-over; mask-composite: add; transition-duration: 900ms; }
+.film .win:not(.j-lit) {
+  --q-l: var(--ql); --q-t: var(--qt); --q-w: var(--qw); --q-h: var(--qh); --q-f: var(--qf); --q-v: var(--qv);
+  --x0: calc(var(--q-l) - var(--q-f));
+  --y0: calc(var(--q-t) - var(--q-v));
+  --w0: calc(var(--q-w) + 2 * var(--q-f));
+  --h0: calc(var(--q-h) + 2 * var(--q-v));
+  --mx: calc(var(--q-f) / var(--w0) * 100%);
+  --my: calc(var(--q-v) / var(--h0) * 100%);
+  inset: auto;
+  left: calc(var(--x0) * 1%);
+  top: calc(var(--y0) * 1%);
+  width: calc(var(--w0) * 1%);
+  height: calc(var(--h0) * 1%);
+  background-size: calc(10000% / var(--w0)) calc(10000% / var(--h0));
+  background-position: calc(var(--x0) / (100 - var(--w0)) * 100%) calc(var(--y0) / (100 - var(--h0)) * 100%);
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 var(--mx), #000 calc(100% - var(--mx)), transparent), linear-gradient(180deg, transparent, #000 var(--my), #000 calc(100% - var(--my)), transparent);
+  -webkit-mask-composite: source-in;
+  mask-image: linear-gradient(90deg, transparent, #000 var(--mx), #000 calc(100% - var(--mx)), transparent), linear-gradient(180deg, transparent, #000 var(--my), #000 calc(100% - var(--my)), transparent);
+  mask-composite: intersect;
+}
+.film .win.j-lit { transition-duration: 900ms; }
 .film .ld .win, :root:not(.story) .film .win { background-image: var(--lit); }
 .story .film .win[style*="--at"]:not(.on) { opacity: 0; }
 
@@ -1060,14 +1090,7 @@ html.film-run .film { height: calc((var(--film-len) + 41) * 100lvh); }
   /* --ox and --oy too: the tall values set on .junction-cam above would
      otherwise beat the engine's --oxw / --oyw switch. */
   .film .junction-cam { --ox: 69.08; --oy: 62.27; --oxw: 69.08; --oyw: 62.27; --hx: .6908; --hy: .6227; --fxw: .7; --fyw: .5; --lift: 0%; }
-  .film .win {
-    -webkit-mask-image:
-      linear-gradient(90deg, transparent calc((var(--qlw, var(--ql)) - 2) * 1%), #000 calc(var(--qlw, var(--ql)) * 1%), #000 calc((var(--qlw, var(--ql)) + var(--qww, var(--qw))) * 1%), transparent calc((var(--qlw, var(--ql)) + var(--qww, var(--qw)) + 2) * 1%)),
-      linear-gradient(180deg, transparent calc((var(--qtw, var(--qt)) - 3) * 1%), #000 calc(var(--qtw, var(--qt)) * 1%), #000 calc((var(--qtw, var(--qt)) + var(--qhw, var(--qh))) * 1%), transparent calc((var(--qtw, var(--qt)) + var(--qhw, var(--qh)) + 3) * 1%));
-    mask-image:
-      linear-gradient(90deg, transparent calc((var(--qlw, var(--ql)) - 2) * 1%), #000 calc(var(--qlw, var(--ql)) * 1%), #000 calc((var(--qlw, var(--ql)) + var(--qww, var(--qw))) * 1%), transparent calc((var(--qlw, var(--ql)) + var(--qww, var(--qw)) + 2) * 1%)),
-      linear-gradient(180deg, transparent calc((var(--qtw, var(--qt)) - 3) * 1%), #000 calc(var(--qtw, var(--qt)) * 1%), #000 calc((var(--qtw, var(--qt)) + var(--qhw, var(--qh))) * 1%), transparent calc((var(--qtw, var(--qt)) + var(--qhw, var(--qh)) + 3) * 1%));
-  }
+  .film .win:not(.j-lit) { --q-l: var(--qlw, var(--ql)); --q-t: var(--qtw, var(--qt)); --q-w: var(--qww, var(--qw)); --q-h: var(--qhw, var(--qh)); --q-f: 2; --q-v: 3; }
   .film .j-glow { --lw: 52.03; --tw: 59.19; --ww: 34.09; --hw: 6.16; }
   .film .j-wall { --lw: 51.38; --tw: 40.81; --ww: 21.35; --hw: 13.92; }
   .film .j-board { --lw: 52.03; --tw: 59.19; --ww: 34.09; --hw: 6.16; background: #FEF6E5; box-shadow: 0 0 2.4cqw 1.4cqw #FEF6E5; }
@@ -1253,8 +1276,10 @@ html.film-run .film { height: calc((var(--film-len) + 41) * 100lvh); }
   background: var(--ground);
   color: #F4EDDF;
 }
-/* The wall passes under the header: it fades out before it gets there. */
-.film .w-view { position: absolute; inset: 0; z-index: 3; -webkit-mask-image: linear-gradient(180deg, transparent 56px, #000 100px); mask-image: linear-gradient(180deg, transparent 56px, #000 100px); }
+/* The wall passes under the header: it fades out before it gets there, under
+   a cap of the night ground (in place of a mask on the whole screen). */
+.film .w-view { position: absolute; inset: 0; z-index: 3; }
+.film .w-view::after { content: ""; position: absolute; inset: 0 0 auto; height: 100px; background: linear-gradient(180deg, var(--ground) 56px, transparent); pointer-events: none; }
 .film .w-rise { position: absolute; left: 0; right: 0; top: 0; padding: var(--top) var(--gutter) 0; will-change: transform; animation-name: work-rise; }
 @keyframes work-rise { 0%, 6% { transform: none; } 78%, 100% { transform: translateY(calc(-100% + 100cqh)); } }
 .film .w-card { position: static; margin: 0 0 26px; max-width: 640px; }
@@ -1269,7 +1294,11 @@ html.film-run .film { height: calc((var(--film-len) + 41) * 100lvh); }
 .film .w-frame {
   position: relative; width: 100%; max-width: var(--pw);
   border: 2px solid #0099D0; outline: 1px solid color-mix(in srgb, #0099D0 40%, transparent); outline-offset: 2px;
-  box-shadow: 0 0 34px color-mix(in srgb, #FFF3C8 12%, transparent);
+  /* The light round the box: two faint unblurred rings, not a blurred
+     shadow, so the wall costs nothing extra to draw as it rises. The
+     photograph's own average colour (--avg) fills the frame until it comes. */
+  box-shadow: 0 0 0 6px color-mix(in srgb, #FFF3C8 5%, transparent), 0 0 0 14px color-mix(in srgb, #FFF3C8 2.5%, transparent);
+  background: var(--avg, transparent);
   line-height: 0;
   transition: opacity 650ms ease;
 }
@@ -1324,7 +1353,8 @@ html.film-run .film { height: calc((var(--film-len) + 41) * 100lvh); }
 
 /* ---------- Still frame: every photograph, stacked, with its caption ---------- */
 :root:not(.story) .film .work { height: auto; min-height: 100lvh; padding: 0 0 72px; container-type: inline-size; }
-:root:not(.story) .film .w-view { position: static; -webkit-mask-image: none; mask-image: none; }
+:root:not(.story) .film .w-view { position: static; }
+:root:not(.story) .film .w-view::after { display: none; }
 :root:not(.story) .film .w-rise { position: static; translate: none; margin-inline: auto; }
 :root:not(.story) .film .w-end { height: auto; padding-top: 64px; }
 :root:not(.story) .film .w-first, :root:not(.story) .film .w-lbox, :root:not(.story) .film .work .flash { display: none; }

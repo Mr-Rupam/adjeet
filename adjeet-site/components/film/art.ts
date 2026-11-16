@@ -8,6 +8,7 @@
  * images keep their pipeline (HomeHero).
  */
 import type { StaticImageData } from 'next/image'
+import { PREVIEW } from './art-previews'
 
 import briefDayTallA from './art/brief-backdrop-day-tall.avif'
 import briefDayTallW from './art/brief-backdrop-day-tall.webp'
@@ -56,32 +57,32 @@ import finTallW from './art/finale-night-tall.webp'
 import finWideA from './art/finale-night-wide.avif'
 import finWideW from './art/finale-night-wide.webp'
 
-/** One picture in two encodings. */
-export type Art = { avif: StaticImageData; webp: StaticImageData }
-const art = (avif: StaticImageData, webp: StaticImageData): Art => ({ avif, webp })
+/** One picture in two encodings, and for a plate a scene opens on, a tiny blurred copy (art-previews.ts). */
+export type Art = { avif: StaticImageData; webp: StaticImageData; preview?: string }
+const art = (avif: StaticImageData, webp: StaticImageData, preview?: string): Art => ({ avif, webp, preview })
 
 export const ART = {
-  briefDayTall: art(briefDayTallA, briefDayTallW),
-  briefDayWide: art(briefDayWideA, briefDayWideW),
-  briefNightTall: art(briefNightTallA, briefNightTallW),
-  briefNightWide: art(briefNightWideA, briefNightWideW),
+  briefDayTall: art(briefDayTallA, briefDayTallW, PREVIEW.briefBackdropDayTall),
+  briefDayWide: art(briefDayWideA, briefDayWideW, PREVIEW.briefBackdropDayWide),
+  briefNightTall: art(briefNightTallA, briefNightTallW, PREVIEW.briefBackdropNightTall),
+  briefNightWide: art(briefNightWideA, briefNightWideW, PREVIEW.briefBackdropNightWide),
   shopBefore: art(shopBeforeA, shopBeforeW),
   shopAfter: art(shopAfterA, shopAfterW),
   workshopTall: art(wsTallA, wsTallW),
-  workshopTallDark: art(wsTallDarkA, wsTallDarkW),
+  workshopTallDark: art(wsTallDarkA, wsTallDarkW, PREVIEW.workshopDuskTallDark),
   workshopWide: art(wsWideA, wsWideW),
-  workshopWideDark: art(wsWideDarkA, wsWideDarkW),
-  roadTall: art(roadTallA, roadTallW),
+  workshopWideDark: art(wsWideDarkA, wsWideDarkW, PREVIEW.workshopDuskWideDark),
+  roadTall: art(roadTallA, roadTallW, PREVIEW.roadEmptyTall),
   truck: art(truckA, truckW),
-  roadWide: art(roadWideA, roadWideW),
+  roadWide: art(roadWideA, roadWideW, PREVIEW.roadGoldenWide),
   hillsTall: art(hillsTallA, hillsTallW),
-  hillsTallDark: art(hillsTallDarkA, hillsTallDarkW),
+  hillsTallDark: art(hillsTallDarkA, hillsTallDarkW, PREVIEW.hillsDuskTallDark),
   hillsWide: art(hillsWideA, hillsWideW),
-  hillsWideDark: art(hillsWideDarkA, hillsWideDarkW),
+  hillsWideDark: art(hillsWideDarkA, hillsWideDarkW, PREVIEW.hillsDuskWideDark),
   junctionTall: art(juncTallA, juncTallW),
-  junctionTallDark: art(juncTallDarkA, juncTallDarkW),
+  junctionTallDark: art(juncTallDarkA, juncTallDarkW, PREVIEW.junctionPlainTallDark),
   junctionWide: art(juncWideA, juncWideW),
-  junctionWideDark: art(juncWideDarkA, juncWideDarkW),
+  junctionWideDark: art(juncWideDarkA, juncWideDarkW, PREVIEW.junctionPlainWideDark),
   finaleTall: art(finTallA, finTallW),
   finaleWide: art(finWideA, finWideW),
 } satisfies Record<string, Art>

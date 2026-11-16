@@ -199,11 +199,17 @@ describe('the brands wall', () => {
     expect(names).not.toContain('Tanyamakeovers')
   })
 
-  it('prints each logo from its own file, at its pixel size, never the Adani mark for another brand', async () => {
+  it('prints each logo from its own file, at its shape, never the Adani mark for another brand', async () => {
     for (const brand of WALL) {
       if (!brand.logo) continue
       const meta = await sharp(path.join(ROOT, 'public', brand.logo.src)).metadata()
-      expect([meta.width, meta.height], brand.name).toEqual([brand.logo.width, brand.logo.height])
+      // The file is the declared size, or (scripts/build-film-render-assets.mjs, 17 November 2026)
+      // downscaled to fit 400 x 160, about twice the largest board face, with the same shape.
+      if (meta.width !== brand.logo.width || meta.height !== brand.logo.height) {
+        expect(meta.width! <= 400 && meta.height! <= 160, brand.name).toBe(true)
+        expect(Math.max(meta.width!, meta.height! * 2.5), brand.name).toBeGreaterThanOrEqual(399)
+        expect(Math.abs(meta.width! / meta.height! - brand.logo.width / brand.logo.height) / (brand.logo.width / brand.logo.height), brand.name).toBeLessThan(0.01)
+      }
       if (brand.name !== 'Adani Cement') expect(brand.logo.src, brand.name).not.toMatch(/adani/)
       // A cropped copy keeps its original beside it, and is no larger than it.
       if (brand.logo.src.includes('-trim')) {
