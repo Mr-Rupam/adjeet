@@ -31,8 +31,8 @@ type ChapterProps = {
 
 /**
  * One chapter: a section as tall as its pinned scroll, holding one sticky
- * stage of one screen (film.css). Its length, overlap, landing point and
- * still frame come from content/home-film.ts.
+ * stage of one screen (film.css). Its length, overlap, landing point, still
+ * frame and the scroll controller's stops come from content/home-film.ts.
  */
 export function Chapter({ id, stage, tone, toneAt, toneLate, stageStyle, children }: ChapterProps) {
   const entry = chapter(id)

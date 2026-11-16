@@ -25,7 +25,7 @@ test('the mobile enquiry dock yields to visible enquiry actions and the footer',
   // past the hero and yields to a chapter's own action.
   await page.locator('#workshop h2').scrollIntoViewIfNeeded()
   await expect(dock).toBeVisible()
-  await page.locator('#proof .acts .cta').scrollIntoViewIfNeeded()
+  await page.locator('#brands .acts .cta').scrollIntoViewIfNeeded()
   await expect(dock).toHaveCount(0)
   await page.getByRole('contentinfo').scrollIntoViewIfNeeded()
   await expect(dock).toHaveCount(0)

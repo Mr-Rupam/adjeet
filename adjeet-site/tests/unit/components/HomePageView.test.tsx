@@ -3,8 +3,8 @@ import { renderToStaticMarkup } from 'react-dom/server'
 import { HomePageView } from '@/components/home/HomePageView'
 import { getPhotoById } from '@/content/gallery'
 import { homeFaqs } from '@/content/home-faqs'
-import { CHAPTERS, MALDA_BOARDS, MALDA_DAYS, MALDA_NORMAL, MALDA_ROWS, PROOF_PICKS, ROAD } from '@/content/home-film'
-import { MALDA_STORY } from '@/content/company-figures'
+import { CHAPTERS, MALDA_BOARDS, MALDA_DAYS, MALDA_NORMAL, MALDA_ROWS, ROAD, WALL_PHONE_MAX, WORK_PICKS, wallCompanies } from '@/content/home-film'
+import { BRAND_TENURES, MALDA_STORY, brandTenureLines } from '@/content/company-figures'
 import { SERVICE_SLUGS } from '@/content/services'
 import { FILM_BOOT } from '@/components/film/film-boot'
 
@@ -16,7 +16,7 @@ function render() {
 }
 
 describe('home page: the film, then the questions', () => {
-  it('runs the eight chapters in order inside the film, then the questions', () => {
+  it('runs the nine chapters in order inside the film, proof first, then the questions', () => {
     const doc = render()
     expect([...doc.querySelectorAll('#film .chs > section.ch')].map(section => section.id)).toEqual(CHAPTERS.map(chapter => chapter.id))
     expect([...doc.querySelectorAll('[data-home-page] > [id]')].map(section => section.id)).toEqual(['film', 'questions'])
@@ -44,8 +44,8 @@ describe('home page: the film, then the questions', () => {
       .toEqual(['/services/glow-sign-boards', '/services/acp-led-signage', '/services/flex-printing', '/services/vehicle-branding'])
   })
 
-  it('turns the old jump to the shopfronts into the honest skip to the proof chapter', () => {
-    const link = render().querySelector('#hero-section [data-hero-actions] a[href="#proof"]')
+  it('skips from the hero straight to the real photographs', () => {
+    const link = render().querySelector('#hero-section [data-hero-actions] a[href="#work"]')
     expect(link?.getAttribute('aria-label')).toBe('See finished work')
     expect(link?.textContent).toBe('See finished work')
   })
@@ -132,9 +132,43 @@ describe('home page: the film, then the questions', () => {
     expect(input.closest('label')?.textContent).toContain("Type your shop's name")
   })
 
-  it('shows the six photographs from the gallery, whole, with their own alt text and captions', () => {
-    const shots = [...render().querySelectorAll('#proof ol.reel > li')]
-    expect(shots.map(shot => shot.getAttribute('data-photo'))).toEqual(PROOF_PICKS.map(pick => pick.id))
+  it('declares the scroll controller stops on the two proof chapters', () => {
+    const doc = render()
+    expect(doc.querySelector('#brands')?.getAttribute('data-stops')).toBe('.5')
+    expect(doc.querySelector('#work')?.getAttribute('data-stops')).toMatch(/^\.06 /)
+    for (const chapter of CHAPTERS) {
+      expect(doc.querySelector(`#${chapter.id}`)?.getAttribute('data-stops') ?? undefined, chapter.id).toBe(chapter.stops)
+    }
+  })
+
+  it('puts one company on each board of the wall, with the years stamped under the tenure brands', () => {
+    const doc = render()
+    const boards = [...doc.querySelectorAll('#brands .b-wall > li')]
+    const wall = wallCompanies()
+    expect(boards.map(board => board.getAttribute('data-company'))).toEqual(wall.map(company => company.name))
+    // Beyond the fifteenth, a board shows on a desktop only.
+    boards.forEach((board, index) => expect(board.classList.contains('b-wide'), String(index)).toBe(index >= WALL_PHONE_MAX))
+    for (const board of boards) {
+      const company = wall.find(entry => entry.name === board.getAttribute('data-company'))!
+      const logo = board.querySelector('img')
+      if (company.logo) {
+        expect(logo?.getAttribute('src')).toBe(company.logo.src)
+        expect(logo?.getAttribute('alt')).toBe(company.name)
+      } else {
+        expect(logo).toBeNull()
+        expect(board.querySelector('.b-print b')?.textContent).toBe(company.name)
+      }
+    }
+    const stamps = [...doc.querySelectorAll('#brands .b-stamp')].map(stamp => stamp.textContent)
+    expect(stamps).toEqual(brandTenureLines())
+    expect(stamps).toHaveLength(BRAND_TENURES.length)
+    expect(doc.querySelector('#brands .b-big')?.textContent).toBe('200+ companies since 1990')
+  })
+
+  it('shows the photographs from the gallery, whole, with their own alt text and captions', () => {
+    const doc = render()
+    const shots = [...doc.querySelectorAll('#work [data-photo]')]
+    expect(shots.map(shot => shot.getAttribute('data-photo'))).toEqual(WORK_PICKS.map(pick => pick.id))
     for (const shot of shots) {
       const photo = getPhotoById(shot.getAttribute('data-photo')!)
       const image = shot.querySelector('img')!
@@ -144,14 +178,15 @@ describe('home page: the film, then the questions', () => {
       expect(decodeURIComponent(image.getAttribute('src') ?? '')).toContain(photo.src)
       expect(image.getAttribute('sizes')).toMatch(/min\(/)
     }
+    expect(doc.querySelector('#work .w-gps')?.textContent).toBe('Every installation is photographed with a GPS stamp: place, date and time.')
   })
 
-  it('every scene image is named as a visualisation, and only the proof shows gallery photographs', () => {
+  it('every scene image is named as a visualisation, and only the proof chapters show photographs and logos', () => {
     const doc = render()
     for (const image of doc.querySelectorAll('#film img')) {
       const alt = image.getAttribute('alt') ?? ''
-      const real = image.closest('#proof .shot') !== null
-      const logo = image.closest('#proof .lboard') !== null
+      const real = image.closest('#work [data-photo]') !== null
+      const logo = image.closest('#brands .b-print') !== null
       if (real || logo) continue
       expect(alt === '' || alt.startsWith('Visualisation:'), alt).toBe(true)
     }
@@ -167,6 +202,7 @@ describe('home page: the film, then the questions', () => {
     const doc = render()
     const whatsapp = [...doc.querySelectorAll('#film a[href^="https://wa.me/"]')]
     expect(whatsapp.length).toBe(6)
+    expect(doc.querySelector('#brands a[href^="https://wa.me/"]')?.textContent).toBe('Ask for the company profile')
   })
 
   it('says nothing about regional agencies or hoardings anywhere on the page', () => {
