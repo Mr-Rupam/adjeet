@@ -164,7 +164,7 @@ describe('/for-brands', () => {
     for (const number of (body.textContent ?? '').match(/\d[\d,]*/g) ?? []) expect(allowed.has(number), number).toBe(true)
   })
 
-  it('lists eight things it runs: five photographed trades linked to their pages, three as type only', () => {
+  it('lists seven things it runs: five photographed trades linked to their pages, two as type only, then one quiet hoardings line', () => {
     expect(BRAND_TRADES.map(trade => trade.title)).toEqual(['Dealer boards', 'In-shop branding', 'Wall painting campaigns', 'Vehicle and fleet branding', 'Puja gates and events'])
     expect(new Set(BRAND_PHOTO_IDS).size).toBe(BRAND_PHOTO_IDS.length)
     for (const trade of BRAND_TRADES) {
@@ -173,6 +173,10 @@ describe('/for-brands', () => {
       expect(heading.closest('li')!.querySelector('figure .fascia-plate')).not.toBeNull()
     }
     expect(TYPE_ONLY_TRADES.map(trade => trade.title)).toEqual([...ALSO_SERVICES])
+    expect(TYPE_ONLY_TRADES).toHaveLength(2)
+    const quiet = [...doc.querySelectorAll('p')].filter(node => node.textContent === 'Hoardings are taken up on request.')
+    expect(quiet).toHaveLength(1)
+    expect(quiet[0].closest('li')!.querySelector('h2, h3, a, img')?.textContent ?? '').not.toMatch(/hoarding/i)
     for (const trade of TYPE_ONLY_TRADES) {
       const heading = [...doc.querySelectorAll('h3')].find(node => node.textContent === trade.title)!
       expect(heading.closest('li')!.querySelector('img')).toBeNull()

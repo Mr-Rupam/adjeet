@@ -163,9 +163,8 @@ export const BRAND_TRADES: BrandTrade[] = [
 
 /** Work with no photographs on the site yet: named, one honest line each, never a borrowed picture. */
 export const TYPE_ONLY_TRADES: { title: (typeof ALSO_SERVICES)[number]; line: string }[] = [
-  { title: ALSO_SERVICES[0], line: 'Tell us the towns and the sizes you need.' },
-  { title: ALSO_SERVICES[1], line: 'Branding for your stall or your dealer meet.' },
-  { title: ALSO_SERVICES[2], line: 'Ask about a road show through your districts.' },
+  { title: ALSO_SERVICES[0], line: 'Branding for your stall or your dealer meet.' },
+  { title: ALSO_SERVICES[1], line: 'Ask about a road show through your districts.' },
 ]
 
 /** A real Star Cement job beside the Malda story, captioned with its own place. */

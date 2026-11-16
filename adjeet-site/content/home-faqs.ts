@@ -18,7 +18,7 @@ export const homeFaqs = [
   },
   {
     q: 'What is AD JEET and what does it make?',
-    a: `${business.name} is an advertising agency in ${business.city}, West Bengal, founded in ${business.foundingYear} by ${business.founder}. It does outdoor advertising, signage and brand rollouts across North Bengal and Sikkim, made at its own workshop and put up by its own crews. The work covers glow sign boards, ACP and LED signage, flex printing, vehicle branding, wall painting advertising, F-pole sign boards, in-shop branding, events and Puja branding, one way vision film and product displays. It also does ${alsoDone[0]}, ${alsoDone[1]}, and ${alsoDone[2]}. It has worked for ${COMPANIES_SERVED}.`,
+    a: `${business.name} is an advertising agency in ${business.city}, West Bengal, founded in ${business.foundingYear} by ${business.founder}. It does outdoor advertising, signage and brand rollouts across North Bengal and Sikkim, made at its own workshop and put up by its own crews. The work covers glow sign boards, ACP and LED signage, flex printing, vehicle branding, wall painting advertising, F-pole sign boards, in-shop branding, events and Puja branding, one way vision film and product displays. It also does ${alsoDone[0]} and ${alsoDone[1]}. It has worked for ${COMPANIES_SERVED}.`,
   },
   {
     q: 'Where is AD JEET based, and which areas do you serve?',

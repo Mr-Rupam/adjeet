@@ -13,7 +13,7 @@ import {
   TYPE_ONLY_TRADES,
   VENDOR_LINE,
 } from '@/content/for-brands'
-import { GPS_PHOTO_LINE, MALDA_STORY } from '@/content/company-figures'
+import { GPS_PHOTO_LINE, HOARDINGS_ON_REQUEST, MALDA_STORY } from '@/content/company-figures'
 import { getPhotoById } from '@/content/gallery'
 import { formatReviewDate, reviewedOn } from '@/content/page-reviews'
 import { business } from '@/lib/business'
@@ -105,6 +105,7 @@ export default function ForBrandsPage() {
                   <li key={trade.title}><h3>{trade.title}</h3><p>{trade.line}</p></li>
                 ))}
               </ul>
+              <p className={styles.onRequest}>{HOARDINGS_ON_REQUEST}</p>
             </li>
           </ul>
         </div>

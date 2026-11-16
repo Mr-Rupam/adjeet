@@ -29,6 +29,12 @@ export interface BengaliSendUs {
   sendUs: string[]
 }
 
+/**
+ * Held on the owner's instruction of 16 November 2026 until a fluent reader
+ * has proofed the text. Set it to true to show the list again.
+ */
+export const BENGALI_HELP_PROOFED = false
+
 export const SILIGURI_SEND_US_BN: Partial<Record<ServiceSlug, BengaliSendUs>> = {
   'glow-sign-boards': {
     heading: 'বাংলায়: কী পাঠাবেন',

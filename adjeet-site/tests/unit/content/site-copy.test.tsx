@@ -5,7 +5,7 @@ import type { ReactElement } from 'react'
 import { homeFaqs } from '@/content/home-faqs'
 import { ALSO_SERVICES } from '@/content/company-figures'
 import { services, SERVICE_SLUGS, getServiceBySlug, type ServiceSlug } from '@/content/services'
-import { SILIGURI_BRIEFS, SILIGURI_SEND_US_BN } from '@/content/service-local'
+import { BENGALI_HELP_PROOFED, SILIGURI_BRIEFS, SILIGURI_SEND_US_BN } from '@/content/service-local'
 import { TOWNS } from '@/content/areas'
 import { CONTACT_SEND_US, LANGUAGES_LINE } from '@/content/enquiry'
 import { generateServiceMetadata } from '@/lib/seo'
@@ -118,17 +118,16 @@ describe('service pages', () => {
     }
   })
 
-  it('mirror the English send-us list in Bengali on the glow and ACP pages only', async () => {
+  it('hold the Bengali send-us list back while it is unproofed, and keep the data', async () => {
+    expect(BENGALI_HELP_PROOFED).toBe(false)
     expect(Object.keys(SILIGURI_SEND_US_BN).sort()).toEqual(['acp-led-signage', 'glow-sign-boards'])
     for (const slug of SERVICE_SLUGS) {
       const doc = await serviceDoc(slug)
-      const block = doc.querySelector('[lang="bn"]')
+      expect(doc.querySelector('[lang="bn"]'), slug).toBeNull()
+      expect(doc.body.textContent ?? '', slug).not.toMatch(/[ঀ-৿]/)
       const bengali = SILIGURI_SEND_US_BN[slug]
-      if (!bengali) {
-        expect(block, slug).toBeNull()
-        continue
-      }
-      expect(block?.querySelectorAll('li'), slug).toHaveLength(SILIGURI_BRIEFS[slug]!.sendUs.length)
+      if (!bengali) continue
+      expect(bengali.sendUs, slug).toHaveLength(SILIGURI_BRIEFS[slug]!.sendUs.length)
       for (const item of bengali.sendUs) expect(item, slug).toMatch(/[ঀ-৿]/)
     }
   }, 30000)

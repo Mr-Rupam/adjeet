@@ -13,7 +13,7 @@ import { FOUNDED_YEAR } from '@/lib/coverage'
 
 const PAGE = {
   title: "Advertising, Signage & Printing Services in Siliguri",
-  description: "AD JEET's services in Siliguri: glow sign boards, ACP and 3D LED letters, flex, vehicle branding, wall painting, hoardings and brand rollouts.",
+  description: "AD JEET's services in Siliguri: glow sign boards, ACP and 3D LED letters, flex, vehicle branding, wall painting and brand rollouts.",
   path: "/services",
 }
 

@@ -10,7 +10,7 @@ Two audiences, one voice: regional, zonal and trade marketing teams of brands, w
 
 ## Product Purpose
 
-Turn interest into a useful enquiry on WhatsApp or through the contact form. Establish AD JEET as what it is: an advertising agency in Siliguri, at work since 1990, doing outdoor advertising, signage and brand rollouts across North Bengal and Sikkim, made at its own workshop and put up by its own crews. One agency from artwork to installation; brands stay for years. Figures come only from `content/company-figures.ts` (see DESIGN.md, "Content rules"). Preserve the existing contact destinations, lead pipeline, and factual coverage sources.
+Turn interest into a useful enquiry on WhatsApp or through the contact form. Establish AD JEET as what it is: an advertising agency in Siliguri, at work since 1990, doing outdoor advertising, signage and brand rollouts across North Bengal and Sikkim, made at its own workshop and put up by its own crews. One agency from artwork to installation; brands stay for years. Figures come only from `content/company-figures.ts` (see DESIGN.md, "Content rules"). Preserve the existing contact destinations, lead pipeline, and factual coverage sources. Exhibitions and dealer meets, and activations and road shows, are named wherever the offer is listed, with no invented detail or photograph. Hoardings are done rarely, on a company's request, and are mentioned once, on /for-brands, as "on request" (owner, 16 November 2026).
 
 ## Brand Personality
 

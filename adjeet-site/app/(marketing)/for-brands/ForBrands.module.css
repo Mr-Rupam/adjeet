@@ -138,6 +138,7 @@
   color: var(--night-ink);
 }
 .typeOnly p { margin: 4px 0 0; color: var(--night-ink-muted); font-size: 16px; line-height: 1.5; }
+.onRequest { margin: 12px 0 0; color: var(--night-ink-muted); font-size: 14px; line-height: 1.5; }
 
 @media (min-width: 768px) {
   .tradeList { grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 56px 32px; }
