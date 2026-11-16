@@ -861,6 +861,10 @@
 /* Once every group is on, the whole lit plate settles in over them, and the
    windows leave rendering once it is in (twelve masked layers less). */
 .film .lamp.h-lit { -webkit-mask-image: none; mask-image: none; transition-duration: 900ms; }
+/* Its own layer while the chapter is live, so fading it out going back is a
+   compositor change, not a repaint of the whole plate (1.8 s of frames on a
+   slowed phone). */
+.story .film .ch.live .lamp.h-lit { will-change: opacity; }
 .film .h-lamps { position: absolute; inset: 0; }
 .story .film .hills-cam:has(> .h-lit.lit-in) > .h-lamps { visibility: hidden; }
 :root:not(.story) .film .h-lamps { display: none; }
