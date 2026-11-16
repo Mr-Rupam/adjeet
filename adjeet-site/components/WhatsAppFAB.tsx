@@ -11,9 +11,11 @@ function readFilm(path: string): FilmState {
   const root = document.documentElement
   const chapter = root.getAttribute('data-film-ch')
   const playing = root.classList.contains('story') && chapter !== null && chapter !== 'after'
-  // Off in the hero and the finale (they hold their own gold action), during
-  // a light handoff, and while a chapter's own gold action is on screen.
-  const hidden = chapter === 'hero' || chapter === 'finale' || !root.classList.contains('settled') || root.classList.contains('has-cta')
+  // Off in the hero and the finale (they hold their own gold action), in the
+  // proof (its photographs' captions run to the screen's edge, and its ledger
+  // has its own gold action), during a light handoff, and while a chapter's
+  // own gold action is on screen.
+  const hidden = chapter === 'hero' || chapter === 'finale' || chapter === 'proof' || !root.classList.contains('settled') || root.classList.contains('has-cta')
   return { path, playing, hidden }
 }
 
@@ -24,7 +26,7 @@ function readFilm(path: string): FilmState {
  *
  * While the home film plays it is a small square in the bottom right corner,
  * which every chapter leaves clear, and it follows the film rather than the
- * page's actions: hidden in the hero and the finale, during a light handoff,
+ * page's actions: hidden in the hero, the proof and the finale, during a light handoff,
  * and whenever a chapter's own gold action is on screen. After the film it is
  * the usual dock again.
  */
