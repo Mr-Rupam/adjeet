@@ -1,5 +1,5 @@
 import { test, expect, type Page } from '@playwright/test'
-import { CHAPTERS } from '../../content/home-film'
+import { CHAPTERS, MALDA_BOARDS, MALDA_DAYS, MALDA_NORMAL, MALDA_ROWS, ROAD } from '../../content/home-film'
 import { SERVICE_SLUGS } from '../../content/services'
 
 // The home page since 16 November 2026: one film, the hero its first chapter
@@ -108,6 +108,57 @@ test.describe('Home page', () => {
         await scrollToChapter(page, id, p)
         expect(await seen(page, selector), `${width}: ${selector}`).toBe(true)
       }
+    }
+  })
+
+  test('the Malda beat: the field lights row by row, then the days run on by themselves past day 7', async ({ page }) => {
+    test.slow()
+    for (const [width, height] of [[390, 844], [1440, 900]] as const) {
+      await page.setViewportSize({ width, height })
+      await page.goto('/')
+      await page.evaluate(() => document.fonts.ready)
+      const road = page.locator('#road')
+      await expect(road.locator('.m-field .m-row > i')).toHaveCount(MALDA_BOARDS)
+      await expect(road.locator('.m-strip i')).toHaveCount(MALDA_NORMAL.max)
+      // Mid count: some rows lit, some not, and the gold days with them.
+      await scrollToChapter(page, 'road', 0.5)
+      const lit = await road.locator('.m-row.on').count()
+      expect(lit, `${width}: rows lit mid count`).toBeGreaterThan(0)
+      expect(lit, `${width}: rows lit mid count`).toBeLessThan(MALDA_ROWS)
+      expect(await road.locator('.m-gold.on').count()).toBeLessThan(MALDA_DAYS)
+      expect(await seen(page, '#road .m-count'), `${width}: the counter`).toBe(true)
+      // The hold: every row and every gold day lit, and the words.
+      await scrollToChapter(page, 'road', 0.78)
+      await expect(road.locator('.m-row.on')).toHaveCount(MALDA_ROWS)
+      await expect(road.locator('.m-gold.on')).toHaveCount(MALDA_DAYS)
+      await expect(road.locator('.m-hold')).toHaveText(ROAD.hold)
+      expect(await seen(page, '#road .m-hold'), `${width}: the hold`).toBe(true)
+      await expect(road.locator('.m-title')).toHaveText(ROAD.maldaTitle)
+      expect(await seen(page, '#road .m-title'), `${width}: the beat's heading`).toBe(true)
+      expect(await seen(page, '#road .m-text'), `${width}: the sentence`).toBe(true)
+      // Then, by themselves, the outlined days to the end of the normal time, and its line.
+      await page.waitForTimeout(2600)
+      const run = await road.locator('.m-run i').evaluateAll(marks => marks.map(mark => Number(getComputedStyle(mark).opacity)))
+      expect(run, `${width}: the days run on`).toEqual(Array(MALDA_NORMAL.max - MALDA_DAYS).fill(1))
+      await expect(road.locator('.m-normal')).toHaveText(ROAD.normal)
+      expect(await seen(page, '#road .m-normal'), `${width}: the normal time`).toBe(true)
+    }
+  })
+
+  test('the road\'s still frame has the field complete, 7 gold days and 18 outlined, and every word', async ({ page }) => {
+    await page.emulateMedia({ reducedMotion: 'reduce' })
+    await page.setViewportSize({ width: 390, height: 844 })
+    await page.goto('/')
+    const road = page.locator('#road')
+    await road.locator('.stage').scrollIntoViewIfNeeded()
+    const rows = await road.locator('.m-row').evaluateAll(list => list.map(row => Number(getComputedStyle(row).opacity)))
+    expect(rows).toEqual(Array(MALDA_ROWS).fill(1))
+    const gold = await road.locator('.m-gold').evaluateAll(list => list.map(mark => Number(getComputedStyle(mark, '::after').opacity)))
+    expect(gold).toEqual(Array(MALDA_DAYS).fill(1))
+    const outlined = await road.locator('.m-run i').evaluateAll(list => list.map(mark => Number(getComputedStyle(mark).opacity)))
+    expect(outlined).toEqual(Array(MALDA_NORMAL.max - MALDA_DAYS).fill(1))
+    for (const selector of ['#road h2', '#road .road-card p', '#road .m-title', '#road .m-hold', '#road .m-normal', '#road .m-text']) {
+      expect(await seen(page, selector), selector).toBe(true)
     }
   })
 

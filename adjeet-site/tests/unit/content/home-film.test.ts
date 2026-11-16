@@ -4,7 +4,7 @@ import fs from 'node:fs'
 import path from 'node:path'
 import sharp from 'sharp'
 import {
-  BRIEF, CHAPTERS, FINALE, HILLS, JUNCTION, LEDGER_LOGOS, MALDA_BOARDS, MALDA_DAYS, PROOF, PROOF_PICKS, ROAD,
+  BRIEF, CHAPTERS, FINALE, HILLS, JUNCTION, LEDGER_LOGOS, MALDA_BOARDS, MALDA_DAYS, MALDA_NORMAL, MALDA_ROWS, PROOF, PROOF_PICKS, ROAD,
   WORKSHOP_CHAPTER, FILM_SOURCES, SKIP_LABEL, DEFAULT_SHOP_NAME,
 } from '@/content/home-film'
 import {
@@ -91,6 +91,27 @@ describe('every figure traces to content/company-figures.ts', () => {
     expect(MALDA_STORY).toContain(`needed ${MALDA_BOARDS} glow sign boards`)
     expect(MALDA_STORY).toContain(`finished on day ${MALDA_DAYS}.`)
     expect(ROAD.hold).toBe(`${MALDA_BOARDS} boards. Day ${MALDA_DAYS}.`)
+  })
+
+  it('the Malda beat compares only with the normal time, in the approved words', () => {
+    expect([MALDA_BOARDS, MALDA_DAYS, MALDA_NORMAL.min, MALDA_NORMAL.max]).toEqual([100, 7, 20, 25])
+    expect(MALDA_STORY).toContain(`normally ${MALDA_NORMAL.min} to ${MALDA_NORMAL.max} days of work.`)
+    expect(ROAD.normal).toBe('Normally 20 to 25 days of work.')
+    expect(MALDA_STORY.toLowerCase()).toContain(ROAD.normal.toLowerCase())
+    // The field is whole rows; nothing beyond what the sentence says.
+    expect(MALDA_BOARDS % MALDA_ROWS).toBe(0)
+    for (const text of [ROAD.fieldLabel, ROAD.stripLabel, ROAD.normal, ROAD.hold]) {
+      expect(text, text).not.toMatch(/saved|faster|quicker|than|guarantee|always|every job/i)
+    }
+  })
+
+  it('the road declares its scroll controller stops: the title frame and the hold', () => {
+    const road = CHAPTERS.find(entry => entry.id === 'road')!
+    expect(road.stops).toEqual([road.rest, 0.78])
+    for (const stop of road.stops!) {
+      expect(stop).toBeGreaterThan(0)
+      expect(stop).toBeLessThan(1)
+    }
   })
 
   it('the proof figures are the company figures', () => {

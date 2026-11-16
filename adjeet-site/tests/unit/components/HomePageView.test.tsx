@@ -3,7 +3,8 @@ import { renderToStaticMarkup } from 'react-dom/server'
 import { HomePageView } from '@/components/home/HomePageView'
 import { getPhotoById } from '@/content/gallery'
 import { homeFaqs } from '@/content/home-faqs'
-import { CHAPTERS, PROOF_PICKS } from '@/content/home-film'
+import { CHAPTERS, MALDA_BOARDS, MALDA_DAYS, MALDA_NORMAL, MALDA_ROWS, PROOF_PICKS, ROAD } from '@/content/home-film'
+import { MALDA_STORY } from '@/content/company-figures'
 import { SERVICE_SLUGS } from '@/content/services'
 import { FILM_BOOT } from '@/components/film/film-boot'
 
@@ -88,6 +89,39 @@ describe('home page: the film, then the questions', () => {
       expect(board.closest('[aria-hidden="true"]')).not.toBeNull()
     }
     expect(doc.querySelector('[data-hero-board]')?.textContent).toBe('Your shop name')
+  })
+
+  it('tells the Malda job with 100 real boards, 25 day marks and the approved sentence', () => {
+    const road = render().querySelector('#road')!
+    // The owner's words head the beat; the count and the days are its proof, under it.
+    const title = road.querySelector('.malda h3.m-title')!
+    expect(title.textContent).toBe('We put our clients first.')
+    expect(title.compareDocumentPosition(road.querySelector('.m-field')!) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy()
+    const field = road.querySelector('.m-field[role="img"]')!
+    expect(field.getAttribute('aria-label')).toBe(ROAD.fieldLabel)
+    // One plane, ten rows, every board its own element.
+    expect(field.querySelectorAll('.m-plane')).toHaveLength(1)
+    expect(field.querySelectorAll('.m-row')).toHaveLength(MALDA_ROWS)
+    expect(field.querySelectorAll('.m-row > i')).toHaveLength(MALDA_BOARDS)
+    // Rows light nearest first, each on its own beat, inside the count.
+    const rowAts = [...field.querySelectorAll<HTMLElement>('.m-row')].map(row => parseFloat(row.style.getPropertyValue('--at')))
+    expect(rowAts).toEqual([...rowAts].sort((a, b) => a - b))
+    const strip = road.querySelector('.m-strip[role="img"]')!
+    expect(strip.getAttribute('aria-label')).toBe(ROAD.stripLabel)
+    expect(strip.querySelectorAll('i')).toHaveLength(MALDA_NORMAL.max)
+    expect(strip.querySelectorAll('i.m-gold')).toHaveLength(MALDA_DAYS)
+    expect(strip.querySelectorAll('.m-run i')).toHaveLength(MALDA_NORMAL.max - MALDA_DAYS)
+    expect(strip.querySelectorAll('.m-run i.m-norm')).toHaveLength(MALDA_NORMAL.max - MALDA_NORMAL.min + 1)
+    // The counter counts in tens to the total, and the days to the last.
+    expect([...road.querySelectorAll('.m-count .m-num span')].map(span => span.textContent).at(-1)).toBe(String(MALDA_BOARDS))
+    expect([...road.querySelectorAll('.m-count .m-day span')].map(span => span.textContent).at(-1)).toBe(`Day ${MALDA_DAYS}`)
+    expect(road.querySelector('.m-count')?.getAttribute('aria-hidden')).toBe('true')
+    expect(road.querySelector('.m-hold')?.textContent).toBe(ROAD.hold)
+    expect(road.querySelector('.m-normal')?.textContent).toBe(ROAD.normal)
+    expect(road.querySelector('.m-text')?.textContent).toBe(MALDA_STORY)
+    // The title and the crew line stay at the start.
+    expect(road.querySelector('.road-card h2')?.textContent).toBe('Then it goes out on the road.')
+    expect(road.querySelector('.road-card p')?.textContent).toBe(ROAD.line)
   })
 
   it('keeps the name field on the device and masked from session recording', () => {
