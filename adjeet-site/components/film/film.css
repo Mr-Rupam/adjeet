@@ -817,30 +817,31 @@
 
 /* ===== ch5-junction.css ===== */
 /* Chapter 5, the junction. Opens on the white of the ridge board, which dims
-   to an unlit street corner; the surfaces switch on one at a time and take
-   the visitor's name in their own style while one line at the bottom names
-   the work; then the whole list settles in the sky and the camera pushes
-   into the floodlit hoarding until its white fills the screen.
-   Plates: junction-night-tall-dark (base) and junction-night-tall (lit).
-   Faces (plates.json): hoarding 21.04 26.61 59.3 x 12.56, wall 15.41 49.04
-   39.11 x 9.81, glow sign 18.92 61.72 60.89 x 3.95, pole sign 85.23 63.28
+   to an unlit street corner under an open night sky; five surfaces switch on
+   one at a time and take the visitor's name in their own style while one
+   line at the bottom names the work; then the whole list settles in the sky,
+   the name steps off the glow sign board, and the camera pushes into that
+   board until its own light fills the screen.
+   Plates: junction-plain-tall-dark (base) and junction-plain-tall (lit).
+   Faces (plates.json): wall 15.41 49.04 39.11 x 9.81, glow sign 18.92 61.72
+   60.89 x 3.95 (the exit light, lit face #FEF4DE), pole sign 85.23 63.28
    11.26 x 4.13, van 4.04 71.05 21.36 x 5.5. No photograph is ever placed
    on a drawn surface. */
 .film .junction {
-  --ground: #06151D;                   /* between the dark (#031015) and lit (#081A23) plates' top edges */
+  --ground: #06151D;                   /* between the dark (#021622) and lit (#081A23) plates' top edges */
   --lit: var(--lit-t);   /* set from FilmJunction */
   --card-ink: #F4EDDF;
   background: var(--ground);
 }
 /* Camera: rests on the corner, steps back a little when the list settles
-   (so the sky gains room), then dollies into the hoarding (centre 50.69,
-   32.89). */
+   (so the sky gains room), then dollies into the glow sign board over the
+   shop (exit light centre 49.37, 63.7), slowly at first, then faster. */
 .film .junction-cam {
-  --ox: 50.69; --oy: 32.89;
-  --hx: .5069; --hy: .3289;
+  --ox: 49.37; --oy: 63.7;
+  --hx: .4937; --hy: .637;
   --dx: calc(50cqw - (100cqw - var(--cw)) * var(--fx, .5) - var(--hx) * var(--cw));
   --dy: calc(50cqh - (100cqh - var(--chh)) * var(--fy, .5) - var(--hy) * var(--chh));
-  --lift: 9%;
+  --lift: 4%;
   animation-name: junction-cam;
 }
 @keyframes junction-cam {
@@ -848,17 +849,24 @@
   10%  { transform: scale(1.02); }
   61%  { transform: translate(0, 0) scale(1); }
   66%  { transform: translate(0, var(--lift)) scale(1); }
-  86%  { transform: translate(0, var(--lift)) scale(1); }
-  91%  { transform: translate(calc(var(--dx) * .3), calc(var(--dy) * .3 + var(--lift) * .7)) scale(1.6); }
-  96%  { transform: translate(calc(var(--dx) * .8), calc(var(--dy) * .8 + var(--lift) * .2)) scale(4); }
-  100% { transform: translate(var(--dx), var(--dy)) scale(9); }
+  84%  { transform: translate(0, var(--lift)) scale(1); }
+  89%  { transform: translate(calc(var(--dx) * .4), calc(var(--dy) * .4 + var(--lift) * .6)) scale(1.7); }
+  93%  { transform: translate(calc(var(--dx) * .8), calc(var(--dy) * .8 + var(--lift) * .2)) scale(4); }
+  97%  { transform: translate(calc(var(--dx) * .97), calc(var(--dy) * .97 + var(--lift) * .03)) scale(11); }
+  100% { transform: translate(var(--dx), var(--dy)) scale(24); }
 }
 :root:not(.story) .film .junction-cam { transform: translate(0, calc(var(--lift) * 1.8)); }
 /* Still frame: the title, then the line and the list under it. */
 :root:not(.story) .film .j-list { top: calc(clamp(92px, 11.5cqh, 120px) + 2.15 * clamp(38px, min(11.4cqw, 6.4cqh), 92px) + 18px); }
 /* On a phone the whole width of the corner is shown (the van and the pole
    sign are at its edges), sat on the bottom, with the night sky above. */
-@container (max-aspect-ratio: 941 / 1672) { .film .junction-cam { --cw: 100cqw; --fy: 1; } }
+@container (max-aspect-ratio: 941 / 1672) {
+  .film .junction-cam { --cw: 100cqw; --fy: 1; }
+  /* While the film plays the title stands in the open night sky just above
+     the trees and the roof (its foot at 25% of the plate, whose top is
+     100cqh - 177.68cqw), not up under the header. */
+  .story .film .junction-card { top: max(clamp(92px, 11.5cqh, 120px), calc(100cqh - 133.3cqw - 2.1 * clamp(36px, min(11.4cqw, 8cqh), 96px))); }
+}
 .film .junction-cam > picture, .film .win.j-lit { -webkit-mask-image: linear-gradient(180deg, transparent 0, #000 12%); mask-image: linear-gradient(180deg, transparent 0, #000 12%); }
 
 /* A soft-edged rectangular window on to the lit plate: --ql --qt --qw --qh
@@ -891,8 +899,6 @@
   font-family: var(--font-barlow-condensed), var(--f-head); font-weight: 600; text-transform: uppercase; letter-spacing: .02em;
   mix-blend-mode: multiply; opacity: .92;
 }
-/* Hoarding: very large letters. */
-.film .j-hoard { --l: 21.04; --t: 26.61; --w: 59.3; --h: 12.56; --fh: .5; --fw: .9; --face-ink: #172229; font-weight: 800; letter-spacing: -.03em; }
 /* Pole sign: a small double-sided board; the name wraps. */
 .film .j-pole {
   --l: 85.23; --t: 63.28; --w: 11.26; --h: 4.13;
@@ -902,21 +908,37 @@
 /* Van: condensed fleet letters on the side panel. */
 .film .j-van { --l: 4.04; --t: 71.05; --w: 21.36; --h: 5.5; --fh: .52; --fw: .9; --em: 5.4; --face-ink: #172229; font-family: var(--font-barlow-condensed), var(--f-head); font-weight: 600; text-transform: uppercase; mix-blend-mode: multiply; }
 
-/* The hoarding's lettering steps off before the push, so the push never
-   shows giant cropped letters (a wrapper, since the face's own opacity is
-   its beat). */
-.film .hoard-out { position: absolute; inset: 0; font-style: normal; pointer-events: none; animation-name: junction-hoard-out; }
-@keyframes junction-hoard-out { 0%, 83% { opacity: 1; } 86.5%, 100% { opacity: 0; } }
+/* The glow sign board's lettering steps off before the push, so the push
+   never shows giant cropped letters (a wrapper, since the face's own opacity
+   is its beat). */
+.film .j-name-out { position: absolute; inset: 0; font-style: normal; pointer-events: none; animation-name: junction-name-out; }
+@keyframes junction-name-out { 0%, 81% { opacity: 1; } 84.5%, 100% { opacity: 0; } }
 
-/* The hoarding's floodlight, filling the screen as the camera arrives. */
-.film .j-flood {
-  --l: 21.04; --t: 26.61; --w: 59.3; --h: 12.56;
-  background: var(--light-white, #FFF8E7);
-  box-shadow: 0 0 2cqw .8cqw var(--light-white, #FFF8E7);
+/* The glow sign board's own light, brightening over its blank face and
+   spilling past its frame as the camera arrives, until it fills the screen. */
+.film .j-board {
+  --l: 18.92; --t: 61.72; --w: 60.89; --h: 3.95;
+  background: #FEF4DE;
+  box-shadow: 0 0 4cqw 2.4cqw #FEF4DE;
   opacity: 0;
-  animation-name: junction-flood;
+  animation-name: junction-board;
 }
-@keyframes junction-flood { 0%, 88% { opacity: 0; } 96%, 100% { opacity: 1; } }
+@keyframes junction-board { 0%, 85% { opacity: 0; } 89% { opacity: .55; } 93%, 100% { opacity: 1; } }
+/* Close to the board, its light opens out from the middle of the screen (where
+   the camera has brought the board) over the last of the push, so the move
+   ends inside the light rather than on an enlarged picture. */
+.film .j-bloom {
+  position: absolute; inset: 0; z-index: 3; pointer-events: none; opacity: 0;
+  background: linear-gradient(180deg, transparent 0, #FEF4DE 34%, #FEF4DE 66%, transparent 100%);
+  transform: scaleY(.3);
+  animation-name: junction-bloom;
+}
+@keyframes junction-bloom {
+  0%, 89% { opacity: 0; transform: scaleY(.3); }
+  93%  { opacity: .55; transform: scaleY(.6); }
+  97%  { opacity: 1; transform: scaleY(1.5); }
+  100% { opacity: 1; transform: scaleY(2.2); }
+}
 
 /* ---------- The words ---------- */
 .film .j-veil {
@@ -940,7 +962,7 @@
 
 /* Then every trade, as type, in the sky. */
 .film .j-list { position: absolute; z-index: 5; left: var(--gutter); right: var(--gutter); top: clamp(88px, 11cqh, 116px); max-width: 620px; color: #F4EDDF; animation-name: junction-list; }
-@keyframes junction-list { 0%, 86% { opacity: 1; } 90%, 100% { opacity: 0; } }
+@keyframes junction-list { 0%, 83% { opacity: 1; } 87%, 100% { opacity: 0; } }
 .film .j-line { font-family: var(--f-head); font-weight: 600; font-size: clamp(22px, min(6.2cqw, 3.2cqh), 36px); line-height: 1.12; letter-spacing: -.02em; text-wrap: balance; }
 .film .j-trades { display: flex; flex-wrap: wrap; margin: 12px 0 0; padding: 0; list-style: none; font-size: 14px; line-height: 1.6; color: color-mix(in srgb, #F4EDDF 80%, transparent); }
 .film .j-trades li:not(:last-child)::after { content: ","; margin-right: .35em; }
@@ -954,14 +976,16 @@
 .film .j-out { animation-name: junction-out; }
 @keyframes junction-out { 0%, 95% { opacity: 0; } 99.5%, 100% { opacity: 1; } }
 
-/* ---------- Wide screens: junction-night-wide (dark and lit) ----------
-   Faces: hoarding 54.67 8.18 32.78 x 18.6 (centre 71.06, 17.48), wall
-   51.38 40.81 21.35 x 13.92, glow sign 52.03 59.19 34.09 x 6.16, pole sign
-   89.77 61.74 6.82 x 7.01, van 25.3 72.48 13.82 x 7.86. The left half is
-   night sky and trees: the words sit there. */
+/* ---------- Wide screens: junction-plain-wide (dark and lit) ----------
+   Faces: wall 51.38 40.81 21.35 x 13.92, glow sign 52.03 59.19 34.09 x 6.16
+   (the exit light, centre 69.08, 62.27, lit face #FEF6E5), pole sign 89.77
+   61.74 6.82 x 7.01, van 25.3 72.48 13.82 x 7.86. The left half is night
+   sky and trees: the words sit there. */
 @media (min-width: 1024px) and (min-aspect-ratio: 5/4) {
   .film .junction { --lit: var(--lit-w); --ground: #06151D; }
-  .film .junction-cam { --oxw: 71.06; --oyw: 17.48; --hx: .7106; --hy: .1748; --fxw: .7; --fyw: .5; --lift: 0%; }
+  /* --ox and --oy too: the tall values set on .junction-cam above would
+     otherwise beat the engine's --oxw / --oyw switch. */
+  .film .junction-cam { --ox: 69.08; --oy: 62.27; --oxw: 69.08; --oyw: 62.27; --hx: .6908; --hy: .6227; --fxw: .7; --fyw: .5; --lift: 0%; }
   .film .win {
     -webkit-mask-image:
       linear-gradient(90deg, transparent calc((var(--qlw, var(--ql)) - 2) * 1%), #000 calc(var(--qlw, var(--ql)) * 1%), #000 calc((var(--qlw, var(--ql)) + var(--qww, var(--qw))) * 1%), transparent calc((var(--qlw, var(--ql)) + var(--qww, var(--qw)) + 2) * 1%)),
@@ -972,7 +996,7 @@
   }
   .film .j-glow { --lw: 52.03; --tw: 59.19; --ww: 34.09; --hw: 6.16; }
   .film .j-wall { --lw: 51.38; --tw: 40.81; --ww: 21.35; --hw: 13.92; }
-  .film .j-hoard, .film .j-flood { --lw: 54.67; --tw: 8.18; --ww: 32.78; --hw: 18.6; }
+  .film .j-board { --lw: 52.03; --tw: 59.19; --ww: 34.09; --hw: 6.16; background: #FEF6E5; box-shadow: 0 0 2.4cqw 1.4cqw #FEF6E5; }
   .film .j-pole { --lw: 89.77; --tw: 61.74; --ww: 6.82; --hw: 7.01; font-size: 1.15cqw; }
   .film .j-van { --lw: 25.3; --tw: 72.48; --ww: 13.82; --hw: 7.86; }
   .film .j-veil { background: linear-gradient(90deg, color-mix(in srgb, #050E14 70%, transparent) 0, color-mix(in srgb, #050E14 35%, transparent) 30%, transparent 46%), linear-gradient(0deg, color-mix(in srgb, #0A0B09 70%, transparent) 0, transparent 22%); }

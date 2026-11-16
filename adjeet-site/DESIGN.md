@@ -39,7 +39,7 @@ The owner asked for the whole home page to be one storyboard: every section a sc
 | 2 workshop | Made in our own workshop. | the doorway's gold light |
 | 3 road | Then it goes out on the road. | the night sky |
 | 4 hills | From the plains to the hills. | a ridge board's white light |
-| 5 junction | Shopfronts, walls, vehicles, events. | the hoarding's floodlight |
+| 5 junction | Shopfronts, walls, vehicles, events. | the glow sign board's light |
 | 6 proof | Brands stay for years. | dark |
 | 7 finale | Your name is next. | the questions follow |
 
@@ -55,6 +55,8 @@ The owner asked for the whole home page to be one storyboard: every section a sc
 - A chapter far from the screen is skipped by the browser (`content-visibility: auto`) and keeps no animations, so the hero's first paint never waits for the rest of the film.
 
 **Handoff colours.** Where one chapter ends on a flat light and the next opens on it, both sides use the same colour: the board's light `#FEF4C5` (hero to brief, brief to workshop), the doorway's gold `#F2B04C` (workshop to road), white light `#FFF8E7` (hills to junction, junction to proof), and the night `#051523` (proof to finale). From the hills onward it is night in both themes; the hero and the brief follow the theme; the workshop and the road have one plate each.
+
+**The junction.** Five surfaces on one street corner light up in turn, each with one line naming its service and linking to its page: glow sign boards, wall painting advertising, F-pole sign boards, vehicle branding and in-shop branding (the shop opening). Then every trade settles as one line of type, and the camera pushes into the glow sign board over the shop until its own light fills the screen. The owner does not promote hoardings (16 November 2026), so the film shows and names no hoarding or billboard; `tests/unit/content/home-film.test.ts` and `tests/e2e/home.spec.ts` fail if one returns.
 
 **Generated art and real photographs.** Every scene is generated concept art. It carries no visible label (owner's instruction), every scene image's alt text begins "Visualisation:", every sign face in it is blank (the lettering is HTML on the face), and it is never presented as a client's job. Real photographs appear only in the proof chapter, from `content/gallery.ts`: never retouched or upscaled, never drawn larger than their own pixels, shown whole in a thin cerulean frame, captioned only with what the record says. No photograph is ever placed on a drawn surface. The logo is never redrawn or put on a plate.
 

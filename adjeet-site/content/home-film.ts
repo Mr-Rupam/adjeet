@@ -46,6 +46,8 @@ export interface Chapter {
   over?: number
   rest: number
   still?: number
+  /** The scroll controller's rest positions (p values), for `data-stops` on the section. */
+  stops?: readonly number[]
 }
 
 export const CHAPTERS: readonly Chapter[] = [
@@ -54,7 +56,8 @@ export const CHAPTERS: readonly Chapter[] = [
   { id: 'workshop', title: 'Made in our own workshop.', len: 1.7, over: 0, rest: 0.66 },
   { id: 'road', title: 'Then it goes out on the road.', len: 2, over: 0, rest: 0.14 },
   { id: 'hills', title: 'From the plains to the hills.', len: 2, over: 0, rest: 0.8 },
-  { id: 'junction', title: 'Shopfronts, walls, vehicles, events.', len: 2.1, over: 0, rest: 0.8 },
+  // Stops: each of the five surfaces lit with its caption, then the whole list settled.
+  { id: 'junction', title: 'Shopfronts, walls, vehicles, events.', len: 2.1, over: 0, rest: 0.8, stops: [0.13, 0.25, 0.37, 0.49, 0.6, 0.8] },
   { id: 'proof', title: 'Brands stay for years.', len: 2.4, over: 0, rest: 0.04 },
   { id: 'finale', title: 'Your name is next.', len: 1.3, over: 0, rest: 0.72 },
 ]
@@ -121,30 +124,35 @@ export const HILLS = {
 } as const
 
 /**
- * The surfaces at the junction, in the order they light up. Each names a
- * trade: a service with a page, or one of the services that has none yet.
+ * The surfaces at the junction, in the order they light up: the glow sign
+ * board over the shop, the painted wall, the pole sign, the van and the open
+ * shop. Each names the service it shows and links to its page.
  */
-type Surface = { slug: ServiceSlug } | { also: (typeof ALSO_SERVICES)[number] }
-const SURFACES: readonly Surface[] = [
-  { slug: 'glow-sign-boards' },
-  { slug: 'wall-painting' },
-  { also: 'Hoardings and billboards' },
-  { slug: 'f-pole-installation' },
-  { slug: 'vehicle-branding' },
-  { slug: 'in-shop-branding' },
+const SURFACES: readonly ServiceSlug[] = [
+  'glow-sign-boards',
+  'wall-painting',
+  'f-pole-installation',
+  'vehicle-branding',
+  'in-shop-branding',
 ]
 
+/**
+ * The owner does not promote large roadside display structures (16 November
+ * 2026, storyboard v2 section 7a), so the film never names them, even while
+ * the site's list of other work still does.
+ */
+const NOT_PROMOTED = /hoarding|billboard/i
+
 export type TradeLink = { label: string; href?: string }
-const tradeOf = (surface: Surface): TradeLink =>
-  'slug' in surface ? { label: SERVICE_LINK_LABELS[surface.slug], href: `/services/${surface.slug}` } : { label: surface.also }
+const tradeOf = (slug: ServiceSlug): TradeLink => ({ label: SERVICE_LINK_LABELS[slug], href: `/services/${slug}` })
 
 export const JUNCTION = {
   surfaces: SURFACES.map(tradeOf),
   line: 'Made at one workshop. Put up by one crew network.',
-  /** Every trade: the ten with pages as links, the three without as text. */
+  /** Every trade: the ten with pages as links, then the other work as text. */
   trades: [
-    ...SERVICE_SLUGS.map(slug => ({ label: SERVICE_LINK_LABELS[slug], href: `/services/${slug}` })),
-    ...ALSO_SERVICES.map(label => ({ label })),
+    ...SERVICE_SLUGS.map(tradeOf),
+    ...ALSO_SERVICES.filter(label => !NOT_PROMOTED.test(label)).map(label => ({ label })),
   ] as TradeLink[],
   listLabel: 'Our work',
 } as const
