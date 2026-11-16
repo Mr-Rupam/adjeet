@@ -147,8 +147,12 @@
   animation-fill-mode: both;
   animation-play-state: paused;
 }
-.story.drv-play .film .ch.pin .stage { opacity: 1; }
+.story.drv-play .film .ch .stage { opacity: 0; }
+.story.drv-play .film .ch.cur .stage { opacity: 1; }
 .story.drv-play .film .ch:not(.live) .stage { visibility: hidden; }
+/* The stages beside the one shown (.cur) stay rendered and composited at
+   opacity 0, so a move never starts in the frame that reveals one. */
+.story.drv-play .film .ch.live .stage { will-change: opacity; }
 /* A playing chapter is never skipped, so its animations exist when the move starts. */
 .story.drv-play .film .ch.live { content-visibility: visible; }
 /* The stepper (story.ts) owns the film's scrolling once every listener is
@@ -290,7 +294,7 @@
    beat, to finish a lights sequence. */
 .film .lit-all { transition: opacity 1s ease; }
 /* Once the whole lit plate is in, the light windows under it leave rendering. */
-.story .film .ch:has(.lit-all.on) .light { visibility: hidden; transition: visibility 0s linear 1050ms; }
+.story .film .ch:has(.lit-all.lit-in) .light { visibility: hidden; }
 .story .film .lit-all[style*="--at"]:not(.on) { opacity: 0; }
 .story .film .fade[style*="--at"] { transition: opacity var(--beat) ease, transform 700ms var(--ease); }
 .story .film .fade[style*="--at"]:not(.on) { opacity: 0; transform: translateY(14px); }
@@ -582,12 +586,12 @@
 }
 .film .ws-out { animation-name: ws-out; }
 @keyframes ws-out { 0%, 72% { opacity: 1; transform: none; } 78%, 100% { opacity: 0; transform: translateY(-3cqh); } }
-.film .workshop .flash { animation-name: ws-flash; }
+.film .workshop .flash { background: var(--light-board); animation-name: ws-flash; }
+.film .workshop .flash.ws-gold { background: var(--light-gold); animation-name: ws-gold; }
+@keyframes ws-gold { 0%, 80% { opacity: 0; } 97%, 100% { opacity: 1; } }
 @keyframes ws-flash {
-  0%   { opacity: 1; background: var(--light-board); }
-  6%   { opacity: 0; background: var(--light-board); }
-  80%  { opacity: 0; background: var(--light-gold); }
-  97%, 100% { opacity: 1; background: var(--light-gold); }
+  0%   { opacity: 1; }
+  6%, 100% { opacity: 0; }
 }
 :root:not(.story) .film .workshop .flash { opacity: 0; }
 
@@ -843,7 +847,7 @@
    windows leave rendering once it is in (twelve masked layers less). */
 .film .lamp.h-lit { -webkit-mask-image: none; mask-image: none; transition-duration: 900ms; }
 .film .h-lamps { position: absolute; inset: 0; }
-.story .film .hills-cam:has(> .h-lit.on) > .h-lamps { visibility: hidden; transition: visibility 0s linear 950ms; }
+.story .film .hills-cam:has(> .h-lit.lit-in) > .h-lamps { visibility: hidden; }
 :root:not(.story) .film .h-lamps { display: none; }
 /* Going back the lights go out together with the lit plate: bringing a dozen
    masked windows back at once cost a slow device seconds of frames. */
@@ -1488,7 +1492,7 @@
    rules (design/fieldwork.css). */
 :root.story[data-film-tone="dark"] .site-header.site-header--over-hero { --hero-ink: var(--night-ink); --focus-ring: var(--gold); }
 :root.story[data-film-tone="light"] .site-header.site-header--over-hero { --hero-ink: var(--day-ink); --focus-ring: var(--cerulean-deep); }
-:root.story .site-header.site-header--over-hero { transition: --hero-ink 320ms ease, background-color 320ms ease, border-color 320ms ease; }
+:root.story .site-header.site-header--over-hero { transition: none; }
 /* The site's reading rail would sit on the chapter rail: off while the film plays. */
 :root.story:not([data-film-ch="after"]) [data-site-rail] { opacity: 0; }
 

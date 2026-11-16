@@ -73,7 +73,9 @@ export function FilmWorkshop() {
         </div>
         <p className="ws-line fade" style={vars({ '--at': 0.64 })}>{WORKSHOP_CHAPTER.line}</p>
       </div>
+      {/* The board's light, then the doorway's gold: two layers, opacity only. */}
       <i className="flash tl" aria-hidden="true" />
+      <i className="flash ws-gold tl" aria-hidden="true" />
     </Chapter>
   )
 }

@@ -48,6 +48,8 @@ type Chapter = {
   el: HTMLElement; id: string; i: number; st: HTMLElement; rest: number; dur: number; stops: Stop[]; beats: Beat[]
   marks: number[]; top: number; pin: number; H: number; ld?: boolean; was?: boolean; near?: boolean; ok?: boolean
   im?: HTMLImageElement[]; an?: Animation[] | null
+  /** The p its keyframes are seated on (NaN while a move plays them). */
+  sp?: number
 }
 /** A rest in page pixels, its chapter and p; ms: a showpiece's own duration for the move into it. */
 type Rest = { y: number; ms: number; c: Chapter; p: number }
@@ -55,6 +57,11 @@ type Rest = { y: number; ms: number; c: Chapter; p: number }
 type Seg = { c: Chapter; a: number; b: number; ms: number }
 
 const clamp = (v: number, a: number, b: number) => Math.max(a, Math.min(b, v))
+/** A move's ease (sine in and out), and its inverse for the beats' times. */
+const ease = (x: number) => (1 - Math.cos(Math.PI * x)) / 2
+const unease = (f: number) => Math.acos(1 - 2 * clamp(f, 0, 1)) / Math.PI
+/** Rate changes along a move: the compositor holds each until the next. */
+const SLICES = 6
 /** An ordinary move takes 0.8 to 1.6 s (a showpiece sets its own). */
 const MOVE_MIN = 800
 const MOVE_MAX = 1600
@@ -170,6 +177,7 @@ export function startStory(film: HTMLElement): StopStory {
         // A stack that is not ready when its move begins sits this pass out.
         if (on && t.pl) t.b.classList.toggle('late', !t.b.classList.contains('ready'))
         t.b.classList.toggle('on', on)
+        if (!on) t.b.classList.remove('lit-in')
       }
     }
     return changed
@@ -190,7 +198,25 @@ export function startStory(film: HTMLElement): StopStory {
   }
   const seat = (c: Chapter, p: number) => {
     if (!h.classList.contains('drv-play')) return
-    for (const a of anims(c)) { a.pause(); a.currentTime = clamp(p, 0, 1) * 1000 }
+    p = clamp(p, 0, 1)
+    // Already on that frame (a move ends on it by the animations' own clamp): untouched.
+    if (c.sp === p) return
+    for (const a of anims(c)) {
+      a.pause()
+      a.effect?.updateTiming({ iterationStart: 0, iterations: 1, direction: 'normal' })
+      a.currentTime = p * 1000
+    }
+    c.sp = p
+  }
+  /* The rest: the stop the film is on. It is the one source of truth for the
+     frame at rest; the scroll position only says where the page is. */
+  let restC: Chapter | null = null
+  let restP = 0
+  const free = () => h.hasAttribute('data-film-free')
+  /** The frame a chapter shows at rest: its stop, or 0 or 1 beside it. */
+  const pOf = (c: Chapter) => {
+    if (!restC || free()) return clamp((scrollY - c.top) / c.pin, 0, 1)
+    return c === restC ? restP : c.i < restC.i ? 1 : 0
   }
 
   /* Root attributes are written only when they change. */
@@ -221,6 +247,9 @@ export function startStory(film: HTMLElement): StopStory {
   /* Live: the chapters whose stages are rendered (film.css). At rest, the one
      on screen; during a move, the ones it plays. */
   const live = (ks: Chapter[]) => { for (const c of C) c.el.classList.toggle('live', ks.includes(c)) }
+  /** .cur: the one stage shown (film.css); the live ones beside it wait at opacity 0. */
+  const show = (c: Chapter | null) => { for (const k of C) k.el.classList.toggle('cur', k === c) }
+  const around = (c: Chapter | null) => (c ? C.filter(k => Math.abs(k.i - c.i) <= 1) : [])
 
   const frame = () => {
     raf = 0
@@ -240,19 +269,20 @@ export function startStory(film: HTMLElement): StopStory {
         c.near = near
         c.el.classList.toggle('near', near)
         c.an = null
-        if (near && !moving) requestAnimationFrame(() => { if (!moving) seat(c, (scrollY - c.top) / c.pin) })
+        c.sp = undefined
+        if (near && !moving) requestAnimationFrame(() => { if (!moving) seat(c, pOf(c)) })
       }
       if (!near && !c.was) continue
       c.was = near
       if (story && js && !h.classList.contains('drv-play')) c.el.style.setProperty('--p', p.toFixed(4))
       if (near) { load(c); if (r >= 0) { load(C[i + 1]); load(C[i + 2]) } }
-      if (!moving) beats(c, pr)
+      if (!moving) beats(c, c === restC && !free() ? restP : pr)
     }
     const end = C[C.length - 1]
     if (now === end && y - end.top > end.pin + end.H * 0.5) now = null
     if (!moving) {
-      mark(now, now ? (y - now.top) / now.pin : 1)
-      if (h.classList.contains('drv-play')) live(now ? [now] : [])
+      mark(now, now === restC && !free() ? restP : now ? (y - now.top) / now.pin : 1)
+      if (h.classList.contains('drv-play')) { live(around(now)); show(now) }
     }
     if (on) h.classList.toggle('step-end', y >= last() - 2)
   }
@@ -274,28 +304,54 @@ export function startStory(film: HTMLElement): StopStory {
     return { c, p: clamp((y - c.top) / c.pin, 0, 1) }
   }
 
-  /** Plays one chapter from a to b over ms; calls done at the end. */
-  const play = (s: Seg, done: () => void) => {
+  /** Plays one chapter from a to b over ms, eased, and calls done once its
+      keyframes reach b by their own clamp. Each animation's timing is set to
+      the stretch [a, b] (iterationStart, iterations, and direction "reverse"
+      going back, so the rate stays positive), and the speed follows the ease
+      by a few rate changes; the compositor carries each until the next, so a
+      late timer never stops the picture. `fresh`: the stage was just shown or
+      woken, so the play waits two frames for it to be composited first. */
+  const play = (s: Seg, done: () => void, fresh: boolean) => {
     const { c, a, b, ms } = s
-    if (!c.near) { c.near = true; c.el.classList.add('near'); c.an = null }
-    const list = anims(c)
-    const rate = ((b - a) * 1000) / ms
-    // .rev: the chapter plays backwards (film.css: the hills' lights go out together).
-    c.el.classList.toggle('rev', b < a)
-    for (const x of list) { x.pause(); x.currentTime = a * 1000; x.playbackRate = rate; x.play() }
-    // Every mark crossed fires once, at its place in the move, in order.
     const fwd = b > a
-    for (const m of c.marks) {
-      if (fwd ? !(m > a && m <= b) : !(m > b && m <= a)) continue
-      const after = fwd ? m : m - 1e-4
-      later(() => { beats(c, after); mark(c, after) }, (Math.abs(m - a) / Math.abs(b - a)) * ms)
+    if (!c.near) { c.near = true; c.el.classList.add('near'); c.an = null; c.sp = undefined; fresh = true }
+    // .rev: the chapter plays backwards (film.css: the hills' lights go out together).
+    c.el.classList.toggle('rev', !fwd)
+    const start = () => {
+      const list = anims(c)
+      const lo = Math.min(a, b)
+      const span = Math.abs(b - a)
+      const base = (span * 1000) / ms
+      const rate = (k: number) => Math.max(0.02, base * SLICES * (ease((k + 1) / SLICES) - ease(k / SLICES)))
+      for (const x of list) {
+        x.pause()
+        x.effect?.updateTiming({ iterationStart: lo, iterations: span, direction: fwd ? 'normal' : 'reverse' })
+        x.currentTime = 0
+        x.playbackRate = rate(0)
+        x.play()
+      }
+      c.sp = NaN
+      for (let k = 1; k < SLICES; k++) later(() => { for (const x of list) x.updatePlaybackRate(rate(k)) }, (ms * k) / SLICES)
+      // Every mark crossed fires once, at its place in the eased move, in order.
+      for (const m of c.marks) {
+        if (fwd ? !(m > a && m <= b) : !(m > b && m <= a)) continue
+        const after = fwd ? m : m - 1e-4
+        later(() => { beats(c, after); mark(c, after) }, unease(Math.abs(m - a) / span) * ms)
+      }
+      let over = false
+      const finish = () => {
+        if (over) return
+        over = true
+        c.sp = b
+        beats(c, b)
+        done()
+      }
+      if (list.length) list[0].finished.then(finish, () => undefined)
+      // A safety net, should the clamp never be reached.
+      later(finish, list.length ? ms * 1.5 + 400 : ms)
     }
-    later(() => {
-      for (const x of list) { x.pause(); x.currentTime = b * 1000; x.playbackRate = 1 }
-      c.el.classList.remove('rev')
-      beats(c, b)
-      done()
-    }, ms)
+    if (fresh) requestAnimationFrame(() => requestAnimationFrame(start))
+    else start()
   }
 
   /** The move from where the page is to a rest, as a list of chapter parts. */
@@ -336,12 +392,12 @@ export function startStory(film: HTMLElement): StopStory {
     const { segs } = route(r)
     const base = segs.map(s => Math.abs(s.b - s.a) * s.c.dur)
     const sum = base.reduce((x, y) => x + y, 0)
-    const show = ms === undefined ? r.ms : ms
-    const total = show || clamp(sum, MOVE_MIN, MOVE_MAX)
+    const own = ms === undefined ? r.ms : ms
+    const total = own || clamp(sum, MOVE_MIN, MOVE_MAX)
     const parts: Array<Seg & { jump: number | null }> = segs.map((s, k) => ({ ...s, ms: sum ? (base[k] / sum) * total : total / segs.length }))
     const ks = [...new Set(parts.map(s => s.c))]
     for (const k of ks) load(k)
-    live([...new Set([where(scrollY).c, ...ks])])
+    live([...new Set([...around(where(scrollY).c), ...ks])])
     let ready = false
     Promise.race([
       Promise.all(ks.flatMap(k => (k.im || []).map(i => i.decode().catch(() => undefined)))),
@@ -356,20 +412,27 @@ export function startStory(film: HTMLElement): StopStory {
     }
     const next = (k: number) => {
       if (k === parts.length) {
+        // The rest is the stop; the page jumps to its place, and nothing is re-seated.
+        restC = r.c
+        restP = r.p
         jump(r.y)
-        live([r.c])
+        live(around(r.c))
+        show(r.c)
+        for (const c of C) c.el.classList.remove('rev')
         moving = false
         h.removeAttribute('data-film-moving')
         ended = performance.now()
         tick()
-        // A chapter that came near during the move is seated once the frame has run.
+        // A chapter that came near during the move is seated (0 or 1) once the frame has run.
         requestAnimationFrame(() => requestAnimationFrame(seatAll))
         return
       }
       const s = parts[k]
-      if (s.jump !== null) { jump(s.jump); seat(s.c, s.a); beats(s.c, s.a); mark(s.c, s.a) }
+      let fresh = false
+      if (s.jump !== null) { jump(s.jump); seat(s.c, s.a); beats(s.c, s.a); mark(s.c, s.a); fresh = true }
+      if (!s.c.el.classList.contains('cur')) { show(s.c); fresh = true }
       if (s.ms < 1 || Math.abs(s.b - s.a) < 1e-4) { next(k + 1); return }
-      play(s, () => next(k + 1))
+      play(s, () => next(k + 1), fresh)
     }
     wait()
   }
@@ -484,16 +547,18 @@ export function startStory(film: HTMLElement): StopStory {
     settleT = 0
     // data-film-free on <html>: a tool or a test that needs a frame between stops.
     if (moving || g || !R.length) return
-    if (h.hasAttribute('data-film-free')) { seatAll(); return }
+    if (free()) { seatAll(); return }
     const y = scrollY
     if (!inFilm(y)) return
     if (past) { go(R[R.length - 1]); return }
     const r = nearest(y)
+    restC = r.c
+    restP = r.p
     if (Math.abs(r.y - y) > 2) jump(r.y)
     else seatAll()
   }
-  /** Every near chapter on its frame for the page's place (after a jump that was not a move). */
-  const seatAll = () => { for (const c of C) if (c.near) seat(c, (scrollY - c.top) / c.pin) }
+  /** Every near chapter on its frame at rest (after a jump that was not a move). */
+  const seatAll = () => { for (const c of C) if (c.near) seat(c, pOf(c)) }
   const onScroll = () => {
     tick()
     if (!on || moving) return
@@ -535,7 +600,7 @@ export function startStory(film: HTMLElement): StopStory {
   const goto = (c: Chapter, p: number, instant = false) => {
     const r = stopIn(c, p)
     if (!r) return jump(at(c, p))
-    if (instant) { jump(r.y); requestAnimationFrame(seatAll) }
+    if (instant) { restC = r.c; restP = r.p; jump(r.y); requestAnimationFrame(seatAll) }
     else go(r)
   }
   const byHash = (hash: string) => C.find(c => '#' + c.id === hash)
@@ -573,17 +638,24 @@ export function startStory(film: HTMLElement): StopStory {
   // A theme change lays out the other theme's pictures and swaps the hero's planes.
   const themes = new MutationObserver(() => requestAnimationFrame(() => { measure(); fit(); reset(); seatAll() }))
 
+  // A whole lit plate that has finished fading in marks itself (.lit-in): the
+  // light windows under it then leave rendering (film.css), with no transition.
+  const onFaded = (e: TransitionEvent) => {
+    const t = e.target as HTMLElement
+    if (e.propertyName === 'opacity' && t.matches?.('.lit-all, .h-lit')) t.classList.toggle('lit-in', t.classList.contains('on'))
+  }
   // A chapter the browser had skipped letters its boards once it renders.
   const onShown = (e: Event) => {
     if ((e as Event & { skipped?: boolean }).skipped) return
     fit()
     const c = C.find(c => c.el === e.currentTarget)
-    if (c) { c.an = null; if (!moving) seat(c, (scrollY - c.top) / c.pin) }
+    if (c) { c.an = null; c.sp = undefined; if (!moving) seat(c, pOf(c)) }
   }
   for (const c of C) c.el.addEventListener('contentvisibilityautostatechange', onShown)
   for (const i of inputs) i.addEventListener('input', onInput)
   d.addEventListener('click', onClick)
   d.addEventListener('focusin', onFocus)
+  film.addEventListener('transitionend', onFaded)
   addEventListener('scroll', onScroll, { passive: true })
   addEventListener('resize', onResize)
   addEventListener('load', onLoad)
@@ -625,10 +697,11 @@ export function startStory(film: HTMLElement): StopStory {
     if (raf) cancelAnimationFrame(raf)
     stopMove()
     clearTimeout(settleT)
-    for (const c of C) { c.el.removeEventListener('contentvisibilityautostatechange', onShown); c.el.classList.remove('live') }
+    for (const c of C) { c.el.removeEventListener('contentvisibilityautostatechange', onShown); c.el.classList.remove('live', 'cur', 'rev') }
     for (const i of inputs) i.removeEventListener('input', onInput)
     d.removeEventListener('click', onClick)
     d.removeEventListener('focusin', onFocus)
+    film.removeEventListener('transitionend', onFaded)
     removeEventListener('scroll', onScroll)
     removeEventListener('resize', onResize)
     removeEventListener('load', onLoad)

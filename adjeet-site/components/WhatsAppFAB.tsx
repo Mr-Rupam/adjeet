@@ -42,7 +42,9 @@ export function WhatsAppFAB() {
     if (!isHome) return
 
     const hero = document.getElementById('hero-section')
-    if (!hero) return
+    // While the film plays it reports where it is (below); an observer on its
+    // animated hero would be recomputed on every frame of every move.
+    if (!hero || document.documentElement.classList.contains('story')) return
 
     const observer = new IntersectionObserver(
       ([entry]) => setHeroState({ path: pathname, isVisible: entry.isIntersecting }),
