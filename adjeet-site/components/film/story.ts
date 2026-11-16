@@ -148,6 +148,7 @@ export function startStory(film: HTMLElement, libs?: FilmLibs): StopStory {
   }
 
   const beats = (c: Chapter, pr: number) => {
+    let changed = false
     for (const t of c.beats) {
       const on = story ? (t.on ? pr >= t.at - 0.015 : pr >= t.at) && pr < t.off : true
       if (on !== t.on) {
@@ -156,8 +157,10 @@ export function startStory(film: HTMLElement, libs?: FilmLibs): StopStory {
         if (on && t.pl) t.b.classList.toggle('late', !t.b.classList.contains('ready'))
         t.b.classList.toggle('on', on)
         if (t.pl) c.an = null
+        changed = true
       }
     }
+    return changed
   }
   // The GSAP driver's per-frame work for one chapter: p is the scrubbed,
   // smoothed progress. Held at 0 until the chapter's pictures are ready.
@@ -167,7 +170,8 @@ export function startStory(film: HTMLElement, libs?: FilmLibs): StopStory {
     // CSS animations only: setting a transition's time would break the beat fades.
     if (!c.an) c.an = c.el.getAnimations({ subtree: true }).filter(a => 'animationName' in a)
     for (const a of c.an) a.currentTime = p * 1000
-    beats(c, p)
+    // The root's flags (has-cta for the dock) follow the beats, not only the scroll.
+    if (beats(c, p)) tick()
   }
 
   /* Root attributes are written only when they change. */

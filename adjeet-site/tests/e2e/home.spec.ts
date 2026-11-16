@@ -401,8 +401,9 @@ test.describe('Home page', () => {
     for (const reducedMotion of ['no-preference', 'reduce'] as const) {
       await page.emulateMedia({ reducedMotion })
       await page.goto('/')
+      // What the page shows and says (not the structured data, which is unchanged).
       const said = await page.locator('body').evaluate(film => [
-        film.textContent ?? '',
+        (film as HTMLElement).innerText ?? '',
         ...[...film.querySelectorAll('[alt], [aria-label], [title]')].flatMap(element => ['alt', 'aria-label', 'title'].map(name => element.getAttribute(name) ?? '')),
       ].join('\n'))
       expect(said, reducedMotion).not.toMatch(/hoarding|billboard/i)
