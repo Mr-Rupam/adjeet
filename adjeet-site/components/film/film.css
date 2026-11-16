@@ -1097,131 +1097,143 @@
   :root:not(.story) .film .j-list { top: calc(14cqh + 2.2 * min(11.4cqw, 6.4cqh) + 24px); }
 }
 
-/* ===== Chapter 1, brands (storyboard-v2, section 4; branch film/proof-top) =====
-   "Brands stay for years." The hero's board light is the lit face of one
-   board; the camera pulls back to a dark wall of the film's boards, all the
-   same size, one company each; a wave switches them on; then the words. It
-   leaves by pushing into the blank board at the wall's centre (.b-seed)
-   until its light (--light-board) fills the screen: the work chapter opens
-   on it. The wall's geometry is worked out here from the screen, so the
-   camera always knows where that board is:
-     --bh --bw   a board's height and width (2.1 : 1, a fascia's shape)
-     --ww --wh   the wall's size; --wl --wtop its place on the stage
-     --sx --sy   the centre of the seed board, in the wall (column --sc, row --sr)
-     --dx --dy   the move that brings that centre to the middle of the screen
-   Rows and the seed's row come from FilmBrands (--rows-t, --rows-w, --sr-t,
-   --sr-w), so the wall follows the company list. Logos sit on the lit face
-   as if printed (multiply), never larger than their own pixels, and step off
-   before the camera moves. */
+/* ===== Chapter 1, brands (storyboard-v2, section 4; branch film/brands-wall) =====
+   "Brands stay for years." The hero's board light shrinks to one blank board
+   (.b-seed) as the dark wall comes in, frames only. On the stop the heading
+   is there; the boards light by themselves in a wave (about 1.5 s), then the
+   figure, the tenure line and the actions. It leaves as the wall dims and the
+   blank board's light grows to fill the screen (--light-board), the light
+   the work chapter opens on. The wall never scales: only the one blank board
+   does, so no logo is ever drawn larger than its pixels.
+
+   The wall is a grid of half boards, so a shorter row sits centred under a
+   full one (FilmBrands places each board: --r --c on a phone, --rw --cw on a
+   desktop; --rows-t and --rows-w are the row counts). A board's size is the
+   largest that fits both the width and the height left by the words:
+     --bw --bh   a board (--face : 1, a fascia's shape)
+     --ww --wh   the wall; --wtop its top on the stage
+   Cheap to draw: a board is one frame and one face whose opacity is its only
+   transition; no blend modes, no filters, no blurred shadows, and nothing
+   moves once the wall is lit. */
 .film .brands {
   --ground: #051523;
   --card-ink: #F4EDDF;
-  --top: clamp(92px, 11.5cqh, 120px);
-  --h2: clamp(36px, min(11.4cqw, 6.4cqh), 92px);
-  --cols: 3; --rows: var(--rows-t, 5); --sc: 2; --sr: var(--sr-t, 3);
-  --cg: 12px; --rg: 24px; --face: 2.1;
+  --top: clamp(92px, 11cqh, 120px);
+  --h2: clamp(34px, min(10.4cqw, 5.6cqh), 92px);
+  --cols: 3; --tracks: 6; --rows: var(--rows-t, 8);
+  --cg: 8px; --rg: 8px; --face: 2.45;
   --span: calc(100cqw - 2 * var(--gutter));
-  --wtop: calc(var(--top) + 2.15 * var(--h2) + 20px);
-  --words: 230px;
+  --wtop: calc(var(--top) + 2.1 * var(--h2) + 14px);
+  --words: 238px;
   --room: calc(100cqh - var(--wtop) - var(--bar) - var(--words));
-  --bh: max(22px, min((var(--span) - (var(--cols) - 1) * var(--cg)) / var(--cols) / var(--face), (var(--room) - (var(--rows) - 1) * var(--rg)) / var(--rows)));
-  --bw: calc(var(--bh) * var(--face));
+  --bw: max(60px, min((var(--span) - (var(--cols) - 1) * var(--cg)) / var(--cols), (var(--room) - (var(--rows) - 1) * var(--rg)) / var(--rows) * var(--face)));
+  --bh: calc(var(--bw) / var(--face));
   --ww: calc(var(--cols) * var(--bw) + (var(--cols) - 1) * var(--cg));
   --wh: calc(var(--rows) * var(--bh) + (var(--rows) - 1) * var(--rg));
   --wl: calc(50cqw - var(--ww) / 2);
-  --sx: calc((var(--sc) - 1) * (var(--bw) + var(--cg)) + var(--bw) / 2);
-  --sy: calc((var(--sr) - 1) * (var(--bh) + var(--rg)) + var(--bh) / 2);
-  --dx: calc(50cqw - var(--wl) - var(--sx));
-  --dy: calc(50cqh - var(--wtop) - var(--sy));
+  --step: 66ms;                       /* the wave: one board after another */
   background: var(--ground);
   color: #F4EDDF;
 }
 
-/* The wall. Unlit, a board is dull acrylic in its cerulean frame; lit, its
-   face is the hero board's cream and its light falls on the wall around it. */
 .film .b-cam {
   position: absolute; z-index: 3;
   left: var(--wl); top: var(--wtop); width: var(--ww); height: var(--wh);
-  transform-origin: var(--sx) var(--sy);
-  will-change: transform;
-  animation-name: brands-cam;
+  animation-name: brands-wall;
 }
-.film .b-wall { display: grid; grid-template-columns: repeat(var(--cols), var(--bw)); grid-auto-rows: var(--bh); gap: var(--rg) var(--cg); margin: 0; padding: 0; list-style: none; }
-.film .b-wide { display: none; }
+.film .b-wall {
+  display: grid;
+  grid-template-columns: repeat(var(--tracks), calc((var(--bw) - var(--cg)) / 2));
+  grid-auto-rows: var(--bh);
+  gap: var(--rg) var(--cg);
+  margin: 0; padding: 0; list-style: none;
+}
 .film .b-board {
-  position: relative; isolation: isolate;
+  grid-row: var(--r); grid-column: var(--c) / span 2;
+  position: relative;
   border: 2px solid #0099D0;
-  background: linear-gradient(180deg, #102532, #0A1B26);
+  background: #0C1F2B;
 }
-.film .b-lit {
+/* The lit face holds the print, so one opacity lights both. */
+.film .b-face {
   position: absolute; inset: 0;
-  background: linear-gradient(180deg, #FFF8E7, #F6F0E3 64%, #ECE2CC);
-  transition: opacity var(--beat) ease;
+  display: flex; align-items: center; justify-content: center;
+  /* In lengths, not percentages: a padding percentage is of the width. */
+  padding: calc(var(--bh) * .1) calc(var(--bw) * .06);
+  background: #FFFCF4;
+  transition: opacity 360ms ease calc(var(--k) * var(--step));
 }
-/* The board's light on the wall round it: a gradient, not a blurred shadow,
-   which cost a second of raster on a desktop as the wall came on. */
-.film .b-lit::before {
-  content: ""; position: absolute; z-index: -1; inset: -45% -18% -70%;
-  background: radial-gradient(closest-side, color-mix(in srgb, #FFF3C8 16%, transparent), color-mix(in srgb, #FFF3C8 6%, transparent) 60%, transparent);
-  pointer-events: none;
-}
-.story .film .b-board:not(.on) .b-lit { opacity: 0; }
-/* Printed on the face: on the unlit acrylic the print reads as dark. */
-.film .b-print { position: absolute; z-index: 1; inset: 15% 9%; display: flex; align-items: center; justify-content: center; mix-blend-mode: multiply; pointer-events: none; animation-name: brands-print; }
-.film .b-print img { display: block; flex: none; max-width: 100%; max-height: 100%; width: auto; height: auto; object-fit: contain; }
-.film .b-print b { font-family: var(--f-head); font-weight: 700; color: #172229; letter-spacing: -.012em; line-height: 1; white-space: nowrap; font-size: min(var(--bh) * .34, var(--bw) * 1.3 / var(--n, 8)); }
-/* The years with a brand, stamped under its board. */
-.film .b-stamp { position: absolute; left: 0; top: calc(100% + 6px); font-family: var(--font-barlow-condensed), var(--f-head); font-weight: 500; font-size: 11.5px; line-height: 1; letter-spacing: .1em; text-transform: uppercase; white-space: nowrap; color: color-mix(in srgb, #F4EDDF 82%, transparent); }
-/* The full line ("16 years with Havells") for screen readers, kept inside the screen. */
-.film .b-stamp .sr { left: 0; top: 0; }
-/* The light the wall sits in once the boards are on. */
-.film .b-pool { position: absolute; inset: 0; z-index: 0; pointer-events: none; background: radial-gradient(ellipse calc(var(--ww) * .8) calc(var(--wh) * .9) at 50% calc(var(--wtop) + var(--wh) / 2), color-mix(in srgb, #FFF3C8 9%, transparent), transparent); animation-name: brands-pool; }
+.story .film .b-wall:not(.on) .b-face { opacity: 0; transition-delay: 0ms; }
+/* Never above its pixels; on a phone at most half of them, sharp at 2x. */
+.film .b-face img { display: block; flex: none; width: auto; height: auto; max-width: min(100%, var(--lw) / 2); max-height: min(100%, var(--lh) / 2); }
+.film .b-face b { font-family: var(--f-head); font-weight: 700; color: #172229; letter-spacing: -.01em; line-height: 1; white-space: nowrap; font-size: min(var(--bh) * .4, var(--bw) * 1.3 / var(--n, 8)); }
+/* The light the wall stands in, once the boards are on. */
+.film .b-pool { position: absolute; inset: 0; z-index: 0; pointer-events: none; background: radial-gradient(ellipse calc(var(--ww) * .75) calc(var(--wh) * .7) at 50% calc(var(--wtop) + var(--wh) / 2), color-mix(in srgb, #FFF3C8 8%, transparent), transparent); transition: opacity 1.2s ease .4s; }
+.story .film .b-pool:not(.on) { opacity: 0; transition-delay: 0ms; }
 /* The one blank board: the hero's light at the start, the way out at the end. */
-.film .b-seed { position: absolute; z-index: 2; left: calc(var(--sx) - var(--bw) / 2); top: calc(var(--sy) - var(--bh) / 2); width: var(--bw); height: var(--bh); border: 2px solid #0099D0; background: var(--light-board); pointer-events: none; animation-name: brands-seed; }
+.film .b-seed {
+  position: absolute; z-index: 4;
+  left: calc(50cqw - var(--bw) / 2); top: calc(var(--wtop) + var(--wh) / 2 - var(--bh) / 2);
+  width: var(--bw); height: var(--bh);
+  border: 2px solid #0099D0; background: var(--light-board);
+  pointer-events: none; opacity: 0;
+  --dy: calc(50cqh - var(--wtop) - var(--wh) / 2);
+  animation-name: brands-seed;
+}
 
-/* The words: the title over the wall, the figure and the actions under it. */
+/* The words: the title over the wall, the figure, the years and the actions under it. */
 .film .b-out { position: absolute; inset: 0; z-index: 5; pointer-events: none; animation-name: brands-out; }
 .film .b-out > * { pointer-events: auto; }
 .film .b-card { top: var(--top); max-width: 640px; }
 .film .b-card h2 { font-size: var(--h2); }
-.film .b-words { position: absolute; left: var(--gutter); right: var(--gutter); top: calc(var(--wtop) + var(--wh) + 30px); color: #F4EDDF; }
-.film .b-big { display: flex; flex-wrap: wrap; align-items: baseline; gap: 2px 12px; margin: 0; font-family: var(--f-head); font-weight: 500; font-size: 16px; line-height: 1.2; color: color-mix(in srgb, #F4EDDF 86%, transparent); }
-.film .b-big b { font-weight: 600; font-size: clamp(46px, min(14cqw, 7cqh), 104px); line-height: .9; letter-spacing: -.04em; color: #F4EDDF; }
-.film .b-words .acts { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 26px; margin-top: 16px; }
+.film .b-words { position: absolute; left: var(--gutter); right: var(--gutter); top: calc(var(--wtop) + var(--wh) + 18px); color: #F4EDDF; }
+/* After the wave. */
+.story .film .b-words.on { transition-delay: 1.5s, 1.5s; }
+/* A keyboard visitor who tabs to an action sees it at once. */
+.story .film .b-words:focus-within { opacity: 1; transform: none; transition: none; }
+.film .b-big { display: flex; flex-wrap: wrap; align-items: baseline; gap: 2px 10px; margin: 0; font-family: var(--f-head); font-weight: 500; font-size: 16px; line-height: 1.2; color: color-mix(in srgb, #F4EDDF 86%, transparent); }
+.film .b-big b { font-weight: 600; font-size: clamp(40px, min(12cqw, 5.6cqh), 96px); line-height: .9; letter-spacing: -.04em; color: #F4EDDF; }
+.film .b-years { margin: 8px 0 0; max-width: 46ch; font-size: 13.5px; line-height: 1.4; color: color-mix(in srgb, #F4EDDF 78%, transparent); text-wrap: pretty; }
+.film .b-words .acts { display: flex; flex-wrap: wrap; align-items: center; gap: 0 24px; margin-top: 12px; }
 
-/* ---------- Motion ---------- */
-@keyframes brands-cam {
-  0%   { transform: translate(var(--dx), var(--dy)) scale(24); }
-  5%   { transform: translate(calc(var(--dx) * .86), calc(var(--dy) * .86)) scale(9); }
-  10%  { transform: translate(calc(var(--dx) * .58), calc(var(--dy) * .58)) scale(3.8); }
-  15%  { transform: translate(calc(var(--dx) * .24), calc(var(--dy) * .24)) scale(1.7); }
-  20%, 80% { transform: none; }
-  86%  { transform: translate(calc(var(--dx) * .3), calc(var(--dy) * .3)) scale(1.8); }
-  92%  { transform: translate(calc(var(--dx) * .78), calc(var(--dy) * .78)) scale(5.5); }
-  100% { transform: translate(var(--dx), var(--dy)) scale(24); }
+/* ---------- Motion: the move in and the move out ---------- */
+@keyframes brands-wall { 0%, 10% { opacity: 0; } 22%, 79% { opacity: 1; } 84%, 100% { opacity: 0; } }
+/* The seed covers the screen until the flash has gone, and grows back to
+   cover it before the flash returns, so no edge of it ever shows. */
+@keyframes brands-seed {
+  0%, 5% { opacity: 1; transform: translateY(var(--dy)) scale(24); }
+  10%  { opacity: 1; transform: translateY(calc(var(--dy) * .8)) scale(8); }
+  15%  { opacity: 1; transform: translateY(calc(var(--dy) * .4)) scale(2.6); }
+  21%  { opacity: 1; transform: none; }
+  30%, 83% { opacity: 0; transform: none; }
+  85%  { opacity: 1; transform: none; }
+  89%  { opacity: 1; transform: translateY(calc(var(--dy) * .4)) scale(2.6); }
+  93%  { opacity: 1; transform: translateY(calc(var(--dy) * .8)) scale(8); }
+  96%, 100% { opacity: 1; transform: translateY(var(--dy)) scale(24); }
 }
-@keyframes brands-print { 0%, 18% { opacity: 0; } 22%, 79% { opacity: 1; } 82%, 100% { opacity: 0; } }
-@keyframes brands-seed { 0%, 36% { opacity: 1; } 44%, 78% { opacity: 0; } 82%, 100% { opacity: 1; } }
-@keyframes brands-pool { 0%, 20% { opacity: 0; } 40%, 80% { opacity: 1; } 88%, 100% { opacity: 0; } }
 @keyframes brands-out { 0%, 79% { opacity: 1; transform: none; } 84%, 100% { opacity: 0; transform: translateY(-3cqh); } }
 .film .brands .flash { animation-name: brands-flash; }
-@keyframes brands-flash { 0% { opacity: 1; } 5%, 93% { opacity: 0; } 98.5%, 100% { opacity: 1; } }
+@keyframes brands-flash { 0% { opacity: 1; } 5%, 96% { opacity: 0; } 99%, 100% { opacity: 1; } }
 
-/* ---------- Wide screens: six across, the words in one row under the wall ---------- */
+/* A narrow phone: the years take a fourth line. */
+@media (max-width: 379px) { .film .brands { --words: 262px; } }
+
+/* ---------- Wide screens: eight, seven and seven, the words in one row ---------- */
 @media (min-width: 1024px) and (min-aspect-ratio: 5/4) {
   .film .brands {
-    --cols: 6; --rows: var(--rows-w, 3); --sc: 3; --sr: var(--sr-w, 2);
-    --cg: 20px; --rg: 34px;
+    --cols: 8; --tracks: 16; --rows: var(--rows-w, 3);
+    --cg: 16px; --rg: 16px; --face: 1.95;
     --top: 14cqh; --h2: min(9cqh, 6.2cqw);
-    --span: min(100cqw - 2 * var(--gutter), 1280px);
+    --span: min(100cqw - 2 * var(--gutter), 1320px);
     --wtop: calc(var(--top) + 1.2 * var(--h2) + 4cqh);
-    --words: 17cqh;
+    --words: 20cqh;
   }
-  .film .b-wide { display: block; }
+  .film .b-board { grid-row: var(--rw); grid-column: var(--cw) / span 2; }
+  .film .b-face img { max-width: min(100%, var(--lw)); max-height: min(100%, var(--lh)); }
   .film .b-card { left: var(--wl); right: auto; max-width: none; }
-  .film .b-stamp { font-size: 13px; top: calc(100% + 8px); }
-  .film .b-words { left: var(--wl); right: auto; width: var(--ww); top: calc(var(--wtop) + var(--wh) + 5cqh); display: flex; align-items: flex-end; justify-content: space-between; gap: 24px; }
+  .film .b-words { left: var(--wl); right: auto; width: var(--ww); top: calc(var(--wtop) + var(--wh) + 5cqh); display: grid; grid-template-columns: auto minmax(0, 1fr) auto; align-items: end; gap: 0 4cqw; }
   .film .b-big { font-size: 19px; }
+  .film .b-years { margin: 0; font-size: 15px; }
   .film .b-words .acts { margin-top: 0; gap: 4px 30px; }
   .film .b-words .cta { min-height: 56px; padding-inline: 26px; font-size: 17px; }
 }
@@ -1232,7 +1244,7 @@
 :root:not(.story) .film .b-out { display: contents; }
 :root:not(.story) .film .b-card { order: 0; margin: 0 var(--gutter); }
 :root:not(.story) .film .b-cam { order: 1; margin: 28px auto 0; }
-:root:not(.story) .film .b-words { order: 2; margin: 36px var(--gutter) 0; }
+:root:not(.story) .film .b-words { order: 2; margin: 32px var(--gutter) 0; }
 :root:not(.story) .film :is(.b-seed, .b-pool), :root:not(.story) .film .brands .flash { display: none; }
 @media (min-width: 1024px) and (min-aspect-ratio: 5/4) {
   :root:not(.story) .film :is(.b-card, .b-words) { margin-inline: auto; width: var(--ww); }

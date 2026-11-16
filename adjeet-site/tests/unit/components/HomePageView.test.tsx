@@ -3,8 +3,8 @@ import { renderToStaticMarkup } from 'react-dom/server'
 import { HomePageView } from '@/components/home/HomePageView'
 import { getPhotoById } from '@/content/gallery'
 import { homeFaqs } from '@/content/home-faqs'
-import { CHAPTERS, MALDA_BOARDS, MALDA_DAYS, MALDA_NORMAL, MALDA_ROWS, ROAD, WALL_PHONE_MAX, WORK_PICKS, stopsAttr, wallCompanies } from '@/content/home-film'
-import { BRAND_TENURES, MALDA_STORY, brandTenureLines } from '@/content/company-figures'
+import { CHAPTERS, MALDA_BOARDS, MALDA_DAYS, MALDA_NORMAL, MALDA_ROWS, ROAD, WALL, WORK_PICKS, stopsAttr, tenureLine } from '@/content/home-film'
+import { MALDA_STORY } from '@/content/company-figures'
 import { SERVICE_SLUGS } from '@/content/services'
 import { FILM_BOOT } from '@/components/film/film-boot'
 
@@ -142,27 +142,25 @@ describe('home page: the film, then the questions', () => {
     }
   })
 
-  it('puts one company on each board of the wall, with the years stamped under the tenure brands', () => {
+  it('puts one brand on each of the 22 boards, logos as plain images, the years in the words and none on the boards', () => {
     const doc = render()
     const boards = [...doc.querySelectorAll('#brands .b-wall > li')]
-    const wall = wallCompanies()
-    expect(boards.map(board => board.getAttribute('data-company'))).toEqual(wall.map(company => company.name))
-    // Beyond the fifteenth, a board shows on a desktop only.
-    boards.forEach((board, index) => expect(board.classList.contains('b-wide'), String(index)).toBe(index >= WALL_PHONE_MAX))
+    expect(boards.map(board => board.getAttribute('data-company'))).toEqual(WALL.map(brand => brand.name))
+    expect(boards).toHaveLength(22)
     for (const board of boards) {
-      const company = wall.find(entry => entry.name === board.getAttribute('data-company'))!
+      const brand = WALL.find(entry => entry.name === board.getAttribute('data-company'))!
       const logo = board.querySelector('img')
-      if (company.logo) {
-        expect(logo?.getAttribute('src')).toBe(company.logo.src)
-        expect(logo?.getAttribute('alt')).toBe(company.name)
+      if (brand.logo) {
+        expect(logo?.getAttribute('src')).toBe(brand.logo.src)
+        expect(logo?.getAttribute('alt')).toBe(brand.name)
       } else {
         expect(logo).toBeNull()
-        expect(board.querySelector('.b-print b')?.textContent).toBe(company.name)
+        expect(board.querySelector('.b-face b')?.textContent).toBe(brand.name)
       }
+      expect(board.textContent).not.toMatch(/years/)
     }
-    const stamps = [...doc.querySelectorAll('#brands .b-stamp')].map(stamp => stamp.textContent)
-    expect(stamps).toEqual(brandTenureLines())
-    expect(stamps).toHaveLength(BRAND_TENURES.length)
+    expect(doc.querySelectorAll('#brands .b-stamp')).toHaveLength(0)
+    expect(doc.querySelector('#brands .b-years')?.textContent).toBe(tenureLine())
     expect(doc.querySelector('#brands .b-big')?.textContent).toBe('200+ companies since 1990')
   })
 
@@ -187,7 +185,7 @@ describe('home page: the film, then the questions', () => {
     for (const image of doc.querySelectorAll('#film img')) {
       const alt = image.getAttribute('alt') ?? ''
       const real = image.closest('#work [data-photo]') !== null
-      const logo = image.closest('#brands .b-print') !== null
+      const logo = image.closest('#brands .b-face') !== null
       if (real || logo) continue
       expect(alt === '' || alt.startsWith('Visualisation:'), alt).toBe(true)
     }
