@@ -114,7 +114,7 @@ export default function ForBrandsPage() {
       <section className={styles.speed} aria-labelledby="brands-speed-heading">
         <div className={`field-container ${styles.speedInner}`}>
           <div>
-            <h2 id="brands-speed-heading" className={styles.paperHeading} data-site-reveal="title">One week in Malda.</h2>
+            <h2 id="brands-speed-heading" className={styles.paperHeading} data-site-reveal="title">We put our clients first.</h2>
             <p className={styles.story}>{MALDA_STORY}</p>
           </div>
           <figure className={styles.speedFigure} data-site-reveal="media">

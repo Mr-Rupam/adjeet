@@ -1,5 +1,5 @@
 import { LoadingImage as Image } from '@/components/ui/LoadingImage'
-import { BRAND_LEDGER, LEDGER_NOTE, type LedgerBrand } from '@/content/for-brands'
+import { BRAND_LEDGER, type LedgerBrand } from '@/content/for-brands'
 import styles from './Brands.module.css'
 
 /**
@@ -37,7 +37,6 @@ export function BrandLedger() {
             </div>
           ))}
         </dl>
-        <p className={styles.ledgerNote}>{LEDGER_NOTE}</p>
       </div>
     </section>
   )

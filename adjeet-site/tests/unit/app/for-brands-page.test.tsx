@@ -136,7 +136,8 @@ describe('/for-brands', () => {
       expect(existsSync(path.join(process.cwd(), 'public', brand.logo)), brand.logo).toBe(true)
       expect(doc.querySelector(`img[alt="${brand.name}"]`), brand.name).not.toBeNull()
     }
-    expect(text).toContain('Selected history includes assignments through regional agencies.')
+    // The owner took the agency note off this page on 16 November 2026; the home page's client board keeps its own.
+    expect(text).not.toContain('regional agencies')
   })
 
   it('reads every figure from content/company-figures.ts', () => {

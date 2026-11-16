@@ -144,8 +144,6 @@ export const BRAND_LEDGER: { sector: string; brands: LedgerBrand[] }[] = [
   },
 ]
 
-export const LEDGER_NOTE = 'Selected history includes assignments through regional agencies.'
-
 export interface BrandTrade {
   title: string
   photoId: string
