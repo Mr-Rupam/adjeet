@@ -1,12 +1,15 @@
 import { test, expect, type Page } from '@playwright/test'
 
-// The stepped film (stepper-contract.md): a gesture is an intent, never a
-// distance. One swipe, one wheel gesture or one key press moves exactly one
-// stop, in a timed move; input during a move is ignored; the film rests only
-// on stops. These are the contract's eleven pass checks, on a phone with touch
-// (390 x 844) and on a desktop with a mouse (1440 x 900).
+// The stepped film (stepper-contract.md, and the film diagnosis of 17fe3e4):
+// a gesture is an intent, never a distance. A gentle swipe, one wheel gesture
+// or one key press moves one stop, in a timed, eased move; the film rests only
+// on stops. Eight stops are gates: a quick swipe, or input during a move,
+// carries the film on through the soft stops to the next gate and never past
+// it. In the work chapter the wall follows the finger. These are the pass
+// checks, on a phone with touch (390 x 844) and on a desktop with a mouse
+// (1440 x 900).
 
-type Rest = { y: number; id: string; p: number; ms: number }
+type Rest = { y: number; id: string; p: number; ms: number; gate: boolean }
 
 const PHONE = { viewport: { width: 390, height: 844 }, hasTouch: true, isMobile: true }
 const DESK = { viewport: { width: 1440, height: 900 } }
@@ -44,8 +47,8 @@ function rests(page: Page): Promise<Rest[]> {
       const top = chapter.getBoundingClientRect().top + scrollY
       const pin = Math.max(1, chapter.offsetHeight - H)
       for (const stop of (chapter.dataset.stops || '').split(' ').filter(Boolean)) {
-        const [p, ms] = stop.split(':').map(Number)
-        out.push({ y: index === 0 && p === 0 ? 0 : Math.ceil(top + pin * p) + 1, id: chapter.id, p, ms: ms || 0 })
+        const [p, ms] = stop.replace('!', '').split(':').map(Number)
+        out.push({ y: index === 0 && p === 0 ? 0 : Math.ceil(top + pin * p) + 1, id: chapter.id, p, ms: ms || 0, gate: stop.endsWith('!') })
       }
     })
     return out.sort((a, b) => a.y - b.y)
@@ -129,7 +132,8 @@ async function atRest(page: Page) {
 for (const [device, use] of [['phone', PHONE], ['desktop', DESK]] as const) {
   test.describe(`The stepped film on a ${device}`, () => {
     test.use(use)
-    const gesture = (page: Page, dir: 1 | -1) => (device === 'phone' ? swipe(page, -dir * 200, 2000) : wheel(page, dir * 100))
+    // A gentle gesture: one stop (a slow 70 px swipe; on the work wall, a 70 px drag).
+    const gesture = (page: Page, dir: 1 | -1) => (device === 'phone' ? swipe(page, -dir * 70, 160) : wheel(page, dir * 100))
 
     test('walking the film takes one gesture a stop, rests only on stops, and every move is timed (checks 4, 5, 6)', async ({ page }) => {
       test.setTimeout(240000)
@@ -223,7 +227,7 @@ for (const [device, use] of [['phone', PHONE], ['desktop', DESK]] as const) {
 test.describe('The stepped film with a mouse and keys', () => {
   test.use(DESK)
 
-  test('one wheel event and a burst of thirty both end exactly on the next stop (check 1)', async ({ page }) => {
+  test('one wheel event goes one stop; a burst of thirty is carried on to the next gate and no further (check 1)', async ({ page }) => {
     await open(page)
     const R = await rests(page)
     await wheel(page, 100)
@@ -237,7 +241,9 @@ test.describe('The stepped film with a mouse and keys', () => {
     }
     await Promise.all(burst)
     await cdp.detach()
-    expect(Math.abs((await rest(page)).y - R[2].y)).toBeLessThanOrEqual(2)
+    const gate = R.find((r, i) => i > 1 && r.gate)!
+    expect(gate.id).toBe('work')
+    expect(Math.abs((await rest(page)).y - gate.y)).toBeLessThanOrEqual(2)
   })
 
   test('a decaying trackpad gesture makes one step, and a new gesture after it one more (check 3)', async ({ page }) => {
@@ -294,6 +300,61 @@ test.describe('The stepped film with a mouse and keys', () => {
 
 test.describe('The stepped film with touch', () => {
   test.use(PHONE)
+
+  test('a hard flick from any rest lands on the next gate and no further', async ({ page }) => {
+    test.setTimeout(120000)
+    await open(page)
+    const R = await rests(page)
+    for (const [id, p] of [['hero', 0], ['brands', 0.5], ['work', 0.2], ['road', 0.14], ['junction', 0.13]] as const) {
+      const from = R.find(r => r.id === id && Math.abs(r.p - p) < 1e-9)!
+      await page.evaluate(top => scrollTo({ top, behavior: 'instant' }), from.y)
+      await rest(page)
+      await swipe(page, -600, 4000)
+      const gate = R.find(r => r.y > from.y + 2 && r.gate)!
+      expect(Math.abs((await rest(page)).y - gate.y), `from ${id} ${p}`).toBeLessThanOrEqual(2)
+    }
+  })
+
+  test('three quick swipes inside the junction cross three surfaces with no pause between them', async ({ page }) => {
+    await open(page)
+    const R = await rests(page)
+    const junction = R.filter(r => r.id === 'junction')
+    await page.evaluate(top => scrollTo({ top, behavior: 'instant' }), junction[0].y)
+    await rest(page)
+    // Count the moves that end (data-film-moving going off) from here on.
+    await page.evaluate(() => {
+      const w = window as unknown as { __ends: number }
+      w.__ends = 0
+      new MutationObserver(() => { if (!document.documentElement.hasAttribute('data-film-moving')) w.__ends++ })
+        .observe(document.documentElement, { attributes: true, attributeFilter: ['data-film-moving'] })
+    })
+    for (let i = 0; i < 3; i++) { await swipe(page, -60, 400); await page.waitForTimeout(60) }
+    expect(Math.abs((await rest(page)).y - junction[3].y)).toBeLessThanOrEqual(2)
+    expect(await page.evaluate(() => (window as unknown as { __ends: number }).__ends), 'one move, never stopping').toBe(1)
+  })
+
+  test('on the work wall the photographs follow the finger, and are let go on to a stop, never past the gate', async ({ page }) => {
+    await open(page)
+    const R = await rests(page)
+    const work = R.filter(r => r.id === 'work')
+    await page.evaluate(top => scrollTo({ top, behavior: 'instant' }), work[1].y)
+    await rest(page)
+    const wall = page.locator('#work .w-rise')
+    const before = (await wall.boundingBox())!.y
+    // Finger down and up the screen by 120 px, slowly, without letting go.
+    const cdp = await page.context().newCDPSession(page)
+    await cdp.send('Input.dispatchTouchEvent', { type: 'touchStart', touchPoints: [{ x: 195, y: 600 }] })
+    for (let i = 1; i <= 12; i++) { await cdp.send('Input.dispatchTouchEvent', { type: 'touchMove', touchPoints: [{ x: 195, y: 600 - i * 10 }] }); await page.waitForTimeout(30) }
+    await page.waitForTimeout(100)
+    const held = (await wall.boundingBox())!.y
+    expect(before - held, 'the wall rose with the finger').toBeGreaterThan(60)
+    await cdp.send('Input.dispatchTouchEvent', { type: 'touchEnd', touchPoints: [] })
+    await cdp.detach()
+    expect(Math.abs((await rest(page)).y - work[2].y)).toBeLessThanOrEqual(2)
+    // A long fast flick goes to the gate at the end of the wall, and no further.
+    await swipe(page, -800, 5000)
+    expect(Math.abs((await rest(page)).y - work[work.length - 1].y)).toBeLessThanOrEqual(2)
+  })
 
   test('a fast long flick and a slow short drag both end exactly on the next stop (check 2)', async ({ page }) => {
     await open(page)
