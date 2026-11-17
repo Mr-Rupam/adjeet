@@ -21,9 +21,11 @@ test('the mobile enquiry dock yields to visible enquiry actions and the footer',
   await page.goto('/')
   const dock = page.locator('.quote-dock')
   await expect(dock).toHaveCount(0)
-  await page.locator('#services').scrollIntoViewIfNeeded()
+  // With reduced motion the film is a stack of still frames: the dock shows
+  // past the hero and yields to a chapter's own action.
+  await page.locator('#workshop h2').scrollIntoViewIfNeeded()
   await expect(dock).toBeVisible()
-  await page.locator('#enquiry-heading').scrollIntoViewIfNeeded()
+  await page.locator('#brands .acts .cta').scrollIntoViewIfNeeded()
   await expect(dock).toHaveCount(0)
   await page.getByRole('contentinfo').scrollIntoViewIfNeeded()
   await expect(dock).toHaveCount(0)

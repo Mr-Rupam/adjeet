@@ -88,7 +88,7 @@ export interface LedgerBrand {
 
 /**
  * The client logo board as a ledger, one row per sector. The same names and
- * files as the homepage board (components/street/ClientStreet.tsx).
+ * files as the client logo board the homepage carried until 16 November 2026.
  */
 export const BRAND_LEDGER: { sector: string; brands: LedgerBrand[] }[] = [
   {
