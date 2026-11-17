@@ -133,9 +133,9 @@ export function buildTimeline(stops: readonly TimelineStop[], chapters: readonly
  * second (slowing down is never limited).
  */
 export const CHASE = {
-  omegaCoarse: 16,
-  omegaFine: 10,
-  rate: 2.4,
+  omegaCoarse: 18,
+  omegaFine: 14,
+  rate: 3,
   grow: 2.0,
   slack: 1.5,
   accel: 12,

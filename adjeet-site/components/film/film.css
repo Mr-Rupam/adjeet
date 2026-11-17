@@ -121,7 +121,15 @@
 /* A neighbour's stage at opacity 0 is neither painted nor rastered until it
    is shown; will-change keeps it drawn, so a hand-over shows the next scene
    at once instead of its flat ground while it is drawn. */
-.story .film .ch.live .stage { will-change: opacity; }
+@media not all and (pointer: coarse) { .story .film .ch.live .stage { will-change: opacity; } }
+/* On a touch screen only the neighbour in the direction of travel is kept
+   drawn (a phone's graphics memory): the next chapter, or the one before
+   while the film plays backwards (.rev on the chapter shown, story.ts). */
+@media (pointer: coarse) {
+  .story .film .ch.cur .stage,
+  .story .film .ch.cur:not(.rev) + .ch.live .stage,
+  .story .film .ch.live:has(+ .ch.cur.rev) .stage { will-change: opacity; }
+}
 .story .film .ch:not(.live) :is(.cam, .tl, .pl) { animation: none; }
 /* Keyframes: give .cam (or any .tl) an animation-name, never the animation
    shorthand. Each is a paused one-second animation; the engine sets its time
