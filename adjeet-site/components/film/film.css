@@ -111,6 +111,9 @@
    the tab order). The hero is rendered .cur and .live, so before the engine
    starts the first chapter is shown by CSS alone. */
 .story .film .ch.cur .stage { opacity: 1; pointer-events: auto; }
+/* Nothing in a chapter that is not shown takes the pointer, whatever a scene
+   rule gives its parts (a rendered neighbour lies over the shown one). */
+.story .film .ch:not(.cur) * { pointer-events: none; }
 /* .live: the chapter shown and the ones before and after it are rendered;
    the browser skips every other chapter, with no animations. */
 .story .film .ch:not(.live) { content-visibility: hidden; }
@@ -1317,7 +1320,9 @@ html.film-run .film { height: calc((var(--film-len) + 41) * 100lvh); }
 .film .w-end { height: 100cqh; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 18px; padding-bottom: var(--bar); text-align: center; }
 .film .w-last { display: flex; flex-direction: column; align-items: center; }
 .film .w-last .w-frame { width: auto; }
-.film .w-last img { width: auto; height: auto; max-width: min(100cqw - 2 * var(--gutter), var(--pw)); max-height: 46cqh; }
+/* Its box is sized from the photograph's ratio (--ar), not from the picture,
+   so a picture that arrives late does not move anything. */
+.film .w-last img { width: min(100cqw - 2 * var(--gutter), var(--pw), 46cqh * var(--ar)); height: auto; aspect-ratio: var(--ar); }
 .film .w-last figcaption { justify-content: center; }
 .film .w-close { display: flex; flex-direction: column; align-items: center; gap: 6px; }
 .film .w-gps { margin: 0; max-width: 24ch; font-family: var(--f-head); font-weight: 500; font-size: clamp(20px, min(5.6cqw, 3cqh), 30px); line-height: 1.25; letter-spacing: -.012em; color: #F4EDDF; text-wrap: balance; }
@@ -1348,7 +1353,7 @@ html.film-run .film { height: calc((var(--film-len) + 41) * 100lvh); }
   .story .film .w-drift:not(.on) .w-frame { opacity: .16; }
   .story .film .w-drift:not(.on) figcaption { opacity: 0; }
   .film .work figcaption { font-size: 14px; }
-  .film .w-last img { max-height: 52cqh; }
+  .film .w-last img { width: min(100cqw - 2 * var(--gutter), var(--pw), 52cqh * var(--ar)); }
 }
 
 /* ---------- Still frame: every photograph, stacked, with its caption ---------- */

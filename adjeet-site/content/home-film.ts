@@ -39,7 +39,10 @@ export type ChapterId = 'hero' | 'brands' | 'work' | 'brief' | 'workshop' | 'roa
  */
 export type Stop = number | { readonly p: number; readonly ms?: number; readonly gate?: boolean }
 export const stopP = (stop: Stop) => (typeof stop === 'number' ? stop : stop.p)
-/** A gate holds the film: one fling never carries past it (the other stops are soft). */
+/**
+ * A gate holds the film: a gesture passes it only if it starts once the film
+ * is on it (components/film/rest.ts). The other stops are soft.
+ */
 export const isGate = (stop: Stop) => typeof stop !== 'number' && !!stop.gate
 /** `data-stops` on the section: "0.14 0.78:3500" (p, or p:ms for a showpiece). */
 export const stopsAttr = (stops?: readonly Stop[]) =>
@@ -74,9 +77,10 @@ export interface Chapter {
  * Proof first (storyboard-v2, section 2): the brands, then the real
  * photographs, then the story. 23 stops. Eight are gates (gate: true), one
  * per chapter after the hero, on the frame that carries its message (the
- * owner's 5 to 8 hard blocks, film diagnosis of 17fe3e4): one fling never
- * carries past a gate. The others are soft: a fling can pass through them
- * to the next gate.
+ * owner's 5 to 8 hard blocks, film diagnosis of 17fe3e4): no gesture carries
+ * past a gate unless it started on it. The others are soft: a fling can pass
+ * through them to the next gate, and the film rests only on stops
+ * (components/film/rest.ts picks the stop when a gesture is over).
  * - hero: at rest.
  * - brands: the wall lit, the title, the figure and the actions (the hero's
  *   push and the wave are the move into it, a showpiece).

@@ -138,7 +138,7 @@ export function FilmWork() {
         {last && (
           <div className="w-end">
             <figure className="w-last" style={vars({ '--at': LAST_AT })} data-photo={last.id}>
-              <div className="w-frame w-grow tl" style={vars({ '--pw': `${last.width}px`, ...slot(last.id) })}>
+              <div className="w-frame w-grow tl" style={vars({ '--pw': `${last.width}px`, '--ar': (last.width / last.height).toFixed(4), ...slot(last.id) })}>
                 <div className="w-img tl">
                   <Image
                     src={last.photo.src}

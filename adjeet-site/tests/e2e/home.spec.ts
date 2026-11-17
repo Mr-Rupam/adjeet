@@ -43,6 +43,41 @@ async function scrollToChapter(page: Page, id: string, p: number) {
   await page.waitForFunction(() => document.getAnimations().every(animation => !(animation instanceof CSSTransition) || animation.playState !== 'running'), undefined, { timeout: 4000 }).catch(() => {})
 }
 
+/**
+ * Shows the frame at progress p of a chapter when p lies between two stops.
+ * The film rests only on stops (components/film/rest.ts), so the frame is held
+ * as a visitor holds it: from the stop before it, a finger down (a CDP touch),
+ * the page scrolled there, the film caught up. Returns the lift.
+ */
+async function holdChapter(page: Page, id: string, p: number) {
+  await engineReady(page)
+  const before = await page.evaluate(([id, p]) => {
+    const film = (window as unknown as { __film: Film & { stops: Array<{ ch: string; p: number; y: number }> } }).__film
+    const y = film.yAt(id as string, p as number)
+    return [...film.stops].reverse().find(stop => stop.y <= y + 1) ?? film.stops[0]
+  }, [id, p] as const)
+  await scrollToChapter(page, before.ch, before.p)
+  const cdp = await page.context().newCDPSession(page)
+  await cdp.send('Emulation.setTouchEmulationEnabled', { enabled: true, maxTouchPoints: 1 })
+  const size = page.viewportSize()!
+  await cdp.send('Input.dispatchTouchEvent', { type: 'touchStart', touchPoints: [{ x: size.width / 2, y: size.height / 2, id: 0 }] })
+  await page.evaluate(([id, p]) => {
+    const film = (window as unknown as { __film: Film }).__film
+    scrollTo({ top: film.yAt(id as string, p as number), behavior: 'instant' })
+  }, [id, p] as const)
+  await page.waitForTimeout(200)
+  await moveEnded(page)
+  await page.waitForTimeout(500)
+  await page.waitForFunction(() => document.getAnimations().every(animation => !(animation instanceof CSSTransition) || animation.playState !== 'running'), undefined, { timeout: 4000 }).catch(() => {})
+  return async () => {
+    await cdp.send('Input.dispatchTouchEvent', { type: 'touchEnd', touchPoints: [] })
+    await page.waitForTimeout(200)
+    await moveEnded(page)
+    await cdp.send('Emulation.setTouchEmulationEnabled', { enabled: false })
+    await cdp.detach()
+  }
+}
+
 /** Waits for the film to catch up with the scroll: not moving, and the page has not scrolled, for 600 ms. */
 async function moveEnded(page: Page) {
   let last = await page.evaluate(() => scrollY)
@@ -154,12 +189,13 @@ test.describe('Home page', () => {
       await expect(road.locator('.m-field .m-row > i')).toHaveCount(MALDA_BOARDS)
       await expect(road.locator('.m-strip i')).toHaveCount(MALDA_NORMAL.max)
       // Mid count (a frame of the move into the hold): some rows lit, some not, and the gold days with them.
-      await scrollToChapter(page, 'road', 0.5)
+      const lift = await holdChapter(page, 'road', 0.5)
       const lit = await road.locator('.m-row.on').count()
       expect(lit, `${width}: rows lit mid count`).toBeGreaterThan(0)
       expect(lit, `${width}: rows lit mid count`).toBeLessThan(MALDA_ROWS)
       expect(await road.locator('.m-gold.on').count()).toBeLessThan(MALDA_DAYS)
       expect(await seen(page, '#road .m-count'), `${width}: the counter`).toBe(true)
+      await lift()
       // The hold: every row and every gold day lit, and the words.
       await scrollToChapter(page, 'road', 0.78)
       await expect(road.locator('.m-row.on')).toHaveCount(MALDA_ROWS)
@@ -415,10 +451,12 @@ test.describe('Home page', () => {
       expect(shown, slug).toEqual(pages.map((_, other) => other === index))
     }
     // The names step off before the push, so no giant cropped letters show.
-    await scrollToChapter(page, 'junction', 0.86)
+    // (Frames between stops, held with a finger down: the film rests only on stops.)
+    let lift = await holdChapter(page, 'junction', 0.86)
     expect(Number(await page.locator('#junction .j-name-out').evaluate(element => getComputedStyle(element).opacity))).toBeLessThan(0.05)
+    await lift()
     // The chapter leaves on the film's flat white, the colour the next chapter opens on.
-    await scrollToChapter(page, 'junction', 1)
+    lift = await holdChapter(page, 'junction', 1)
     const out = await page.locator('#junction .j-out').evaluate(element => {
       const style = getComputedStyle(element)
       const probe = document.createElement('i')
@@ -431,6 +469,7 @@ test.describe('Home page', () => {
     expect(out.opacity).toBeGreaterThan(0.95)
     expect(out.background).toBe(out.white)
     expect(out.white).toBe('rgb(255, 248, 231)')
+    await lift()
   })
 
   test('the film names no hoarding or billboard, in its words or its pictures', async ({ page }) => {
