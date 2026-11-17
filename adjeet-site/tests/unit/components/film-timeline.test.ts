@@ -114,9 +114,10 @@ describe('chase', () => {
   }
 
   it('keeps its starting values in one object', () => {
-    expect(CHASE).toMatchObject({ omegaCoarse: 16, omegaFine: 10, rate: 2.4, grow: 2, slack: 1.5, accel: 12 })
-    expect(chaseOptions(true).omega).toBe(16)
-    expect(chaseOptions(false).omega).toBe(10)
+    // Tuned on 17 November 2026 from the first recordings: a shorter landing and a slightly faster move.
+    expect(CHASE).toMatchObject({ omegaCoarse: 18, omegaFine: 14, rate: 3, grow: 2, slack: 1.5, accel: 12 })
+    expect(chaseOptions(true).omega).toBe(18)
+    expect(chaseOptions(false).omega).toBe(14)
   })
 
   for (const [from, target] of [[0, 1.2], [0, 0.3], [4, 1], [0, 12], [10, 9.99], [2.5, 2.5]] as const) {
