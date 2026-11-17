@@ -118,6 +118,10 @@
    the browser skips every other chapter, with no animations. */
 .story .film .ch:not(.live) { content-visibility: hidden; }
 .story .film .ch.live { content-visibility: visible; }
+/* A neighbour's stage at opacity 0 is neither painted nor rastered until it
+   is shown; will-change keeps it drawn, so a hand-over shows the next scene
+   at once instead of its flat ground while it is drawn. */
+.story .film .ch.live .stage { will-change: opacity; }
 .story .film .ch:not(.live) :is(.cam, .tl, .pl) { animation: none; }
 /* Keyframes: give .cam (or any .tl) an animation-name, never the animation
    shorthand. Each is a paused one-second animation; the engine sets its time
@@ -724,19 +728,23 @@ html.film-run .film { height: calc((var(--film-len) + 41) * 100lvh); }
 .film .road-wash { position: absolute; inset: 0; z-index: 8; pointer-events: none; opacity: 0; }
 .film .r-gold { background: var(--light-gold, #F2B04C); animation-name: road-gold; }
 @keyframes road-gold { 0% { opacity: 1; } 8%, 100% { opacity: 0; } }
-/* Night comes down from the top of the sky: a tall band, flat night above,
-   through dusk colours to clear, sliding down at full opacity (so it never
-   greys the sky the way a fade would). */
+/* Night comes down from the top of the sky: a band of dusk colours, night
+   at its top edge to clear at its foot, slides down at full opacity (so it
+   never greys the sky the way a fade would), and flat night follows it down
+   (.r-night, a screen of night scaled down from the top edge to meet the
+   band). Two layers of about a screen each, in place of one band 2.6
+   screens tall, with the same frames: the band's night edge is at the top
+   of the screen at 91.68% and at its foot at 96.3%. */
 .film .r-dusk {
-  inset: 0 0 auto; height: 260%; opacity: 1;
-  background: linear-gradient(180deg, var(--night-sky) 0, var(--night-sky) 61%, #16294A 66%, #4C4560 72%, #B97D5F 80%, color-mix(in srgb, #E9A86A 60%, transparent) 88%, transparent 100%);
+  inset: 0 0 auto; height: 104.4%; opacity: 1;
+  background: linear-gradient(180deg, var(--night-sky) 0, var(--night-sky) 2.874%, #16294A 15.33%, #4C4560 30.27%, #B97D5F 50.19%, color-mix(in srgb, #E9A86A 60%, transparent) 70.11%, transparent 100%);
   transform: translateY(-100%);
   animation-name: road-dusk;
 }
-@keyframes road-dusk { 0%, 87% { transform: translateY(-100%); } 99%, 100% { transform: translateY(0); } }
+@keyframes road-dusk { 0%, 87% { transform: translateY(-100%); } 96.3%, 100% { transform: translateY(92.912%); } }
 :root:not(.story) .film .r-dusk { display: none; }
-.film .r-night { background: var(--night-sky); animation-name: road-night; }
-@keyframes road-night { 0%, 95% { opacity: 0; } 99%, 100% { opacity: 1; } }
+.film .r-night { background: var(--night-sky); transform-origin: 50% 0; animation-name: road-night; }
+@keyframes road-night { 0%, 91.68% { opacity: 1; transform: scaleY(0); } 96.3%, 100% { opacity: 1; transform: scaleY(1); } }
 
 /* ---------- Wide screens: road-golden-wide ----------
    No truck layer for the wide plate: the tall truck is hidden, the name sits
@@ -1447,7 +1455,10 @@ html.film-run .film { height: calc((var(--film-len) + 41) * 100lvh); }
   opacity: 0;
   pointer-events: none;
 }
-.film .hero-stage .bloom { position: absolute; inset: -20%; z-index: 8; background: radial-gradient(closest-side, var(--light) 30%, color-mix(in srgb, var(--light) 60%, transparent) 62%, transparent 100%); opacity: 0; pointer-events: none; }
+/* The box is the stage, scaled 1.4 times further in hero-bloom: the same
+   ellipse on screen as a box 1.4 stages wide and tall, in a layer one
+   screen in size. */
+.film .hero-stage .bloom { position: absolute; inset: 0; z-index: 8; background: radial-gradient(closest-side, var(--light) 30%, color-mix(in srgb, var(--light) 60%, transparent) 62%, transparent 100%); opacity: 0; pointer-events: none; }
 @media (min-width: 1024px) and (min-aspect-ratio: 5/4) {
   .film .hero-stage { --ground: light-dark(#F6F0E3, #02121B); --road: light-dark(#ECE9DF, #030B0F); }
   .film .hero-art {
@@ -1495,7 +1506,7 @@ html.film-run .film { height: calc((var(--film-len) + 41) * 100lvh); }
 .film .hero-glow { animation-name: hero-glow; }
 @keyframes hero-glow { 0%, 40% { opacity: 0; } 70%, 100% { opacity: 1; } }
 .film .hero-stage .bloom { animation-name: hero-bloom; }
-@keyframes hero-bloom { 0%, 56% { opacity: 0; transform: scale(.4); } 90%, 100% { opacity: 1; transform: scale(1.2); } }
+@keyframes hero-bloom { 0%, 56% { opacity: 0; transform: scale(.56); } 90%, 100% { opacity: 1; transform: scale(1.68); } }
 .film .hero-stage .flash { animation-name: hero-flash; }
 @keyframes hero-flash { 0%, 82% { opacity: 0; } 96%, 100% { opacity: 1; } }
 
